@@ -1,0 +1,3 @@
+razorpay:
+  key: ${RAZORPAY_KEY:}
+  secret: ${RAZORPAY_SECRET:}

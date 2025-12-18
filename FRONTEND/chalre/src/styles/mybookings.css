@@ -1,0 +1,227 @@
+/* Wrapper */
+.booking-list-wrapper {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+
+.booking-list-wrapper h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* Tabs */
+.bookings-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e5e7eb;
+  justify-content: center;
+}
+
+.tab-button {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 16px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  margin-bottom: -2px;
+}
+
+.tab-button:hover {
+  color: #374151;
+}
+
+.tab-button.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+/* Booking Card */
+.booking-card {
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 14px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  transition: 0.25s ease;
+}
+
+.booking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.10);
+}
+
+/* Header */
+.booking-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.booking-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+/* Info Rows */
+.booking-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 15px;
+  margin-bottom: 14px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+/* Payment status colors */
+.pmode {
+  font-weight: 600;
+  color: #444;
+}
+
+.pstatus {
+  font-weight: 600;
+}
+
+.pstatus.paid {
+  color: #089f32;
+}
+
+.pstatus.pending {
+  color: #e39c00;
+}
+
+.pstatus.cash_received {
+  color: #0077cc;
+}
+
+/* Booking Actions */
+.booking-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Cancel Button */
+.cancel-btn {
+  width: 100%;
+  background: #ff3b3b;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: #d92d2d;
+}
+
+/* Rate Button */
+.rate-btn {
+  width: 100%;
+  background: #f59e0b;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: 0.3s ease;
+}
+
+.rate-btn:hover {
+  background: #d97706;
+}
+
+.chat-btn {
+  width: 100%;
+  background: #10b981;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: 0.3s ease;
+}
+
+.chat-btn:hover {
+  background: #059669;
+}
+
+.rated-text {
+  text-align: center;
+  color: #059669;
+  font-weight: 600;
+  padding: 8px 0;
+}
+
+/* Cancelled Text */
+.cancelled-text {
+  color: #ff3b3b;
+  text-align: center;
+  font-weight: 600;
+  padding: 8px 0;
+}
+
+/* Empty State */
+.empty-text {
+  text-align: center;
+  font-size: 18px;
+  padding: 40px 0;
+  opacity: 0.7;
+}
+
+/* Error message */
+.error {
+  text-align: center;
+  color: #d90000;
+  margin-bottom: 10px;
+}
+
+/* Fade Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,89 @@
+.ride-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e8f5e9;
+  transition: 0.25s ease;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 25px auto;
+}
+
+.ride-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.ride-card.full {
+  opacity: 0.7;
+  border-color: #f5d0d0;
+}
+
+/* Header (From - Arrow - To) */
+.ride-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1b5e20;
+}
+
+.arrow-icon {
+  color: #2e7d32;
+  width: 28px;
+  height: 28px;
+}
+
+/* Ride info row */
+.ride-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #e0f2f1;
+}
+
+.info-item {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: #2c3e50;
+  font-size: 15px;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+.view-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  background: #1b5e20;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s;
+  font-size: 16px;
+}
+
+.view-btn:hover {
+  background: #2e7d32;
+}
+
+.view-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}

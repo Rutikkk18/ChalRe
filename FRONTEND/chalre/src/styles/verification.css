@@ -1,0 +1,108 @@
+.verify-wrapper {
+  width: 100%;
+  max-width: 650px;
+  margin: auto;
+  padding: 20px;
+}
+
+.verify-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.status-box {
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.status-box.pending {
+  background: #eaf2ff;
+  border-left: 5px solid #0066ff;
+}
+
+.status-box.approved {
+  background: #e8ffe8;
+  border-left: 5px solid #00b140;
+}
+
+.status-box.rejected {
+  background: #ffeaea;
+  border-left: 5px solid #ff3b3b;
+}
+
+.remarks {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #b30000;
+}
+
+/* Upload Section */
+.section-title {
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.doc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  background: #fafafa;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.08);
+}
+
+.doc-card input,
+.doc-card select {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.add-btn {
+  width: 100%;
+  padding: 12px;
+  background: #e8e8e8;
+  border-radius: 8px;
+  font-size: 15px;
+  border: none;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.add-btn:hover {
+  background: #dcdcdc;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: #007bff;
+  color: white;
+  border-radius: 8px;
+  border: none;
+  font-size: 17px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-weight: 600;
+}
+
+.submit-btn:hover {
+  opacity: 0.9;
+}
+
+.success-msg {
+  margin-top: 20px;
+  font-size: 16px;
+  color: green;
+  text-align: center;
+}

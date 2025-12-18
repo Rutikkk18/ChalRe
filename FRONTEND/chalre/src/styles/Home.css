@@ -1,0 +1,214 @@
+/* ================================
+   GLOBAL WRAPPER
+================================ */
+.home-wrapper {
+  font-family: 'Poppins', sans-serif;
+  background: #f4fff4; /* very light green */
+  min-height: 100vh;
+  color: #1f3b1f;
+}
+
+/* ================================
+   NAVBAR
+================================ */
+.navbar {
+  position: fixed;
+  top: 12px;                 /* space from top */
+  left: 50%;
+  transform: translateX(-50%);
+
+ width: 85rem;           /* 👈 change this value */
+  height: 4.5rem;
+  background: white;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 28px;
+  z-index: 100;
+
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 100, 0, 0.35);
+}
+/* LOGO */
+.logo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1c7c31;
+  margin-left: 44px; 
+}
+
+/* NAV-LINKS (CENTER SECTION) */
+.nav-links {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;   /* ⬅ shift to right */
+  gap: 28px;
+ 
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #1f3b1f;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #1c7c31;
+}
+
+/* RIGHT SIDE BUTTONS */
+.register-btn {
+  background: #1c7c31;
+  color: white !important;
+  padding: 10px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  white-space: nowrap;
+  font-weight: 600;
+
+  /* 🟢 FIX for overflow */
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  margin-top: -10px;
+}
+
+.register-btn:hover {
+  background: #176527;
+}
+
+/* LOGOUT BUTTON */
+.logout-btn {
+  background: #0cba4f;
+  color: white;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+  width: 80px;
+  margin-top: -15px;
+}
+
+.logout-btn:hover {
+  background: #a91f1f;
+}
+
+/* ================================
+   HERO SECTION
+================================ */
+.hero {
+  margin-top: 100px;
+  text-align: center;
+  padding: 90px 20px;
+  color: #1c7c31;
+
+  background-image: url("/hero-banner.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+.hero h1 {
+  font-size: 46px;
+  font-weight: 700;
+}
+
+.hero p {
+  margin-top: 12px;
+  font-size: 19px;
+  opacity: 0.95;
+}
+
+/* HERO BUTTONS */
+.hero-buttons {
+  margin-top: 30px;
+}
+
+.hero-btn {
+  text-decoration: none;
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-size: 17px;
+  margin: 0 14px;
+  font-weight: 600;
+}
+
+.primary {
+  background: white;
+  color: #1c7c31;
+}
+
+.secondary {
+  background: #1c7c31;
+  color: white;
+}
+
+/* ================================
+   FEATURES SECTION
+================================ */
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 80px 40px;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  background: white;
+  padding: 32px;
+  width: 280px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 100, 0, 0.12);
+}
+
+.feature-card h3 {
+  color: #1c7c31;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* ================================
+   RESPONSIVE NAVBAR FIX
+================================ */
+@media (max-width: 850px) {
+  .nav-links {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 700px) {
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 14px 0;
+  }
+
+  .nav-links {
+    margin-top: 10px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 550px) {
+  .hero h1 {
+    font-size: 34px;
+  }
+
+  .hero p {
+    font-size: 16px;
+  }
+
+  .hero-btn {
+    padding: 12px 22px;
+    margin: 8px;
+  }
+}

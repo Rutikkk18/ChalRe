@@ -1,0 +1,211 @@
+/* ================================
+   DASHBOARD – CHALRE
+   Modern • Clean • User Friendly
+================================ */
+
+/* ---------- GLOBAL ---------- */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', system-ui, sans-serif;
+  background: linear-gradient(135deg, #f3fff7, #dbf5e4);
+  color: #1f2933;
+}
+
+/* ---------- CONTAINER ---------- */
+.dash-container {
+  max-width: 1100px;
+  margin: 90px auto 40px;
+  padding: 20px;
+}
+
+/* ---------- HEADER ---------- */
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+   padding: 0px 20px;
+}
+
+.dash-header h1 {
+  font-size: 30px;
+  font-weight: 700;
+  color: #0f5132;
+}
+
+/* ---------- MAIN CARD ---------- */
+.dash-card.modern {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 12px 30px rgba(15, 81, 50, 0.12);
+}
+
+/* ---------- PROFILE SECTION ---------- */
+.profile-section {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e4f3ea;
+}
+
+.dash-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #dff5e6;
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.email {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 4px 0 8px;
+}
+
+/* ---------- BADGES ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+
+.badge.success {
+  background: #e7f7ee;
+  color: #1e8e4c;
+}
+
+.badge.warning {
+  background: #fff6db;
+  color: #c28b00;
+}
+
+.badge.danger {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+/* ---------- STATUS GRID ---------- */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 26px 0;
+}
+
+.status-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #f7fffb;
+  border: 1px solid #dbeee1;
+}
+
+.status-card svg {
+  color: #28a745;
+}
+
+.status-card span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.status-card strong {
+  display: block;
+  font-size: 16px;
+  color: #0f5132;
+}
+
+.status-card button {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  background: #28a745;
+  color: white;
+}
+
+.status-card button:hover {
+  background: #23923f;
+}
+
+/* ---------- PRIMARY ACTIONS ---------- */
+.primary-actions {
+  display: flex;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.primary-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #2fbf62, #249a4a);
+  color: white;
+  box-shadow: 0 8px 18px rgba(40, 167, 69, 0.35);
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+}
+
+.primary-btn.outline {
+  background: #e9f9ed;
+  color: #1e8e4c;
+  box-shadow: none;
+}
+
+/* ---------- SECONDARY ACTIONS ---------- */
+.secondary-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.secondary-actions button {
+  padding: 11px;
+  border-radius: 12px;
+  background: #f4fff7;
+  border: 1px solid #dbeee1;
+  cursor: pointer;
+  font-weight: 600;
+  color: #0f5132;
+}
+
+.secondary-actions button:hover {
+  background: #e9f9ed;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .profile-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .primary-actions {
+    flex-direction: column;
+  }
+}

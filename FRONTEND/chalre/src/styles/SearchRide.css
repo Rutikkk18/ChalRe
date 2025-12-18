@@ -1,0 +1,300 @@
+/* ================================
+   SEARCH RIDES PAGE - CHALRE THEME
+   White + Light Green + Green
+   Modern / Clean / Classic UI
+================================ */
+
+/* ---------- THEME VARIABLES ---------- */
+:root {
+  --green-dark: #0f5132;
+  --green-main: #28a745;
+  --green-soft: #e9f9ed;
+  --green-light: #f4fff7;
+
+  --border-soft: #dbeee1;
+  --border-focus: #3fae55;
+
+  --text-dark: #1f2933;
+  --text-muted: #6b7280;
+
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+
+  --shadow-soft: 0 8px 24px rgba(15, 81, 50, 0.08);
+  --shadow-hover: 0 12px 28px rgba(15, 81, 50, 0.12);
+}
+
+/* ---------- GLOBAL ---------- */
+body {
+  background: linear-gradient(135deg, #f3fff7, #dbf5e4);
+  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-dark);
+}
+
+/* ---------- PAGE WRAPPER ---------- */
+.search-wrapper {
+  max-width: 1200px;
+  margin: 48px auto;
+  padding: 20px;
+  display: flex;
+  gap: 34px;
+  align-items: flex-start;
+}
+
+/* ---------- CARDS ---------- */
+.search-container,
+.results-container {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 28px 30px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-soft);
+}
+
+/* ---------- HEADINGS ---------- */
+.search-container h2,
+.results-container h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--green-dark);
+  letter-spacing: -0.3px;
+  margin-bottom: 16px;
+}
+
+/* ---------- FORM ---------- */
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--green-dark);
+}
+
+.form-row input {
+  padding: 13px 15px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  border: 1.5px solid var(--border-soft);
+  background: var(--green-light);
+  transition: all 0.25s ease;
+}
+
+.form-row input::placeholder {
+  color: #9ca3af;
+}
+
+.form-row input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(63, 174, 85, 0.15);
+}
+
+/* ---------- BUTTONS ---------- */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.btn {
+  padding: 13px 22px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Primary Button */
+.btn.primary {
+  background: linear-gradient(135deg, #2fbf62, #249a4a);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.35);
+}
+
+.btn.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Ghost Button */
+.btn.ghost {
+  background: var(--green-soft);
+  color: var(--green-main);
+  border: 1.5px solid #ccefd6;
+}
+
+.btn.ghost:hover {
+  background: #dff5e6;
+}
+
+/* Filter Button */
+.btn.filter-btn {
+  background: #ffffff;
+  color: var(--green-main);
+  border: 1.5px solid var(--green-main);
+  gap: 6px;
+}
+
+.btn.filter-btn:hover {
+  background: var(--green-soft);
+}
+
+/* ---------- FILTERS ---------- */
+.filters-section {
+  margin-top: 22px;
+  padding: 22px;
+  background: var(--green-light);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-soft);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.filters-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin: 0;
+}
+
+.close-filters {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 6px;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+.close-filters:hover {
+  background: #eef2f3;
+}
+
+/* ---------- FILTER GRID ---------- */
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green-dark);
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  background: #ffffff;
+  transition: 0.25s;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(63, 174, 85, 0.15);
+}
+
+/* Price Range */
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.price-inputs input {
+  flex: 1;
+}
+
+.price-inputs span {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ---------- RESULTS ---------- */
+.results-container {
+  flex: 2;
+}
+
+.results-container h3 {
+  font-size: 20px;
+}
+
+/* ---------- STATES ---------- */
+.muted {
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.error {
+  color: #dc3545;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.empty {
+  color: #4b5563;
+  background: #f8faf9;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--green-main);
+  margin-bottom: 16px;
+}
+
+.empty a {
+  color: var(--green-main);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.empty a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- RESULTS GRID ---------- */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 22px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 900px) {
+  .search-wrapper {
+    flex-direction: column;
+  }
+}

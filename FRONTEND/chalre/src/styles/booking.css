@@ -1,0 +1,172 @@
+/* booking page */
+.booking-wrapper {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.booking-card {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  border: 1px solid #e6e6e6;
+}
+
+h2 {
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.ride-summary {
+  background: #eaffea;
+  border-left: 4px solid #2f8f2f;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.ride-summary h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #145214;
+}
+
+.form-row {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.form-row input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.price-box {
+  background: #f7fff7;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #cceccc;
+  margin: 15px 0;
+}
+
+.price-box h3 {
+  margin-top: 8px;
+  color: #1e6b1e;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #2e8f2e;
+  color: #fff;
+  font-size: 17px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background: #257825;
+}
+
+.error {
+  margin-bottom: 10px;
+  color: #c62828;
+  font-weight: 600;
+}
+
+/* Payment Method Selection */
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #f9f9f9;
+}
+
+.payment-option:hover:not(.disabled) {
+  border-color: #2e8f2e;
+  background: #f0f8f0;
+}
+
+.payment-option.selected {
+  border-color: #2e8f2e;
+  background: #eaffea;
+}
+
+.payment-option.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+.payment-option input[type="radio"] {
+  margin-right: 12px;
+  cursor: pointer;
+}
+
+.payment-option.disabled input[type="radio"] {
+  cursor: not-allowed;
+}
+
+.payment-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.payment-balance {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.payment-balance .insufficient {
+  color: #c62828;
+  font-weight: 600;
+}
+
+.payment-note {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #2e8f2e;
+  border-radius: 10px;
+  background: transparent;
+  color: #2e8f2e;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-secondary:hover {
+  background: #2e8f2e;
+  color: #fff;
+}

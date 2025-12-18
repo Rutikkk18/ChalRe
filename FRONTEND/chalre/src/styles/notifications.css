@@ -1,0 +1,149 @@
+/* ------- WRAPPER -------- */
+.noti-wrapper {
+  width: 100%;
+  padding: 20px;
+  max-width: 650px;
+  margin: auto;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ------- HEADER -------- */
+.noti-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.noti-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.mark-all-read-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mark-all-read-btn:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+.mark-all-read-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ------- LIST -------- */
+.noti-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ------- EACH NOTIFICATION CARD -------- */
+.noti-item {
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: #fdfdfd;
+  border-left: 6px solid #b8b8b8;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.08);
+  transition: 0.25s ease;
+  cursor: pointer;
+}
+
+/* UNREAD NOTIFICATION */
+.noti-item.unread {
+  background: #e9f3ff;
+  border-left-color: #007bff;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.12);
+}
+
+/* READ NOTIFICATION */
+.noti-item.read {
+  opacity: 0.8;
+}
+
+/* Hover effect */
+.noti-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 5px 12px rgba(0,0,0,0.12);
+}
+
+/* ------ TEXTS -------- */
+.noti-header-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.noti-texts h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+  flex: 1;
+}
+
+.mark-read-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.mark-read-btn:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+}
+
+.noti-texts p {
+  margin: 8px 0;
+  font-size: 15px;
+  color: #444;
+  line-height: 1.4;
+}
+
+/* TIME */
+.time {
+  font-size: 12px;
+  color: #666;
+}
+
+/* EMPTY MESSAGE */
+.empty {
+  text-align: center;
+  color: #777;
+  margin-top: 40px;
+  font-size: 16px;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

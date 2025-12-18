@@ -1,0 +1,74 @@
+package com.Startup.chalre.controller;
+
+import com.Startup.chalre.DTO.LoginDTO;
+import com.Startup.chalre.DTO.UserRegisterDTO;
+import com.Startup.chalre.DTO.UserUpdateDTO;
+import com.Startup.chalre.entity.User;
+import com.Startup.chalre.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(
+            @Valid @RequestBody UserRegisterDTO dto,
+            BindingResult bindingResult) {
+        
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining(", "));
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+        
+        return ResponseEntity.ok(userService.registeruser(dto));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
+
+        // Get user + validate password
+        User user = userService.validateLogin(dto);
+
+        // Generate token with ROLE inside
+        String token = userService.generateJwtForUser(user);
+
+        return ResponseEntity.ok(Collections.singletonMap("token", token));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal User user) {
+
+        if (user == null) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(
+            @RequestBody UserUpdateDTO dto,
+            @AuthenticationPrincipal User user) {
+
+        if (user == null) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        User updated = userService.updateProfile(user.getId(), dto);
+        return ResponseEntity.ok(updated);
+    }
+}
