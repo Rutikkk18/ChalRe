@@ -8,7 +8,6 @@ import com.Startup.chalre.entity.User;
 import com.Startup.chalre.repository.BookingRepository;
 import com.Startup.chalre.repository.RideRepository;
 import com.Startup.chalre.service.BookingService;
-import com.Startup.chalre.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
@@ -29,7 +28,6 @@ public class RideService {
     private final RideRepository rideRepository;
     private final NotificationService notificationService;
     private final BookingRepository bookingRepository;
-    private final WalletService walletService;
 
     // CREATE RIDE
     public Ride createRide(RideDTO dto, User driver) {
@@ -328,19 +326,15 @@ public class RideService {
                 // Cancel the booking
                 booking.setStatus("CANCELLED");
 
-                // Refund wallet payments
-                if ("WALLET".equalsIgnoreCase(booking.getPaymentMode()) 
-                    && "PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
-                    
+                // Mark payment as refunded if payment was PAID
+                if ("PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
                     long pricePaise = (long) (ride.getPrice() * 100);
                     long refundAmount = pricePaise * booking.getSeatsBooked();
-                    
-                    // Refund to passenger's wallet
-                    walletService.creditForCancellation(booking.getUser().getId(), refundAmount);
                     
                     booking.setPaymentStatus("REFUNDED");
                     refundedCount++;
                     totalRefundAmount += refundAmount;
+                    // Note: Actual refund processing would be handled by payment gateway/webhook
                 }
 
                 bookingRepository.save(booking);
@@ -350,9 +344,7 @@ public class RideService {
                         booking.getUser(),
                         "Ride Cancelled by Driver",
                         "The ride from " + ride.getStartLocation() + " to " + ride.getEndLocation() + 
-                        " has been cancelled by the driver." +
-                        ("WALLET".equalsIgnoreCase(booking.getPaymentMode()) ? 
-                            " Amount refunded to your wallet." : ""),
+                        " has been cancelled by the driver. Refund will be processed.",
                         "RIDE_CANCELLED_BY_DRIVER",
                         Map.of(
                                 "rideId", ride.getId().toString(),

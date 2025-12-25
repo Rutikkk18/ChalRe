@@ -1,7 +1,6 @@
 /* ================================
-   SEARCH RIDES PAGE - CHALRE THEME
-   White + Light Green + Green
-   Modern / Clean / Classic UI
+   SEARCH RIDES PAGE - BLA BLA CAR STYLE
+   Horizontal search bar + Sidebar filters + Horizontal cards
 ================================ */
 
 /* ---------- THEME VARIABLES ---------- */
@@ -25,69 +24,73 @@
   --shadow-hover: 0 12px 28px rgba(15, 81, 50, 0.12);
 }
 
-/* ---------- GLOBAL ---------- */
-body {
-  background: linear-gradient(135deg, #f3fff7, #dbf5e4);
-  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  color: var(--text-dark);
-}
-
 /* ---------- PAGE WRAPPER ---------- */
 .search-wrapper {
-  max-width: 1200px;
-  margin: 48px auto;
-  padding: 20px;
-  display: flex;
-  gap: 34px;
-  align-items: flex-start;
-}
-
-/* ---------- CARDS ---------- */
-.search-container,
-.results-container {
-  background: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: 28px 30px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: var(--shadow-soft);
-}
-
-/* ---------- HEADINGS ---------- */
-.search-container h2,
-.results-container h3 {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--green-dark);
-  letter-spacing: -0.3px;
-  margin-bottom: 16px;
-}
-
-/* ---------- FORM ---------- */
-.search-form {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
+  position: relative;
 }
 
+/* ---------- HORIZONTAL SEARCH BAR (TOP) ---------- */
+.search-container {
+  position: sticky;
+  top: 100px; /* Position below navbar with spacing */
+  z-index: 100; /* Stay above other content */
+  margin-top: 3rem;
+  margin-bottom: 24px; /* Add space below search bar */
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.3s ease;
+
+}
+
+/* Enhanced shadow when stuck */
+.search-container.stuck {
+  box-shadow: 0 4px 20px rgba(15, 81, 50, 0.15);
+}
+
+.search-container h2 {
+  display: none; /* Hide heading, search bar is self-explanatory */
+}
+
+.search-form {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Form rows become horizontal inputs */
 .form-row {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 1;
+  min-width: 180px;
 }
 
 .form-row label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--green-dark);
 }
 
 .form-row input {
-  padding: 13px 15px;
+  padding: 12px 14px;
   border-radius: var(--radius-md);
   font-size: 15px;
   border: 1.5px solid var(--border-soft);
   background: var(--green-light);
   transition: all 0.25s ease;
+  width: 250px;
 }
 
 .form-row input::placeholder {
@@ -101,15 +104,16 @@ body {
   box-shadow: 0 0 0 4px rgba(63, 174, 85, 0.15);
 }
 
-/* ---------- BUTTONS ---------- */
+/* Search button on right */
 .form-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 10px;
+  align-items: flex-end;
+  flex-shrink: 0;
 }
 
 .btn {
-  padding: 13px 22px;
+  padding: 12px 24px;
   border-radius: var(--radius-md);
   font-size: 15px;
   cursor: pointer;
@@ -119,6 +123,8 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
+ margin-bottom: 18px;
 }
 
 /* Primary Button */
@@ -156,48 +162,54 @@ body {
   background: var(--green-soft);
 }
 
-/* ---------- FILTERS ---------- */
-.filters-section {
-  margin-top: 22px;
-  padding: 22px;
-  background: var(--green-light);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-soft);
-}
-
-.filters-header {
+/* ---------- MAIN CONTENT LAYOUT (Filters + Results) ---------- */
+.search-content-layout {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
+  gap: 24px;
+  align-items: flex-start;
 }
 
-.filters-header h3 {
+/* ---------- LEFT SIDEBAR (FILTERS ONLY) ---------- */
+.filters-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  position: sticky;
+  top: 240px; /* Position below sticky search bar: 90px (navbar+gap) + ~120px (search bar height) + 30px gap */
+  max-height: calc(100vh - 260px); /* Account for navbar + search bar + spacing */
+  overflow-y: auto;
+  z-index: 90; /* Below search bar but above content */
+}
+
+.filters-sidebar h3 {
   font-size: 18px;
   font-weight: 700;
   color: var(--green-dark);
-  margin: 0;
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-soft);
 }
 
-.close-filters {
+/* Filters section (moved from inline to sidebar) */
+.filters-section {
+  margin-top: 0;
+  padding: 0;
   background: transparent;
   border: none;
-  cursor: pointer;
-  color: var(--text-muted);
-  padding: 6px;
-  border-radius: 50%;
-  transition: 0.2s;
 }
 
-.close-filters:hover {
-  background: #eef2f3;
+.filters-header {
+  display: none; /* Hide header in sidebar, title is h3 */
 }
 
-/* ---------- FILTER GRID ---------- */
 .filters-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .filter-group {
@@ -220,6 +232,7 @@ body {
   font-size: 14px;
   background: #ffffff;
   transition: 0.25s;
+  width: 100%;
 }
 
 .filter-group input:focus,
@@ -245,13 +258,77 @@ body {
   font-weight: 600;
 }
 
-/* ---------- RESULTS ---------- */
+/* Checkbox/Radio Groups */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.checkbox-label input[type="checkbox"],
+.checkbox-label input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--green-main);
+  margin: 0;
+}
+
+.checkbox-label span {
+  user-select: none;
+}
+
+.checkbox-label:hover {
+  color: var(--green-dark);
+}
+
+.close-filters {
+  display: none; /* Not needed in sidebar */
+}
+
+/* ---------- RESULTS CONTAINER (RIGHT) ---------- */
 .results-container {
-  flex: 2;
+  flex: 1;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .results-container h3 {
   font-size: 20px;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin: 0;
+}
+
+.mobile-filter-toggle {
+  display: none;
+}
+
+/* ---------- HORIZONTAL RIDE CARDS (NOT GRID) ---------- */
+.cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* ---------- STATES ---------- */
@@ -285,16 +362,118 @@ body {
   text-decoration: underline;
 }
 
-/* ---------- RESULTS GRID ---------- */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 22px;
+/* ---------- AUTOCOMPLETE ---------- */
+.autocomplete-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  max-height: 220px;
+  min-height: 44px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: var(--shadow-soft);
+}
+
+.autocomplete-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  background: #ffffff;
+  color: var(--text-dark);
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover {
+  background: var(--green-soft);
+}
+
+.autocomplete-item.muted {
+  color: #777;
+}
+
+.autocomplete-dropdown * {
+  color: var(--text-dark);
 }
 
 /* ---------- RESPONSIVE ---------- */
+@media (max-width: 1024px) {
+  .filters-sidebar {
+    width: 280px;
+    top: 230px; /* Adjust for tablet with proper spacing */
+    max-height: calc(100vh - 250px);
+  }
+}
+
 @media (max-width: 900px) {
-  .search-wrapper {
+  .search-container {
+    top: 80px; /* Adjust for smaller navbar on mobile with spacing */
+    margin-top: 2rem;
+    margin-bottom: 20px; /* Add space below */
+  }
+
+  .search-content-layout {
     flex-direction: column;
+  }
+
+  .filters-sidebar {
+    width: 100%;
+    position: static;
+    max-height: none;
+  }
+
+  .filters-sidebar.hidden-mobile {
+    display: none;
+  }
+
+  .mobile-filter-toggle {
+    display: inline-flex !important;
+  }
+
+  .search-form {
+    flex-wrap: wrap;
+  }
+
+  .form-row {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 600px) {
+  .search-container {
+    top: 60px; /* Further adjust for mobile navbar */
+    margin-top: 1rem;
+    padding: 16px;
+  }
+
+  .search-form {
+    flex-direction: column;
+  }
+
+  .form-row {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .form-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
   }
 }

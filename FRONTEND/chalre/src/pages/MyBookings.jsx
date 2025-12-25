@@ -74,7 +74,7 @@ export default function MyBookings() {
 
     try {
       await api.delete(`/bookings/${id}`);
-      alert("Booking cancelled successfully. If paid via wallet, amount will be refunded.");
+      alert("Booking cancelled successfully. Refund will be processed.");
       loadBookings();
     } catch (err) {
       console.error(err);

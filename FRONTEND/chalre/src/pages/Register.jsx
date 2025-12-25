@@ -1,7 +1,12 @@
 import { useState } from "react";
-import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
-import { handleError } from "../utils/errorHandler";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile
+} from "firebase/auth";
+import { auth } from "../../Firebfase";
+import "../styles/auth.css";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -10,6 +15,8 @@ export default function Register() {
     password: "",
     phone: ""
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
 
@@ -20,12 +27,47 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setError("");
+
+    if (!form.phone.trim()) {
+      setError("Phone number is required");
+      return;
+    }
+
     try {
-      await api.post("/auth/register", form);
-      alert("Registration successful!");
-      navigate("/login");
+      setLoading(true);
+
+      const userCred = await createUserWithEmailAndPassword(
+        auth,
+        form.email,
+        form.password
+      );
+
+      // best-effort profile update for display name
+      await updateProfile(userCred.user, { displayName: form.name }).catch(() => {});
+
+      await sendEmailVerification(userCred.user);
+
+      localStorage.setItem(
+        "registrationProfile",
+        JSON.stringify({
+          name: form.name,
+          phone: form.phone,
+          email: form.email
+        })
+      );
+
+      navigate("/verify-email");
     } catch (err) {
-      handleError(err, { showAlert: true });
+      const message =
+        err?.code === "auth/email-already-in-use"
+          ? "Email already registered. Please login."
+          : err?.code === "auth/weak-password"
+            ? "Password should be at least 6 characters."
+            : err?.message || "Registration failed. Please try again.";
+      setError(message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -33,6 +75,8 @@ export default function Register() {
     <div className="login-container">
       <form className="login-box" onSubmit={handleSubmit}>
         <h2>Register</h2>
+
+        {error && <p className="error">{error}</p>}
 
         <input 
           name="name" 
@@ -60,14 +104,17 @@ export default function Register() {
         <input 
           type="tel" 
           name="phone" 
-          placeholder="Phone (Optional)" 
+          placeholder="Phone" 
           onChange={handleChange}
           autoComplete="tel"
           pattern="[0-9]{10}"
           title="Please enter a valid 10-digit phone number"
+          required
         />
 
-        <button type="submit">Create Account</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Sending verification..." : "Create Account"}
+        </button>
       </form>
     </div>
   );

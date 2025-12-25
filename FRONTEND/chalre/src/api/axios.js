@@ -19,8 +19,15 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const requestUrl = error.config?.url || "";
+    const isPublicRideFetch =
+      requestUrl.includes("/rides/search") || requestUrl.includes("/rides");
+
     // Handle 401/403 errors globally
-    if (error.response?.status === 401 || error.response?.status === 403) {
+    if (
+      (error.response?.status === 401 || error.response?.status === 403) &&
+      !isPublicRideFetch
+    ) {
       // Clear auth data
       localStorage.removeItem("token");
       localStorage.removeItem("user");

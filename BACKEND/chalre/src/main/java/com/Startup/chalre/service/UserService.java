@@ -1,11 +1,15 @@
 package com.Startup.chalre.service;
 
+import com.Startup.chalre.DTO.FirebaseLoginRequest;
 import com.Startup.chalre.DTO.LoginDTO;
 import com.Startup.chalre.DTO.UserRegisterDTO;
 import com.Startup.chalre.DTO.UserUpdateDTO;
 import com.Startup.chalre.JWTTOKEN.JwtUtil;
 import com.Startup.chalre.entity.User;
 import com.Startup.chalre.repository.UserRepository;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,10 @@ public class UserService {
         // Check if email already exists
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
+        }
+        // Check if phone already exists
+        if (userRepository.findByPhone(dto.getPhone()).isPresent()) {
+            throw new RuntimeException("Phone number already registered");
         }
         
         User user = new User();
@@ -74,5 +82,70 @@ public class UserService {
         }
 
         return userRepository.save(user);
+    }
+
+    public String loginWithFirebaseToken(FirebaseLoginRequest request) {
+        if (request.getIdToken() == null || request.getIdToken().isBlank()) {
+            throw new IllegalArgumentException("Firebase idToken is required");
+        }
+
+        FirebaseToken decodedToken;
+        try {
+            decodedToken = FirebaseAuth.getInstance().verifyIdToken(request.getIdToken());
+        } catch (FirebaseAuthException e) {
+            throw new RuntimeException("Invalid Firebase token");
+        }
+
+        if (!decodedToken.isEmailVerified()) {
+            throw new IllegalStateException("Email not verified");
+        }
+
+        String email = decodedToken.getEmail();
+        if (email == null || email.isBlank()) {
+            throw new RuntimeException("Email missing from Firebase token");
+        }
+
+        String incomingPhone = request.getPhone() != null ? request.getPhone().trim() : null;
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            if (incomingPhone == null || incomingPhone.isEmpty()) {
+                throw new IllegalArgumentException("Phone number is required to finish signup");
+            }
+
+            userRepository.findByPhone(incomingPhone).ifPresent(existing -> {
+                throw new RuntimeException("Phone number already registered");
+            });
+
+            user = new User();
+            user.setEmail(email);
+            user.setName(resolveName(request, decodedToken));
+            user.setPhone(incomingPhone);
+            user.setRole("USER");
+        } else {
+            if ((user.getPhone() == null || user.getPhone().isBlank()) && incomingPhone != null && !incomingPhone.isEmpty()) {
+                user.setPhone(incomingPhone);
+            }
+            if (user.getName() == null || user.getName().isBlank()) {
+                user.setName(resolveName(request, decodedToken));
+            }
+        }
+
+        userRepository.save(user);
+
+        return jwtUtil.generateToken(user);
+    }
+
+    private String resolveName(FirebaseLoginRequest request, FirebaseToken decodedToken) {
+        if (request.getName() != null && !request.getName().trim().isEmpty()) {
+            return request.getName().trim();
+        }
+        if (decodedToken.getName() != null && !decodedToken.getName().isBlank()) {
+            return decodedToken.getName();
+        }
+        if (decodedToken.getEmail() != null) {
+            return decodedToken.getEmail().split("@")[0];
+        }
+        return "User";
     }
 }

@@ -33,11 +33,13 @@ public class Booking {
 
     private String bookingTime;  // booking time for history
 
-    private String paymentMode;     // "WALLET" or "CASH"
+    private String paymentMethod;  // "CASH" or "ONLINE"
     
-    // Payment Status: "PAID" (wallet), "PENDING" (cash - waiting for driver), "REFUNDED"
+    @ManyToOne
+    private Payment payment;  // Link to Payment entity (null for CASH payments)
+    
+    // Payment Status: "PAID" (online), "PENDING" (cash - waiting for driver), "REFUNDED"
     // Note: Payment status is separate from booking status
-    // Booking can be "BOOKED" while payment is "PENDING" for cash payments
     private String paymentStatus;
 
 }

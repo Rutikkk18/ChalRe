@@ -3,32 +3,12 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/dashboard.css";
-import {
-  Wallet,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Phone,
-} from "lucide-react";
+import { CheckCircle, XCircle, Clock } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [walletBalance, setWalletBalance] = useState(0);
-
-  useEffect(() => {
-    if (user) fetchWalletBalance();
-  }, [user]);
-
-  const fetchWalletBalance = async () => {
-    try {
-      const res = await api.get("/wallet");
-      setWalletBalance((res.data.balance || 0) / 100);
-    } catch (err) {
-      console.error("Failed to fetch wallet:", err);
-    }
-  };
 
   if (!user) return null;
 
@@ -75,28 +55,6 @@ export default function Dashboard() {
 
         {/* STATUS CARDS */}
         <div className="status-grid">
-          <div className="status-card">
-            <Wallet />
-            <div>
-              <span>Wallet Balance</span>
-              <strong>₹{walletBalance.toFixed(2)}</strong>
-            </div>
-            <button onClick={() => navigate("/wallet")}>Manage</button>
-          </div>
-
-          <div className="status-card">
-            <Phone />
-            <div>
-              <span>Phone</span>
-              <strong>{user.phone ? "Verified" : "Not Verified"}</strong>
-            </div>
-            {!user.phone && (
-              <button onClick={() => navigate("/verify-phone")}>
-                Verify
-              </button>
-            )}
-          </div>
-
           <div className="status-card">
             <CheckCircle />
             <div>

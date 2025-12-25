@@ -111,6 +111,7 @@ body {
   align-items: center;
   gap: 12px;
   padding: 16px;
+  width: 30rem;
   border-radius: 14px;
   background: #f7fffb;
   border: 1px solid #dbeee1;
@@ -133,7 +134,7 @@ body {
 
 .status-card button {
   margin-left: auto;
-  padding: 6px 12px;
+ width: 10rem;
   border-radius: 10px;
   border: none;
   cursor: pointer;
@@ -195,7 +196,7 @@ body {
 }
 
 .secondary-actions button:hover {
-  background: #e9f9ed;
+  background: #ceecd5;
 }
 
 /* ---------- RESPONSIVE ---------- */

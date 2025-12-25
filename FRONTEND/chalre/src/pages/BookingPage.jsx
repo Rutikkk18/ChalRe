@@ -2,8 +2,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import loadRazorpay from "../utils/loadRazorpay";
 import "../styles/booking.css";
-import { Wallet, IndianRupee } from "lucide-react";
+import { CreditCard, IndianRupee } from "lucide-react";
 
 export default function BookingPage() {
   const { id } = useParams(); // rideId
@@ -12,8 +13,7 @@ export default function BookingPage() {
   
   const [ride, setRide] = useState(null);
   const [seats, setSeats] = useState(1);
-  const [paymentMode, setPaymentMode] = useState("WALLET");
-  const [walletBalance, setWalletBalance] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -21,7 +21,6 @@ export default function BookingPage() {
 
   useEffect(() => {
     fetchRide();
-    fetchWalletBalance();
   }, []);
 
   const fetchRide = async () => {
@@ -38,17 +37,7 @@ export default function BookingPage() {
     }
   };
 
-  const fetchWalletBalance = async () => {
-    try {
-      const res = await api.get("/wallet");
-      setWalletBalance((res.data.balance || 0) / 100); // Convert paise to rupees
-    } catch (err) {
-      console.error("Failed to fetch wallet balance:", err);
-      // Don't set error, wallet might not exist yet
-    }
-  };
-
-  const handleBooking = async () => {
+  const handleBookRide = async () => {
     if (!ride) return;
 
     if (noSeatsLeft) {
@@ -67,36 +56,177 @@ export default function BookingPage() {
       return;
     }
 
-    // Validate wallet balance if paying with wallet
-    const totalCost = ride.price * seats;
-    if (paymentMode === "WALLET" && walletBalance < totalCost) {
-      setError(`Insufficient wallet balance. You need ₹${totalCost.toFixed(2)} but have ₹${walletBalance.toFixed(2)}. Please add money to wallet or choose cash payment.`);
-      return;
-    }
-
     setLoading(true);
     setError("");
 
     try {
-      const res = await api.post("/bookings/create", {
-        rideId: Number(ride.id),  // Ensure it's a number
-        seats: Number(seats),     // Ensure it's a number
-        paymentMode: paymentMode  // User-selected payment mode
-      });
+      if (paymentMethod === "CASH") {
+        // CASH payment: Book directly without payment
+        // Explicitly do NOT include paymentId
+        const res = await api.post("/bookings/create", {
+          rideId: Number(ride.id),
+          seats: Number(seats),
+          paymentMethod: "CASH"
+          // paymentId is intentionally omitted for CASH payments
+        });
 
-      const bookingId = res?.data?.id;
+        const bookingId = res?.data?.id;
+        navigate(`/booking/success/${bookingId}`);
+      } else {
+        // ONLINE payment: Create Razorpay order and open checkout
+        const totalCostPaise = Math.round(ride.price * seats * 100);
 
-      navigate(`/booking/success/${bookingId}`);
+        // Create Razorpay order
+        const orderRes = await api.post("/payments/order", {
+          rideId: Number(ride.id),
+          amountPaise: totalCostPaise
+        });
+
+        // Validate response
+        if (!orderRes.data || !orderRes.data.orderId || !orderRes.data.key) {
+          setError("Invalid response from payment server. Please try again.");
+          setLoading(false);
+          return;
+        }
+
+        // REFACTORED: No paymentId in response - payment record will be created after verification
+        const { orderId, amount, key, currency } = orderRes.data;
+
+        // Debug logging (remove in production)
+        console.log("🔍 Razorpay Order Details:");
+        console.log("   Order ID:", orderId);
+        console.log("   Amount:", amount, "paise (₹" + (amount / 100).toFixed(2) + ")");
+        console.log("   Key:", key.substring(0, 15) + "...");
+        console.log("   Currency:", currency || "INR");
+        console.log("   Note: Payment record will be created after successful payment");
+
+        // Validate key format
+        if (!key.startsWith("rzp_")) {
+          setError("Invalid Razorpay key format. Please contact support.");
+          setLoading(false);
+          return;
+        }
+
+        // Load Razorpay script
+        const razorpayLoaded = await loadRazorpay();
+        if (!razorpayLoaded) {
+          setError("Failed to load Razorpay. Please check your internet connection.");
+          setLoading(false);
+          return;
+        }
+
+        // Validate Razorpay is available
+        if (!window.Razorpay) {
+          setError("Razorpay SDK not loaded. Please refresh the page.");
+          setLoading(false);
+          return;
+        }
+
+        // Open Razorpay checkout
+        const options = {
+          key: key, // Key from backend (must match the key used to create order)
+          amount: amount, // Amount in paise (must match order amount)
+          currency: currency || "INR",
+          name: "Ride Booking",
+          description: `Ride from ${ride.startLocation} to ${ride.endLocation}`,
+          order_id: orderId, // Order ID from backend (must match)
+          handler: async function (response) {
+            // REFACTORED: Collect payment details AFTER successful payment
+            console.log("✅ Payment successful:", response);
+            
+            try {
+              // Step 1: Verify payment and create payment record
+              // Backend will verify signature FIRST, then create payment record
+              const verifyRes = await api.post("/payments/verify", {
+                rideId: Number(ride.id),
+                amountPaise: totalCostPaise, // Send amount for validation
+                razorpayOrderId: response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature
+              });
+
+              console.log("✅ Payment verified and record created:", verifyRes.data);
+              
+              // Extract paymentId from verification response (created after verification)
+              const paymentId = verifyRes.data.id;
+
+              // Step 2: Create booking with verified payment
+              const bookingRes = await api.post("/bookings/create", {
+                rideId: Number(ride.id),
+                seats: Number(seats),
+                paymentMethod: "ONLINE",
+                paymentId: paymentId // Use paymentId from verification response
+              });
+
+              navigate(`/booking/success/${bookingRes.data.id}`);
+            } catch (err) {
+              console.error("❌ Payment verification failed:", err);
+              const errorMsg = err.response?.data || err.message || "Payment verification failed";
+              setError(`Payment verification failed: ${errorMsg}. Please contact support if amount was deducted.`);
+              setLoading(false);
+            }
+          },
+          prefill: {
+            name: "",
+            email: "",
+            contact: ""
+          },
+          notes: {
+            rideId: ride.id.toString(),
+            seats: seats.toString()
+          },
+          theme: {
+            color: "#1c7c31"
+          },
+          modal: {
+            ondismiss: function() {
+              console.log("⚠️ Payment modal dismissed by user");
+              setLoading(false);
+            }
+          }
+        };
+
+        // Add error handler for Razorpay checkout
+        options.handler_error = function(error) {
+          console.error("❌ Razorpay checkout error:", error);
+          setLoading(false);
+          
+          let errorMessage = "Payment failed. ";
+          if (error.error) {
+            if (error.error.code === "BAD_REQUEST_ERROR") {
+              errorMessage += "Invalid payment details. Please try again.";
+            } else if (error.error.description) {
+              errorMessage += error.error.description;
+            } else {
+              errorMessage += error.error.reason || "Unknown error";
+            }
+          } else {
+            errorMessage += "Please try again or contact support.";
+          }
+          
+          setError(errorMessage);
+        };
+
+        try {
+          const razorpay = new window.Razorpay(options);
+          razorpay.open();
+        } catch (err) {
+          console.error("❌ Failed to open Razorpay checkout:", err);
+          setError("Failed to open payment gateway. Please try again.");
+          setLoading(false);
+        }
+      }
     } catch (err) {
       console.error(err);
       
-      // Handle error response - extract message from object if needed
-      let errorMessage = "Booking failed.";
+      // Handle error response
+      let errorMessage = paymentMethod === "CASH" 
+        ? "Booking failed." 
+        : "Failed to initiate payment.";
       
       if (err.response?.data) {
         const errorData = err.response.data;
         
-        // If error is an object (from GlobalExceptionHandler), extract the error message
         if (typeof errorData === 'object' && errorData.error) {
           errorMessage = errorData.error;
         } else if (typeof errorData === 'string') {
@@ -107,7 +237,6 @@ export default function BookingPage() {
       }
       
       setError(errorMessage);
-    } finally {
       setLoading(false);
     }
   };
@@ -146,41 +275,35 @@ export default function BookingPage() {
         <div className="form-row">
           <label>Payment Method</label>
           <div className="payment-options">
-            <label className={`payment-option ${paymentMode === "WALLET" ? "selected" : ""} ${walletBalance < (ride.price * seats) ? "disabled" : ""}`}>
+            <label className={`payment-option ${paymentMethod === "CASH" ? "selected" : ""}`}>
               <input
                 type="radio"
-                name="paymentMode"
-                value="WALLET"
-                checked={paymentMode === "WALLET"}
-                onChange={(e) => setPaymentMode(e.target.value)}
-                disabled={walletBalance < (ride.price * seats)}
-              />
-              <div>
-                <div className="payment-label">
-                  <Wallet size={18} /> Pay with Wallet
-                </div>
-                <div className="payment-balance">
-                  Balance: ₹{walletBalance.toFixed(2)}
-                  {walletBalance < (ride.price * seats) && (
-                    <span className="insufficient"> (Insufficient)</span>
-                  )}
-                </div>
-              </div>
-            </label>
-            
-            <label className={`payment-option ${paymentMode === "CASH" ? "selected" : ""}`}>
-              <input
-                type="radio"
-                name="paymentMode"
+                name="paymentMethod"
                 value="CASH"
-                checked={paymentMode === "CASH"}
-                onChange={(e) => setPaymentMode(e.target.value)}
+                checked={paymentMethod === "CASH"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
               />
               <div>
                 <div className="payment-label">
                   <IndianRupee size={18} /> Pay with Cash
                 </div>
                 <div className="payment-note">Pay directly to driver</div>
+              </div>
+            </label>
+            
+            <label className={`payment-option ${paymentMethod === "ONLINE" ? "selected" : ""}`}>
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="ONLINE"
+                checked={paymentMethod === "ONLINE"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              <div>
+                <div className="payment-label">
+                  <CreditCard size={18} /> Online Payment
+                </div>
+                <div className="payment-note">Pay securely online</div>
               </div>
             </label>
           </div>
@@ -190,25 +313,21 @@ export default function BookingPage() {
 
         <button
           className="btn-primary"
-          onClick={handleBooking}
-          disabled={
-            loading ||
-            noSeatsLeft ||
-            (paymentMode === "WALLET" && walletBalance < (ride.price * seats))
-          }
+          onClick={handleBookRide}
+          disabled={loading || noSeatsLeft}
+          style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
         >
-          {loading ? "Processing..." : "Confirm Booking"}
+          {loading ? (
+            "Processing..."
+          ) : paymentMethod === "CASH" ? (
+            "Book Ride"
+          ) : (
+            <>
+              <CreditCard size={18} />
+              Proceed to Pay
+            </>
+          )}
         </button>
-        
-        {paymentMode === "WALLET" && walletBalance < (ride.price * seats) && (
-          <button
-            className="btn-secondary"
-            onClick={() => navigate("/wallet")}
-            style={{ marginTop: "0.5rem", width: "100%" }}
-          >
-            Add Money to Wallet
-          </button>
-        )}
       </div>
     </div>
   );

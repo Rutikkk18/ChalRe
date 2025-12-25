@@ -2,7 +2,6 @@ package com.Startup.chalre.DTO;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
@@ -15,7 +14,11 @@ public class BookingDTO {
     @Min(value = 1, message = "At least 1 seat must be booked")
     private Integer seats;   // seats to book
     
-    @NotBlank(message = "Payment mode is required")
-    private String paymentMode;   // from frontend: "WALLET" or "CASH"
+    @NotNull(message = "Payment method is required")
+    private String paymentMethod;   // "CASH" or "ONLINE"
+    
+    // Payment ID is optional - required only for ONLINE payment method
+    // No @NotNull annotation - validation happens in service layer
+    private Long paymentId;
 
 }

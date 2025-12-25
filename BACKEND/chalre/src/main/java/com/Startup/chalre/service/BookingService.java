@@ -2,9 +2,9 @@ package com.Startup.chalre.service;
 
 import com.Startup.chalre.DTO.BookingDTO;
 import com.Startup.chalre.entity.Booking;
+import com.Startup.chalre.entity.Payment;
 import com.Startup.chalre.entity.Ride;
 import com.Startup.chalre.entity.User;
-import com.Startup.chalre.entity.Wallet;
 import com.Startup.chalre.repository.BookingRepository;
 import com.Startup.chalre.repository.RideRepository;
 import jakarta.transaction.Transactional;
@@ -25,7 +25,7 @@ public class BookingService {
 
     private final RideRepository rideRepository;
     private final BookingRepository bookingRepository;
-    private final WalletService walletService;
+    private final PaymentService paymentService;
     private final NotificationService notificationService;
 
     /**
@@ -70,17 +70,45 @@ public class BookingService {
         long pricePaise = (long) (ride.getPrice() * 100);
         long totalCost = pricePaise * dto.getSeats();
 
-        // ----------------------- PAYMENT HANDLING -----------------------
-        if (dto.getPaymentMode().equalsIgnoreCase("WALLET")) {
-            // Pre-check wallet balance before processing
-            Wallet wallet = walletService.getWallet(user.getId());
-            if (wallet.getBalance() < totalCost) {
-                throw new RuntimeException("Insufficient wallet balance. Current balance: ₹" + 
-                    (wallet.getBalance() / 100.0) + ", Required: ₹" + (totalCost / 100.0));
-            }
-            walletService.debitForBooking(user.getId(), totalCost);
+        // Validate payment method
+        if (dto.getPaymentMethod() == null || 
+            (!dto.getPaymentMethod().equalsIgnoreCase("CASH") && 
+             !dto.getPaymentMethod().equalsIgnoreCase("ONLINE"))) {
+            throw new RuntimeException("Invalid payment method. Use CASH or ONLINE.");
         }
-        // CASH mode → no wallet deduction
+
+        // ----------------------- PAYMENT VALIDATION -----------------------
+        Payment payment = null;
+        
+        if ("ONLINE".equalsIgnoreCase(dto.getPaymentMethod())) {
+            // ONLINE payment: paymentId is required and must be SUCCESS
+            if (dto.getPaymentId() == null) {
+                throw new RuntimeException("Payment ID is required for ONLINE payment. Please initiate payment first.");
+            }
+            
+            payment = paymentService.getPayment(dto.getPaymentId());
+            
+            // Verify payment belongs to user
+            if (!payment.getUser().getId().equals(user.getId())) {
+                throw new RuntimeException("Payment does not belong to this user");
+            }
+            
+            // Verify payment is for this ride
+            if (!payment.getRide().getId().equals(ride.getId())) {
+                throw new RuntimeException("Payment is not for this ride");
+            }
+            
+            // Verify payment amount matches
+            if (!payment.getAmount().equals(totalCost)) {
+                throw new RuntimeException("Payment amount does not match booking cost");
+            }
+            
+            // Verify payment status is SUCCESS
+            if (payment.getStatus() != Payment.PaymentStatus.SUCCESS) {
+                throw new RuntimeException("Payment must be successful before booking. Current status: " + payment.getStatus());
+            }
+        }
+        // CASH payment: no paymentId required, payment happens with driver
         // ----------------------------------------------------------------
 
         // Create booking - IMMEDIATELY CONFIRMED (no admin approval needed)
@@ -91,15 +119,14 @@ public class BookingService {
         booking.setSeatsBooked(dto.getSeats());
         booking.setStatus("BOOKED");  // ✅ Booking is immediately confirmed
         booking.setBookingTime(LocalDateTime.now().toString());
-        booking.setPaymentMode(dto.getPaymentMode());
-
-        // Payment status (separate from booking status)
-        // - WALLET: Payment is immediate, status = PAID
-        // - CASH: Payment happens with driver, status = PENDING until driver confirms
-        if (dto.getPaymentMode().equalsIgnoreCase("CASH")) {
-            booking.setPaymentStatus("PENDING");  // Cash payment pending driver confirmation
+        booking.setPaymentMethod(dto.getPaymentMethod());
+        booking.setPayment(payment); // Link to payment (null for CASH)
+        
+        // Set payment status based on payment method
+        if ("ONLINE".equalsIgnoreCase(dto.getPaymentMethod())) {
+            booking.setPaymentStatus("PAID"); // Online payment is already paid
         } else {
-            booking.setPaymentStatus("PAID");  // Wallet payment immediately paid
+            booking.setPaymentStatus("PENDING"); // Cash payment pending driver confirmation
         }
 
         // Reduce seats safely inside lock
@@ -147,17 +174,11 @@ public class BookingService {
         ride.setAvailableSeats(ride.getAvailableSeats() + booking.getSeatsBooked());
         rideRepository.save(ride);
 
-        // Refund wallet if payment was via WALLET and status was PAID
-        if ("WALLET".equalsIgnoreCase(booking.getPaymentMode()) 
-            && "PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
-            
-            long pricePaise = (long) (ride.getPrice() * 100);
-            long refundAmount = pricePaise * booking.getSeatsBooked();
-            
-            // Refund to wallet
-            walletService.creditForCancellation(user.getId(), refundAmount);
-            
+        // Mark payment as refunded if payment was PAID
+        if ("PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
             booking.setPaymentStatus("REFUNDED");
+            // Note: Actual refund processing would be handled by payment gateway/webhook
+            // For now, we just mark the booking payment status as REFUNDED
         }
 
         bookingRepository.save(booking);
@@ -166,9 +187,7 @@ public class BookingService {
         notificationService.sendNotification(
                 user,
                 "Booking Cancelled",
-                "Your booking has been cancelled." + 
-                ("WALLET".equalsIgnoreCase(booking.getPaymentMode()) ? 
-                    " Amount refunded to wallet." : ""),
+                "Your booking has been cancelled. Refund will be processed.",
                 "BOOKING_CANCELLED",
                 Map.of("bookingId", booking.getId().toString())
         );

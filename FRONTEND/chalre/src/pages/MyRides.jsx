@@ -63,7 +63,7 @@ export default function MyRides() {
   };
 
   const cancelRide = async (id) => {
-    if (!window.confirm("Are you sure you want to cancel this ride? All passengers will be notified and refunded if they paid via wallet.")) return;
+    if (!window.confirm("Are you sure you want to cancel this ride? All passengers will be notified and refunds will be processed.")) return;
 
     try {
       const res = await api.post(`/rides/${id}/cancel`);

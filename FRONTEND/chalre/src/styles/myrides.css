@@ -8,13 +8,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .rides-header h2 {
   font-size: 2rem;
   color: #1f2937;
-  margin: 0;
+  font-family: 'Times New Roman', Times, serif;
+
 }
 
 /* Tabs */
@@ -54,11 +55,13 @@
   background: #26b437;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
+  width: 200px;
   border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
+  margin-top: 8rem;
+  margin-right: 0rem;
 }
 
 .btn-primary1:hover {

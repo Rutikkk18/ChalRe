@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -8,29 +8,47 @@ import SearchRides from "./pages/SearchRides";
 import OfferRide from "./pages/OfferRide";
 import RideDetails from "./pages/RideDetails";
 import BookingPage from "./pages/BookingPage";
-import WalletPage from "./pages/WalletPage";
 import MyBookings from "./pages/MyBookings";
 import BookingSuccess from "./pages/BookingSuccess";
 import NotificationPage from "./pages/NotificationPage";
 import VerificationPage from "./pages/VerificationPage";
+import VerifyEmail from "./pages/VerifyEmail";
 import MyRides from "./pages/MyRides";
 import ProfilePage from "./pages/ProfilePage";
-import PhoneVerificationPage from "./pages/PhoneVerificationPage";
+import MainLayout from "./layouts/MainLayout";
 
 export default function App() {
   return (
-      <Routes>
-      {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/search" element={<SearchRides />} />
-      <Route path="/offer" element={<OfferRide />} />
-      <Route path="/ridedetails/:id" element={<RideDetails />} />
-        <Route path="/book-ride/:id" element={<BookingPage />} />
-    <Route path="/booking/success/:id" element={<BookingSuccess />} />
 
-      {/* Protected Routes */}
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/search" element={<SearchRides />} />
+        <Route
+          path="/offer"
+          element={
+            <ProtectedRoute>
+              <OfferRide />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/ridedetails/:id" element={<RideDetails />} />
+        <Route
+          path="/book-ride/:id"
+          element={
+            <ProtectedRoute>
+              <BookingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/booking/success/:id"
+          element={
+            <ProtectedRoute>
+              <BookingSuccess />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/dashboard"
           element={
@@ -38,31 +56,43 @@ export default function App() {
               <Dashboard />
             </ProtectedRoute>
           }
-        /> 
-      <Route
-        path="/wallet"
-        element={
-          <ProtectedRoute>
-            <WalletPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/mybookings"
-        element={
-          <ProtectedRoute>
-            <MyBookings />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/notifications"
-        element={
-          <ProtectedRoute>
-            <NotificationPage />
-          </ProtectedRoute>
-        }
-      />
+        />
+        <Route
+          path="/mybookings"
+          element={
+            <ProtectedRoute>
+              <MyBookings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/myrides"
+          element={
+            <ProtectedRoute>
+              <MyRides />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route
         path="/verification"
         element={
@@ -71,30 +101,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/myrides"
-        element={
-          <ProtectedRoute>
-            <MyRides />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/verify-phone"
-        element={
-          <ProtectedRoute>
-            <PhoneVerificationPage />
-          </ProtectedRoute>
-        }
-      />
-      </Routes>
+      <Route path="/verify-email" element={<VerifyEmail />} />
+    </Routes>
   );
 }

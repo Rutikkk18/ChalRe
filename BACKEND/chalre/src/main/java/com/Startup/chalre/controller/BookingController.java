@@ -29,19 +29,24 @@ public class BookingController {
         // Handle validation errors
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getFieldErrors().stream()
-                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .map(error -> {
+                        // Customize error messages for better UX
+                        if ("paymentMethod".equals(error.getField())) {
+                            return "Payment method is required. Please select CASH or ONLINE.";
+                        }
+                        return error.getField() + ": " + error.getDefaultMessage();
+                    })
                     .collect(Collectors.joining(", "));
             return ResponseEntity.badRequest().body(errorMessage);
         }
 
-        // Validate payment mode
-        if (dto.getPaymentMode() == null || 
-            (!dto.getPaymentMode().equalsIgnoreCase("WALLET")
-                && !dto.getPaymentMode().equalsIgnoreCase("CASH"))) {
-            return ResponseEntity.badRequest().body("Invalid payment mode. Use WALLET or CASH.");
+        try {
+            return ResponseEntity.ok(bookingService.bookRide(dto, user));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Internal server error: " + e.getMessage());
         }
-
-        return ResponseEntity.ok(bookingService.bookRide(dto, user));
     }
 
     // CANCEL BOOKING

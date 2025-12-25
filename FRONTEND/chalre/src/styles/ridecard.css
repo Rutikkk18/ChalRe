@@ -1,18 +1,34 @@
+/* ================================
+   RIDE CARD - HORIZONTAL BLA BLA CAR STYLE
+   Full-width horizontal card with route left-to-right
+================================ */
+
+:root {
+  --green-dark: #0f5132;
+  --green-main: #28a745;
+  --border-soft: #dbeee1;
+  --border-focus: #3fae55;
+  --text-dark: #1f2933;
+  --radius-md: 12px;
+}
+
 .ride-card {
   background: #ffffff;
-  border-radius: 18px;
-  padding: 22px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e8f5e9;
-  transition: 0.25s ease;
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border-soft);
+  transition: all 0.25s ease;
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto 25px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .ride-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--border-focus);
 }
 
 .ride-card.full {
@@ -20,70 +36,128 @@
   border-color: #f5d0d0;
 }
 
-/* Header (From - Arrow - To) */
+/* Header: Route (Start → End) horizontal */
 .ride-card-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .location {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #1b5e20;
+  color: var(--green-dark);
+  flex: 1;
+  min-width: 200px;
+}
+
+.location strong {
+  font-weight: 600;
+  margin-right: 4px;
 }
 
 .arrow-icon {
-  color: #2e7d32;
-  width: 28px;
-  height: 28px;
+  color: var(--green-main);
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
-/* Ride info row */
+/* Bottom section: Time, Seats, Price, Button */
 .ride-info {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid #e0f2f1;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
+  flex-wrap: wrap;
 }
 
 .info-item {
   display: flex;
   gap: 6px;
   align-items: center;
-  color: #2c3e50;
-  font-size: 15px;
+  color: var(--text-dark);
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
-.price {
-  font-size: 18px;
-  font-weight: bold;
-  color: #1b5e20;
+.info-item strong {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.info-item.price {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-left: auto;
+  margin-right: 16px;
 }
 
 .view-btn {
-  margin-top: 20px;
-  width: 100%;
-  padding: 14px;
-  background: #1b5e20;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #2fbf62, #249a4a);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   font-weight: 600;
-  transition: 0.25s;
-  font-size: 16px;
+  transition: all 0.25s ease;
+  font-size: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  white-space: nowrap;
+  min-width: auto;
+  width: auto;
 }
 
 .view-btn:hover {
-  background: #2e7d32;
+  background: linear-gradient(135deg, #249a4a, #1e7e3d);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
 }
 
 .view-btn:disabled {
   background: #9ca3af;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Responsive: Stack on small screens */
+@media (max-width: 768px) {
+  .ride-card {
+    padding: 16px;
+  }
+
+  .ride-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .arrow-icon {
+    transform: rotate(90deg);
+    margin: 4px 0;
+  }
+
+  .ride-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .info-item.price {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .view-btn {
+    width: 100%;
+  }
 }

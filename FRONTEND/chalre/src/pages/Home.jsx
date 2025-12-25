@@ -1,49 +1,108 @@
 // src/pages/Home.jsx
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-import { Link } from "react-router-dom";
 import "../styles/home.css";
+import LocationAutocomplete from "../components/LocationAutocomplete";
+import { useNavigate } from "react-router-dom";
+import { useState,useEffect } from "react";
 
 export default function Home() {
-  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const [search, setSearch] = useState({
+    from: "",
+    to: "",
+    date: "",
+    passengers: 1,
+  });
+
+  const updateSearch = (field, value) => {
+    setSearch((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const [scrolled, setScrolled] = useState(false);
+
+useEffect(() => {
+  const onScroll = () => {
+    setScrolled(window.scrollY > 120);
+  };
+
+  window.addEventListener("scroll", onScroll);
+  return () => window.removeEventListener("scroll", onScroll);
+}, []);
 
   return (
     <div className="home-wrapper">
-
-      {/* NAVBAR */}
-      <nav className="navbar">
-        <div className="logo">ChalRe</div>
-
-        {/* MAIN LINKS */}
-        <div className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/search">Search Rides</Link>
-          <Link to="/offer">Offer Ride</Link>
-
-          {!user && <Link to="/login">Login</Link>}
-          {user && <Link to="/dashboard">Dashboard</Link>}
-        
-
-        {/* RIGHT SIDE BUTTONS */}
-        
-        {!user ? (
-          <Link to="/register" className="register-btn">Register</Link>
-        ) : (
-          <button onClick={logout} className="logout-btn">Logout</button>
-        )}
-        </div>
-      </nav>
-
       {/* HERO SECTION */}
       <header className="hero">
         <h1>Ride Together. Travel Smarter.</h1>
-        <p>A modern platform connecting local riders. Safe, fast and affordable rides for everyone.</p>
+        <p>
+          A modern platform connecting local riders. Safe, fast and affordable
+          rides for everyone.
+        </p>
 
-        <div className="hero-buttons">
-          <Link to="/search" className="hero-btn primary">Search Rides</Link>
-          <Link to="/offer" className="hero-btn secondary">Offer a Ride</Link>
+        <div className={`home-search-bar ${scrolled ? "search-sticky" : ""}`}>
+          <div className="search-item">
+            <LocationAutocomplete
+              value={search.from}
+              onChange={(val) => updateSearch("from", val)}
+              placeholder="Leaving From"
+            />
+          </div>
+
+          <div className="divider" />
+
+          <div className="search-item">
+            <LocationAutocomplete
+              value={search.to}
+              onChange={(val) => updateSearch("to", val)}
+              placeholder="Going to"
+            />
+          </div>
+
+          <div className="divider" />
+
+          <div className="search-item small">
+            <input
+              type="date"
+              value={search.date}
+              min={new Date().toISOString().split("T")[0]}
+              onChange={(e) => updateSearch("date", e.target.value)}
+            />
+          </div>
+
+          <div className="divider" />
+
+          <div className="search-item small">
+            <div className="seat-input">
+              <span className="seat-label">Seats </span>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={search.passengers}
+                onChange={(e) =>
+                  updateSearch("passengers", e.target.value)
+                }
+              />
+            </div>
+          </div>
+
+          <button
+            className="search-action"
+            onClick={() => {
+              // Validate from and to
+              if (!search.from.trim() || !search.to.trim()) {
+                alert("Please enter both 'Leaving From' and 'Going to' locations.");
+                return;
+              }
+              // Navigate to /search with state
+              navigate("/search", { state: { from: search.from, to: search.to, date: search.date, passengers: search.passengers } });
+            }}
+          >
+            Search
+          </button>
         </div>
       </header>
+      <div class="divider gradient"></div>
 
       {/* FEATURES SECTION */}
       <section className="features">
@@ -54,14 +113,31 @@ export default function Home() {
 
         <div className="feature-card">
           <h3>Smart Matching</h3>
-          <p>Find rides going your way in seconds using our auto-matching engine.</p>
+          <p>
+            Find rides going your way in seconds using our auto-matching engine.
+          </p>
         </div>
 
         <div className="feature-card">
-          <h3>Secure Wallet</h3>
-          <p>Pay instantly, load money and track all your travel payments.</p>
+          <h3>Secure Payments</h3>
+          <p>
+            Pay securely with multiple payment options. Fast and reliable transactions.
+          </p>
         </div>
+        <div class="divider gradient"/>
       </section>
+
+      <div className="ride-sharehome">
+
+        <h2 className="h2hr">Share your ride. Save more.</h2>
+        <p className="phr">Post your trip, fill empty seats, and split fuel and toll costs effortlessly.</p>
+        <button className="btn-hssr">Share your ride</button>
+      
+        
+      </div>
+      <div class="divider gradient"/>
+      
+
 
     </div>
   );

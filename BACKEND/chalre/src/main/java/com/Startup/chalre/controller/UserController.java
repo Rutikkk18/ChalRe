@@ -1,5 +1,6 @@
 package com.Startup.chalre.controller;
 
+import com.Startup.chalre.DTO.FirebaseLoginRequest;
 import com.Startup.chalre.DTO.LoginDTO;
 import com.Startup.chalre.DTO.UserRegisterDTO;
 import com.Startup.chalre.DTO.UserUpdateDTO;
@@ -47,6 +48,20 @@ public class UserController {
         String token = userService.generateJwtForUser(user);
 
         return ResponseEntity.ok(Collections.singletonMap("token", token));
+    }
+
+    @PostMapping("/firebase-login")
+    public ResponseEntity<?> firebaseLogin(@RequestBody FirebaseLoginRequest request) {
+        try {
+            String token = userService.loginWithFirebaseToken(request);
+            return ResponseEntity.ok(Collections.singletonMap("token", token));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
     @GetMapping("/me")

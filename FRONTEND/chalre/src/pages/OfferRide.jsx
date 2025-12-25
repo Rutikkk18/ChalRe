@@ -2,6 +2,8 @@
 import { useState } from "react";
 import api from "../api/axios";
 import "../styles/offerRide.css";
+import LocationAutocomplete from "../components/LocationAutocomplete";
+
 
 export default function OfferRide() {
   const [form, setForm] = useState({
@@ -116,24 +118,22 @@ export default function OfferRide() {
           
           <div className="row">
             <label>Pickup Location</label>
-            <input
-              type="text"
-              placeholder="Enter pickup city / area"
+           <LocationAutocomplete
               value={form.from}
-              onChange={(e) => updateField("from", e.target.value)}
-              required
+              onChange={(val) => updateField("from", val)}
+              placeholder="Enter pickup city / area"
             />
+
           </div>
 
           <div className="row">
             <label>Drop Location</label>
-            <input
-              type="text"
-              placeholder="Enter drop city / area"
+            <LocationAutocomplete
               value={form.to}
-              onChange={(e) => updateField("to", e.target.value)}
-              required
+              onChange={(val) => updateField("to", val)}
+              placeholder="Enter drop city / area"
             />
+
           </div>
 
           <div className="row-half">
@@ -197,33 +197,7 @@ export default function OfferRide() {
           </div>
 
           <div className="row-half">
-            <div>
-              <label>Car Type (Optional)</label>
-              <select
-                value={form.carType}
-                onChange={(e) => updateField("carType", e.target.value)}
-              >
-                <option value="">Select Type</option>
-                <option value="SEDAN">Sedan</option>
-                <option value="SUV">SUV</option>
-                <option value="HATCHBACK">Hatchback</option>
-                <option value="COUPE">Coupe</option>
-                <option value="CONVERTIBLE">Convertible</option>
-                <option value="WAGON">Wagon</option>
-              </select>
-            </div>
-
-            <div>
-              <label>Gender Preference (Optional)</label>
-              <select
-                value={form.genderPreference}
-                onChange={(e) => updateField("genderPreference", e.target.value)}
-              >
-                <option value="">No Preference</option>
-                <option value="MALE_ONLY">Male Only</option>
-                <option value="FEMALE_ONLY">Female Only</option>
-              </select>
-            </div>
+         
           </div>
 
           <div className="row">
