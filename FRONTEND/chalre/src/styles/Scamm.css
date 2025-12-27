@@ -1,0 +1,528 @@
+/* MAIN WRAPPER */
+.scam-main {
+  background:  linear-gradient(135deg, #eafff0, #c8f7d4);
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+  
+}
+
+/* HERO SECTION */
+.scam-hero {
+  background: linear-gradient(135deg, #eafff0, #c8f7d4);
+  padding: 80px 20px;
+   
+}
+
+.scam-hero-inner {
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  
+  
+}
+
+/* IMAGE */
+.scam-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.scam-image img {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  object-fit: contain;
+  background: linear-gradient(135deg, #eafff0, #c8f7d4);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* TEXT */
+.scam-hero-text {
+  flex: 1;
+}
+
+.scam-hero-text h2 {
+  font-size: 34px;
+  color: #0f5132;
+  margin-bottom: 16px;
+  width: 600px;
+}
+
+.scam-hero-text p {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #3f4f46;
+  width: 600px;
+
+}
+
+/* CONTENT SECTION */
+.scam-content {
+  max-width: 900px;
+  margin: 80px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* CARDS */
+.scam-card {
+  background: #ffffff;
+  padding: 60px 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  max-width: 1200px;
+  margin: 80px ;
+  margin-top: -50px;
+  width: 1100px;
+  margin-left: -140px;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.scam-action-section {
+  
+  max-width: 1200px;
+  margin: 90px auto;
+  padding: 0 20px;
+  font-family: 'Times New Roman', Times, serif;
+  margin-top: -40px;
+}
+
+/* Main heading */
+.scam-action-title {
+  font-size: 38px;
+  font-weight: 700;
+  color: #0f3f46;
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+/* 3-column layout */
+.scam-action-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 60px;
+}
+
+/* Each block */
+.scam-action-item h4 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f3f46;
+  margin-bottom: 14px;
+}
+
+.scam-action-item p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #5f7c82;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .scam-action-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .scam-action-title {
+    font-size: 28px;
+  }
+}
+
+
+/* Main heading */
+.scam-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 700;
+  color: #0f3d2e;
+  margin-bottom: 50px;
+}
+
+/* Grid layout */
+.scam-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 50px;
+}
+
+/* Each item */
+.scam-item {
+  text-align: left;
+}
+
+/* Icon */
+.scam-icon {
+  font-size: 34px;
+  margin-bottom: 14px;
+  color: #0f766e;
+}
+
+/* Item title */
+.scam-item h4 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f3d2e;
+  margin-bottom: 10px;
+}
+
+/* Description */
+.scam-item p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .scam-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .scam-title {
+    font-size: 28px;
+  }
+}
+
+
+.scam-card.dark {
+  background: #0f5132;
+  color: #ffffff;
+  padding: 70px 60px;
+  border-radius: 16px;
+  max-width: 1200px;
+  
+}
+
+/* Title */
+.scam-dark-title {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 50px;
+  max-width: 900px;
+}
+
+/* Two-column layout */
+.scam-dark-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+/* Item block */
+.scam-dark-item h4 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 18px 0 12px;
+}
+
+.scam-dark-item p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #e6f4ec;
+}
+
+/* Icon style */
+.scam-dark-icon {
+  font-size: 42px;
+}
+
+/* Small note text */
+.scam-note {
+  margin-top: 14px;
+  font-weight: 500;
+  color: #b7e4c7;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .scam-dark-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .scam-dark-title {
+    font-size: 30px;
+  }
+}
+
+
+.scam-card h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scam-card p,
+.scam-card li {
+  font-size: 16px;
+  line-height: 1.6;
+  
+}
+.sc-p{
+  text-align: center;
+}
+
+/* LIST */
+.scam-card ul {
+  padding-left: 20px;
+}
+
+/* BUTTON */
+.scam-btn {
+  margin-top: 16px;
+  background: #00aaff;
+  color: white;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 450px;
+}
+
+.scam-btn:hover {
+  background: #008fd1;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .scam-hero-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+
+/* ================================
+   ONLINE SECURITY TIPS SECTION
+================================ */
+
+.security-section {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 40px 20px;
+  background: white;
+  font-family: 'Times New Roman', Times, serif;
+  width: 1150px;
+  margin-left: -140px;
+  border-radius: 30px;
+  margin-top: -40px;
+}
+
+.security-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 700;
+  color: #0f5132;
+  margin-bottom: 40px;
+}
+
+.security-block {
+  margin-bottom: 30px;
+}
+
+.security-block h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f5132;
+  margin-bottom: 10px;
+}
+
+.security-block p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #555;
+}
+
+.security-block ul {
+  padding-left: 18px;
+}
+
+.security-block ul li {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.security-block ul li strong {
+  color: #0f5132;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+  margin: 30px 0;
+}
+
+/* Button */
+.security-btn {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.security-btn button {
+  background: #00a8e8;
+  color: #fff;
+  border: none;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.security-btn button:hover {
+  background: #008ec4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .security-title {
+    font-size: 28px;
+  }
+
+  .security-section {
+    padding: 30px 15px;
+  }
+}
+
+/* ================================
+   APP PROMOTION SECTION
+================================ */
+
+.app-promo {
+  background: linear-gradient(90deg, #2fd1ff, #00a8e8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 80px;
+  color: #003b44;
+  border-radius: 30px;
+  width: 1050px;
+  margin-left: -140px;
+}
+
+.app-promo-text {
+  max-width: 500px;
+}
+
+.app-promo-text h3 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.app-promo-text p {
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.store-buttons img {
+  height: 45px;
+  margin-right: 12px;
+  cursor: pointer;
+}
+
+.app-promo-image img {
+  height: 300px;
+}
+
+/* ================================
+   FOOTER
+================================ */
+
+.site-footer {
+  background: #f2f2f2;
+  padding: 60px 80px;
+  border-radius: 30px;
+  width: 1050px;
+  margin-left: -140px;
+}
+
+.footer-columns {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.footer-col h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: #003b44;
+}
+
+.footer-col p {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.footer-col p:hover {
+  text-decoration: underline;
+}
+
+.lang-btn {
+  margin-top: 20px;
+  padding: 10px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.social-icons span {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #00a8e8;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 900px) {
+  .app-promo {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .app-promo-image img {
+    margin-top: 30px;
+    height: 240px;
+  }
+
+  .footer-columns {
+    flex-direction: column;
+  }
+}

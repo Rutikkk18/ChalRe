@@ -8,7 +8,8 @@ import { MapPin, Clock, Users, IndianRupee, Phone, CheckCircle, Star, CreditCard
 import loadRazorpay from "../utils/loadRazorpay";
 
 export default function RideDetails() {
-  const { rideId } = useParams();
+  const { id: rideId } = useParams();
+
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 

@@ -16,6 +16,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import MyRides from "./pages/MyRides";
 import ProfilePage from "./pages/ProfilePage";
 import MainLayout from "./layouts/MainLayout";
+import Scamm from "./pages/scamm";
 
 export default function App() {
   return (
@@ -89,8 +90,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="scam" element={<Scamm/>}/>
       </Route>
-
+      
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route
@@ -101,6 +103,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+     
       <Route path="/verify-email" element={<VerifyEmail />} />
     </Routes>
   );
