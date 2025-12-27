@@ -3,14 +3,29 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/dashboard.css";
+import "../styles/payouts.css";
 import { CheckCircle, XCircle, Clock } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
+import EarningsDisplay from "../components/EarningsDisplay";
+import BankDetailsForm from "../components/BankDetailsForm";
+import PayoutHistory from "../components/PayoutHistory";
+import PayoutRequestModal from "../components/PayoutRequestModal";
 
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [showPayoutModal, setShowPayoutModal] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   if (!user) return null;
+
+  const handleRequestPayout = () => {
+    setShowPayoutModal(true);
+  };
+
+  const handlePayoutSuccess = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
 
   return (
     <div className="dash-container">
@@ -97,6 +112,40 @@ export default function Dashboard() {
         </div>
 
       </div>
+
+      {/* EARNINGS & PAYOUT SECTION - Only for verified drivers */}
+      {user.isDriverVerified && user.verificationStatus === "APPROVED" && (
+        <div className="dash-card modern" style={{ marginTop: "24px" }}>
+          <EarningsDisplay 
+            key={refreshKey}
+            onRequestPayout={handleRequestPayout}
+          />
+        </div>
+      )}
+
+      {/* BANK DETAILS SECTION - Only for verified drivers */}
+      {user.isDriverVerified && user.verificationStatus === "APPROVED" && (
+        <div className="dash-card modern" style={{ marginTop: "24px" }}>
+          <BankDetailsForm 
+            key={refreshKey}
+            onSuccess={handlePayoutSuccess}
+          />
+        </div>
+      )}
+
+      {/* PAYOUT HISTORY - Only for verified drivers */}
+      {user.isDriverVerified && user.verificationStatus === "APPROVED" && (
+        <div className="dash-card modern" style={{ marginTop: "24px" }}>
+          <PayoutHistory key={refreshKey} />
+        </div>
+      )}
+
+      {/* PAYOUT REQUEST MODAL */}
+      <PayoutRequestModal
+        isOpen={showPayoutModal}
+        onClose={() => setShowPayoutModal(false)}
+        onSuccess={handlePayoutSuccess}
+      />
     </div>
   );
 }

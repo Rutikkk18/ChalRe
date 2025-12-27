@@ -27,6 +27,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final PaymentService paymentService;
     private final NotificationService notificationService;
+    private final DriverEarningsService driverEarningsService;
 
     /**
      * ATOMIC BOOKING WITH CONCURRENCY SAFE LOCKING
@@ -135,6 +136,32 @@ public class BookingService {
 
         // Save booking
         Booking savedBooking = bookingRepository.save(booking);
+
+        // 💰 Add driver earnings if ONLINE payment was successful
+        if ("ONLINE".equalsIgnoreCase(dto.getPaymentMethod()) && payment != null) {
+            try {
+                User driver = ride.getDriver();
+                driverEarningsService.addEarnings(driver, payment.getAmount());
+                
+                // 🔔 Notification to driver about earnings
+                notificationService.sendNotification(
+                        driver,
+                        "New Earnings",
+                        "You earned ₹" + ((payment.getAmount() - (long)(payment.getAmount() * 0.10)) / 100.0) + 
+                        " from a booking (₹" + (payment.getAmount() / 100.0) + " - 10% commission).",
+                        "EARNINGS_ADDED",
+                        Map.of(
+                                "bookingId", savedBooking.getId().toString(),
+                                "rideId", ride.getId().toString(),
+                                "amount", payment.getAmount().toString()
+                        )
+                );
+            } catch (Exception e) {
+                // Log error but don't fail the booking
+                org.slf4j.LoggerFactory.getLogger(BookingService.class)
+                        .error("Failed to add driver earnings for booking: " + savedBooking.getId(), e);
+            }
+        }
 
         // 🔔 Auto Notification → Booking Confirmed
         notificationService.sendNotification(

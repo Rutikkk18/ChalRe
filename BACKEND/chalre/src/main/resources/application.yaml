@@ -1,9 +1,10 @@
 razorpay:
   # Configuration Priority:
-  # 1. Environment variables (RAZORPAY_KEY, RAZORPAY_SECRET) - Highest priority
+  # 1. Environment variables (RAZORPAY_KEY, RAZORPAY_SECRET, RAZORPAY_ACCOUNT_NUMBER) - Highest priority
   # 2. Values below - Fallback for development only
   # 
-  # For production: Set RAZORPAY_KEY and RAZORPAY_SECRET as environment variables
+  # For production: Set RAZORPAY_KEY, RAZORPAY_SECRET, and RAZORPAY_ACCOUNT_NUMBER as environment variables
   # For development: You can use the fallback values below or set env vars
   key: ${RAZORPAY_KEY:rzp_test_RuyNYmxgIyvcvI}
   secret: ${RAZORPAY_SECRET:rDGzjV8Iynyni0UrP24eZ4EZ}
+  account-number: ${RAZORPAY_ACCOUNT_NUMBER:}
