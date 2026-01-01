@@ -37,6 +37,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/locations/**").permitAll()
+                        .requestMatchers(
+                                "/uploads/**",     // ✅ ADD THIS
+                                "/api/upload/**",  // (optional but recommended)
+                                "/auth/**"
+                        ).permitAll()
                         // Public ride discovery
                         .requestMatchers(HttpMethod.GET, "/api/rides/**").permitAll()
 

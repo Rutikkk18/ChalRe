@@ -80,6 +80,10 @@ public class UserService {
         if (dto.getProfileImage() != null) {
             user.setProfileImage(dto.getProfileImage());
         }
+        if (dto.getUpiId() != null && !dto.getUpiId().trim().isEmpty()) {
+            user.setUpiId(dto.getUpiId().trim());
+        }
+
 
         return userRepository.save(user);
     }

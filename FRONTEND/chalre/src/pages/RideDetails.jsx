@@ -6,6 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 import "../styles/rideDetails.css";
 import { MapPin, Clock, Users, IndianRupee, Phone, CheckCircle, Star, CreditCard } from "lucide-react";
 import loadRazorpay from "../utils/loadRazorpay";
+import { BACKEND_URL } from "../config";
 
 export default function RideDetails() {
   const { id: rideId } = useParams();
@@ -346,7 +347,15 @@ export default function RideDetails() {
               <div className="driver-left">
                 <div className="driver-avatar">
                   {ride.driver?.profileImage ? (
-                    <img src={ride.driver.profileImage} alt={ride.driver.name} />
+                          <img
+                     src={
+                       user.profileImage
+                         ? `${BACKEND_URL}${user.profileImage}`
+                         : "/profileimage.png"
+                     }
+                     alt="Profile"
+                     className="dash-avatar"
+                   />
                   ) : (
                     <div className="placeholder">{(ride.driver?.name || "D").charAt(0)}</div>
                   )}

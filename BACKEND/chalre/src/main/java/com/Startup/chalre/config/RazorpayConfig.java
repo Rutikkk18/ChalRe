@@ -1,4 +1,4 @@
-package com.Startup.chalre.config;
+/*package com.Startup.chalre.config;
 
 import com.razorpay.RazorpayClient;
 import org.slf4j.Logger;
@@ -92,3 +92,4 @@ public class RazorpayConfig {
         return key;
     }
 }
+*/

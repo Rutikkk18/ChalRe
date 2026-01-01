@@ -4,14 +4,7 @@
 ================================ */
 
 /* ---------- GLOBAL ---------- */
-html,
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Poppins', system-ui, sans-serif;
-  background: linear-gradient(135deg, #f3fff7, #dbf5e4);
-  color: #1f2933;
-}
+
 
 /* ---------- CONTAINER ---------- */
 .dash-container {
@@ -64,6 +57,10 @@ body {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
+   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
 }
 
 .email {
@@ -75,13 +72,20 @@ body {
 /* ---------- BADGES ---------- */
 .badge {
   display: inline-flex;
-  align-items: center;
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
-  padding: 5px 10px;
-  border-radius: 999px;
+  padding: 6px 10px;
+  border-radius: 9px;
+  margin-top: 24px;
+  margin-right: 300px;
+  margin-top: 220px;
+  
+  ;
+  
+  
 }
+
 
 .badge.success {
   background: #e7f7ee;
@@ -90,7 +94,7 @@ body {
 
 .badge.warning {
   background: #fff6db;
-  color: #c28b00;
+  color: #c9b819;
 }
 
 .badge.danger {
@@ -197,6 +201,54 @@ body {
 
 .secondary-actions button:hover {
   background: #ceecd5;
+}
+
+
+.upi-section {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgb(202, 211, 200);
+}
+
+.upi-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upi-section input {
+  width: 30%;
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.upi-section button {
+  margin-left: 20px;
+   flex: 1;
+  width: 120px;
+  height: 40px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Times New Roman', Times, serif;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #2fbf62, #249a4a);
+  color: white;
+  box-shadow: 0 8px 18px rgba(40, 167, 69, 0.35);
+}
+
+.upi-section button:hover{
+ background-color:  #2bde6a;
+ transform: translateY(-1px);
+}
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
 }
 
 /* ---------- RESPONSIVE ---------- */

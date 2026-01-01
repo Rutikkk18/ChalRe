@@ -1,25 +1,44 @@
 package com.Startup.chalre.service;
 
-
-
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class UploadService {
 
-    private final Cloudinary cloudinary;
+    private static final String UPLOAD_DIR = "uploads/profile/";
 
-    public String uploadFile(byte[] fileBytes, String fileName) throws IOException {
-        Map upload = cloudinary.uploader().upload(fileBytes,
-                ObjectUtils.asMap("public_id", "driver_docs/" + fileName));
+    public String uploadProfileImage(MultipartFile file) throws IOException {
 
-        return upload.get("secure_url").toString();
+        // Ensure directory exists
+        Path uploadPath = Paths.get(UPLOAD_DIR);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        // Clean filename
+        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+        String fileExtension = "";
+
+        if (originalFilename.contains(".")) {
+            fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        // Generate unique filename
+        String newFileName = UUID.randomUUID() + fileExtension;
+
+        // Save file
+        Path filePath = uploadPath.resolve(newFileName);
+        Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+        // Return public URL
+        return "/uploads/profile/" + newFileName;
     }
 }

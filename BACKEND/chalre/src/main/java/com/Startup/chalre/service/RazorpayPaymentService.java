@@ -1,4 +1,4 @@
-package com.Startup.chalre.service;
+/*package com.Startup.chalre.service;
 
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
@@ -48,14 +48,7 @@ public class RazorpayPaymentService {
         this.notificationService = notificationService;
     }
     
-    /**
-     * Create Razorpay order ONLY (does NOT create payment record)
-     * Payment record will be created AFTER successful payment verification
-     * @param userId User making the payment
-     * @param rideId Ride being booked
-     * @param amountPaise Amount in paise
-     * @return Map containing orderId, amount, and order details (NO paymentId)
-     */
+
     public Map<String, Object> createOrder(Long userId, Long rideId, Long amountPaise) {
         try {
             Ride ride = rideRepository.findById(rideId)
@@ -148,17 +141,7 @@ public class RazorpayPaymentService {
         }
     }
     
-    /**
-     * REFACTORED: Verify Razorpay payment signature FIRST, then create payment record
-     * This ensures payment is verified BEFORE inserting into database
-     * @param userId User ID for authorization
-     * @param rideId Ride ID
-     * @param amountPaise Amount in paise (for validation)
-     * @param razorpayOrderId Razorpay order ID
-     * @param razorpayPaymentId Razorpay payment ID
-     * @param razorpaySignature Razorpay signature
-     * @return Created Payment entity with SUCCESS status
-     */
+
     @Transactional
     public Payment verifyAndCreatePayment(Long userId, Long rideId, Long amountPaise,
                                           String razorpayOrderId, String razorpayPaymentId, 
@@ -232,14 +215,7 @@ public class RazorpayPaymentService {
         }
     }
     
-    /**
-     * REFACTORED: Verify Razorpay payment signature using Razorpay Utils class
-     * This uses the official Razorpay SDK method for signature verification
-     * @param razorpayOrderId Razorpay order ID
-     * @param razorpayPaymentId Razorpay payment ID
-     * @param razorpaySignature Razorpay signature
-     * @return true if signature is valid, false otherwise
-     */
+   e
     private boolean verifyPaymentSignature(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature) {
         try {
             // Use Razorpay Utils.verifyPaymentSignature for official verification
@@ -269,12 +245,10 @@ public class RazorpayPaymentService {
         }
     }
     
-    /**
-     * Get payment by Razorpay order ID
-     */
+
     public Payment getPaymentByOrderId(String orderId) {
         return paymentRepository.findByRazorpayOrderId(orderId)
                 .orElseThrow(() -> new RuntimeException("Payment not found for order ID: " + orderId));
     }
 }
-
+*/

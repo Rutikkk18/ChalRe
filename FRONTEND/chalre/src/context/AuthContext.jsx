@@ -2,7 +2,7 @@
 import { createContext, useState, useEffect } from "react";
 import api from "../api/axios";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -11,15 +11,15 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
-      setUser(JSON.parse(savedUser));   // ⬅ important
+      setUser(JSON.parse(savedUser));
     }
   }, []);
 
   const fetchUser = async () => {
     try {
-      const res = await api.get("/auth/me");  // correct route
-      setUser(res.data);
+      const res = await api.get("/auth/me");
 
+      setUser(res.data);
       localStorage.setItem("user", JSON.stringify(res.data));
     } catch (err) {
       console.error("Failed to fetch user:", err);
@@ -33,8 +33,6 @@ export function AuthProvider({ children }) {
   // login stores token → THEN fetches user
   const login = async (token) => {
     localStorage.setItem("token", token);
-
-    // must wait so ProtectedRoute does not redirect
     await fetchUser();
   };
 
@@ -51,7 +49,15 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,     // ✅ FIX: expose setUser
+        login,
+        logout,
+        fetchUser    // ✅ optional but useful
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -39,6 +39,13 @@ public class User {
     private String verificationStatus = "NOT_SUBMITTED"; // PENDING / APPROVED / REJECTED
     private String verificationRemarks;
 
+
+    private String upiId;
+
     private String gender;  // MALE, FEMALE, OTHER, or null (no preference)
+
+    @Column(length = 500)
+    private String profileImageUrl;
+
 
 }

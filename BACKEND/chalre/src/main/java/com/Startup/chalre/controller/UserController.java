@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,24 +28,21 @@ public class UserController {
     public ResponseEntity<?> register(
             @Valid @RequestBody UserRegisterDTO dto,
             BindingResult bindingResult) {
-        
+
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getFieldErrors().stream()
                     .map(error -> error.getField() + ": " + error.getDefaultMessage())
                     .collect(Collectors.joining(", "));
             return ResponseEntity.badRequest().body(errorMessage);
         }
-        
+
         return ResponseEntity.ok(userService.registeruser(dto));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
 
-        // Get user + validate password
         User user = userService.validateLogin(dto);
-
-        // Generate token with ROLE inside
         String token = userService.generateJwtForUser(user);
 
         return ResponseEntity.ok(Collections.singletonMap("token", token));
@@ -85,5 +83,32 @@ public class UserController {
 
         User updated = userService.updateProfile(user.getId(), dto);
         return ResponseEntity.ok(updated);
+    }
+
+    // ✅ FIXED: Add / Update UPI ID (NO save() call)
+    @PostMapping("/upi")
+    public ResponseEntity<?> updateUpiId(
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal User user) {
+
+        if (user == null) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        String upiId = body.get("upiId");
+
+        if (upiId == null || !upiId.matches("^[a-zA-Z0-9.\\-_]{2,}@[a-zA-Z]{2,}$")) {
+            return ResponseEntity.badRequest().body("Invalid UPI ID");
+        }
+
+        UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setUpiId(upiId.trim());
+
+        User updated = userService.updateProfile(user.getId(), dto);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "UPI ID saved successfully",
+                "upiId", updated.getUpiId()
+        ));
     }
 }

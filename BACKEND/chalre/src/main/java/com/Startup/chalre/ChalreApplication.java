@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 public class ChalreApplication {
 
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(ChalreApplication.class, args);
 	}

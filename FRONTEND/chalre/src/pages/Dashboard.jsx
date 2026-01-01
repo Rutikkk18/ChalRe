@@ -1,33 +1,56 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/dashboard.css";
-import "../styles/payouts.css";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+
+import { CheckCircle, XCircle, Clock, CreditCard } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
-import EarningsDisplay from "../components/EarningsDisplay";
-import BankDetailsForm from "../components/BankDetailsForm";
-import PayoutHistory from "../components/PayoutHistory";
-import PayoutRequestModal from "../components/PayoutRequestModal";
+import { BACKEND_URL } from "../config";
 
 export default function Dashboard() {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [showPayoutModal, setShowPayoutModal] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
 
-  if (!user) return null;
+  const [upiId, setUpiId] = useState(user.upiId || "");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleRequestPayout = () => {
-    setShowPayoutModal(true);
-  };
+  const saveUpiId = async () => {
+    if (!upiId.match(/^[a-zA-Z0-9.\-_]{2,}@[a-zA-Z]{2,}$/)) {
+      setError("Invalid UPI ID format");
+      return;
+    }
 
-  const handlePayoutSuccess = () => {
-    setRefreshKey((prev) => prev + 1);
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await api.post("/auth/upi", { upiId });
+
+      // update user locally
+      setUser({
+        ...user,
+        upiId: res.data.upiId,
+      });
+
+      alert("UPI ID saved successfully");
+    } catch (err) {
+  const msg =
+    err.response?.data?.message ||
+    err.response?.data?.details ||
+    err.response?.data?.error ||
+    "Failed to save UPI ID";
+
+  setError(msg);
+}
+ finally {
+      setLoading(false);
+    }
   };
 
   return (
+    
     <div className="dash-container">
       {/* HEADER */}
       <div className="dash-header">
@@ -37,11 +60,14 @@ export default function Dashboard() {
 
       {/* MAIN CARD */}
       <div className="dash-card modern">
-
         {/* PROFILE */}
         <div className="profile-section">
           <img
-            src={user.profileImage || "/profileimage.png"}
+            src={
+              user.profileImage
+                ? `${BACKEND_URL}${user.profileImage}`
+                : "/profileimage.png"
+            }
             alt="Profile"
             className="dash-avatar"
           />
@@ -52,23 +78,23 @@ export default function Dashboard() {
 
             {user.verificationStatus === "APPROVED" && (
               <span className="badge success">
-                <CheckCircle size={14} /> Verified Driver
+                <CheckCircle size={14} /> 
               </span>
             )}
             {user.verificationStatus === "PENDING" && (
               <span className="badge warning">
-                <Clock size={14} /> Verification Pending
+                <Clock size={14} /> 
               </span>
             )}
             {user.verificationStatus === "REJECTED" && (
               <span className="badge danger">
-                <XCircle size={14} /> Verification Rejected
+                <XCircle size={14} />
               </span>
             )}
           </div>
         </div>
 
-        {/* STATUS CARDS */}
+        {/* DRIVER STATUS */}
         <div className="status-grid">
           <div className="status-card">
             <CheckCircle />
@@ -82,6 +108,30 @@ export default function Dashboard() {
               </button>
             )}
           </div>
+        </div>
+
+        {/* 💰 UPI SETUP */}
+        <div className="upi-section">
+          <h3>
+            <CreditCard size={18} /> UPI for Payments
+          </h3>
+
+          <p className="muted">
+            Required to receive payments when you offer rides
+          </p>
+
+          <input
+            type="text"
+            placeholder="yourupi@bank"
+            value={upiId}
+            onChange={(e) => setUpiId(e.target.value)}
+          />
+
+          {error && <p className="error-text">{error}</p>}
+
+          <button onClick={saveUpiId} disabled={loading}>
+            {user.upiId ? "Update UPI ID" : "Add UPI ID"}
+          </button>
         </div>
 
         {/* PRIMARY ACTIONS */}
@@ -110,42 +160,7 @@ export default function Dashboard() {
             Notifications
           </button>
         </div>
-
       </div>
-
-      {/* EARNINGS & PAYOUT SECTION - Only for verified drivers */}
-      {user.isDriverVerified && user.verificationStatus === "APPROVED" && (
-        <div className="dash-card modern" style={{ marginTop: "24px" }}>
-          <EarningsDisplay 
-            key={refreshKey}
-            onRequestPayout={handleRequestPayout}
-          />
-        </div>
-      )}
-
-      {/* BANK DETAILS SECTION - Only for verified drivers */}
-      {user.isDriverVerified && user.verificationStatus === "APPROVED" && (
-        <div className="dash-card modern" style={{ marginTop: "24px" }}>
-          <BankDetailsForm 
-            key={refreshKey}
-            onSuccess={handlePayoutSuccess}
-          />
-        </div>
-      )}
-
-      {/* PAYOUT HISTORY - Only for verified drivers */}
-      {user.isDriverVerified && user.verificationStatus === "APPROVED" && (
-        <div className="dash-card modern" style={{ marginTop: "24px" }}>
-          <PayoutHistory key={refreshKey} />
-        </div>
-      )}
-
-      {/* PAYOUT REQUEST MODAL */}
-      <PayoutRequestModal
-        isOpen={showPayoutModal}
-        onClose={() => setShowPayoutModal(false)}
-        onSuccess={handlePayoutSuccess}
-      />
     </div>
   );
 }

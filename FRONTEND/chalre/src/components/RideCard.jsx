@@ -56,12 +56,13 @@ export default function RideCard({ ride }) {
             <strong>Price:</strong> ₹{ride.price}
           </span>
         </div>
-      </div>
-
-      {/* BOOK BUTTON */}
-      <button className="view-btn" onClick={goToBooking} disabled={isFull}>
+        {/* BOOK BUTTON */}
+      <button className="book-btn" onClick={goToBooking} disabled={isFull}>
         {isFull ? "Ride Full" : "Book Ride"}
       </button>
+      </div>
+
+      
     </div>
   );
 }

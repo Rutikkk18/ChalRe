@@ -1,4 +1,3 @@
-// src/pages/VerificationPage.jsx
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import api from "../api/axios";
@@ -7,12 +6,15 @@ import "../styles/verification.css";
 export default function VerificationPage() {
   const { user } = useContext(AuthContext);
 
-  const [docs, setDocs] = useState([{ url: "", type: "" }]);
+  const [docs, setDocs] = useState([
+    { file: null, type: "" }
+  ]);
+
   const [status, setStatus] = useState(user?.verificationStatus || "NOT_SUBMITTED");
   const [remarks, setRemarks] = useState(user?.verificationRemarks || null);
   const [loading, setLoading] = useState(false);
 
-  // Load latest user status when page opens
+  // 🔄 Load latest user verification status
   useEffect(() => {
     fetchMe();
   }, []);
@@ -27,18 +29,44 @@ export default function VerificationPage() {
     }
   };
 
+  // ➕ Add more document inputs
+  const addDoc = () => {
+    setDocs([...docs, { file: null, type: "" }]);
+  };
+
+  // 📝 Update document data
+  const updateDoc = (index, field, value) => {
+    const newDocs = [...docs];
+    newDocs[index][field] = value;
+    setDocs(newDocs);
+  };
+
+  // 🚀 Submit verification
   const handleSubmit = async () => {
-    if (docs.some(d => !d.url || !d.type)) {
-      alert("Please fill all document fields.");
+    if (docs.some(d => !d.file || !d.type)) {
+      alert("Please select file and type for all documents.");
       return;
     }
 
     setLoading(true);
-    try {
-      const urls = docs.map(d => d.url);
-      const types = docs.map(d => d.type);
 
-      await api.post("/api/driver/verify/submit", { urls, types });
+    try {
+      const formData = new FormData();
+
+      docs.forEach((doc) => {
+        formData.append("files", doc.file);
+        formData.append("types", doc.type);
+      });
+
+      await api.post(
+        "/driver/verify/submit",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
 
       alert("Verification submitted successfully!");
       setStatus("PENDING");
@@ -50,21 +78,11 @@ export default function VerificationPage() {
     }
   };
 
-  const addDoc = () => {
-    setDocs([...docs, { url: "", type: "" }]);
-  };
-
-  const updateDoc = (index, field, value) => {
-    const newDocs = [...docs];
-    newDocs[index][field] = value;
-    setDocs(newDocs);
-  };
-
   return (
     <div className="verify-wrapper">
       <h2 className="verify-title">Driver Verification (KYC)</h2>
 
-      {/* Status Box */}
+      {/* STATUS BOX */}
       <div className={`status-box ${status.toLowerCase()}`}>
         <p>Status: <strong>{status}</strong></p>
         {status === "REJECTED" && (
@@ -72,12 +90,12 @@ export default function VerificationPage() {
         )}
       </div>
 
-      {/* If approved stop UI */}
+      {/* APPROVED MESSAGE */}
       {status === "APPROVED" && (
         <p className="success-msg">Your verification is approved 🎉</p>
       )}
 
-      {/* If not approved — show upload form */}
+      {/* UPLOAD FORM */}
       {status !== "APPROVED" && (
         <>
           <h3 className="section-title">Upload Documents</h3>
@@ -85,15 +103,18 @@ export default function VerificationPage() {
           {docs.map((doc, index) => (
             <div className="doc-card" key={index}>
               <input
-                type="text"
-                placeholder="Document URL"
-                value={doc.url}
-                onChange={(e) => updateDoc(index, "url", e.target.value)}
+                type="file"
+                accept="image/*,.pdf"
+                onChange={(e) =>
+                  updateDoc(index, "file", e.target.files[0])
+                }
               />
 
               <select
                 value={doc.type}
-                onChange={(e) => updateDoc(index, "type", e.target.value)}
+                onChange={(e) =>
+                  updateDoc(index, "type", e.target.value)
+                }
               >
                 <option value="">Select Type</option>
                 <option value="ID_CARD">ID Card</option>
@@ -104,9 +125,15 @@ export default function VerificationPage() {
             </div>
           ))}
 
-          <button className="add-btn" onClick={addDoc}>+ Add More</button>
+          <button className="add-btn" onClick={addDoc}>
+            + Add More
+          </button>
 
-          <button className="submit-btn" onClick={handleSubmit} disabled={loading}>
+          <button
+            className="submit-btn"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
             {loading ? "Submitting..." : "Submit Verification"}
           </button>
         </>

@@ -45,12 +45,13 @@
 .profile-image-section {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .image-container {
   position: relative;
-  display: inline-block;
+  width: 130px;
+  height: 130px;
 }
 
 .profile-avatar {

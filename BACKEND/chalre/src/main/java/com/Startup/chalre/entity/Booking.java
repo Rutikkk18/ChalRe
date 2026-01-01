@@ -34,9 +34,11 @@ public class Booking {
     private String bookingTime;  // booking time for history
 
     private String paymentMethod;  // "CASH" or "ONLINE"
-    
-    @ManyToOne
-    private Payment payment;  // Link to Payment entity (null for CASH payments)
+
+    // add inside Booking entity
+    @Column(length = 100)
+    private String txnId;
+
     
     // Payment Status: "PAID" (online), "PENDING" (cash - waiting for driver), "REFUNDED"
     // Note: Payment status is separate from booking status

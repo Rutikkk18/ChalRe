@@ -100,9 +100,9 @@
   margin-right: 16px;
 }
 
-.view-btn {
+.ride-info button.book-btn{
   padding: 10px 20px;
-  background: linear-gradient(135deg, #2fbf62, #249a4a);
+  background: rgb(29, 178, 21);
   color: white;
   border: none;
   border-radius: var(--radius-md);
@@ -115,15 +115,16 @@
   white-space: nowrap;
   min-width: auto;
   width: auto;
+  
 }
 
-.view-btn:hover {
+.book-btn:hover {
   background: linear-gradient(135deg, #249a4a, #1e7e3d);
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
 }
 
-.view-btn:disabled {
+.book-btn:disabled {
   background: #9ca3af;
   cursor: not-allowed;
   box-shadow: none;

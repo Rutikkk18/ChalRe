@@ -1,7 +1,5 @@
 package com.Startup.chalre.entity;
 
-
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -19,7 +17,8 @@ public class VerificationDoc {
     @ManyToOne(optional = false)
     private User user;
 
-    private String url;      // Cloud storage / S3 / Firebase URL
-    private String docType;  // ID_CARD, LICENSE, PROFILE_PHOTO etc.
+    private String url;      // /uploads/verification/xyz.jpg
+    private String docType;  // LICENSE, ID_CARD, PROFILE_PHOTO
+
     private LocalDateTime uploadedAt;
 }
