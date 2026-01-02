@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-import "../styles/home.css";
+import "../styles/Home.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import { useNavigate } from "react-router-dom";
 import { useState,useEffect } from "react";
