@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import api from "../api/axios";
 import RideCard from "../components/RideCard";
-import "../styles/searchRide.css";
+import "../styles/SearchRide.css";
 import { Filter, X } from "lucide-react";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 
