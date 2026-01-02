@@ -300,10 +300,10 @@ useEffect(() => {
         <div className="footer-col">
           <h4>Learn More</h4>
           <ul>
-            <li>About ChalRe</li>
-            <li>How ChalRe Works</li>
-            <li>Help & Support</li>
-            <li>Media & Press</li>
+            <li onClick={() => navigate("/about")}>About ChalRe</li>
+            <li onClick={() => navigate("/about")}>How ChalRe Works</li>
+            <li onClick={() => navigate("/help-center")} >Help & Support</li>
+            <li >Media & Press</li>
             <li className="footer-highlight">Join Our Team</li>
           </ul>
 
@@ -321,7 +321,7 @@ useEffect(() => {
       </div>
 
       <div className="footer-bottom">
-        <span>Terms & Conditions</span>
+        <span onClick={() => navigate("/terms")} >Terms & Conditions</span>
         <span>© ChalRe 2025</span>
       </div>
     </footer>  

@@ -1,0 +1,89 @@
+.about-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
+  padding: 40px 20px;
+  font-family: "Segoe UI", sans-serif;
+  color: #333;
+  margin-top: 40px;
+}
+
+/* Hero */
+.about-hero {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.about-hero h1 {
+  font-size: 40px;
+  color: #0a3d62;
+  margin-bottom: 15px;
+}
+
+.about-hero p {
+  font-size: 18px;
+  max-width: 700px;
+  margin: auto;
+  color: #555;
+}
+
+/* Sections */
+.about-section {
+  margin-bottom: 60px;
+}
+
+.about-section.light {
+  background: #f7f9fb;
+  padding: 40px;
+  border-radius: 12px;
+}
+
+.about-section h2 {
+  font-size: 28px;
+  margin-bottom: 15px;
+  color: #0a3d62;
+}
+
+.about-section p {
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 900px;
+}
+
+/* Steps */
+.about-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.step-card {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.step-card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #1e3799;
+}
+
+.step-card p {
+  font-size: 15px;
+  color: #555;
+}
+
+/* List */
+.about-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.about-list li {
+  font-size: 16px;
+  margin-bottom: 10px;
+}

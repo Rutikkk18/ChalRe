@@ -4,7 +4,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import Home from "./pages/Home";
-import SearchRides from "./pages/SearchRides";
+import SearchRides from "./pages/searchRides";
 import OfferRide from "./pages/OfferRide";
 import RideDetails from "./pages/RideDetails";
 import BookingPage from "./pages/BookingPage";
@@ -17,6 +17,9 @@ import MyRides from "./pages/MyRides";
 import ProfilePage from "./pages/ProfilePage";
 import MainLayout from "./layouts/MainLayout";
 import Scamm from "./pages/scamm";
+import TermsAndConditions from "./pages/TermsAndConditions"
+import HelpCenter from "./pages/HelpCenter"
+import AboutChalRe from "./pages/AboutChalRe";
 
 export default function App() {
   return (
@@ -91,6 +94,10 @@ export default function App() {
           }
         />
         <Route path="scam" element={<Scamm/>}/>
+        <Route path="/terms" element={<TermsAndConditions />} />
+        <Route path="/help-center" element={<HelpCenter />} />
+        <Route path="/about" element={<AboutChalRe />} />
+
       </Route>
       
       <Route path="/login" element={<Login />} />
