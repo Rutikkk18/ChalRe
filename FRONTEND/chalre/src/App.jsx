@@ -16,7 +16,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import MyRides from "./pages/MyRides";
 import ProfilePage from "./pages/ProfilePage";
 import MainLayout from "./layouts/MainLayout";
-import Scamm from "./pages/scamm";
+import Scamm from "./pages/Scamm";
 import TermsAndConditions from "./pages/TermsAndConditions"
 import HelpCenter from "./pages/HelpCenter"
 import AboutChalRe from "./pages/AboutChalRe";
