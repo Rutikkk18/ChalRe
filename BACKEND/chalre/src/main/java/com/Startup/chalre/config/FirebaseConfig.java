@@ -6,8 +6,9 @@ import com.google.firebase.FirebaseOptions;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class FirebaseConfig {
@@ -15,13 +16,15 @@ public class FirebaseConfig {
     @PostConstruct
     public void initialize() {
         try {
-            // Read the path from environment variable
-            String firebasePath = System.getenv("FIREBASE_CREDENTIALS");
-            if (firebasePath == null) {
-                throw new RuntimeException("Environment variable FIREBASE_CREDENTIALS not set!");
+            // Read Firebase service account JSON from ENV variable
+            String firebaseJson = System.getenv("FIREBASE_SERVICE_ACCOUNT");
+
+            if (firebaseJson == null || firebaseJson.isBlank()) {
+                throw new RuntimeException("❌ FIREBASE_SERVICE_ACCOUNT env variable not set");
             }
 
-            InputStream serviceAccount = new FileInputStream(firebasePath);
+            InputStream serviceAccount =
+                    new ByteArrayInputStream(firebaseJson.getBytes(StandardCharsets.UTF_8));
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -29,7 +32,7 @@ public class FirebaseConfig {
 
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
-                System.out.println("🔥 Firebase initialized!");
+                System.out.println("🔥 Firebase initialized successfully");
             }
 
         } catch (Exception e) {
