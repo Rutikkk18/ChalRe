@@ -1,6 +1,5 @@
 /* ================================
-   SEARCH RIDES PAGE - BLA BLA CAR STYLE
-   Horizontal search bar + Sidebar filters + Horizontal cards
+   SEARCH RIDES PAGE - RESPONSIVE FIX
 ================================ */
 
 /* ---------- THEME VARIABLES ---------- */
@@ -28,73 +27,73 @@
 .search-wrapper {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px 20px;
+  padding: clamp(16px, 3vw, 24px) clamp(12px, 2vw, 20px);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(16px, 3vw, 24px);
   position: relative;
 }
 
-/* ---------- HORIZONTAL SEARCH BAR (TOP) ---------- */
+/* ---------- HORIZONTAL SEARCH BAR (TOP) - FULLY RESPONSIVE ---------- */
 .search-container {
   position: sticky;
-  top: 100px; /* Position below navbar with spacing */
-  z-index: 100; /* Stay above other content */
-  margin-top: 3rem;
-  margin-bottom: 24px; /* Add space below search bar */
+  top: clamp(80px, 12vw, 100px); /* 🔧 Responsive top position */
+  z-index: 100;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(16px, 3vw, 24px);
   background: #ffffff;
   border-radius: var(--radius-lg);
-  padding: 20px 24px;
+  padding: clamp(16px, 3vw, 20px) clamp(16px, 3vw, 24px);
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
   transition: box-shadow 0.3s ease;
-
+  width: 100%;  /* 🔧 Full width */
 }
 
-/* Enhanced shadow when stuck */
 .search-container.stuck {
   box-shadow: 0 4px 20px rgba(15, 81, 50, 0.15);
 }
 
 .search-container h2 {
-  display: none; /* Hide heading, search bar is self-explanatory */
+  display: none;
 }
 
 .search-form {
   display: flex;
   flex-direction: row;
   align-items: flex-end;
-  gap: 16px;
+  gap: clamp(10px, 2vw, 16px);
   flex-wrap: wrap;
 }
 
-/* Form rows become horizontal inputs */
+/* ---------- FORM ROWS - RESPONSIVE ---------- */
 .form-row {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  flex: 1;
-  min-width: 180px;
+  flex: 1 1 auto;  /* 🔧 Allow flexible growth */
+  min-width: clamp(140px, 20vw, 180px);  /* 🔧 Responsive min-width */
 }
 
 .form-row label {
-  font-size: 13px;
+  font-size: clamp(12px, 1.5vw, 13px);
   font-weight: 600;
   color: var(--green-dark);
 }
 
 .form-row input {
-  padding: 12px 14px;
+  padding: clamp(10px, 1.5vw, 12px) clamp(12px, 2vw, 14px);
   border-radius: var(--radius-md);
-  font-size: 15px;
+  font-size: clamp(14px, 1.8vw, 15px);
   border: 1.5px solid var(--border-soft);
   background: var(--green-light);
   transition: all 0.25s ease;
-  width: 250px;
+  width: 100%;  /* 🔧 Full width, not fixed 250px */
 }
 
 .form-row input::placeholder {
   color: #9ca3af;
+  font-size: clamp(13px, 1.5vw, 14px);
 }
 
 .form-row input:focus {
@@ -104,18 +103,19 @@
   box-shadow: 0 0 0 4px rgba(63, 174, 85, 0.15);
 }
 
-/* Search button on right */
+/* ---------- BUTTONS - RESPONSIVE ---------- */
 .form-actions {
   display: flex;
   gap: 10px;
   align-items: flex-end;
   flex-shrink: 0;
+  flex-wrap: wrap;  /* 🔧 Allow wrapping on small screens */
 }
 
 .btn {
-  padding: 12px 24px;
+  padding: clamp(10px, 1.5vw, 12px) clamp(18px, 3vw, 24px);
   border-radius: var(--radius-md);
-  font-size: 15px;
+  font-size: clamp(14px, 1.8vw, 15px);
   cursor: pointer;
   transition: all 0.25s ease;
   border: none;
@@ -124,13 +124,14 @@
   align-items: center;
   justify-content: center;
   white-space: nowrap;
- margin-bottom: 18px;
+  margin-bottom: clamp(8px, 2vw, 18px);
+  min-width: fit-content;  /* 🔧 Don't force width */
 }
 
 /* Primary Button */
 .btn.primary {
-  background: linear-gradient(135deg, #2fbf62, #249a4a);
-  color: #ffffff;
+  background: linear-gradient(135deg, #2fbf62, #249a4a) !important;  /* 🔧 Force color */
+  color: #ffffff !important;
   box-shadow: 0 6px 16px rgba(40, 167, 69, 0.35);
 }
 
@@ -141,60 +142,62 @@
 
 /* Ghost Button */
 .btn.ghost {
-  background: var(--green-soft);
-  color: var(--green-main);
-  border: 1.5px solid #ccefd6;
+  background: var(--green-soft) !important;  /* 🔧 Force color */
+  color: var(--green-main) !important;
+  border: 1.5px solid #ccefd6 !important;
 }
 
 .btn.ghost:hover {
-  background: #dff5e6;
+  background: #dff5e6 !important;
 }
 
 /* Filter Button */
 .btn.filter-btn {
-  background: #ffffff;
-  color: var(--green-main);
-  border: 1.5px solid var(--green-main);
+  background: #ffffff !important;  /* 🔧 Force color */
+  color: var(--green-main) !important;
+  border: 1.5px solid var(--green-main) !important;
   gap: 6px;
 }
 
 .btn.filter-btn:hover {
-  background: var(--green-soft);
+  background: var(--green-soft) !important;
 }
 
-/* ---------- MAIN CONTENT LAYOUT (Filters + Results) ---------- */
+/* ---------- MAIN CONTENT LAYOUT ---------- */
 .search-content-layout {
   display: flex;
-  gap: 24px;
+  gap: clamp(16px, 3vw, 24px);
   align-items: flex-start;
+  flex-wrap: wrap;  /* 🔧 Allow wrapping */
 }
 
-/* ---------- LEFT SIDEBAR (FILTERS ONLY) ---------- */
+/* ---------- LEFT SIDEBAR (FILTERS) - RESPONSIVE ---------- */
 .filters-sidebar {
-  width: 300px;
+  width: 100%;
+  max-width: 300px;  /* 🔧 Max width instead of fixed */
   flex-shrink: 0;
   background: #ffffff;
   border-radius: var(--radius-lg);
-  padding: 20px;
+  padding: clamp(16px, 3vw, 20px);
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
   position: sticky;
-  top: 240px; /* Position below sticky search bar: 90px (navbar+gap) + ~120px (search bar height) + 30px gap */
-  max-height: calc(100vh - 260px); /* Account for navbar + search bar + spacing */
+  top: clamp(200px, 25vw, 240px); /* 🔧 Responsive sticky position */
+  max-height: calc(100vh - clamp(220px, 28vw, 260px));  /* 🔧 Responsive max-height */
   overflow-y: auto;
-  z-index: 90; /* Below search bar but above content */
+  z-index: 90;
 }
 
 .filters-sidebar h3 {
-  font-size: 18px;
+  font-size: clamp(16px, 2.5vw, 18px);
   font-weight: 700;
   color: var(--green-dark);
-  margin: 0 0 20px 0;
+  margin: 0 0 clamp(16px, 3vw, 20px) 0;
   padding-bottom: 12px;
   border-bottom: 2px solid var(--border-soft);
 }
 
-/* Filters section (moved from inline to sidebar) */
+/* ---------- FILTERS SECTION ---------- */
 .filters-section {
   margin-top: 0;
   padding: 0;
@@ -203,13 +206,13 @@
 }
 
 .filters-header {
-  display: none; /* Hide header in sidebar, title is h3 */
+  display: none;
 }
 
 .filters-grid {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: clamp(16px, 3vw, 20px);
 }
 
 .filter-group {
@@ -219,17 +222,17 @@
 }
 
 .filter-group label {
-  font-size: 13px;
+  font-size: clamp(12px, 1.5vw, 13px);
   font-weight: 600;
   color: var(--green-dark);
 }
 
 .filter-group input,
 .filter-group select {
-  padding: 10px 12px;
+  padding: clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px);
   border: 1.5px solid var(--border-soft);
   border-radius: var(--radius-sm);
-  font-size: 14px;
+  font-size: clamp(13px, 1.8vw, 14px);
   background: #ffffff;
   transition: 0.25s;
   width: 100%;
@@ -251,11 +254,13 @@
 
 .price-inputs input {
   flex: 1;
+  min-width: 0;  /* 🔧 Allow shrinking */
 }
 
 .price-inputs span {
   color: var(--text-muted);
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 /* Checkbox/Radio Groups */
@@ -270,7 +275,7 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: clamp(13px, 1.8vw, 14px);
   color: var(--text-dark);
   font-weight: 500;
 }
@@ -282,6 +287,7 @@
   cursor: pointer;
   accent-color: var(--green-main);
   margin: 0;
+  flex-shrink: 0;
 }
 
 .checkbox-label span {
@@ -293,15 +299,16 @@
 }
 
 .close-filters {
-  display: none; /* Not needed in sidebar */
+  display: none;
 }
 
-/* ---------- RESULTS CONTAINER (RIGHT) ---------- */
+/* ---------- RESULTS CONTAINER (RIGHT) - RESPONSIVE ---------- */
 .results-container {
-  flex: 1;
+  flex: 1 1 auto;  /* 🔧 Flexible growth */
+  min-width: 0;  /* 🔧 Allow shrinking */
   background: #ffffff;
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: clamp(16px, 3vw, 24px);
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
 }
@@ -310,11 +317,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: clamp(16px, 3vw, 20px);
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .results-container h3 {
-  font-size: 20px;
+  font-size: clamp(18px, 3vw, 20px);
   font-weight: 700;
   color: var(--green-dark);
   margin: 0;
@@ -324,36 +333,39 @@
   display: none;
 }
 
-/* ---------- HORIZONTAL RIDE CARDS (NOT GRID) ---------- */
+/* ---------- HORIZONTAL RIDE CARDS ---------- */
 .cards-grid {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: clamp(16px, 3vw, 20px);
 }
 
 /* ---------- STATES ---------- */
 .muted {
   color: var(--text-muted);
   margin-bottom: 10px;
+  font-size: clamp(14px, 1.8vw, 15px);
 }
 
 .error {
-  color: #dc3545;
+  color: #dc3545 !important;  /* 🔧 Force color */
   font-weight: 600;
   margin-bottom: 10px;
+  font-size: clamp(14px, 1.8vw, 15px);
 }
 
 .empty {
   color: #4b5563;
   background: #f8faf9;
-  padding: 14px 16px;
+  padding: clamp(12px, 2vw, 14px) clamp(14px, 2vw, 16px);
   border-radius: var(--radius-sm);
   border-left: 4px solid var(--green-main);
   margin-bottom: 16px;
+  font-size: clamp(14px, 1.8vw, 15px);
 }
 
 .empty a {
-  color: var(--green-main);
+  color: var(--green-main) !important;  /* 🔧 Force color */
   font-weight: 600;
   text-decoration: none;
 }
@@ -386,7 +398,7 @@
 .autocomplete-item {
   padding: 10px 14px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: clamp(13px, 1.8vw, 14px);
   font-weight: 500;
   background: #ffffff;
   color: var(--text-dark);
@@ -409,20 +421,26 @@
   color: var(--text-dark);
 }
 
-/* ---------- RESPONSIVE ---------- */
+/* ---------- TABLET RESPONSIVE ---------- */
 @media (max-width: 1024px) {
   .filters-sidebar {
-    width: 280px;
-    top: 230px; /* Adjust for tablet with proper spacing */
-    max-height: calc(100vh - 250px);
+    max-width: 280px;
+    top: clamp(180px, 23vw, 230px);
+    max-height: calc(100vh - clamp(200px, 25vw, 250px));
+  }
+
+  .form-row {
+    min-width: 150px;
   }
 }
 
+/* ---------- MOBILE RESPONSIVE (BELOW 900px) ---------- */
 @media (max-width: 900px) {
   .search-container {
-    top: 80px; /* Adjust for smaller navbar on mobile with spacing */
+    position: relative;  /* 🔧 Don't stick on mobile */
+    top: auto;
     margin-top: 2rem;
-    margin-bottom: 20px; /* Add space below */
+    margin-bottom: 20px;
   }
 
   .search-content-layout {
@@ -431,8 +449,10 @@
 
   .filters-sidebar {
     width: 100%;
-    position: static;
+    max-width: 100%;
+    position: static;  /* 🔧 No sticky on mobile */
     max-height: none;
+    order: -1;  /* 🔧 Filters appear above results */
   }
 
   .filters-sidebar.hidden-mobile {
@@ -448,32 +468,115 @@
   }
 
   .form-row {
-    min-width: 150px;
+    flex: 1 1 calc(50% - 8px);  /* 🔧 Two columns on tablet */
+    min-width: 140px;
+  }
+
+  .form-actions {
+    width: 100%;
+    justify-content: flex-start;
   }
 }
 
+/* ---------- SMALL MOBILE (BELOW 600px) ---------- */
 @media (max-width: 600px) {
+  .search-wrapper {
+    padding: 12px 10px;
+  }
+
   .search-container {
-    top: 60px; /* Further adjust for mobile navbar */
     margin-top: 1rem;
     padding: 16px;
+    border-radius: 12px;
   }
 
   .search-form {
     flex-direction: column;
+    gap: 12px;
   }
 
   .form-row {
     width: 100%;
+    flex: 1 1 100%;
     min-width: 100%;
+  }
+
+  .form-row input {
+    width: 100%;
   }
 
   .form-actions {
     width: 100%;
     flex-direction: column;
+    gap: 8px;
   }
 
   .btn {
     width: 100%;
+    margin-bottom: 0;
   }
+
+  .results-container {
+    padding: 16px;
+  }
+
+  .filters-sidebar {
+    padding: 16px;
+  }
+
+  .price-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .price-inputs span {
+    text-align: center;
+  }
+}
+
+/* ---------- EXTRA SMALL MOBILE (BELOW 400px) ---------- */
+@media (max-width: 400px) {
+  .search-wrapper {
+    padding: 10px 8px;
+  }
+
+  .search-container {
+    padding: 12px;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .filters-sidebar h3 {
+    font-size: 16px;
+  }
+
+  .filter-group label {
+    font-size: 12px;
+  }
+
+  .checkbox-label {
+    font-size: 13px;
+  }
+}
+
+/* ---------- SCROLLBAR STYLING FOR FILTERS SIDEBAR ---------- */
+.filters-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filters-sidebar::-webkit-scrollbar-track {
+  background: var(--green-light);
+  border-radius: 3px;
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb {
+  background: var(--green-main);
+  border-radius: 3px;
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--green-dark);
 }
