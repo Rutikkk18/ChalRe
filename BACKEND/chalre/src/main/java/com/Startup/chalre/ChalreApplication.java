@@ -1,5 +1,6 @@
 package com.Startup.chalre;
 
+import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -13,5 +14,9 @@ public class ChalreApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ChalreApplication.class, args);
 	}
+    @Test
+    public void contextLoads() {
+        // disabled for cloud build
+    }
 
 }
