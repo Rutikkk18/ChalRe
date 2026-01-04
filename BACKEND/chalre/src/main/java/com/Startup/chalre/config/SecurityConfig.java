@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+
 
 import java.util.List;
 
@@ -32,22 +32,21 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-    .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())
+
+                // ✅ ADD THIS LINE
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/locations/**").permitAll()
                         .requestMatchers(
-                                "/uploads/**",     // ✅ ADD THIS
-                                "/api/upload/**",  // (optional but recommended)
+                                "/uploads/**",
+                                "/api/upload/**",
                                 "/auth/**"
                         ).permitAll()
-                        // Public ride discovery
                         .requestMatchers(HttpMethod.GET, "/api/rides/**").permitAll()
-
-                        // Allow only admins to use admin endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->
@@ -58,10 +57,30 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // ✅ ADD THIS ENTIRE METHOD
+    @Bean
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
 
+        config.setAllowedOrigins(List.of(
+                "https://chalre.vercel.app",
+                "http://localhost:5173",
+                "http://localhost:5174",
+                "http://localhost:5175"
+        ));
+        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
+
