@@ -3,10 +3,7 @@
     {
       "source": "/api/:path*",
       "destination": "https://chalre-backend.onrender.com/api/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/"
     }
+    
   ]
 }
