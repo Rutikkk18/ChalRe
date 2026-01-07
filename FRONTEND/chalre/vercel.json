@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://chalre-backend.onrender.com/api/:path*"
+      "destination": "https://chalre.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ]
 }
