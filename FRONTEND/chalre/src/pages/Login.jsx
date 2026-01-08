@@ -49,6 +49,7 @@ export default function Login() {
       };
 
       const res = await api.post("/auth/firebase-login", payload);
+      console.log("LOGIN RESPONSE", res.data);
       const token = res.data.token;
 
       // MUST WAIT SO USER GETS STORED BEFORE REDIRECT
