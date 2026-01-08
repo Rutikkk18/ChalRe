@@ -14,9 +14,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -89,6 +92,9 @@ public class UserService {
     }
 
     public String loginWithFirebaseToken(FirebaseLoginRequest request) {
+
+        log.info("Firebase login request: {}", request);
+
         if (request.getIdToken() == null || request.getIdToken().isBlank()) {
             throw new IllegalArgumentException("Firebase idToken is required");
         }
@@ -97,6 +103,7 @@ public class UserService {
         try {
             decodedToken = FirebaseAuth.getInstance().verifyIdToken(request.getIdToken());
         } catch (FirebaseAuthException e) {
+            log.error("Firebase token verification failed", e);
             throw new RuntimeException("Invalid Firebase token");
         }
 
