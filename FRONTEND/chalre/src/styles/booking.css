@@ -1,117 +1,247 @@
-/* booking page */
+/* ================================
+   BOOKING PAGE - FULLY RESPONSIVE & POLISHED
+================================ */
+
+/* ---------- GLOBAL RESET ---------- */
+* {
+  box-sizing: border-box;
+}
+
+/* ---------- PAGE WRAPPER ---------- */
 .booking-wrapper {
   max-width: 480px;
-  margin: 40px auto;
-  padding: 20px;
+  width: 100%;
+  margin: clamp(24px, 5vw, 40px) auto;
+  padding: clamp(16px, 3vw, 20px);
 }
 
+/* ---------- BOOKING CARD ---------- */
 .booking-card {
   background: #ffffff;
-  padding: 25px;
-  border-radius: 14px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  padding: clamp(20px, 4vw, 25px);
+  border-radius: clamp(12px, 2vw, 14px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   border: 1px solid #e6e6e6;
+  transition: box-shadow 0.3s ease;
 }
 
-h2 {
-  margin-bottom: 15px;
-  font-size: 24px;
+.booking-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
+/* ---------- HEADING ---------- */
+.booking-card h2 {
+  margin-bottom: clamp(12px, 2vw, 15px);
+  font-size: clamp(20px, 4vw, 24px);
+  font-weight: 700;
+  color: #1f2933;
+  line-height: 1.3;
+}
+
+/* ---------- RIDE SUMMARY ---------- */
 .ride-summary {
   background: #eaffea;
   border-left: 4px solid #2f8f2f;
-  padding: 12px 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 15px);
+  border-radius: clamp(6px, 1.5vw, 8px);
+  margin-bottom: clamp(16px, 3vw, 20px);
+  transition: background 0.2s ease;
+}
+
+.ride-summary:hover {
+  background: #dff5df;
 }
 
 .ride-summary h3 {
   margin: 0;
-  font-size: 20px;
+  font-size: clamp(18px, 3vw, 20px);
   color: #145214;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
+.ride-summary p {
+  margin: clamp(6px, 1vw, 8px) 0 0;
+  font-size: clamp(14px, 2vw, 15px);
+  color: #2a5a2a;
+}
+
+/* ---------- FORM ROWS ---------- */
 .form-row {
-  margin-bottom: 15px;
+  margin-bottom: clamp(12px, 2.5vw, 15px);
   display: flex;
   flex-direction: column;
 }
 
 .form-row label {
   font-weight: 600;
-  margin-bottom: 5px;
+  margin-bottom: clamp(4px, 1vw, 5px);
+  font-size: clamp(14px, 2vw, 15px);
+  color: #1f2933;
 }
 
-.form-row input {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 15px;
+.form-row input,
+.form-row select {
+  padding: clamp(9px, 1.5vw, 10px) clamp(10px, 2vw, 12px);
+  border-radius: clamp(6px, 1.5vw, 8px);
+  border: 1.5px solid #ccc;
+  font-size: clamp(14px, 2vw, 15px);
+  font-family: inherit;
+  background: #fafafa;
+  transition: all 0.25s ease;
+  width: 100%;
 }
 
+.form-row input::placeholder {
+  color: #999;
+  font-size: clamp(13px, 1.8vw, 14px);
+}
+
+.form-row input:focus,
+.form-row select:focus {
+  outline: none;
+  border-color: #2f8f2f;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(47, 143, 47, 0.15);
+}
+
+/* ---------- PRICE BOX ---------- */
 .price-box {
   background: #f7fff7;
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #cceccc;
-  margin: 15px 0;
+  padding: clamp(12px, 2.5vw, 15px);
+  border-radius: clamp(8px, 1.5vw, 10px);
+  border: 1.5px solid #cceccc;
+  margin: clamp(12px, 2.5vw, 15px) 0;
+  transition: background 0.2s ease;
+}
+
+.price-box:hover {
+  background: #f0faf0;
 }
 
 .price-box h3 {
-  margin-top: 8px;
+  margin: clamp(6px, 1vw, 8px) 0 0;
   color: #1e6b1e;
+  font-size: clamp(18px, 3vw, 20px);
+  font-weight: 700;
 }
 
+.price-box p {
+  margin: clamp(4px, 1vw, 6px) 0 0;
+  font-size: clamp(14px, 2vw, 15px);
+  color: #2a5a2a;
+}
+
+/* ---------- PRIMARY BUTTON ---------- */
 .btn-primary {
   width: 100%;
-  padding: 12px;
+  padding: clamp(11px, 2vw, 12px);
   border: none;
-  border-radius: 10px;
-  background: #2e8f2e;
-  color: #fff;
-  font-size: 17px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn-primary:hover {
-  background: #257825;
-}
-
-.error {
-  margin-bottom: 10px;
-  color: #c62828;
+  border-radius: clamp(8px, 1.5vw, 10px);
+  background: #2e8f2e !important;
+  color: #fff !important;
+  font-size: clamp(16px, 2.5vw, 17px);
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-/* Payment Method Selection */
+.btn-primary:hover:not(:disabled) {
+  background: #257825 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(46, 143, 46, 0.3);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- SECONDARY BUTTON ---------- */
+.btn-secondary {
+  width: 100%;
+  padding: clamp(9px, 1.5vw, 10px);
+  border: 2px solid #2e8f2e;
+  border-radius: clamp(8px, 1.5vw, 10px);
+  background: transparent !important;
+  color: #2e8f2e !important;
+  font-size: clamp(14px, 2vw, 15px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  margin-top: clamp(8px, 1.5vw, 10px);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #2e8f2e !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 143, 46, 0.25);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- ERROR MESSAGE ---------- */
+.error {
+  margin-bottom: clamp(8px, 1.5vw, 10px);
+  padding: clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px);
+  color: #c62828 !important;
+  font-weight: 600;
+  font-size: clamp(13px, 1.8vw, 14px);
+  background: #ffebee;
+  border-radius: clamp(6px, 1vw, 8px);
+  border-left: 4px solid #c62828;
+  line-height: 1.5;
+}
+
+/* ---------- PAYMENT METHOD SELECTION ---------- */
 .payment-options {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 8px;
+  gap: clamp(8px, 1.5vw, 10px);
+  margin-top: clamp(6px, 1vw, 8px);
 }
 
 .payment-option {
   display: flex;
-  align-items: center;
-  padding: 12px;
+  align-items: flex-start;
+  flex-direction: column;
+  padding: clamp(10px, 2vw, 12px);
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: clamp(6px, 1.5vw, 8px);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   background: #f9f9f9;
 }
 
 .payment-option:hover:not(.disabled) {
   border-color: #2e8f2e;
   background: #f0f8f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 .payment-option.selected {
   border-color: #2e8f2e;
   background: #eaffea;
+  box-shadow: 0 4px 12px rgba(46, 143, 46, 0.15);
 }
 
 .payment-option.disabled {
@@ -121,8 +251,12 @@ h2 {
 }
 
 .payment-option input[type="radio"] {
-  margin-right: 12px;
+  margin-right: clamp(10px, 2vw, 12px);
   cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: #2e8f2f;
+  flex-shrink: 0;
 }
 
 .payment-option.disabled input[type="radio"] {
@@ -132,41 +266,169 @@ h2 {
 .payment-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: clamp(6px, 1.5vw, 8px);
   font-weight: 600;
   color: #333;
+  font-size: clamp(14px, 2vw, 15px);
+  width: 100%;
 }
 
 .payment-balance {
-  font-size: 0.875rem;
+  font-size: clamp(12px, 1.8vw, 14px);
   color: #666;
-  margin-top: 4px;
+  margin-top: clamp(4px, 1vw, 6px);
+  line-height: 1.4;
 }
 
 .payment-balance .insufficient {
-  color: #c62828;
+  color: #c62828 !important;
   font-weight: 600;
 }
 
 .payment-note {
-  font-size: 0.875rem;
+  font-size: clamp(12px, 1.8vw, 14px);
   color: #666;
-  margin-top: 4px;
+  margin-top: clamp(4px, 1vw, 6px);
+  line-height: 1.4;
 }
 
-.btn-secondary {
-  width: 100%;
-  padding: 10px;
-  border: 2px solid #2e8f2e;
-  border-radius: 10px;
-  background: transparent;
-  color: #2e8f2e;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.3s;
+/* ---------- SUCCESS MESSAGE ---------- */
+.success-message {
+  background: #e8f5e9;
+  color: #2e7d32 !important;
+  padding: clamp(10px, 2vw, 12px);
+  border-radius: clamp(6px, 1vw, 8px);
+  border-left: 4px solid #4caf50;
+  margin-bottom: clamp(12px, 2vw, 15px);
+  font-weight: 600;
+  font-size: clamp(13px, 1.8vw, 14px);
 }
 
-.btn-secondary:hover {
-  background: #2e8f2e;
-  color: #fff;
+/* ---------- INFO MESSAGE ---------- */
+.info-message {
+  background: #e3f2fd;
+  color: #1976d2 !important;
+  padding: clamp(10px, 2vw, 12px);
+  border-radius: clamp(6px, 1vw, 8px);
+  border-left: 4px solid #2196f3;
+  margin-bottom: clamp(12px, 2vw, 15px);
+  font-size: clamp(13px, 1.8vw, 14px);
+  line-height: 1.5;
+}
+
+/* ---------- LOADING STATE ---------- */
+.booking-card.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ---------- RESPONSIVE BREAKPOINTS ---------- */
+
+/* Tablet and below */
+@media (max-width: 768px) {
+  .booking-wrapper {
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 16px;
+  }
+
+  .booking-card {
+    padding: 20px;
+  }
+
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .payment-option:hover {
+    transform: none;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .booking-wrapper {
+    margin: 16px auto;
+    padding: 12px;
+  }
+
+  .booking-card {
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .booking-card h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .ride-summary h3 {
+    font-size: 18px;
+  }
+
+  .form-row {
+    margin-bottom: 12px;
+  }
+
+  .form-row input,
+  .form-row select {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    font-size: 16px;
+  }
+}
+
+/* Extra small mobile */
+@media (max-width: 360px) {
+  .booking-wrapper {
+    padding: 10px;
+  }
+
+  .booking-card {
+    padding: 16px;
+  }
+
+  .booking-card h2 {
+    font-size: 18px;
+  }
+
+  .payment-option {
+    padding: 10px;
+  }
+
+  .payment-label {
+    font-size: 14px;
+  }
+}
+
+/* Landscape mobile fix */
+@media (max-height: 600px) and (orientation: landscape) {
+  .booking-wrapper {
+    margin: 20px auto;
+  }
+}
+
+/* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.form-row input:focus-visible,
+.form-row select:focus-visible,
+.payment-option:focus-visible {
+  outline: 2px solid #2e8f2e;
+  outline-offset: 2px;
+}
+
+/* ---------- PRINT STYLES ---------- */
+@media print {
+  .booking-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    display: none;
+  }
 }

@@ -1,40 +1,43 @@
+/* ================================
+   AUTH PAGE - FULLY RESPONSIVE
+================================ */
 
 html, body {
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;  /* 🔧 Prevent horizontal scroll */
 }
 
 /* ================================
-   LOGIN PAGE CONTAINER
+   LOGIN/AUTH PAGE CONTAINER
 ================================ */
 .login-container {
   width: 100vw;
   min-height: 100vh;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
+  padding: clamp(20px, 4vw, 40px) clamp(16px, 3vw, 20px);  /* 🔧 Responsive padding */
   background: linear-gradient(135deg, #eafff0, #c8f7d4);
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  box-sizing: border-box;
 }
 
-
 /* ================================
-   LOGIN BOX (CARD)
+   LOGIN BOX (CARD) - RESPONSIVE
 ================================ */
 .login-box {
-  width: 360px;
-  padding: 36px 32px;
-
+  width: 100%;
+  max-width: 400px;  /* 🔧 Max-width instead of fixed width */
+  padding: clamp(28px, 5vw, 36px) clamp(24px, 4vw, 32px);  /* 🔧 Responsive padding */
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: clamp(12px, 2vw, 16px);
   border: none;
-
   box-shadow: 0 20px 45px rgba(0, 100, 0, 0.18);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
 }
 
 .login-box:hover {
@@ -43,30 +46,36 @@ html, body {
 }
 
 /* ================================
-   HEADING
+   HEADING - RESPONSIVE
 ================================ */
 .login-box h2 {
   text-align: center;
-  margin-bottom: 24px;
-  font-size: 26px;
+  margin-bottom: clamp(20px, 4vw, 24px);
+  font-size: clamp(22px, 4vw, 26px);  /* 🔧 Responsive font size */
   font-weight: 700;
   color: #1c7c31;
+  line-height: 1.2;
 }
 
 /* ================================
-   INPUT FIELDS
+   INPUT FIELDS - RESPONSIVE
 ================================ */
 .login-box input {
   width: 100%;
-  margin-bottom: 18px;
-  padding: 14px 14px;
-
-  border-radius: 8px;
+  margin-bottom: clamp(14px, 3vw, 18px);
+  padding: clamp(12px, 2vw, 14px);  /* 🔧 Responsive padding */
+  border-radius: clamp(6px, 1.5vw, 8px);
   border: 1.5px solid #d9e8dc;
-  font-size: 15px;
-
+  font-size: clamp(14px, 2vw, 15px);  /* 🔧 Responsive font size */
   background: #f7fff9;
   transition: border 0.25s ease, box-shadow 0.25s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.login-box input::placeholder {
+  color: #8fa696;
+  font-size: clamp(13px, 1.8vw, 14px);
 }
 
 .login-box input:focus {
@@ -77,42 +86,308 @@ html, body {
 }
 
 /* ================================
-   LOGIN BUTTON
+   LOGIN BUTTON - RESPONSIVE
 ================================ */
 .login-box button {
   width: 100%;
-  padding: 14px;
-  margin-top: 8px;
-
-  background: linear-gradient(135deg, #1c7c31, #3dbf64);
-  color: white;
-
+  padding: clamp(12px, 2vw, 14px);  /* 🔧 Responsive padding */
+  margin-top: clamp(6px, 1.5vw, 8px);
+  background: linear-gradient(135deg, #1c7c31, #3dbf64) !important;  /* 🔧 Force color */
+  color: white !important;
   border: none;
-  border-radius: 10px;
-
-  font-size: 16px;
+  border-radius: clamp(8px, 1.5vw, 10px);
+  font-size: clamp(15px, 2vw, 16px);  /* 🔧 Responsive font size */
   font-weight: 600;
   cursor: pointer;
-
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-.login-box button:hover {
+.login-box button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(28, 124, 49, 0.35);
 }
 
-
-button:active {
+.login-box button:active:not(:disabled) {
   transform: translateY(0);
 }
 
+.login-box button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* ================================
-   RESPONSIVE
+   ERROR MESSAGE - RESPONSIVE
 ================================ */
-@media (max-width: 420px) {
-  .login-box {
-    width: 90%;
-    padding: 28px 22px;
+.login-box .error {
+  background: #fee;
+  color: #c33 !important;  /* 🔧 Force color */
+  padding: clamp(10px, 2vw, 12px);
+  border-radius: clamp(6px, 1vw, 8px);
+  margin-bottom: clamp(14px, 3vw, 18px);
+  font-size: clamp(13px, 1.8vw, 14px);  /* 🔧 Responsive font size */
+  text-align: center;
+  border: 1px solid #fcc;
+  font-weight: 500;
+}
+
+/* ================================
+   BOTTOM TEXT/LINKS - RESPONSIVE
+================================ */
+.login-box p {
+  text-align: center;
+  margin-top: clamp(16px, 3vw, 20px);
+  font-size: clamp(13px, 1.8vw, 14px);  /* 🔧 Responsive font size */
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.login-box p a {
+  color: #1c7c31 !important;  /* 🔧 Force color */
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  margin-left: 4px;
+}
+
+.login-box p a:hover {
+  color: #3dbf64 !important;
+  text-decoration: underline;
+}
+
+/* ================================
+   REGISTER CONTAINER (if used)
+================================ */
+.register-container {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(20px, 4vw, 40px) clamp(16px, 3vw, 20px);
+  background: linear-gradient(135deg, #eafff0, #c8f7d4);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  box-sizing: border-box;
+}
+
+.register-box {
+  width: 100%;
+  max-width: 400px;
+  padding: clamp(28px, 5vw, 36px) clamp(24px, 4vw, 32px);
+  background: #ffffff;
+  border-radius: clamp(12px, 2vw, 16px);
+  border: none;
+  box-shadow: 0 20px 45px rgba(0, 100, 0, 0.18);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+.register-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 60px rgba(0, 100, 0, 0.25);
+}
+
+.register-box h2 {
+  text-align: center;
+  margin-bottom: clamp(20px, 4vw, 24px);
+  font-size: clamp(22px, 4vw, 26px);
+  font-weight: 700;
+  color: #1c7c31;
+  line-height: 1.2;
+}
+
+.register-box input,
+.register-box select {
+  width: 100%;
+  margin-bottom: clamp(14px, 3vw, 18px);
+  padding: clamp(12px, 2vw, 14px);
+  border-radius: clamp(6px, 1.5vw, 8px);
+  border: 1.5px solid #d9e8dc;
+  font-size: clamp(14px, 2vw, 15px);
+  background: #f7fff9;
+  transition: border 0.25s ease, box-shadow 0.25s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.register-box input::placeholder {
+  color: #8fa696;
+  font-size: clamp(13px, 1.8vw, 14px);
+}
+
+.register-box input:focus,
+.register-box select:focus {
+  outline: none;
+  border-color: #1c7c31;
+  box-shadow: 0 0 0 3px rgba(28, 124, 49, 0.15);
+  background: #ffffff;
+}
+
+.register-box button {
+  width: 100%;
+  padding: clamp(12px, 2vw, 14px);
+  margin-top: clamp(6px, 1.5vw, 8px);
+  background: linear-gradient(135deg, #1c7c31, #3dbf64) !important;
+  color: white !important;
+  border: none;
+  border-radius: clamp(8px, 1.5vw, 10px);
+  font-size: clamp(15px, 2vw, 16px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.register-box button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(28, 124, 49, 0.35);
+}
+
+.register-box button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.register-box button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.register-box .error {
+  background: #fee;
+  color: #c33 !important;
+  padding: clamp(10px, 2vw, 12px);
+  border-radius: clamp(6px, 1vw, 8px);
+  margin-bottom: clamp(14px, 3vw, 18px);
+  font-size: clamp(13px, 1.8vw, 14px);
+  text-align: center;
+  border: 1px solid #fcc;
+  font-weight: 500;
+}
+
+.register-box p {
+  text-align: center;
+  margin-top: clamp(16px, 3vw, 20px);
+  font-size: clamp(13px, 1.8vw, 14px);
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.register-box p a {
+  color: #1c7c31 !important;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  margin-left: 4px;
+}
+
+.register-box p a:hover {
+  color: #3dbf64 !important;
+  text-decoration: underline;
+}
+
+/* ================================
+   RESPONSIVE BREAKPOINTS
+================================ */
+
+/* Tablet and below */
+@media (max-width: 768px) {
+  .login-container,
+  .register-container {
+    padding: 24px 16px;
+  }
+
+  .login-box,
+  .register-box {
+    max-width: 100%;
+    padding: 28px 24px;
+  }
+
+  .login-box:hover,
+  .register-box:hover {
+    transform: none;  /* 🔧 Disable hover effect on touch devices */
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .login-container,
+  .register-container {
+    padding: 20px 12px;
+  }
+
+  .login-box,
+  .register-box {
+    padding: 24px 20px;
+    border-radius: 12px;
+  }
+
+  .login-box h2,
+  .register-box h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .login-box input,
+  .register-box input,
+  .register-box select {
+    padding: 12px;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+
+  .login-box button,
+  .register-box button {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .login-box p,
+  .register-box p {
+    font-size: 13px;
+  }
+}
+
+/* Extra small mobile */
+@media (max-width: 360px) {
+  .login-container,
+  .register-container {
+    padding: 16px 10px;
+  }
+
+  .login-box,
+  .register-box {
+    padding: 20px 16px;
+  }
+
+  .login-box h2,
+  .register-box h2 {
+    font-size: 20px;
+  }
+
+  .login-box input,
+  .register-box input,
+  .register-box select {
+    font-size: 13px;
+  }
+}
+
+/* Landscape mobile fix */
+@media (max-height: 600px) and (orientation: landscape) {
+  .login-container,
+  .register-container {
+    padding: 20px 16px;
+    min-height: auto;
+  }
+
+  .login-box,
+  .register-box {
+    margin: 20px auto;
   }
 }
