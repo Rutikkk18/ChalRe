@@ -40,7 +40,12 @@ public class SecurityConfig {
                 // ✅ Authorization
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/register",
+                                "/api/auth/firebase-login"
+                        ).permitAll()
+
                         .requestMatchers("/api/locations/**").permitAll()
                         .requestMatchers(
                                 "/uploads/**",

@@ -1,21 +1,23 @@
 package com.Startup.chalre.Auth;
 
-import com.Startup.chalre.JWTTOKEN.JwtUtil;
-import com.Startup.chalre.entity.User;
-import com.Startup.chalre.repository.UserRepository;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.List;
+import com.Startup.chalre.JWTTOKEN.JwtUtil;
+import com.Startup.chalre.entity.User;
+import com.Startup.chalre.repository.UserRepository;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
@@ -39,10 +41,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // ✅ SKIP JWT CHECK FOR AUTH ENDPOINTS
         String path = request.getServletPath();
-        if (path.startsWith("/api/auth")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        // ✅ Skip ONLY public auth endpoints
+                if (
+                    path.equals("/api/auth/login") ||
+                    path.equals("/api/auth/register") ||
+                    path.equals("/api/auth/firebase-login")
+                ) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
 
         String header = request.getHeader("Authorization");
 

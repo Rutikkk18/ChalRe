@@ -9,6 +9,7 @@ import com.Startup.chalre.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -63,14 +64,16 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
 
-        if (user == null) {
+        if (authentication == null) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
+        User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(user);
     }
+
 
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(
