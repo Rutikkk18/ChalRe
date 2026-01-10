@@ -104,7 +104,7 @@ public class UserService {
             decodedToken = FirebaseAuth.getInstance().verifyIdToken(request.getIdToken());
         } catch (FirebaseAuthException e) {
             log.error("Firebase token verification failed", e);
-            throw new RuntimeException("Invalid Firebase token");
+            throw new IllegalArgumentException("Invalid Firebase token");
         }
 
         if (!decodedToken.isEmailVerified()) {
@@ -113,7 +113,7 @@ public class UserService {
 
         String email = decodedToken.getEmail();
         if (email == null || email.isBlank()) {
-            throw new RuntimeException("Email missing from Firebase token");
+            throw new IllegalStateException("Email missing from Firebase token");
         }
 
         String incomingPhone = request.getPhone() != null ? request.getPhone().trim() : null;
@@ -124,9 +124,9 @@ public class UserService {
                 throw new IllegalArgumentException("Phone number is required to finish signup");
             }
 
-            userRepository.findByPhone(incomingPhone).ifPresent(existing -> {
-                throw new RuntimeException("Phone number already registered");
-            });
+            if (userRepository.findByPhone(incomingPhone).isPresent()) {
+                throw new IllegalArgumentException("Phone number already registered");
+            }
 
             user = new User();
             user.setEmail(email);
@@ -142,10 +142,14 @@ public class UserService {
             }
         }
 
-        userRepository.save(user);
+        if (user.getPhone() == null || user.getPhone().isBlank()) {
+            throw new IllegalArgumentException("Phone number is required");
+        }
 
+        userRepository.save(user);
         return jwtUtil.generateToken(user);
     }
+
 
     private String resolveName(FirebaseLoginRequest request, FirebaseToken decodedToken) {
         if (request.getName() != null && !request.getName().trim().isEmpty()) {
