@@ -15,20 +15,26 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const fetchUser = async () => {
-    try {
-      const res = await api.get("/auth/me");
+ const fetchUser = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.warn("fetchUser skipped: no token");
+    return;
+  }
 
-      setUser(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
-    } catch (err) {
-      console.error("Failed to fetch user:", err);
+  try {
+    const res = await api.get("/auth/me");
+    setUser(res.data);
+    localStorage.setItem("user", JSON.stringify(res.data));
+  } catch (err) {
+    console.error("Failed to fetch user:", err);
 
-      setUser(null);
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-    }
-  };
+    setUser(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+  }
+};
+
 
   // login stores token → THEN fetches user
   const login = async (token) => {
@@ -42,11 +48,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("token");
   };
 
-  // On reload if token exists → fetch user
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) fetchUser();
-  }, []);
+
 
   return (
     <AuthContext.Provider

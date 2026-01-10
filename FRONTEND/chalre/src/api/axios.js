@@ -25,10 +25,11 @@ api.interceptors.response.use(
       requestUrl.includes("/rides/search") || requestUrl.includes("/rides");
 
     // Handle 401/403 errors globally
-    if (
-      (error.response?.status === 401 || error.response?.status === 403) &&
-      !isPublicRideFetch
-    ) {
+   if (
+  (error.response?.status === 401 || error.response?.status === 403) &&
+  !requestUrl.includes("/auth/me") &&
+  !isPublicRideFetch
+) {
       // Clear auth data
       localStorage.removeItem("token");
       localStorage.removeItem("user");
