@@ -1,164 +1,233 @@
 /* ================================
-   HELP CENTER PAGE – CHALRE
+   HELP CENTER PAGE - FULLY RESPONSIVE & POLISHED
    Modern • Clean • User Friendly
 ================================ */
 
+/* ---------- GLOBAL RESET ---------- */
+* {
+  box-sizing: border-box;
+}
+
+/* ---------- MAIN CONTAINER ---------- */
 .help-center-container {
   max-width: 900px;
-  margin: 90px auto 40px;
-  padding: 20px;
+  width: 100%;
+  margin: clamp(80px, 12vw, 90px) auto clamp(30px, 5vw, 40px);
+  padding: clamp(16px, 3vw, 20px);
 }
 
 /* ---------- HEADER ---------- */
 .help-center-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: clamp(32px, 6vw, 40px);
+  animation: fadeInDown 0.6s ease;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .help-center-header h1 {
-  font-size: 36px;
+  font-size: clamp(28px, 5vw, 36px);
   font-weight: 700;
   color: #0f5132;
-  margin-bottom: 12px;
+  margin-bottom: clamp(10px, 2vw, 12px);
+  line-height: 1.2;
 }
 
 .help-center-subtitle {
-  font-size: 16px;
+  font-size: clamp(15px, 2vw, 16px);
   color: #6b7280;
   margin: 0;
+  line-height: 1.5;
 }
 
 /* ---------- SEARCH BAR ---------- */
 .help-center-search {
-  margin-bottom: 40px;
+  margin-bottom: clamp(32px, 6vw, 40px);
+  animation: fadeIn 0.6s ease 0.2s backwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .search-input-wrapper {
   position: relative;
-  max-width: 600px;
+  max-width: min(600px, 100%);
   margin: 0 auto;
 }
 
 .search-icon {
   position: absolute;
-  left: 16px;
+  left: clamp(14px, 2vw, 16px);
   top: 50%;
   transform: translateY(-50%);
-  color: #6b7280;
+  color: #6b7280 !important;
   pointer-events: none;
+  width: clamp(18px, 3vw, 20px);
+  height: clamp(18px, 3vw, 20px);
 }
 
 .search-input {
   width: 100%;
-  padding: 14px 16px 14px 48px;
+  padding: clamp(12px, 2vw, 14px) clamp(14px, 2vw, 16px) clamp(12px, 2vw, 14px) clamp(44px, 8vw, 48px);
   border: 2px solid #e4f3ea;
-  border-radius: 12px;
-  font-size: 15px;
+  border-radius: clamp(10px, 2vw, 12px);
+  font-size: clamp(14px, 2vw, 15px);
   background: #ffffff;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
 
 .search-input:focus {
   outline: none;
   border-color: #28a745;
+  background: #f7fffb;
   box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }
 
 .search-input::placeholder {
   color: #9ca3af;
+  font-size: clamp(13px, 1.8vw, 14px);
 }
 
 /* ---------- CONTENT ---------- */
 .help-center-content {
-  margin-bottom: 40px;
+  margin-bottom: clamp(32px, 6vw, 40px);
+  animation: fadeInUp 0.6s ease 0.3s backwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .faq-section {
   background: #ffffff;
-  border-radius: 18px;
-  padding: 32px;
+  border-radius: clamp(14px, 2.5vw, 18px);
+  padding: clamp(24px, 5vw, 32px);
   box-shadow: 0 4px 20px rgba(15, 81, 50, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.faq-section:hover {
+  box-shadow: 0 8px 30px rgba(15, 81, 50, 0.12);
 }
 
 .faq-title {
-  font-size: 24px;
+  font-size: clamp(20px, 4vw, 24px);
   font-weight: 700;
   color: #0f5132;
-  margin-bottom: 24px;
+  margin-bottom: clamp(20px, 4vw, 24px);
+  line-height: 1.3;
 }
 
 /* ---------- FAQ LIST ---------- */
 .faq-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: clamp(10px, 2vw, 12px);
 }
 
+/* ---------- FAQ ITEM ---------- */
 .faq-item {
   background: #f7fffb;
-  border: 1px solid #e4f3ea;
-  border-radius: 12px;
+  border: 1.5px solid #e4f3ea;
+  border-radius: clamp(10px, 2vw, 12px);
   overflow: hidden;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .faq-item:hover {
   border-color: #28a745;
   box-shadow: 0 2px 8px rgba(40, 167, 69, 0.1);
+  transform: translateY(-2px);
 }
 
 .faq-item.expanded {
   border-color: #28a745;
+  background: #ffffff;
   box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
 }
 
+/* ---------- FAQ QUESTION ---------- */
 .faq-question {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: clamp(16px, 3vw, 20px);
   cursor: pointer;
   user-select: none;
+  transition: background 0.2s ease;
+}
+
+.faq-question:hover {
+  background: rgba(40, 167, 69, 0.03);
 }
 
 .faq-question h3 {
-  font-size: 16px;
+  font-size: clamp(15px, 2.5vw, 16px);
   font-weight: 600;
   color: #0f5132;
   margin: 0;
   flex: 1;
-  padding-right: 16px;
+  padding-right: clamp(12px, 2vw, 16px);
+  line-height: 1.5;
 }
 
+/* ---------- FAQ TOGGLE ---------- */
 .faq-toggle {
-  font-size: 24px;
+  font-size: clamp(20px, 4vw, 24px);
   font-weight: 300;
-  color: #28a745;
-  width: 32px;
-  height: 32px;
+  color: #28a745 !important;
+  width: clamp(28px, 5vw, 32px);
+  height: clamp(28px, 5vw, 32px);
   display: flex;
   align-items: center;
   justify-content: center;
   background: #e7f7ee;
   border-radius: 50%;
   flex-shrink: 0;
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
 }
 
 .faq-item.expanded .faq-toggle {
   transform: rotate(180deg);
+  background: #28a745;
+  color: #ffffff !important;
 }
 
+/* ---------- FAQ ANSWER ---------- */
 .faq-answer {
-  padding: 0 20px 20px 20px;
-  animation: slideDown 0.2s ease-out;
+  padding: 0 clamp(16px, 3vw, 20px) clamp(16px, 3vw, 20px) clamp(16px, 3vw, 20px);
+  animation: slideDown 0.3s ease-out;
 }
 
 .faq-answer p {
-  font-size: 14.5px;
+  font-size: clamp(14px, 2vw, 14.5px);
   line-height: 1.7;
   color: #555;
   margin: 0;
+  word-wrap: break-word;
 }
 
 @keyframes slideDown {
@@ -175,79 +244,109 @@
 /* ---------- NO RESULTS ---------- */
 .no-results {
   text-align: center;
-  padding: 60px 20px;
+  padding: clamp(40px, 8vw, 60px) clamp(16px, 3vw, 20px);
   color: #6b7280;
+  animation: fadeIn 0.4s ease;
 }
 
 .no-results svg {
-  color: #d1d5db;
-  margin-bottom: 16px;
+  color: #d1d5db !important;
+  margin-bottom: clamp(12px, 3vw, 16px);
+  width: clamp(48px, 10vw, 64px);
+  height: clamp(48px, 10vw, 64px);
 }
 
 .no-results p {
-  font-size: 16px;
-  margin: 8px 0;
+  font-size: clamp(15px, 2.5vw, 16px);
+  margin: clamp(6px, 1vw, 8px) 0;
+  font-weight: 600;
+  color: #4b5563;
 }
 
 .no-results-hint {
-  font-size: 14px;
+  font-size: clamp(13px, 1.8vw, 14px);
   color: #9ca3af;
+  margin-top: clamp(6px, 1vw, 8px);
 }
 
 /* ---------- SUPPORT SECTION ---------- */
 .help-center-support {
-  margin-bottom: 32px;
+  margin-bottom: clamp(28px, 5vw, 32px);
+  animation: fadeInUp 0.6s ease 0.4s backwards;
 }
 
 .support-card {
   background: linear-gradient(135deg, #e7f7ee, #d4f0e0);
-  border-radius: 18px;
-  padding: 32px;
+  border-radius: clamp(14px, 2.5vw, 18px);
+  padding: clamp(24px, 5vw, 32px);
   text-align: center;
   box-shadow: 0 4px 20px rgba(15, 81, 50, 0.08);
+  transition: all 0.3s ease;
+}
+
+.support-card:hover {
+  box-shadow: 0 8px 30px rgba(15, 81, 50, 0.15);
+  transform: translateY(-4px);
 }
 
 .support-icon {
-  color: #28a745;
-  margin-bottom: 16px;
+  color: #28a745 !important;
+  margin: 0 auto clamp(12px, 3vw, 16px);
+  display: block;
+  width: clamp(40px, 8vw, 48px);
+  height: clamp(40px, 8vw, 48px);
 }
 
 .support-card h3 {
-  font-size: 20px;
+  font-size: clamp(18px, 3vw, 20px);
   font-weight: 700;
   color: #0f5132;
-  margin-bottom: 12px;
+  margin-bottom: clamp(10px, 2vw, 12px);
+  line-height: 1.3;
 }
 
 .support-card p {
-  font-size: 15px;
+  font-size: clamp(14px, 2vw, 15px);
   color: #555;
-  margin-bottom: 20px;
+  margin-bottom: clamp(16px, 3vw, 20px);
   line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
+/* ---------- SUPPORT CONTACT ---------- */
 .support-contact {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: clamp(6px, 1.5vw, 8px);
+  padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
   background: #ffffff;
-  border-radius: 24px;
-  color: #0f5132;
+  border-radius: clamp(20px, 4vw, 24px);
+  color: #0f5132 !important;
   font-weight: 600;
   text-decoration: none;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
+  font-size: clamp(14px, 2vw, 15px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .support-contact:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.25);
+  background: #f7fffb;
+}
+
+.support-contact svg {
+  width: clamp(18px, 3vw, 20px);
+  height: clamp(18px, 3vw, 20px);
 }
 
 .support-contact a {
-  color: #0f5132;
+  color: #0f5132 !important;
   text-decoration: none;
-  font-size: 15px;
+  font-size: clamp(14px, 2vw, 15px);
+  font-weight: 600;
 }
 
 .support-contact a:hover {
@@ -257,27 +356,41 @@
 /* ---------- ACTIONS ---------- */
 .help-center-actions {
   text-align: center;
+  animation: fadeIn 0.6s ease 0.5s backwards;
 }
 
 .back-btn {
-  background: #ffffff;
-  color: #0f5132;
+  background: #ffffff !important;
+  color: #0f5132 !important;
   border: 2px solid #e4f3ea;
-  padding: 12px 24px;
-  font-size: 15px;
+  padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
+  font-size: clamp(14px, 2vw, 15px);
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: clamp(10px, 2vw, 12px);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
-.back-btn:hover {
-  background: #f7fffb;
+.back-btn:hover:not(:disabled) {
+  background: #f7fffb !important;
   border-color: #28a745;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
 }
 
-/* ---------- RESPONSIVE ---------- */
+.back-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.back-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- TABLET RESPONSIVE ---------- */
 @media (max-width: 768px) {
   .help-center-container {
     margin-top: 80px;
@@ -306,5 +419,181 @@
 
   .search-input-wrapper {
     max-width: 100%;
+  }
+
+  .faq-item:hover,
+  .support-card:hover,
+  .back-btn:hover,
+  .support-contact:hover {
+    transform: none;
+  }
+}
+
+/* ---------- MOBILE RESPONSIVE ---------- */
+@media (max-width: 640px) {
+  .help-center-container {
+    margin-top: 70px;
+    padding: 14px;
+  }
+
+  .help-center-header {
+    margin-bottom: 28px;
+  }
+
+  .help-center-search {
+    margin-bottom: 28px;
+  }
+
+  .faq-section {
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  .faq-list {
+    gap: 10px;
+  }
+
+  .faq-question {
+    padding: 14px;
+  }
+
+  .faq-answer {
+    padding: 0 14px 14px 14px;
+  }
+
+  .support-card {
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  .no-results {
+    padding: 40px 16px;
+  }
+}
+
+/* ---------- SMALL MOBILE ---------- */
+@media (max-width: 400px) {
+  .help-center-container {
+    padding: 12px;
+  }
+
+  .help-center-header h1 {
+    font-size: 24px;
+  }
+
+  .help-center-subtitle {
+    font-size: 14px;
+  }
+
+  .faq-section {
+    padding: 18px;
+  }
+
+  .faq-title {
+    font-size: 20px;
+  }
+
+  .faq-question h3 {
+    font-size: 14px;
+  }
+
+  .support-card h3 {
+    font-size: 18px;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+}
+
+/* ---------- LANDSCAPE MODE ---------- */
+@media (max-height: 600px) and (orientation: landscape) {
+  .help-center-container {
+    margin-top: 60px;
+  }
+
+  .help-center-header {
+    margin-bottom: 24px;
+  }
+
+  .help-center-search {
+    margin-bottom: 24px;
+  }
+}
+
+/* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
+.search-input:focus-visible {
+  outline: 2px solid #28a745;
+  outline-offset: 2px;
+}
+
+.faq-question:focus-visible {
+  outline: 2px solid #28a745;
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+.back-btn:focus-visible {
+  outline: 2px solid #28a745;
+  outline-offset: 2px;
+}
+
+.support-contact:focus-visible {
+  outline: 2px solid #28a745;
+  outline-offset: 2px;
+}
+
+/* ---------- LOADING STATE ---------- */
+.help-center-content.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ---------- REDUCE MOTION (ACCESSIBILITY) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .help-center-header,
+  .help-center-search,
+  .help-center-content,
+  .help-center-support,
+  .help-center-actions,
+  .faq-answer,
+  .faq-item,
+  .support-card,
+  .back-btn,
+  .support-contact {
+    animation: none;
+    transition: none;
+  }
+
+  .faq-toggle {
+    transition: none;
+  }
+}
+
+/* ---------- PRINT STYLES ---------- */
+@media print {
+  .help-center-search,
+  .help-center-actions,
+  .support-contact {
+    display: none;
+  }
+
+  .faq-section,
+  .support-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+
+  .faq-item {
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+
+  .faq-toggle {
+    display: none;
+  }
+
+  .faq-answer {
+    display: block !important;
   }
 }

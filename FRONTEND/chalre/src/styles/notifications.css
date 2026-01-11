@@ -1,48 +1,83 @@
-/* ------- WRAPPER -------- */
-.noti-wrapper {
-  width: 100%;
-  padding: 20px;
-  max-width: 650px;
-  margin: auto;
-  animation: fadeIn 0.3s ease;
+/* ================================
+   NOTIFICATIONS PAGE - FULLY RESPONSIVE & POLISHED
+================================ */
+
+/* ---------- GLOBAL RESET ---------- */
+* {
+  box-sizing: border-box;
 }
 
-/* ------- HEADER -------- */
+/* ---------- WRAPPER ---------- */
+.noti-wrapper {
+  width: 100%;
+  padding: clamp(16px, 3vw, 20px);
+  max-width: min(650px, 100%);
+  margin: clamp(80px, 12vw, 100px) auto clamp(20px, 4vw, 30px);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- HEADER ---------- */
 .noti-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: clamp(20px, 4vw, 25px);
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 5rem;
+  gap: clamp(10px, 2vw, 12px);
 }
 
 .noti-title {
   margin: 0;
-  font-size: 26px;
+  font-size: clamp(22px, 4vw, 26px);
   font-weight: 700;
   color: #1a1a1a;
+  line-height: 1.3;
 }
 
+/* ---------- MARK ALL READ BUTTON ---------- */
 .mark-all-read-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background: #3b82f6;
-  color: white;
+  gap: clamp(5px, 1vw, 6px);
+  padding: clamp(9px, 2vw, 10px) clamp(14px, 3vw, 16px);
+  background: #3b82f6 !important;
+  color: white !important;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: clamp(6px, 1.5vw, 8px);
+  font-size: clamp(13px, 2vw, 14px);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  white-space: nowrap;
+}
+
+.mark-all-read-btn svg {
+  width: clamp(16px, 3vw, 18px);
+  height: clamp(16px, 3vw, 18px);
 }
 
 .mark-all-read-btn:hover:not(:disabled) {
-  background: #2563eb;
+  background: #2563eb !important;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.mark-all-read-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .mark-all-read-btn:disabled {
@@ -50,101 +85,447 @@
   cursor: not-allowed;
 }
 
-/* ------- LIST -------- */
+/* ---------- NOTIFICATION LIST ---------- */
 .noti-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: clamp(12px, 3vw, 15px);
 }
 
-/* ------- EACH NOTIFICATION CARD -------- */
+/* ---------- NOTIFICATION ITEM ---------- */
 .noti-item {
-  padding: 18px 20px;
-  border-radius: 12px;
+  padding: clamp(16px, 3vw, 18px) clamp(18px, 3vw, 20px);
+  border-radius: clamp(10px, 2vw, 12px);
   background: #fdfdfd;
-  border-left: 6px solid #b8b8b8;
-  box-shadow: 0px 2px 6px rgba(0,0,0,0.08);
-  transition: 0.25s ease;
+  border-left: clamp(5px, 1vw, 6px) solid #b8b8b8;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease;
   cursor: pointer;
+  animation: slideIn 0.4s ease;
 }
 
-/* UNREAD NOTIFICATION */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ---------- UNREAD NOTIFICATION ---------- */
 .noti-item.unread {
   background: #e9f3ff;
   border-left-color: #007bff;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.12);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-/* READ NOTIFICATION */
+.noti-item.unread:hover {
+  background: #d4e8ff;
+}
+
+/* ---------- READ NOTIFICATION ---------- */
 .noti-item.read {
   opacity: 0.8;
+  background: #f9f9f9;
 }
 
-/* Hover effect */
+.noti-item.read:hover {
+  opacity: 0.9;
+  background: #f5f5f5;
+}
+
+/* ---------- HOVER EFFECT ---------- */
 .noti-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0px 5px 12px rgba(0,0,0,0.12);
+  transform: translateY(-3px);
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* ------ TEXTS -------- */
+/* ---------- NOTIFICATION HEADER (TOP ROW) ---------- */
 .noti-header-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: clamp(10px, 2vw, 12px);
+  margin-bottom: clamp(6px, 1vw, 8px);
+}
+
+/* ---------- NOTIFICATION TEXTS ---------- */
+.noti-texts {
+  flex: 1;
+  min-width: 0;
 }
 
 .noti-texts h4 {
   margin: 0;
-  font-size: 18px;
+  font-size: clamp(16px, 3vw, 18px);
   font-weight: 600;
   color: #222;
-  flex: 1;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
+.noti-texts p {
+  margin: clamp(6px, 1vw, 8px) 0;
+  font-size: clamp(14px, 2vw, 15px);
+  color: #444;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* ---------- MARK READ BUTTON ---------- */
 .mark-read-btn {
-  background: #3b82f6;
-  color: white;
+  background: #3b82f6 !important;
+  color: white !important;
   border: none;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: clamp(26px, 5vw, 28px);
+  height: clamp(26px, 5vw, 28px);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.mark-read-btn svg {
+  width: clamp(14px, 2.5vw, 16px);
+  height: clamp(14px, 2.5vw, 16px);
 }
 
 .mark-read-btn:hover {
-  background: #2563eb;
-  transform: scale(1.1);
+  background: #2563eb !important;
+  transform: scale(1.15);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
 }
 
-.noti-texts p {
-  margin: 8px 0;
-  font-size: 15px;
-  color: #444;
-  line-height: 1.4;
+.mark-read-btn:active {
+  transform: scale(1);
 }
 
-/* TIME */
+/* ---------- TIME ---------- */
 .time {
-  font-size: 12px;
+  font-size: clamp(11px, 1.5vw, 12px);
   color: #666;
+  font-weight: 500;
+  margin-top: clamp(4px, 1vw, 6px);
+  display: block;
 }
 
-/* EMPTY MESSAGE */
+/* ---------- EMPTY STATE ---------- */
 .empty {
   text-align: center;
   color: #777;
-  margin-top: 40px;
-  font-size: 16px;
+  margin-top: clamp(30px, 6vw, 40px);
+  padding: clamp(30px, 6vw, 40px) clamp(20px, 4vw, 30px);
+  font-size: clamp(15px, 2.5vw, 16px);
+  line-height: 1.6;
+  animation: fadeIn 0.5s ease;
 }
 
-/* Fade-in animation */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+.empty svg {
+  width: clamp(48px, 10vw, 64px);
+  height: clamp(48px, 10vw, 64px);
+  margin-bottom: clamp(12px, 3vw, 16px);
+  opacity: 0.5;
+  color: #999;
+}
+
+/* ---------- NOTIFICATION TYPES ---------- */
+.noti-item.type-booking {
+  border-left-color: #10b981;
+}
+
+.noti-item.type-booking.unread {
+  background: #ecfdf5;
+}
+
+.noti-item.type-booking.unread:hover {
+  background: #d1fae5;
+}
+
+.noti-item.type-ride {
+  border-left-color: #3b82f6;
+}
+
+.noti-item.type-ride.unread {
+  background: #eff6ff;
+}
+
+.noti-item.type-ride.unread:hover {
+  background: #dbeafe;
+}
+
+.noti-item.type-payment {
+  border-left-color: #f59e0b;
+}
+
+.noti-item.type-payment.unread {
+  background: #fef3c7;
+}
+
+.noti-item.type-payment.unread:hover {
+  background: #fde68a;
+}
+
+.noti-item.type-alert {
+  border-left-color: #dc2626;
+}
+
+.noti-item.type-alert.unread {
+  background: #fee2e2;
+}
+
+.noti-item.type-alert.unread:hover {
+  background: #fecaca;
+}
+
+/* ---------- NOTIFICATION BADGE ---------- */
+.noti-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: clamp(3px, 0.5vw, 4px) clamp(8px, 1.5vw, 10px);
+  border-radius: clamp(10px, 2vw, 12px);
+  font-size: clamp(11px, 1.5vw, 12px);
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #4b5563;
+  margin-top: clamp(6px, 1vw, 8px);
+}
+
+.noti-badge.booking {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.noti-badge.ride {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.noti-badge.payment {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.noti-badge.alert {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ---------- LOADING STATE ---------- */
+.noti-item.loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.noti-wrapper.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ---------- TABLET RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .noti-wrapper {
+    margin-top: 80px;
+    padding: 16px;
+  }
+
+  .noti-header {
+    margin-bottom: 20px;
+  }
+
+  .noti-item:hover,
+  .mark-all-read-btn:hover {
+    transform: none;
+  }
+
+  .mark-read-btn:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* ---------- MOBILE RESPONSIVE ---------- */
+@media (max-width: 640px) {
+  .noti-wrapper {
+    margin-top: 70px;
+    padding: 14px;
+  }
+
+  .noti-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .mark-all-read-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .noti-title {
+    font-size: 22px;
+  }
+
+  .noti-list {
+    gap: 12px;
+  }
+
+  .noti-item {
+    padding: 16px;
+  }
+
+  .noti-texts h4 {
+    font-size: 16px;
+  }
+
+  .noti-texts p {
+    font-size: 14px;
+  }
+
+  .empty {
+    margin-top: 30px;
+    padding: 30px 20px;
+  }
+}
+
+/* ---------- SMALL MOBILE ---------- */
+@media (max-width: 400px) {
+  .noti-wrapper {
+    padding: 12px;
+  }
+
+  .noti-title {
+    font-size: 20px;
+  }
+
+  .noti-item {
+    padding: 14px;
+  }
+
+  .noti-texts h4 {
+    font-size: 15px;
+  }
+
+  .noti-texts p {
+    font-size: 13px;
+  }
+
+  .mark-read-btn {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* ---------- LANDSCAPE MODE ---------- */
+@media (max-height: 600px) and (orientation: landscape) {
+  .noti-wrapper {
+    margin-top: 60px;
+  }
+
+  .noti-header {
+    margin-bottom: 16px;
+  }
+
+  .noti-list {
+    gap: 10px;
+  }
+}
+
+/* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
+.mark-all-read-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.mark-read-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.noti-item:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+/* ---------- REDUCE MOTION (ACCESSIBILITY) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .noti-wrapper,
+  .noti-item,
+  .mark-all-read-btn,
+  .mark-read-btn,
+  .empty {
+    animation: none;
+    transition: none;
+  }
+
+  .noti-item:hover,
+  .mark-all-read-btn:hover,
+  .mark-read-btn:hover {
+    transform: none;
+  }
+}
+
+/* ---------- PRINT STYLES ---------- */
+@media print {
+  .mark-all-read-btn,
+  .mark-read-btn {
+    display: none;
+  }
+
+  .noti-item {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+
+  .noti-wrapper {
+    margin: 0;
+    padding: 0;
+  }
+
+  .noti-item:hover {
+    transform: none;
+  }
+}
+
+/* ---------- SKELETON LOADER ---------- */
+.noti-item.skeleton {
+  pointer-events: none;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.noti-item.skeleton .noti-texts h4,
+.noti-item.skeleton .noti-texts p,
+.noti-item.skeleton .time {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  color: transparent;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
