@@ -185,7 +185,7 @@ function Scamm() {
       </div>
 
       <div className="security-btn">
-        <button>Visit our Help Centre</button>
+        <button onClick={() => navigate("/help-center")} >Visit our Help Centre</button>
       </div>
     </div>
   );

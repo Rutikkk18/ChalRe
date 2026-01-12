@@ -11,7 +11,33 @@
  * @returns {string} - User-friendly error message
  */
 export const getErrorMessage = (error) => {
-  // Network error (no response from server)
+  /* ===============================
+     🔐 AUTH / FIREBASE ERRORS
+     =============================== */
+  if (error?.code) {
+    switch (error.code) {
+      case "auth/invalid-credential":
+      case "auth/wrong-password":
+      case "auth/user-not-found":
+        return "Invalid email or password";
+
+      case "auth/invalid-email":
+        return "Please enter a valid email address";
+
+      case "auth/user-disabled":
+        return "This account has been disabled";
+
+      case "auth/too-many-requests":
+        return "Too many login attempts. Please try again later";
+
+      default:
+        return "Authentication failed. Please try again.";
+    }
+  }
+
+  /* ===============================
+     🌐 NETWORK ERRORS
+     =============================== */
   if (!error.response) {
     if (error.message === "Network Error") {
       return "Unable to connect to server. Please check your internet connection.";
@@ -23,20 +49,22 @@ export const getErrorMessage = (error) => {
 
   // Extract error message from various response formats
   let errorMessage = null;
-  
-  if (typeof data === 'string') {
+
+  if (typeof data === "string") {
     errorMessage = data;
-  } else if (data && typeof data === 'object') {
-    // Handle GlobalExceptionHandler format: {timestamp, error} or {timestamp, error, details}
+  } else if (data && typeof data === "object") {
+    // Handle GlobalExceptionHandler format
     errorMessage = data.error || data.message || data.details;
   }
 
-  // Handle specific HTTP status codes
+  /* ===============================
+     🧠 HTTP STATUS HANDLING
+     =============================== */
   switch (status) {
     case 400:
       return errorMessage || "Invalid request. Please check your input.";
     case 401:
-      return "You are not authorized. Please login again.";
+      return "Invalid email or password";
     case 403:
       return "You don't have permission to perform this action.";
     case 404:
@@ -96,8 +124,7 @@ export const handleError = (error, options = {}) => {
  */
 export const handleApiError = async (error, options = {}) => {
   const errorMessage = getErrorMessage(error);
-  
-  // Log full error for debugging
+
   if (options.log !== false) {
     console.error("API Error:", {
       message: errorMessage,
@@ -107,25 +134,21 @@ export const handleApiError = async (error, options = {}) => {
     });
   }
 
-  // Show alert if requested
   if (options.showAlert) {
     alert(errorMessage);
   }
 
-  // Call custom handler if provided
   if (options.onError) {
     options.onError(errorMessage, error);
   }
 
-  // Return formatted error for component handling
   throw new Error(errorMessage);
 };
 
 /**
  * Validation error formatter
- * Formats validation errors from backend (typically 422 or 400)
  * @param {Error} error - Axios error with validation data
- * @returns {string|Object} - Formatted validation errors
+ * @returns {string|Object}
  */
 export const formatValidationErrors = (error) => {
   if (!error.response || error.response.status !== 422) {
@@ -133,8 +156,7 @@ export const formatValidationErrors = (error) => {
   }
 
   const { data } = error.response;
-  
-  // If backend returns structured validation errors
+
   if (data?.errors && Array.isArray(data.errors)) {
     return data.errors.map(err => err.message || err).join(", ");
   }
@@ -148,8 +170,6 @@ export const formatValidationErrors = (error) => {
 
 /**
  * Check if error is a network error
- * @param {Error} error - Error object
- * @returns {boolean}
  */
 export const isNetworkError = (error) => {
   return !error.response && (error.message === "Network Error" || error.code === "ERR_NETWORK");
@@ -157,8 +177,6 @@ export const isNetworkError = (error) => {
 
 /**
  * Check if error is an authentication error
- * @param {Error} error - Error object
- * @returns {boolean}
  */
 export const isAuthError = (error) => {
   return error.response?.status === 401 || error.response?.status === 403;
@@ -166,21 +184,17 @@ export const isAuthError = (error) => {
 
 /**
  * Handle authentication errors (redirect to login)
- * @param {Error} error - Error object
- * @param {Function} navigate - React Router navigate function
  */
 export const handleAuthError = (error, navigate) => {
   if (isAuthError(error)) {
-    // Clear auth data
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    
-    // Redirect to login
+
     if (navigate) {
-      navigate("/login", { 
-        state: { 
-          message: "Your session has expired. Please login again." 
-        } 
+      navigate("/login", {
+        state: {
+          message: "Your session has expired. Please login again."
+        }
       });
     }
   }

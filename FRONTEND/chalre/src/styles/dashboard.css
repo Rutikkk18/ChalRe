@@ -344,6 +344,7 @@
 
 .upi-section button {
   margin-top: clamp(10px, 2vw, 12px);
+  margin-left: clamp(10px);
   min-width: fit-content;
   width: auto;
   padding: clamp(10px, 2vw, 12px) clamp(18px, 3vw, 24px);

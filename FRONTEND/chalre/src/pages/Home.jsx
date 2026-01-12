@@ -267,7 +267,7 @@ useEffect(() => {
   </div>
 
   <div className="help-btn-wrap">
-    <button className="help-btn">Read our Help Centre</button>
+    <button className="help-btn" onClick={() => navigate("/help-center")} >Read our Help Centre</button>
   </div>
   
  <div class="divider gradient"/>
