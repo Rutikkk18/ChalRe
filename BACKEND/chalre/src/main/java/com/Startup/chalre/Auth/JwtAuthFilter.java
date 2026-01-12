@@ -27,31 +27,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
-        // ✅ ALLOW PREFLIGHT (CORS) REQUESTS – DO NOT CONTINUE FILTER CHAIN
+        // ✅ Allow CORS preflight
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
         }
 
-
-        // ✅ SKIP JWT CHECK FOR AUTH ENDPOINTS
         String path = request.getServletPath();
-        // ✅ Skip ONLY public auth endpoints
-                if (
-                    path.equals("/api/auth/login") ||
-                    path.equals("/api/auth/register") ||
-                    path.equals("/api/auth/firebase-login")
-                ) {
-                    filterChain.doFilter(request, response);
-                    return;
-                }
 
+        // ✅ Skip ALL public auth endpoints safely
+        if (path.startsWith("/api/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        // ✅ Read Authorization header
         String header = request.getHeader("Authorization");
 
         if (header == null || !header.startsWith("Bearer ")) {
@@ -60,11 +56,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String token = header.substring(7);
-
         String email;
+
         try {
             email = jwtUtil.extractEmail(token);
         } catch (Exception e) {
+            // ❌ Invalid / expired token → continue without auth
             filterChain.doFilter(request, response);
             return;
         }
