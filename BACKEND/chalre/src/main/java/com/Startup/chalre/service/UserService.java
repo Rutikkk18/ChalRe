@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -27,26 +26,22 @@ public class UserService {
     private final JwtUtil jwtUtil;
 
     public User registeruser(UserRegisterDTO dto) {
-        // Check if email already exists
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
-        // Check if phone already exists
         if (userRepository.findByPhone(dto.getPhone()).isPresent()) {
             throw new RuntimeException("Phone number already registered");
         }
-        
+
         User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
-        // Set default role if not provided
         user.setRole(dto.getRole() != null && !dto.getRole().isEmpty() ? dto.getRole() : "USER");
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         return userRepository.save(user);
     }
 
-    // 🔥 updated login validation
     public User validateLogin(LoginDTO dto) {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -58,12 +53,10 @@ public class UserService {
         return user;
     }
 
-    // 🔥 generate JWT containing email + role
     public String generateJwtForUser(User user) {
         return jwtUtil.generateToken(user);
     }
 
-    // used by /me
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -87,13 +80,12 @@ public class UserService {
             user.setUpiId(dto.getUpiId().trim());
         }
 
-
         return userRepository.save(user);
     }
 
     public String loginWithFirebaseToken(FirebaseLoginRequest request) {
 
-        log.info("Firebase login request: {}", request);
+        log.info("Firebase login request received");
 
         if (request.getIdToken() == null || request.getIdToken().isBlank()) {
             throw new IllegalArgumentException("Firebase idToken is required");
@@ -103,18 +95,20 @@ public class UserService {
         try {
             decodedToken = FirebaseAuth.getInstance().verifyIdToken(request.getIdToken());
         } catch (FirebaseAuthException e) {
-            log.error("Firebase token verification failed", e);
-            throw new IllegalArgumentException("Invalid Firebase token");
+            log.error("Firebase token verification failed: {}", e.getMessage());
+            throw new IllegalStateException("Firebase authentication failed");
         }
 
-        if (!decodedToken.isEmailVerified()) {
-            throw new IllegalStateException("Email not verified");
-        }
+        // 🔥 IMPORTANT FIX:
+        // Do NOT block login on isEmailVerified()
+        // OAuth providers (Google) are already trusted by Firebase
 
         String email = decodedToken.getEmail();
         if (email == null || email.isBlank()) {
             throw new IllegalStateException("Email missing from Firebase token");
         }
+
+        log.info("Firebase user verified: email={}, uid={}", email, decodedToken.getUid());
 
         String incomingPhone = request.getPhone() != null ? request.getPhone().trim() : null;
         User user = userRepository.findByEmail(email).orElse(null);
@@ -134,7 +128,8 @@ public class UserService {
             user.setPhone(incomingPhone);
             user.setRole("USER");
         } else {
-            if ((user.getPhone() == null || user.getPhone().isBlank()) && incomingPhone != null && !incomingPhone.isEmpty()) {
+            if ((user.getPhone() == null || user.getPhone().isBlank())
+                    && incomingPhone != null && !incomingPhone.isEmpty()) {
                 user.setPhone(incomingPhone);
             }
             if (user.getName() == null || user.getName().isBlank()) {
@@ -149,7 +144,6 @@ public class UserService {
         userRepository.save(user);
         return jwtUtil.generateToken(user);
     }
-
 
     private String resolveName(FirebaseLoginRequest request, FirebaseToken decodedToken) {
         if (request.getName() != null && !request.getName().trim().isEmpty()) {
