@@ -26,63 +26,67 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
-    @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+   @Override
+protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
+) throws ServletException, IOException {
 
-        // ✅ Allow CORS preflight
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String path = request.getServletPath();
-
-        // ✅ Skip ALL public auth endpoints safely
-        if (path.startsWith("/api/auth/")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // ✅ Read Authorization header
-        String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = header.substring(7);
-        String email;
-
-        try {
-            email = jwtUtil.extractEmail(token);
-        } catch (Exception e) {
-            // ❌ Invalid / expired token → continue without auth
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            User user = userRepository.findByEmail(email).orElse(null);
-
-            if (user != null) {
-                String role = jwtUtil.extractRole(token);
-
-                List<SimpleGrantedAuthority> authorities =
-                        List.of(new SimpleGrantedAuthority("ROLE_" + role));
-
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(user, null, authorities);
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
-
+    if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
         filterChain.doFilter(request, response);
+        return;
     }
+
+    String path = request.getServletPath();
+
+    // ✅ Skip ONLY public auth endpoints
+    if (
+        path.equals("/api/auth/login") ||
+        path.equals("/api/auth/register") ||
+        path.equals("/api/auth/firebase-login")
+    ) {
+        filterChain.doFilter(request, response);
+        return;
+    }
+
+    String header = request.getHeader("Authorization");
+
+    if (header == null || !header.startsWith("Bearer ")) {
+        filterChain.doFilter(request, response);
+        return;
+    }
+
+    String token = header.substring(7);
+    String email;
+
+    try {
+        email = jwtUtil.extractEmail(token);
+    } catch (Exception e) {
+        filterChain.doFilter(request, response);
+        return;
+    }
+
+    if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user != null) {
+            String role = jwtUtil.extractRole(token);
+
+            var authorities = List.of(
+                new SimpleGrantedAuthority("ROLE_" + role)
+            );
+
+            var authToken =
+                new UsernamePasswordAuthenticationToken(user, null, authorities);
+
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+        }
+    }
+
+    filterChain.doFilter(request, response);
+}
+
+    
 }
