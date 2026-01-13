@@ -15,17 +15,15 @@ public class FirebaseConfig {
     @PostConstruct
     public void initialize() {
         try {
-            String firebaseBase64 = System.getenv("FIREBASE_SERVICE_ACCOUNT");
+            String firebaseJson = System.getenv("FIREBASE_SERVICE_ACCOUNT");
 
-            // 🔹 Do NOT crash app if Firebase is optional
-            if (firebaseBase64 == null || firebaseBase64.isBlank()) {
-                System.out.println("⚠️ Firebase not initialized (FIREBASE_SERVICE_ACCOUNT missing)");
+            if (firebaseJson == null || firebaseJson.isBlank()) {
+                System.out.println("⚠️ Firebase not initialized (env missing)");
                 return;
             }
 
-            byte[] decodedBytes = Base64.getDecoder().decode(firebaseBase64);
             ByteArrayInputStream serviceAccount =
-                    new ByteArrayInputStream(decodedBytes);
+                    new ByteArrayInputStream(firebaseJson.getBytes());
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -37,8 +35,10 @@ public class FirebaseConfig {
             }
 
         } catch (Exception e) {
-            System.err.println("❌ Firebase initialization failed (app will continue)");
+            System.err.println("❌ Firebase initialization failed");
             e.printStackTrace();
         }
     }
 }
+
+
