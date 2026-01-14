@@ -63,10 +63,11 @@ export default function Dashboard() {
         {/* PROFILE */}
         <div className="profile-section">
           <img
-            src={form.profileImage || "/profileimage.png"}
-            alt="Profile"
-            className="profile-avatar"
-          />
+          src={user?.profileImage || "/profileimage.png"}
+          alt="Profile"
+          className="profile-avatar"
+        />
+
 
 
           <div className="profile-info">

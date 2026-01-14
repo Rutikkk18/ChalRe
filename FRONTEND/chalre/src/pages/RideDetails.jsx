@@ -347,11 +347,12 @@ export default function RideDetails() {
               <div className="driver-left">
                 <div className="driver-avatar">
                   {ride.driver?.profileImage ? (
-                         <img
-                    src={form.profileImage || "/profileimage.png"}
-                    alt="Profile"
-                    className="profile-avatar"
-                  />
+                       <img
+                      src={user?.profileImage || "/profileimage.png"}
+                      alt="Profile"
+                      className="profile-avatar"
+                    />
+
 
                   ) : (
                     <div className="placeholder">{(ride.driver?.name || "D").charAt(0)}</div>
