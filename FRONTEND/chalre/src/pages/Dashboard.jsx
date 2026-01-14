@@ -63,14 +63,11 @@ export default function Dashboard() {
         {/* PROFILE */}
         <div className="profile-section">
           <img
-            src={
-              user.profileImage
-                ? `${BACKEND_URL}${user.profileImage}`
-                : "/profileimage.png"
-            }
+            src={form.profileImage || "/profileimage.png"}
             alt="Profile"
-            className="dash-avatar"
+            className="profile-avatar"
           />
+
 
           <div className="profile-info">
             <h2>{user.name}</h2>

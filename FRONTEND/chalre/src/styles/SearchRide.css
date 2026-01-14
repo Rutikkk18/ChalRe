@@ -1,5 +1,6 @@
 /* ================================
-   SEARCH RIDES PAGE - FULLY RESPONSIVE & POLISHED
+   SEARCH RIDES PAGE - FULLY RESPONSIVE & FIXED LAYOUT
+   Cards now properly display next to filters!
 ================================ */
 
 /* ---------- THEME VARIABLES ---------- */
@@ -187,20 +188,19 @@
   background: var(--green-soft) !important;
 }
 
-/* ---------- MAIN CONTENT LAYOUT ---------- */
+/* ---------- MAIN CONTENT LAYOUT - FIXED! ---------- */
 .search-content-layout {
-  display: flex;
+  display: grid;
+  grid-template-columns: 300px 1fr;
   gap: clamp(16px, 3vw, 24px);
   align-items: flex-start;
-  flex-wrap: wrap;
   width: 100%;
+  position: relative;
 }
 
 /* ---------- LEFT SIDEBAR (FILTERS) - RESPONSIVE ---------- */
 .filters-sidebar {
   width: 100%;
-  max-width: 300px;
-  flex-shrink: 0;
   background: #ffffff;
   border-radius: var(--radius-lg);
   padding: clamp(16px, 3vw, 20px);
@@ -331,15 +331,16 @@
   display: none;
 }
 
-/* ---------- RESULTS CONTAINER (RIGHT) - RESPONSIVE ---------- */
+/* ---------- RESULTS CONTAINER (RIGHT) - FIXED! ---------- */
 .results-container {
-  flex: 1 1 auto;
+  width: 100%;
   min-width: 0;
   background: #ffffff;
   border-radius: var(--radius-lg);
   padding: clamp(16px, 3vw, 24px);
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
+  overflow: hidden;
 }
 
 .results-header {
@@ -362,11 +363,18 @@
   display: none;
 }
 
-/* ---------- HORIZONTAL RIDE CARDS ---------- */
+/* ---------- HORIZONTAL RIDE CARDS - FIXED! ---------- */
 .cards-grid {
   display: flex;
   flex-direction: column;
   gap: clamp(16px, 3vw, 20px);
+  width: 100%;
+}
+
+/* Ensure ride cards don't overflow */
+.cards-grid > * {
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* ---------- STATES ---------- */
@@ -458,10 +466,28 @@
   color: var(--text-dark);
 }
 
-/* ---------- TABLET RESPONSIVE ---------- */
-@media (max-width: 1024px) {
+/* ---------- LARGE DESKTOP (1200px+) ---------- */
+@media (min-width: 1200px) {
+  .search-content-layout {
+    grid-template-columns: 320px 1fr;
+  }
+
   .filters-sidebar {
-    max-width: 280px;
+    padding: 24px;
+  }
+
+  .results-container {
+    padding: 28px;
+  }
+}
+
+/* ---------- TABLET RESPONSIVE (768px - 1024px) ---------- */
+@media (max-width: 1024px) {
+  .search-content-layout {
+    grid-template-columns: 280px 1fr;
+  }
+
+  .filters-sidebar {
     top: clamp(185px, 24vw, 235px);
     max-height: calc(100vh - clamp(205px, 26vw, 255px));
   }
@@ -480,16 +506,21 @@
     margin-bottom: 20px;
   }
 
+  /* Switch to single column layout */
   .search-content-layout {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .filters-sidebar {
     width: 100%;
-    max-width: 100%;
     position: static;
     max-height: none;
     order: -1;
+  }
+
+  .results-container {
+    width: 100%;
   }
 
   .filters-sidebar.hidden-mobile {
@@ -672,6 +703,15 @@
   outline-offset: 2px;
 }
 
+/* ---------- REDUCE MOTION (ACCESSIBILITY) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ---------- PRINT STYLES ---------- */
 @media print {
   .search-container,
@@ -683,5 +723,9 @@
   .results-container {
     box-shadow: none;
     border: none;
+  }
+
+  .search-content-layout {
+    grid-template-columns: 1fr;
   }
 }
