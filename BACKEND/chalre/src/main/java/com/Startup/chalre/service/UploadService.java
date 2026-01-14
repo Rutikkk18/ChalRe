@@ -1,44 +1,33 @@
 package com.Startup.chalre.service;
 
+import com.cloudinary.Cloudinary;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class UploadService {
 
-    private static final String UPLOAD_DIR = "uploads/profile/";
+    private final Cloudinary cloudinary;
 
-    public String uploadProfileImage(MultipartFile file) throws IOException {
+    public String uploadProfileImage(MultipartFile file) {
 
-        // Ensure directory exists
-        Path uploadPath = Paths.get(UPLOAD_DIR);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+        try {
+            Map<?, ?> result = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    Map.of(
+                            "folder", "chalre/profile",
+                            "resource_type", "image"
+                    )
+            );
+
+            return result.get("secure_url").toString();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Image upload failed");
         }
-
-        // Clean filename
-        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
-        String fileExtension = "";
-
-        if (originalFilename.contains(".")) {
-            fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        }
-
-        // Generate unique filename
-        String newFileName = UUID.randomUUID() + fileExtension;
-
-        // Save file
-        Path filePath = uploadPath.resolve(newFileName);
-        Files.copy(file.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-        // Return public URL
-        return "/uploads/profile/" + newFileName;
     }
 }

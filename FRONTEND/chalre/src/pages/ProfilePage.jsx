@@ -58,18 +58,21 @@ export default function ProfilePage() {
 
   try {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("image", file);
 
-    const res = await api.post("/upload/profile", formData, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
+    const res = await api.post(
+      "/upload/profile-image",
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" }
+      }
+    );
 
-    // ✅ ADD CONSOLE LOG EXACTLY HERE
-    console.log("Uploaded image URL:", res.data.url);
+    console.log("Uploaded image URL:", res.data.imageUrl);
 
     setForm((prev) => ({
       ...prev,
-      profileImage: res.data.url
+      profileImage: res.data.imageUrl
     }));
 
     setSuccess("Profile image uploaded successfully");
@@ -80,6 +83,7 @@ export default function ProfilePage() {
     setLoading(false);
   }
 };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -124,14 +128,11 @@ export default function ProfilePage() {
         <div className="profile-image-section">
           <div className="image-container">
                       <img
-            src={
-              form.profileImage
-                ? `${BACKEND_URL}${form.profileImage}`
-                : "/profileimage.png"
-            }
-            alt="Profile"
-            className="profile-avatar"
-          />
+                  src={form.profileImage || "/profileimage.png"}
+                  alt="Profile"
+                  className="profile-avatar"
+                />
+
             <label className="image-upload-label">
               <Camera size={20} />
               <input
