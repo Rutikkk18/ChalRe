@@ -60,13 +60,15 @@ export default function Dashboard() {
 
       {/* MAIN CARD */}
       <div className="dash-card modern">
-        {/* PROFILE */}
+        {/* PROFILE */} 
+        
         <div className="profile-section">
           <img
           src={user?.profileImage || "/profileimage.png"}
           alt="Profile"
           className="profile-avatar"
         />
+        
 
 
 

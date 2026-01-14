@@ -57,25 +57,13 @@
   flex-wrap: wrap;
 }
 
-.dash-avatar {
-  width: clamp(70px, 15vw, 90px);
-  height: clamp(70px, 15vw, 90px);
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #dff5e6;
-  flex-shrink: 0;
-  transition: transform 0.3s ease, border-color 0.3s ease;
-}
-
-.dash-avatar:hover {
-  transform: scale(1.05);
-  border-color: #28a745;
-}
 
 /* Add this right after .dash-avatar styles */
+/* FIXED AVATAR SIZING - NO MORE GIANT IMAGES! */
+.dash-avatar,
 .profile-avatar {
-  width: clamp(70px, 15vw, 90px);
-  height: clamp(70px, 15vw, 90px);
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #dff5e6;
@@ -83,6 +71,7 @@
   transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
+.dash-avatar:hover,
 .profile-avatar:hover {
   transform: scale(1.05);
   border-color: #28a745;
