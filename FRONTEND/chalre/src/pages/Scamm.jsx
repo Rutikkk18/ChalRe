@@ -1,7 +1,9 @@
 import React from "react";
 import "../styles/Scamm.css";
+import { useNavigate } from "react-router-dom";
 
 function Scamm() {
+  const navigate = useNavigate();
   return (
     <div className="scam-main">
 
