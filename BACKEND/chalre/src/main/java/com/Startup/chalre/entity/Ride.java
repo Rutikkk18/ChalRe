@@ -4,6 +4,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 
 @Entity
 @Data
@@ -38,4 +43,15 @@ public class Ride {
     // Link ride to driver
     @ManyToOne
     private User driver;
+
+    public LocalDateTime getRideDateTime() {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        LocalDate rideDate = LocalDate.parse(this.date, dateFormatter);
+        LocalTime rideTime = LocalTime.parse(this.time, timeFormatter);
+
+        return LocalDateTime.of(rideDate, rideTime);
+    }
+
 }

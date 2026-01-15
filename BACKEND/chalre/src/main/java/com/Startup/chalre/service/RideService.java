@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -102,6 +103,17 @@ public class RideService {
                 .stream()
                 .filter(ride -> ride.getAvailableSeats() > 0)
                 .toList();
+
+        LocalDate today = LocalDate.now();
+
+        rides = rides.stream()
+                .filter(ride -> {
+                    LocalDate rideDate = LocalDate.parse(ride.getDate());
+                    return !rideDate.isBefore(today);
+                })
+                .toList();
+
+
 
         if (date != null && !date.isEmpty()) {
             rides = rides.stream()
