@@ -641,8 +641,8 @@
 }
 
 .help-btn {
-  background: #00a8e8 !important;  /* 🔧 Force color */
-  color: #fff !important;
+  background: #a6e8b4 !important;  /* 🔧 Force color */
+  color: #040404 !important;
   border: none;
   padding: 14px 28px;
   font-size: clamp(13px, 1.8vw, 14px);
@@ -653,7 +653,7 @@
 }
 
 .help-btn:hover {
-  background: #008fc7 !important;
+  background: #6ce066 !important;
 }
 
 /* ================================

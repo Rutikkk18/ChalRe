@@ -33,10 +33,9 @@ useEffect(() => {
     <div className="home-wrapper">
       {/* HERO SECTION */}
       <header className="hero">
-        <h1>Ride Together. Travel Smarter.</h1>
+        <h1>Miles Better Together </h1>
         <p>
-          A modern platform connecting local riders. Safe, fast and affordable
-          rides for everyone.
+        The modern way to connect with people nearby. Safe, fast, and affordable travel for everyone.
         </p>
 
         <div className={`home-search-bar ${scrolled ? "search-sticky" : ""}`}>

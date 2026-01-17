@@ -14,7 +14,7 @@ const TermsAndConditions = () => {
         <p>
           Welcome to ChalRe. By accessing or using our website or mobile
           application, you agree to comply with and be bound by these
-          Terms & Conditions. If you do not agree, please do not use ChalRe.
+          Terms & Conditions.
         </p>
       </section>
 
