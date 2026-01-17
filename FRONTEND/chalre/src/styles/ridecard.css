@@ -1,6 +1,6 @@
 /* ================================
-   RIDE CARD - FULLY RESPONSIVE & POLISHED
-   Horizontal card with route left-to-right
+   RIDE CARD - REDESIGNED & FULLY RESPONSIVE
+   Professional • Modern • Clean Layout
 ================================ */
 
 /* ---------- THEME VARIABLES ---------- */
@@ -25,15 +25,15 @@
 /* ---------- RIDE CARD ---------- */
 .ride-card {
   background: #ffffff;
-  border-radius: clamp(10px, 2vw, var(--radius-md));
-  padding: clamp(16px, 3vw, 20px) clamp(18px, 4vw, 24px);
-  box-shadow: var(--shadow-soft);
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(15, 81, 50, 0.08);
   border: 1.5px solid var(--border-soft);
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: clamp(14px, 3vw, 16px);
+  gap: 16px;
   animation: slideIn 0.4s ease;
 }
 
@@ -50,7 +50,7 @@
 
 .ride-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 6px 20px rgba(15, 81, 50, 0.12);
   border-color: var(--border-focus);
 }
 
@@ -69,43 +69,64 @@
 .ride-card-header {
   display: flex;
   align-items: center;
-  gap: clamp(10px, 2vw, 12px);
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid #f0f0f0;
 }
 
-/* ---------- LOCATION ---------- */
+/* ---------- START LOCATION ---------- */
 .location {
   display: flex;
-  align-items: center;
-  gap: clamp(6px, 1.5vw, 8px);
-  font-size: clamp(15px, 2.5vw, 16px);
-  font-weight: 600;
-  color: var(--green-dark);
+  align-items: flex-start;
+  gap: 10px;
   flex: 1;
-  min-width: min(180px, 100%);
-  line-height: 1.4;
+  min-width: 0;
 }
 
 .location svg {
-  width: clamp(18px, 3vw, 20px);
-  height: clamp(18px, 3vw, 20px);
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
   color: var(--green-main);
+  margin-top: 2px;
+}
+
+.location > div {
+  flex: 1;
+  min-width: 0;
 }
 
 .location strong {
+  display: block;
+  font-size: 13px;
   font-weight: 600;
-  margin-right: clamp(3px, 0.5vw, 4px);
-  word-break: break-word;
+  color: #6b7280;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.location span {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--green-dark);
+  line-height: 1.4;
+  word-wrap: break-word;
 }
 
 /* ---------- ARROW ICON ---------- */
 .arrow-icon {
   color: var(--green-main) !important;
-  width: clamp(20px, 4vw, 24px);
-  height: clamp(20px, 4vw, 24px);
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   transition: transform 0.3s ease;
+}
+
+.ride-card:hover .arrow-icon {
+  transform: translateX(4px);
 }
 
 /* ---------- RIDE INFO (BOTTOM SECTION) ---------- */
@@ -113,85 +134,95 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: clamp(12px, 3vw, 16px);
-  padding-top: clamp(10px, 2vw, 12px);
-  border-top: 1.5px solid var(--border-soft);
+  gap: 16px;
   flex-wrap: wrap;
+}
+
+/* ---------- INFO GROUP (LEFT SIDE) ---------- */
+.info-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
 /* ---------- INFO ITEM ---------- */
 .info-item {
   display: flex;
-  gap: clamp(5px, 1vw, 6px);
   align-items: center;
+  gap: 6px;
   color: var(--text-dark);
-  font-size: clamp(13px, 2vw, 14px);
-  flex-shrink: 0;
-  line-height: 1.4;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
 .info-item svg {
-  width: clamp(16px, 3vw, 18px);
-  height: clamp(16px, 3vw, 18px);
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
   color: var(--text-muted);
 }
 
 .info-item strong {
   font-weight: 600;
-  margin-right: clamp(3px, 0.5vw, 4px);
   color: var(--text-dark);
+}
+
+/* ---------- PRICE & BUTTON GROUP ---------- */
+.price-action-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
 }
 
 /* ---------- PRICE ITEM ---------- */
 .info-item.price {
-  font-size: clamp(18px, 4vw, 20px);
+  font-size: 22px;
   font-weight: 700;
   color: var(--green-dark);
-  margin-left: auto;
-  margin-right: clamp(12px, 3vw, 16px);
+  margin: 0;
 }
 
 .info-item.price svg {
   color: var(--green-main);
-  width: clamp(20px, 4vw, 24px);
-  height: clamp(20px, 4vw, 24px);
+  width: 22px;
+  height: 22px;
 }
 
 /* ---------- BOOK BUTTON ---------- */
 .ride-info button.book-btn {
-  padding: clamp(9px, 2vw, 10px) clamp(18px, 4vw, 20px);
-  background: linear-gradient(135deg, #1db215, #16a50f) !important;
+  padding: 11px 24px;
+  background: linear-gradient(135deg, #28a745, #1e8e3a) !important;
   color: white !important;
   border: none;
-  border-radius: clamp(8px, 1.5vw, var(--radius-md));
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.25s ease;
-  font-size: clamp(13px, 2vw, 14px);
+  transition: all 0.3s ease;
+  font-size: 15px;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
   white-space: nowrap;
-  min-width: auto;
-  width: auto;
   font-family: inherit;
   appearance: none;
   -webkit-appearance: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
 }
 
 .book-btn svg {
-  width: clamp(16px, 3vw, 18px);
-  height: clamp(16px, 3vw, 18px);
+  width: 16px;
+  height: 16px;
 }
 
 .book-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #249a4a, #1e7e3d) !important;
+  background: linear-gradient(135deg, #239a42, #1a7a32) !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+  box-shadow: 0 6px 18px rgba(40, 167, 69, 0.35);
 }
 
 .book-btn:active:not(:disabled) {
@@ -206,17 +237,17 @@
   opacity: 0.7;
 }
 
-/* ---------- VIEW BUTTON (if exists) ---------- */
+/* ---------- VIEW BUTTON ---------- */
 .view-btn {
-  padding: clamp(9px, 2vw, 10px) clamp(18px, 4vw, 20px);
-  background: #e0e7ff !important;
+  padding: 11px 24px;
+  background: #f0f4ff !important;
   color: #4f46e5 !important;
-  border: none;
-  border-radius: clamp(8px, 1.5vw, var(--radius-md));
+  border: 1.5px solid #e0e7ff;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.25s ease;
-  font-size: clamp(13px, 2vw, 14px);
+  transition: all 0.3s ease;
+  font-size: 15px;
   flex-shrink: 0;
   white-space: nowrap;
   font-family: inherit;
@@ -225,29 +256,31 @@
 }
 
 .view-btn:hover:not(:disabled) {
-  background: #c7d2fe !important;
+  background: #e0e7ff !important;
+  border-color: #c7d2fe;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
 }
 
 .view-btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
-/* ---------- DRIVER INFO (if exists) ---------- */
+/* ---------- DRIVER INFO ---------- */
 .driver-info {
   display: flex;
   align-items: center;
-  gap: clamp(8px, 2vw, 10px);
-  padding: clamp(10px, 2vw, 12px);
+  gap: 10px;
+  padding: 12px 14px;
   background: #f9fafb;
-  border-radius: clamp(6px, 1vw, var(--radius-sm));
+  border-radius: 10px;
   border: 1px solid #e5e7eb;
+  margin-top: 4px;
 }
 
 .driver-avatar {
-  width: clamp(36px, 8vw, 40px);
-  height: clamp(36px, 8vw, 40px);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--green-main);
@@ -260,7 +293,7 @@
 }
 
 .driver-name {
-  font-size: clamp(14px, 2vw, 15px);
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-dark);
   margin: 0;
@@ -273,7 +306,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: clamp(12px, 1.8vw, 13px);
+  font-size: 13px;
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -290,9 +323,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: clamp(3px, 0.5vw, 4px) clamp(8px, 1.5vw, 10px);
-  border-radius: clamp(10px, 2vw, 12px);
-  font-size: clamp(11px, 1.5vw, 12px);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -312,18 +345,26 @@
   color: #991b1b;
 }
 
-/* ---------- TABLET RESPONSIVE ---------- */
+/* ---------- TABLET (768px - 1024px) ---------- */
 @media (max-width: 1024px) {
   .ride-card {
     padding: 18px 20px;
   }
 
-  .ride-info {
+  .ride-card-header {
+    gap: 14px;
+  }
+
+  .info-group {
+    gap: 16px;
+  }
+
+  .price-action-group {
     gap: 14px;
   }
 }
 
-/* ---------- TABLET/MOBILE RESPONSIVE ---------- */
+/* ---------- MOBILE (below 768px) ---------- */
 @media (max-width: 768px) {
   .ride-card {
     padding: 16px;
@@ -337,30 +378,59 @@
   .ride-card-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 12px;
+    padding-bottom: 12px;
+  }
+
+  .location span {
+    font-size: 14px;
   }
 
   .arrow-icon {
     transform: rotate(90deg);
-    margin: clamp(3px, 1vw, 4px) 0;
+    width: 20px;
+    height: 20px;
+    align-self: center;
+    margin: 4px 0;
+  }
+
+  .ride-card:hover .arrow-icon {
+    transform: rotate(90deg) translateY(4px);
   }
 
   .ride-info {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .info-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .info-item {
+    justify-content: flex-start;
+  }
+
+  .price-action-group {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    margin-left: 0;
     gap: 10px;
   }
 
   .info-item.price {
-    margin-left: 0;
-    margin-right: 0;
-    font-size: 18px;
+    font-size: 20px;
+    justify-content: flex-start;
   }
 
   .book-btn,
   .view-btn {
     width: 100%;
     justify-content: center;
+    padding: 12px 20px;
   }
 
   .book-btn:hover,
@@ -369,15 +439,19 @@
   }
 }
 
-/* ---------- MOBILE RESPONSIVE ---------- */
-@media (max-width: 640px) {
+/* ---------- SMALL MOBILE (below 480px) ---------- */
+@media (max-width: 480px) {
   .ride-card {
     padding: 14px;
+    border-radius: 12px;
   }
 
-  .location {
-    font-size: 15px;
-    min-width: 100%;
+  .location strong {
+    font-size: 12px;
+  }
+
+  .location span {
+    font-size: 13px;
   }
 
   .info-item {
@@ -385,24 +459,28 @@
   }
 
   .info-item.price {
-    font-size: 18px;
+    font-size: 19px;
   }
 
   .book-btn,
   .view-btn {
     font-size: 14px;
-    padding: 10px 16px;
+    padding: 11px 18px;
   }
 }
 
-/* ---------- SMALL MOBILE ---------- */
-@media (max-width: 400px) {
+/* ---------- EXTRA SMALL (below 360px) ---------- */
+@media (max-width: 360px) {
   .ride-card {
     padding: 12px;
   }
 
-  .location {
-    font-size: 14px;
+  .location strong {
+    font-size: 11px;
+  }
+
+  .location span {
+    font-size: 13px;
   }
 
   .info-item {
@@ -410,12 +488,7 @@
   }
 
   .info-item.price {
-    font-size: 17px;
-  }
-
-  .arrow-icon {
-    width: 20px;
-    height: 20px;
+    font-size: 18px;
   }
 }
 
@@ -426,15 +499,15 @@
     gap: 12px;
   }
 
-  .ride-info {
-    padding-top: 10px;
+  .ride-card-header {
+    padding-bottom: 10px;
   }
 }
 
 /* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
 .book-btn:focus-visible,
 .view-btn:focus-visible {
-  outline: 2px solid var(--green-main);
+  outline: 3px solid rgba(40, 167, 69, 0.4);
   outline-offset: 2px;
 }
 
@@ -455,7 +528,8 @@
 
   .ride-card:hover,
   .book-btn:hover,
-  .view-btn:hover {
+  .view-btn:hover,
+  .ride-card:hover .arrow-icon {
     transform: none;
   }
 }

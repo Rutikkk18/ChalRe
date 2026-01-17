@@ -89,10 +89,20 @@ public class RideService {
     }
 
     public List<Ride> getallRides() {
-        return rideRepository.findAll().stream()
-                .filter(ride -> ride.getAvailableSeats() > 0)
-                .toList();
-    }
+    LocalDate today = LocalDate.now();
+    
+    return rideRepository.findAll().stream()
+            .filter(ride -> ride.getAvailableSeats() > 0)
+            .filter(ride -> {
+                try {
+                    LocalDate rideDate = LocalDate.parse(ride.getDate());
+                    return !rideDate.isBefore(today); // Show today and future dates
+                } catch (Exception e) {
+                    return false; // If date parsing fails, hide the ride
+                }
+            })
+            .toList();
+}
 
     public List<Ride> searchRides(String from, String to, String date, Integer seats, 
                                    Double minPrice, Double maxPrice, String carType, 
