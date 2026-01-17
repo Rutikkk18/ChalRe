@@ -158,51 +158,42 @@ public class BookingService {
 
     public Map<String, List<Booking>> getMyBookingsSeparated(User user) {
 
-        List<Booking> allBookings = bookingRepository.findByUser(user);
-        LocalDate today = LocalDate.now();
+    List<Booking> allBookings = bookingRepository.findByUser(user);
+    LocalDate today = LocalDate.now();
 
-        List<Booking> upcoming = new ArrayList<>();
-        List<Booking> past = new ArrayList<>();
+    List<Booking> upcoming = new ArrayList<>();
+    List<Booking> past = new ArrayList<>();
 
-        for (Booking booking : allBookings) {
+    for (Booking booking : allBookings) {
 
-            if (!"BOOKED".equals(booking.getStatus())) {
-                past.add(booking);
-                continue;
-            }
-
-            try {
-                LocalDate rideDate = LocalDate.parse(booking.getRide().getDate());
-
-                if (rideDate.isBefore(today)) {
-                    past.add(booking);
-                } else if (rideDate.equals(today)
-                        && booking.getRide().getTime() != null
-                        && !booking.getRide().getTime().isEmpty()) {
-
-                    try {
-                        LocalTime rideTime = LocalTime.parse(booking.getRide().getTime());
-                        if (rideTime.isBefore(LocalTime.now())) {
-                            past.add(booking);
-                        } else {
-                            upcoming.add(booking);
-                        }
-                    } catch (Exception e) {
-                        upcoming.add(booking);
-                    }
-
-                } else {
-                    upcoming.add(booking);
-                }
-
-            } catch (Exception e) {
-                upcoming.add(booking);
-            }
+        // CANCELLED bookings always go to PAST
+        if (!"BOOKED".equals(booking.getStatus())) {
+            past.add(booking);
+            continue;
         }
 
-        Map<String, List<Booking>> result = new HashMap<>();
-        result.put("upcoming", upcoming);
-        result.put("past", past);
-        return result;
+        try {
+            LocalDate rideDate = LocalDate.parse(booking.getRide().getDate());
+
+            // If ride date is before today → PAST
+            if (rideDate.isBefore(today)) {
+                past.add(booking);
+            } 
+            // If ride date is today or future → UPCOMING
+            else {
+                upcoming.add(booking);
+            }
+
+        } catch (Exception e) {
+            // If date parsing fails, consider it upcoming (safer default)
+            upcoming.add(booking);
+        }
+    }
+
+    Map<String, List<Booking>> result = new HashMap<>();
+    result.put("upcoming", upcoming);
+    result.put("past", past);
+    return result;
+
     }
 }

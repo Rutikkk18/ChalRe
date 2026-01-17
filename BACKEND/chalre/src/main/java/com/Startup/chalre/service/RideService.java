@@ -196,47 +196,35 @@ public class RideService {
     }
 
     public Map<String, List<Ride>> getMyRidesSeparated(User driver) {
-        List<Ride> allRides = rideRepository.findByDriver(driver);
-        LocalDate today = LocalDate.now();
-        
-        List<Ride> upcoming = new ArrayList<>();
-        List<Ride> past = new ArrayList<>();
-        
-        for (Ride ride : allRides) {
-            try {
-                LocalDate rideDate = LocalDate.parse(ride.getDate());
-                if (rideDate.isBefore(today) || 
-                    (rideDate.equals(today) && ride.getTime() != null && !ride.getTime().isEmpty())) {
-                    try {
-                        LocalTime rideTime = LocalTime.parse(ride.getTime());
-                        LocalTime now = LocalTime.now();
-                        if (rideDate.equals(today) && rideTime.isBefore(now)) {
-                            past.add(ride);
-                        } else {
-                            upcoming.add(ride);
-                        }
-                    } catch (Exception e) {
-                        // If time parsing fails, check date only
-                        if (rideDate.isBefore(today)) {
-                            past.add(ride);
-                        } else {
-                            upcoming.add(ride);
-                        }
-                    }
-                } else {
-                    upcoming.add(ride);
-                }
-            } catch (Exception e) {
-                // If date parsing fails, consider it upcoming
+    List<Ride> allRides = rideRepository.findByDriver(driver);
+    LocalDate today = LocalDate.now();
+    
+    List<Ride> upcoming = new ArrayList<>();
+    List<Ride> past = new ArrayList<>();
+    
+    for (Ride ride : allRides) {
+        try {
+            LocalDate rideDate = LocalDate.parse(ride.getDate());
+            
+            // If ride date is before today → PAST
+            if (rideDate.isBefore(today)) {
+                past.add(ride);
+            } 
+            // If ride date is today or future → UPCOMING
+            else {
                 upcoming.add(ride);
             }
+        } catch (Exception e) {
+            // If date parsing fails, consider it upcoming (safer default)
+            upcoming.add(ride);
         }
-        
-        Map<String, List<Ride>> result = new HashMap<>();
-        result.put("upcoming", upcoming);
-        result.put("past", past);
-        return result;
     }
+    
+    Map<String, List<Ride>> result = new HashMap<>();
+    result.put("upcoming", upcoming);
+    result.put("past", past);
+    return result;
+}
 
     public Map<String, Object> getRideBookings(Long rideId, User driver) {
         Ride ride = rideRepository.findById(rideId)
