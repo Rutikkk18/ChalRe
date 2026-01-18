@@ -348,7 +348,6 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
-
 /* ---------- UPI SECTION ---------- */
 .upi-section {
   margin-top: clamp(16px, 3vw, 20px);
@@ -368,10 +367,18 @@
   flex-wrap: wrap;
 }
 
+/* Add paragraph style for muted text */
+.upi-section p.muted {
+  font-size: clamp(13px, 2vw, 14px);
+  color: #6b7280;
+  margin-bottom: clamp(10px, 2vw, 12px);
+}
+
 .upi-section input {
   width: 100%;
   max-width: 400px;
   margin-top: clamp(6px, 1vw, 8px);
+  margin-bottom: clamp(12px, 2vw, 16px); /* ADDED: Space after input */
   padding: clamp(9px, 1.5vw, 10px);
   border-radius: clamp(6px, 1.5vw, 8px);
   border: 1.5px solid #ddd;
@@ -393,13 +400,11 @@
 }
 
 .upi-section button {
-  margin-top: clamp(10px, 2vw, 12px);
-  margin-left: clamp(10px);
-  padding-left: clamp(10px);
+  margin-top: 0; /* REMOVED: Not needed since input has margin-bottom */
+  margin-left: 0; /* FIXED: Removed invalid clamp */
   min-width: fit-content;
   width: auto;
   padding: clamp(10px, 2vw, 12px) clamp(18px, 3vw, 24px);
-  height: auto;
   border-radius: clamp(10px, 2vw, 14px);
   font-size: clamp(15px, 2.5vw, 16px);
   font-weight: 700;
@@ -437,6 +442,17 @@
   font-weight: 500;
 }
 
+/* Mobile: Full-width button */
+@media (max-width: 768px) {
+  .upi-section button {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .upi-section input {
+    max-width: 100%;
+  }
+}
 /* ---------- TABLET RESPONSIVE ---------- */
 @media (max-width: 900px) {
   .dash-container {

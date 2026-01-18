@@ -91,6 +91,10 @@ export default function MyBookings() {
     }
   };
 
+  const viewRide = (id) => {
+    navigate(`/ridedetails/${id}`);
+  };
+  
   if (loading) return <div className="booking-list-wrapper">Loading...</div>;
 
   return (
