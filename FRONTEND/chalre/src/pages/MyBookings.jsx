@@ -168,6 +168,14 @@ export default function MyBookings() {
             </div>
 
             <div className="booking-actions">
+
+               <button
+                                className="btn-view"
+                                onClick={() => viewRide(ride.id)}
+                                title="View Details"
+                              >
+                                <Eye /> View
+                              </button>
               {b.status === "BOOKED" && activeTab === "upcoming" && (
                 <>
                   <button

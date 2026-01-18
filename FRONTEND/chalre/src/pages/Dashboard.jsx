@@ -79,21 +79,25 @@ export default function Dashboard() {
             <h2>{user.name}</h2>
             <p className="email">{user.email}</p>
 
-            {user.verificationStatus === "APPROVED" && (
+           {user.verificationStatus === "APPROVED" && (
               <span className="badge success">
                 <CheckCircle size={14} /> 
+                Verified
               </span>
             )}
             {user.verificationStatus === "PENDING" && (
               <span className="badge warning">
                 <Clock size={14} /> 
+                Pending
               </span>
             )}
             {user.verificationStatus === "REJECTED" && (
               <span className="badge danger">
                 <XCircle size={14} />
+                Rejected
               </span>
             )}
+                        
           </div>
         </div>
 
