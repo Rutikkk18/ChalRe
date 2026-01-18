@@ -393,7 +393,9 @@ html, body {
 } 
 
 /* ================================
+/* ================================
    PASSWORD INPUT WRAPPER WITH TOGGLE
+   High Visibility Button
 ================================ */
 .password-input-wrapper {
   position: relative;
@@ -403,72 +405,89 @@ html, body {
 
 .password-input-wrapper input {
   width: 100%;
-  padding-right: 45px; /* Space for eye icon */
+  padding-right: 50px; /* Space for eye icon */
   margin-bottom: 0; /* Remove default margin since wrapper has it */
 }
 
-/* Password Toggle Button */
+/* Password Toggle Button - HIGH VISIBILITY */
 .password-toggle-btn {
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
-  border: none;
+  background: transparent !important;
+  border: none !important;
   cursor: pointer;
-  color: #6b7280;
+  color: #1c7c31 !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
+  padding: 6px !important;
   transition: color 0.2s ease;
-  margin: 0;
-  width: auto;
-  height: auto;
-  border-radius: 4px;
+  margin: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  
 }
 
-.password-toggle-btn:hover {
-  color: #1c7c31;
-  background: rgba(28, 124, 49, 0.05);
+.password-toggle-btn svg {
+  width: 15px !important;
+  height: 15px !important;
+  stroke-width: 2.5px;
+  color: #1c7c31 !important;
 }
+
+
 
 .password-toggle-btn:focus {
-  outline: 2px solid rgba(28, 124, 49, 0.3);
-  outline-offset: 1px;
-  color: #1c7c31;
+  outline: 2px solid rgba(28, 124, 49, 0.3) !important;
+  outline-offset: 2px;
+  color: #1c7c31 !important;
 }
 
 .password-toggle-btn:active {
-  transform: translateY(-50%) scale(0.95);
+  transform: translateY(-50%);
+  background: transparent !important;
 }
 
 /* Ensure button doesn't inherit login-box button styles */
 .login-box .password-toggle-btn,
 .register-box .password-toggle-btn {
-  background: none !important;
+  background: transparent !important;
   box-shadow: none !important;
   padding: 6px !important;
   margin: 0 !important;
   min-width: auto !important;
   width: auto !important;
+  height: auto !important;
+  border: none !important;
 }
 
 .login-box .password-toggle-btn:hover,
 .register-box .password-toggle-btn:hover {
   transform: translateY(-50%);
   box-shadow: none !important;
-  background: rgba(28, 124, 49, 0.05) !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 /* Mobile optimization */
 @media (max-width: 480px) {
   .password-toggle-btn {
     right: 10px;
-    padding: 8px; /* Larger touch target */
+    padding: 8px !important;
   }
 
   .password-input-wrapper input {
-    padding-right: 42px;
+    padding-right: 45px;
   }
+}
+
+/* Extra emphasis on focus for accessibility */
+.password-toggle-btn:focus-visible {
+  outline: 2px solid rgba(28, 124, 49, 0.4) !important;
+  outline-offset: 2px;
+  background: transparent !important;
 }

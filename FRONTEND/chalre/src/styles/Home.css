@@ -10,9 +10,8 @@
 
 /* ================================
    NAVBAR - FIXED & PROFESSIONAL
-   All items perfectly aligned horizontally
+   Logo LEFT | Nav Links + Button RIGHT
 ================================ */
-
 .navbar {
   position: fixed;
   top: 8px;
@@ -38,7 +37,7 @@
   box-shadow: 0 12px 40px rgba(0, 100, 0, 0.2);
 }
 
-/* ---------- LOGO ---------- */
+/* ---------- LOGO (LEFT SIDE) ---------- */
 .logo {
   font-size: clamp(22px, 4vw, 28px);
   font-weight: 700;
@@ -48,7 +47,7 @@
   flex-shrink: 0;
 }
 
-/* ---------- NAV LINKS CONTAINER ---------- */
+/* ---------- NAV LINKS CONTAINER (RIGHT SIDE) ---------- */
 .nav-links {
   flex: 1;
   display: flex;
@@ -75,7 +74,7 @@
   color: #1c7c31;
 }
 
-/* ---------- REGISTER BUTTON - FIXED ALIGNMENT ---------- */
+/* ---------- REGISTER BUTTON ---------- */
 .register-btn {
   background: #1c7c31 !important;
   color: white !important;
@@ -100,7 +99,7 @@
   box-shadow: 0 4px 12px rgba(28, 124, 49, 0.3);
 }
 
-/* ---------- LOGOUT BUTTON - FIXED ALIGNMENT ---------- */
+/* ---------- LOGOUT BUTTON ---------- */
 .logout-btn {
   background: #1c7c31 !important;
   color: white !important;
@@ -145,7 +144,7 @@
   }
 }
 
-/* ---------- RESPONSIVE - MOBILE ---------- */
+/* ---------- RESPONSIVE - MOBILE (BELOW 768px) ---------- */
 @media (max-width: 768px) {
   .navbar {
     height: auto;
@@ -221,7 +220,6 @@
 
 /* ---------- REDUCE MOTION (ACCESSIBILITY) ---------- */
 @media (prefers-reduced-motion: reduce) {
-
   .navbar,
   .nav-links a,
   .register-btn,
@@ -251,7 +249,6 @@
 
 .hero h1 {
   font-size: clamp(28px, 6vw, 46px);
-  /* 🔧 Responsive heading */
   font-weight: 700;
   margin-top: clamp(-20px, -3vw, -40px);
   font-family: 'Times New Roman', Times, serif;
@@ -261,7 +258,6 @@
 .hero p {
   margin-top: 12px;
   font-size: clamp(16px, 2.5vw, 19px);
-  /* 🔧 Responsive text */
   opacity: 0.95;
   font-family: 'Times New Roman', Times, serif;
   max-width: 600px;
@@ -279,12 +275,10 @@
   border-radius: 12px;
   padding: 10px;
   max-width: min(1100px, 95%);
-  /* 🔧 Never overflow */
   margin: 40px auto 0;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
   transition: all 0.01s ease;
   gap: 8px;
-  /* 🔧 Add gap for spacing */
 }
 
 .home-search-bar:not(.search-sticky) {
@@ -299,7 +293,6 @@
   transform: translateX(-50%);
   z-index: 90;
   width: min(1100px, 95%);
-  /* 🔧 Responsive sticky bar */
 }
 
 .search-item {
@@ -308,7 +301,6 @@
   flex-direction: column;
   padding: 6px clamp(8px, 1.5vw, 14px);
   min-width: 0;
-  /* 🔧 Allow flex items to shrink */
 }
 
 .search-item.small {
@@ -336,7 +328,6 @@
   padding: 6px 0;
   background: transparent;
   width: 100%;
-  /* 🔧 Full width */
 }
 
 .search-item input::placeholder {
@@ -356,7 +347,6 @@
 
 .search-action {
   background: #3b863b !important;
-  /* 🔧 Force color */
   color: white !important;
   border: none;
   border-radius: 10px;
@@ -413,18 +403,16 @@
 }
 
 /* ================================
-   RIDE SHARE SECTION - FIXED
+   RIDE SHARE SECTION
 ================================ */
 .ride-sharehome {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: min(800px, 90%);
-  /* 🔧 Responsive width */
   padding: clamp(24px, 5vw, 40px);
   background-color: #1fa055;
   margin: 0 auto clamp(40px, 8vw, 70px);
-  /* 🔧 Centered with auto margins */
   border-radius: 30px;
 }
 
@@ -446,7 +434,6 @@
 
 .ride-sharehome button.btn-hssr {
   background: #f4fff4 !important;
-  /* 🔧 Force color */
   background-color: #f4fff4 !important;
   color: #1f3b1f !important;
   width: clamp(140px, 30vw, 160px);
@@ -467,7 +454,7 @@
 }
 
 /* ================================
-   FRAUD SECTION - FIXED
+   FRAUD SECTION
 ================================ */
 .fraud-div {
   display: flex;
@@ -503,7 +490,6 @@
   color: #0f3d2e;
   margin-bottom: 16px;
   margin-left: 0;
-  /* 🔧 Removed fixed margin */
 }
 
 .fraud-content p {
@@ -512,17 +498,14 @@
   color: #4b5563;
   margin-bottom: 24px;
   width: 100%;
-  /* 🔧 Responsive width */
   max-width: 550px;
 }
 
 .fraud-div .fraud-btn {
   background-color: #6af496 !important;
-  /* 🔧 Force color */
   color: white !important;
   border: none;
   margin-left: 0;
-  /* 🔧 Removed fixed margin */
   padding: 12px 26px;
   border-radius: 25px;
   font-size: clamp(14px, 1.8vw, 15px);
@@ -567,7 +550,6 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  /* 🔧 Auto responsive */
   gap: clamp(20px, 3vw, 30px);
 }
 
@@ -624,7 +606,6 @@
 .help-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  /* 🔧 Auto responsive */
   gap: clamp(30px, 6vw, 60px);
 }
 
@@ -659,9 +640,8 @@
 }
 
 .help-btn {
-  background: #a6e8b4 !important;
-  /* 🔧 Force color */
-  color: #040404 !important;
+  background: #0b9a2a !important;
+  color: #fffefe !important;
   border: none;
   padding: 14px 28px;
   font-size: clamp(13px, 1.8vw, 14px);
@@ -672,14 +652,13 @@
 }
 
 .help-btn:hover {
-  background: #6ce066 !important;
+  background: #054e02 !important;
 }
 
 /* ================================
    MOBILE SPECIFIC FIXES
 ================================ */
 @media (max-width: 768px) {
-
   /* Stack search bar vertically on mobile */
   .home-search-bar {
     flex-direction: column;
@@ -710,7 +689,6 @@
 
   .search-sticky {
     position: relative;
-    /* 🔧 Don't stick on mobile */
     top: auto;
     transform: none;
     width: 95%;
@@ -726,34 +704,10 @@
   .fraud-content p {
     margin-left: 0;
   }
-}
 
-.fraud-div .fraud-btn {
-  margin-left: 0;
-}
-
-/* Navbar mobile */
-.navbar {
-  flex-direction: column;
-  height: auto;
-  padding: 14px;
-  width: 95%;
-}
-
-.logo {
-  margin-left: 0;
-}
-
-.nav-links {
-  margin-top: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.register-btn,
-.logout-btn {
-  margin-top: 8px;
-}
+  .fraud-div .fraud-btn {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 480px) {

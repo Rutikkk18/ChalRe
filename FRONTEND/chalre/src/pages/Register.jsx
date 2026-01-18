@@ -115,6 +115,12 @@ export default function Register() {
         <button type="submit" disabled={loading}>
           {loading ? "Sending verification..." : "Create Account"}
         </button>
+
+        
+        <p>
+          Already have an account?
+          <a href="/login"> Login</a>
+        </p>
       </form>
     </div>
   );

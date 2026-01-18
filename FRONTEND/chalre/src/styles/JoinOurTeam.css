@@ -1,184 +1,400 @@
-/* JoinOurTeam.css */
+/* ================================
+   JOIN OUR TEAM - FULLY RESPONSIVE & POLISHED
+   Classic Modern Design with Better Colors
+================================ */
 
+/* ---------- GLOBAL WRAPPER ---------- */
 .jot-wrapper {
     font-family: 'Times New Roman', Times, serif;
     background-color: #ffffff;
     min-height: 100vh;
     color: #333;
+    overflow-x: hidden;
 }
 
-/* Hero Section */
+/* ---------- HERO SECTION ---------- */
 .jot-hero {
-    background-color: #1c7c31;
-    /* Primary Green */
+    background: linear-gradient(135deg, #28a745 0%, #20894a 100%);
     color: white;
-    padding: clamp(100px, 15vw, 140px) 20px clamp(60px, 10vw, 80px);
-    /* Account for fixed navbar */
+    padding: clamp(100px, 15vw, 140px) clamp(16px, 3vw, 20px) clamp(60px, 10vw, 80px);
     text-align: center;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(40, 167, 69, 0.15);
 }
 
 .jot-hero-content {
     max-width: 800px;
     margin: 0 auto;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .jot-hero h1 {
-    font-size: clamp(32px, 5vw, 48px);
+    font-size: clamp(28px, 5vw, 48px);
     font-weight: 700;
-    margin-bottom: 20px;
+    margin-bottom: clamp(16px, 3vw, 20px);
     line-height: 1.2;
+    letter-spacing: -0.5px;
 }
 
 .jot-hero p {
-    font-size: clamp(18px, 2.5vw, 22px);
-    opacity: 0.9;
+    font-size: clamp(16px, 2.5vw, 22px);
+    opacity: 0.95;
     max-width: 600px;
     margin: 0 auto;
+    line-height: 1.5;
 }
 
-/* Main Container */
+/* ---------- MAIN CONTAINER ---------- */
 .jot-container {
-    max-width: 1000px;
+    max-width: min(1000px, 95%);
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 clamp(16px, 3vw, 20px);
 }
 
-/* Section Common Styles */
+/* ---------- SECTION COMMON STYLES ---------- */
 .jot-section {
-    padding: clamp(50px, 8vw, 80px) 0;
-    border-bottom: 1px solid #f0f0f0;
+    padding: clamp(40px, 8vw, 80px) 0;
+    border-bottom: 1px solid #e8e8e8;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .jot-section:last-of-type {
     border-bottom: none;
 }
 
-.jot-section.bg-light {}
+.jot-section.bg-light {
+    background: #f8fdf9;
+    margin: 0 -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
 
 .jot-section h2 {
-    font-size: clamp(28px, 4vw, 36px);
-    color: #1c7c31;
-    margin-bottom: 24px;
+    font-size: clamp(24px, 4vw, 36px);
+    color: #20894a;
+    margin-bottom: clamp(20px, 4vw, 24px);
     font-weight: 700;
+    line-height: 1.2;
 }
 
 .jot-section p {
-    font-size: clamp(16px, 2vw, 18px);
-    line-height: 1.6;
+    font-size: clamp(15px, 2vw, 18px);
+    line-height: 1.7;
     color: #4b5563;
-    margin-bottom: 16px;
-    max-width: 800px;
+    margin-bottom: clamp(14px, 3vw, 16px);
+    max-width: 100%;
 }
 
-/* Grid Layouts */
+/* ---------- GRID LAYOUTS ---------- */
 .jot-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    margin-top: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: clamp(20px, 4vw, 30px);
+    margin-top: clamp(24px, 5vw, 30px);
 }
 
 .jot-card {
-    background: #f9fff9;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e0f5e6;
-    transition: transform 0.2s;
+    background: linear-gradient(135deg, #f9fff9 0%, #f4fdf6 100%);
+    padding: clamp(24px, 5vw, 30px);
+    border-radius: clamp(10px, 2vw, 12px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border: 1.5px solid #d4f1dc;
+    transition: all 0.3s ease;
 }
 
 .jot-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.12);
+    border-color: #28a745;
 }
 
 .jot-card h3 {
-    font-size: 22px;
-    color: #1c7c31;
-    margin-bottom: 12px;
+    font-size: clamp(18px, 3vw, 22px);
+    color: #20894a;
+    margin-bottom: clamp(10px, 2vw, 12px);
+    font-weight: 600;
 }
 
-/* Tech List */
+.jot-card p {
+    font-size: clamp(14px, 2vw, 16px);
+    line-height: 1.6;
+    color: #555;
+}
+
+/* ---------- TECH LIST ---------- */
 .jot-tech-list {
     list-style: none;
     padding: 0;
-    margin-top: 20px;
+    margin-top: clamp(16px, 3vw, 20px);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: clamp(10px, 2vw, 12px);
 }
 
 .jot-tech-list li {
-    font-size: 17px;
+    font-size: clamp(15px, 2vw, 17px);
     color: #333;
-    background: #f4f4f4;
-    padding: 12px 18px;
-    border-radius: 8px;
-    border-left: 4px solid #1c7c31;
+    background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+    padding: clamp(10px, 2vw, 12px) clamp(16px, 3vw, 18px);
+    border-radius: clamp(6px, 1vw, 8px);
+    border-left: 4px solid #28a745;
+    transition: all 0.3s ease;
+    line-height: 1.5;
 }
 
-/* Culture Grid */
+.jot-tech-list li:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.1);
+    background: #fff;
+}
+
+/* ---------- CULTURE GRID ---------- */
 .jot-culture-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-    margin-top: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+    gap: clamp(20px, 4vw, 30px);
+    margin-top: clamp(24px, 5vw, 30px);
+}
+
+.culture-item {
+    padding: clamp(16px, 3vw, 20px);
+    background: #ffffff;
+    border-radius: clamp(8px, 1.5vw, 10px);
+    border: 1px solid #e8e8e8;
+    transition: all 0.3s ease;
+}
+
+.culture-item:hover {
+    border-color: #28a745;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.08);
 }
 
 .culture-item h4 {
-    font-size: 20px;
-    color: #0f5132;
-    margin-bottom: 10px;
+    font-size: clamp(17px, 2.5vw, 20px);
+    color: #20894a;
+    margin-bottom: clamp(8px, 1.5vw, 10px);
+    font-weight: 600;
 }
 
-/* Hiring Box */
+.culture-item p {
+    font-size: clamp(14px, 2vw, 16px);
+    line-height: 1.6;
+    color: #666;
+}
+
+/* ---------- HIRING BOX ---------- */
 .jot-hiring-box {
-    background: #f0fdf4;
-    border: 2px dashed #1c7c31;
-    padding: 40px;
-    border-radius: 16px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #e8fced 100%);
+    border: 2px dashed #28a745;
+    padding: clamp(30px, 6vw, 40px);
+    border-radius: clamp(12px, 2vw, 16px);
     text-align: center;
+    box-shadow: 0 4px 16px rgba(40, 167, 69, 0.08);
+    transition: all 0.3s ease;
+}
+
+.jot-hiring-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(40, 167, 69, 0.12);
 }
 
 .jot-lead {
-    font-size: 19px;
+    font-size: clamp(16px, 2.5vw, 19px);
     color: #222;
-    margin-bottom: 12px;
+    margin-bottom: clamp(10px, 2vw, 12px);
+    line-height: 1.5;
+    font-weight: 500;
 }
 
-/* CTA Section */
+/* ---------- CTA SECTION ---------- */
 .jot-cta {
     text-align: center;
-    padding: 80px 20px;
-    background-color: #fff;
+    padding: clamp(60px, 10vw, 80px) clamp(16px, 3vw, 20px);
+    background: linear-gradient(135deg, #ffffff 0%, #f9fff9 100%);
 }
 
 .jot-cta h3 {
-    font-size: 28px;
-    color: #1c7c31;
-    margin-bottom: 10px;
+    font-size: clamp(24px, 4vw, 32px);
+    color: #20894a;
+    margin-bottom: clamp(8px, 1.5vw, 10px);
+    font-weight: 700;
 }
 
+.jot-cta p {
+    font-size: clamp(15px, 2vw, 18px);
+    color: #4b5563;
+    margin-bottom: clamp(20px, 4vw, 24px);
+}
+
+/* ---------- BUTTON STYLES ---------- */
 .jot-btn {
     display: inline-block;
-    background-color: #1c7c31;
-    color: white;
+    background: linear-gradient(135deg, #28a745 0%, #20894a 100%);
+    color: white !important;
     text-decoration: none;
-    padding: 14px 32px;
-    border-radius: 30px;
+    padding: clamp(12px, 2vw, 14px) clamp(28px, 5vw, 32px);
+    border-radius: clamp(20px, 4vw, 30px);
     font-weight: 600;
-    font-size: 16px;
-    margin-top: 24px;
-    transition: background 0.3s;
+    font-size: clamp(15px, 2vw, 16px);
+    margin-top: clamp(20px, 4vw, 24px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
+    border: none;
+    cursor: pointer;
 }
 
 .jot-btn:hover {
-    background-color: #145c24;
+    background: linear-gradient(135deg, #20894a 0%, #1a7a3d 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(40, 167, 69, 0.35);
 }
 
-/* Responsive specific */
+.jot-btn:active {
+    transform: translateY(0);
+}
+
+/* ---------- RESPONSIVE - TABLET ---------- */
+@media (max-width: 1024px) {
+    .jot-hero {
+        padding-top: clamp(90px, 12vw, 120px);
+    }
+
+    .jot-grid,
+    .jot-culture-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    }
+}
+
+/* ---------- RESPONSIVE - MOBILE ---------- */
 @media (max-width: 768px) {
     .jot-hero {
         padding-top: 100px;
-        /* Adjust for mobile navbar */
+        padding-bottom: 50px;
+    }
+
+    .jot-section {
+        padding: clamp(30px, 6vw, 40px) 0;
+    }
+
+    .jot-grid,
+    .jot-culture-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .jot-card {
+        padding: 20px;
+    }
+
+    .jot-hiring-box {
+        padding: 24px;
+    }
+
+    .jot-section.bg-light {
+        margin: 0 -16px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+/* ---------- RESPONSIVE - SMALL MOBILE ---------- */
+@media (max-width: 480px) {
+    .jot-hero {
+        padding-top: 90px;
+        padding-bottom: 40px;
+    }
+
+    .jot-hero h1 {
+        font-size: 26px;
+    }
+
+    .jot-hero p {
+        font-size: 16px;
+    }
+
+    .jot-section h2 {
+        font-size: 22px;
+    }
+
+    .jot-card {
+        padding: 16px;
+    }
+
+    .jot-tech-list li {
+        padding: 10px 14px;
+        font-size: 15px;
+    }
+
+    .jot-hiring-box {
+        padding: 20px;
+    }
+
+    .jot-btn {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+/* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
+.jot-btn:focus-visible {
+    outline: 3px solid rgba(40, 167, 69, 0.4);
+    outline-offset: 2px;
+}
+
+/* ---------- REDUCE MOTION (ACCESSIBILITY) ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .jot-card:hover,
+    .jot-btn:hover,
+    .culture-item:hover,
+    .jot-tech-list li:hover {
+        transform: none;
+    }
+}
+
+/* ---------- PRINT STYLES ---------- */
+@media print {
+    .jot-hero {
+        background: #28a745;
+        color: #000;
+        padding: 20px;
+    }
+
+    .jot-card,
+    .jot-section {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+    }
+
+    .jot-btn {
+        display: none;
     }
 }
