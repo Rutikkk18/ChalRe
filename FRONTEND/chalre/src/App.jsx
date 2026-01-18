@@ -20,6 +20,7 @@ import Scamm from "./pages/Scamm";
 import TermsAndConditions from "./pages/TermsAndConditions"
 import HelpCenter from "./pages/HelpCenter"
 import AboutChalRe from "./pages/AboutChalRe";
+import JoinOurTeam from "./pages/JoinOurTeam";
 
 export default function App() {
   return (
@@ -93,13 +94,14 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="scam" element={<Scamm/>}/>
+        <Route path="scam" element={<Scamm />} />
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/help-center" element={<HelpCenter />} />
         <Route path="/about" element={<AboutChalRe />} />
+        <Route path="/careers" element={<JoinOurTeam />} />
 
       </Route>
-      
+
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route
@@ -110,7 +112,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
-     
+
       <Route path="/verify-email" element={<VerifyEmail />} />
     </Routes>
   );
