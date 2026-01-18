@@ -319,6 +319,26 @@
   color: #6b7280;
   font-family: 'Times New Roman', Times, serif;
   font-size: clamp(14px, 2vw, 18px);
+   display: flex;
+  align-items: center;
+  height: 100%;
+  line-height: 1;
+}
+.seat-input {
+  display: flex;
+  align-items: center; /* ✅ same horizontal line */
+  gap: 8px;
+  height: 100%;
+}
+.seat-input input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: clamp(14px, 2vw, 16px);
+  font-family: 'Times New Roman', Times, serif;
+  line-height: 1;
+  padding: 0;
+  width: 60px;
 }
 
 .search-item input {

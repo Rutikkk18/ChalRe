@@ -1,8 +1,20 @@
 // src/pages/MyBookings.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/mybookings.css";
-import { MapPin, Calendar, Users, IndianRupee, Eye, XCircle, Clock, History, Star, MessageCircle } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  Users,
+  IndianRupee,
+  Eye,
+  XCircle,
+  Clock,
+  History,
+  Star,
+  MessageCircle
+} from "lucide-react";
 import RatingModal from "../components/RatingModal";
 import ChatModal from "../components/ChatModal";
 
@@ -10,12 +22,14 @@ export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
   const [upcomingBookings, setUpcomingBookings] = useState([]);
   const [pastBookings, setPastBookings] = useState([]);
-  const [activeTab, setActiveTab] = useState("upcoming"); // "upcoming" or "past"
+  const [activeTab, setActiveTab] = useState("upcoming");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [ratingModal, setRatingModal] = useState(null); // { rideId, driverName }
-  const [chatModal, setChatModal] = useState(null); // { rideId, otherUser }
-  const [ratedRides, setRatedRides] = useState(new Set()); // Track rated rides
+  const [ratingModal, setRatingModal] = useState(null);
+  const [chatModal, setChatModal] = useState(null);
+  const [ratedRides, setRatedRides] = useState(new Set());
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadBookings();
@@ -27,7 +41,11 @@ export default function MyBookings() {
       const separatedData = res.data || {};
       setUpcomingBookings(separatedData.upcoming || []);
       setPastBookings(separatedData.past || []);
-      setBookings(activeTab === "upcoming" ? (separatedData.upcoming || []) : (separatedData.past || []));
+      setBookings(
+        activeTab === "upcoming"
+          ? separatedData.upcoming || []
+          : separatedData.past || []
+      );
     } catch (err) {
       console.error(err);
       setError("Failed to load bookings");
@@ -40,16 +58,6 @@ export default function MyBookings() {
     setBookings(activeTab === "upcoming" ? upcomingBookings : pastBookings);
   }, [activeTab, upcomingBookings, pastBookings]);
 
-  const checkIfRated = async (rideId) => {
-    try {
-      const res = await api.get(`/ratings/driver/${bookings.find(b => b.ride.id === rideId)?.ride.driver.id}`);
-      const ratings = res.data || [];
-      return ratings.some(r => r.ride?.id === rideId);
-    } catch (err) {
-      return false;
-    }
-  };
-
   const handleRateClick = (booking) => {
     setRatingModal({
       rideId: booking.ride.id,
@@ -58,8 +66,8 @@ export default function MyBookings() {
   };
 
   const handleRatingSuccess = (rideId) => {
-    setRatedRides(prev => new Set([...prev, rideId]));
-    loadBookings(); // Refresh to update UI
+    setRatedRides((prev) => new Set([...prev, rideId]));
+    loadBookings();
   };
 
   const handleChatClick = (booking) => {
@@ -81,9 +89,9 @@ export default function MyBookings() {
       let errorMsg = "Failed to cancel booking.";
       if (err.response?.data) {
         const errorData = err.response.data;
-        if (typeof errorData === 'object' && errorData.error) {
+        if (typeof errorData === "object" && errorData.error) {
           errorMsg = errorData.error;
-        } else if (typeof errorData === 'string') {
+        } else if (typeof errorData === "string") {
           errorMsg = errorData;
         }
       }
@@ -94,7 +102,7 @@ export default function MyBookings() {
   const viewRide = (id) => {
     navigate(`/ridedetails/${id}`);
   };
-  
+
   if (loading) return <div className="booking-list-wrapper">Loading...</div>;
 
   return (
@@ -136,7 +144,9 @@ export default function MyBookings() {
             <div className="booking-info">
               <div className="info-item">
                 <Calendar />
-                <span>{b.ride.date} • {b.ride.time}</span>
+                <span>
+                  {b.ride.date} • {b.ride.time}
+                </span>
               </div>
 
               <div className="info-item">
@@ -154,32 +164,42 @@ export default function MyBookings() {
               </div>
 
               <div className="info-item">
-                <span className="booking-status" style={{ 
-                  color: b.status === "BOOKED" ? "#059669" : "#dc2626",
-                  fontWeight: "600"
-                }}>
-                  Booking: {b.status === "BOOKED" ? "✓ Confirmed" : "Cancelled"}
+                <span
+                  className="booking-status"
+                  style={{
+                    color:
+                      b.status === "BOOKED" ? "#059669" : "#dc2626",
+                    fontWeight: "600"
+                  }}
+                >
+                  Booking:{" "}
+                  {b.status === "BOOKED" ? "✓ Confirmed" : "Cancelled"}
                 </span>
               </div>
 
               <div className="info-item">
                 <span className={`pstatus ${b.paymentStatus.toLowerCase()}`}>
-                  Payment: {b.paymentStatus === "PAID" ? "✓ Paid" : 
-                           b.paymentStatus === "PENDING" ? "Pending (Cash)" :
-                           b.paymentStatus === "REFUNDED" ? "✓ Refunded" : b.paymentStatus}
+                  Payment:{" "}
+                  {b.paymentStatus === "PAID"
+                    ? "✓ Paid"
+                    : b.paymentStatus === "PENDING"
+                    ? "Pending (Cash)"
+                    : b.paymentStatus === "REFUNDED"
+                    ? "✓ Refunded"
+                    : b.paymentStatus}
                 </span>
               </div>
             </div>
 
             <div className="booking-actions">
+              <button
+                className="btn-view"
+                onClick={() => viewRide(b.ride.id)}
+                title="View Ride Details"
+              >
+                <Eye /> View
+              </button>
 
-               <button
-                                className="btn-view"
-                                onClick={() => viewRide(ride.id)}
-                                title="View Details"
-                              >
-                                <Eye /> View
-                              </button>
               {b.status === "BOOKED" && activeTab === "upcoming" && (
                 <>
                   <button
@@ -196,20 +216,22 @@ export default function MyBookings() {
                   </button>
                 </>
               )}
-              
-              {activeTab === "past" && b.status === "BOOKED" && !ratedRides.has(b.ride.id) && (
-                <button
-                  className="rate-btn"
-                  onClick={() => handleRateClick(b)}
-                >
-                  <Star /> Rate Driver
-                </button>
-              )}
-              
+
+              {activeTab === "past" &&
+                b.status === "BOOKED" &&
+                !ratedRides.has(b.ride.id) && (
+                  <button
+                    className="rate-btn"
+                    onClick={() => handleRateClick(b)}
+                  >
+                    <Star /> Rate Driver
+                  </button>
+                )}
+
               {activeTab === "past" && ratedRides.has(b.ride.id) && (
                 <p className="rated-text">✓ Rated</p>
               )}
-              
+
               {b.status === "CANCELLED" && (
                 <p className="cancelled-text">Booking Cancelled</p>
               )}

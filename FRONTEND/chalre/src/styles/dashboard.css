@@ -377,8 +377,7 @@
 .upi-section input {
   width: 100%;
   max-width: 400px;
-  margin-top: clamp(6px, 1vw, 8px);
-  margin-bottom: clamp(12px, 2vw, 16px); /* ADDED: Space after input */
+    margin: 0;
   padding: clamp(9px, 1.5vw, 10px);
   border-radius: clamp(6px, 1.5vw, 8px);
   border: 1.5px solid #ddd;
@@ -441,6 +440,14 @@
   display: block;
   font-weight: 500;
 }
+
+.text {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 14px); /* ✅ horizontal gap */
+  flex-wrap: wrap; /* mobile safe */
+}
+
 
 /* Mobile: Full-width button */
 @media (max-width: 768px) {
