@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import "../styles/mybookings.css";
-import { MapPin, Calendar, Users, IndianRupee, XCircle, Clock, History, Star, MessageCircle } from "lucide-react";
+import { MapPin, Calendar, Users, IndianRupee, Eye, XCircle, Clock, History, Star, MessageCircle } from "lucide-react";
 import RatingModal from "../components/RatingModal";
 import ChatModal from "../components/ChatModal";
 
