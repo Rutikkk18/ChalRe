@@ -111,6 +111,7 @@ public class RideService {
         List<Ride> rides = rideRepository
                 .findByStartLocationIgnoreCaseAndEndLocationIgnoreCase(from, to)
                 .stream()
+
                 .filter(ride -> ride.getAvailableSeats() > 0)
                 .toList();
 

@@ -34,10 +34,9 @@ const AboutChalRe = () => {
             </p>
           </div>
           <div className="step-card">
-            <h3>2. Request & Confirm</h3>
+            <h3>2. User Search & Confirm</h3>
             <p>
-              Riders send booking requests. The ride owner reviews and approves
-              requests.
+              Users select the ride , pay charges online or cash and confirm booking.
             </p>
           </div>
           <div className="step-card">

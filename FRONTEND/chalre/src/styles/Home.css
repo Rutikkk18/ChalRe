@@ -301,6 +301,13 @@
   flex-direction: column;
   padding: 6px clamp(8px, 1.5vw, 14px);
   min-width: 0;
+  border: none;
+  outline: none;
+}
+
+.search-item:focus-within {
+  outline: none;
+  border: none;
 }
 
 .search-item.small {
@@ -319,17 +326,19 @@
   color: #6b7280;
   font-family: 'Times New Roman', Times, serif;
   font-size: clamp(14px, 2vw, 18px);
-   display: flex;
+  display: flex;
   align-items: center;
   height: 100%;
   line-height: 1;
 }
+
 .seat-input {
   display: flex;
-  align-items: center; /* ✅ same horizontal line */
+  align-items: center;
   gap: 8px;
   height: 100%;
 }
+
 .seat-input input {
   border: none;
   outline: none;
@@ -341,6 +350,11 @@
   width: 60px;
 }
 
+.seat-input input:focus {
+  outline: none;
+  border: none;
+}
+
 .search-item input {
   border: none;
   outline: none;
@@ -348,6 +362,12 @@
   padding: 6px 0;
   background: transparent;
   width: 100%;
+}
+
+.search-item input:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
 }
 
 .search-item input::placeholder {
@@ -379,6 +399,12 @@
   margin-right: clamp(10px, 3vw, 60px);
   font-family: 'Times New Roman', Times, serif;
   flex-shrink: 0;
+  outline: none;
+}
+
+.search-action:focus {
+  outline: none;
+  border: none;
 }
 
 .search-action:hover {
@@ -400,20 +426,27 @@
   background: white;
   padding: clamp(20px, 4vw, 32px);
   width: 100%;
-  max-width: 280px;
+  max-width: 340px;
   border-radius: 14px;
   text-align: center;
   box-shadow: 0 4px 14px rgba(0, 100, 0, 0.12);
-  font-family: 'Times New Roman', Times, serif;
-  font-size: clamp(18px, 2.5vw, 22px);
+  font-family: 'Times New Roman';
+  font-size: clamp(10px, 1.1vw, 22px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feature-card h3 {
   color: #1c7c31;
-  font-size: clamp(20px, 3vw, 25px);
+  font-size: clamp(20px, 2vw, 25px);
   margin-bottom: 10px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Times New Roman';
 }
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
+}
+
 
 .divider.gradient {
   height: 2px;
@@ -434,6 +467,12 @@
   background-color: #1fa055;
   margin: 0 auto clamp(40px, 8vw, 70px);
   border-radius: 30px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+
+}
+.ride-sharehome:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
 }
 
 .h2hr {
@@ -522,7 +561,7 @@
 }
 
 .fraud-div .fraud-btn {
-  background-color: #6af496 !important;
+  background-color: #0da82f !important;
   color: white !important;
   border: none;
   margin-left: 0;
@@ -536,7 +575,7 @@
 }
 
 .fraud-btn:hover {
-  background-color: #008fd1 !important;
+  background-color: #0b7b07 !important;
 }
 
 /* ================================
@@ -660,7 +699,7 @@
 }
 
 .help-btn {
-  background: #0b9a2a !important;
+  background: #0da82f !important;
   color: #fffefe !important;
   border: none;
   padding: 14px 28px;
@@ -672,7 +711,7 @@
 }
 
 .help-btn:hover {
-  background: #054e02 !important;
+  background: #0b7b07 !important;
 }
 
 /* ================================
