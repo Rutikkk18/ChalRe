@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +20,7 @@ public class VerificationService {
     private final VerificationDocRepository docRepo;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
-
-    private static final String UPLOAD_DIR = "uploads/verification/";
+    private final CloudinaryService cloudinaryService;
 
     @Transactional
     public void submitVerification(
@@ -39,11 +36,9 @@ public class VerificationService {
         List<VerificationDoc> oldDocs = docRepo.findByUser(user);
         docRepo.deleteAll(oldDocs);
 
-        try {
-            Files.createDirectories(Paths.get(UPLOAD_DIR));
-        } catch (IOException e) {
-            throw new RuntimeException("Could not create upload directory");
-        }
+
+        // Cloudinary upload directory (folder name in Cloudinary)
+        String cloudinaryFolder = "chalre/verification";
 
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
@@ -58,19 +53,13 @@ public class VerificationService {
                 throw new RuntimeException("Invalid file type");
             }
 
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path filePath = Paths.get(UPLOAD_DIR).resolve(fileName);
-
-            try {
-                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to store verification file");
-            }
+            // Upload to Cloudinary
+            String secureUrl = cloudinaryService.uploadFile(file, cloudinaryFolder);
 
             VerificationDoc doc = new VerificationDoc();
             doc.setUser(user);
             doc.setDocType(types.get(i));
-            doc.setUrl("/uploads/verification/" + fileName);
+            doc.setUrl(secureUrl); // Store Cloudinary URL
             doc.setUploadedAt(LocalDateTime.now());
 
             docRepo.save(doc);
