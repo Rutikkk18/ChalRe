@@ -33,7 +33,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   animation: slideIn 0.4s ease;
 }
 
@@ -70,8 +70,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 14px;
+  gap: 20px;
+  padding-bottom: 20px;
   border-bottom: 1.5px solid #f0f0f0;
 }
 
@@ -85,8 +85,8 @@
 }
 
 .location svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
   color: var(--green-main);
   margin-top: 2px;
@@ -121,42 +121,32 @@
 /* ---------- ARROW ICON ---------- */
 .arrow-icon {
   color: var(--green-main) !important;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
   transition: transform 0.3s ease;
+  margin: 0 8px;
 }
 
 .ride-card:hover .arrow-icon {
   transform: translateX(4px);
 }
 
-/* ---------- RIDE INFO (BOTTOM SECTION) ---------- */
+/* ---------- RIDE INFO (BOTTOM SECTION) - HORIZONTAL LAYOUT ---------- */
 .ride-info {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-/* ---------- INFO GROUP (LEFT SIDE) ---------- */
-.info-group {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  flex: 1;
+  gap: 24px;
 }
 
 /* ---------- INFO ITEM ---------- */
 .info-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   color: var(--text-dark);
   font-size: 14px;
-  white-space: nowrap;
 }
 
 .info-item svg {
@@ -168,34 +158,33 @@
 
 .info-item strong {
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--text-muted);
+  margin-right: 4px;
 }
 
-/* ---------- PRICE & BUTTON GROUP ---------- */
-.price-action-group {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-left: auto;
+.info-item span {
+  font-weight: 600;
+  color: var(--text-dark);
 }
 
 /* ---------- PRICE ITEM ---------- */
 .info-item.price {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--green-dark);
   margin: 0;
+  white-space: nowrap;
 }
 
 .info-item.price svg {
   color: var(--green-main);
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
 
 /* ---------- BOOK BUTTON ---------- */
-.ride-info button.book-btn {
-  padding: 11px 24px;
+.book-btn {
+  padding: 12px 32px;
   background: linear-gradient(135deg, #28a745, #1e8e3a) !important;
   color: white !important;
   border: none;
@@ -354,15 +343,17 @@
   }
 
   .ride-card-header {
-    gap: 14px;
-  }
-
-  .info-group {
     gap: 16px;
   }
 
-  .price-action-group {
-    gap: 14px;
+  .ride-info {
+    gap: 20px;
+  }
+
+  .arrow-icon {
+    width: 28px;
+    height: 28px;
+    margin: 0 4px;
   }
 }
 
@@ -370,7 +361,7 @@
 @media (max-width: 768px) {
   .ride-card {
     padding: 16px;
-    gap: 14px;
+    gap: 16px;
   }
 
   .ride-card:hover {
@@ -381,7 +372,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-    padding-bottom: 12px;
+    padding-bottom: 16px;
   }
 
   .location-name {
@@ -394,8 +385,8 @@
 
   .arrow-icon {
     transform: rotate(90deg);
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     align-self: center;
     margin: 4px 0;
   }
@@ -404,43 +395,28 @@
     transform: rotate(90deg) translateY(4px);
   }
 
+  /* Stack all items vertically on mobile */
   .ride-info {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
-  }
-
-  .info-group {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .info-item {
     justify-content: flex-start;
   }
 
-  .price-action-group {
-    flex-direction: column-reverse;
-    align-items: stretch;
-    margin-left: 0;
-    gap: 10px;
-  }
-
   .info-item.price {
-    font-size: 20px;
+    font-size: 22px;
     justify-content: flex-start;
   }
 
-  .book-btn,
-  .view-btn {
+  .book-btn {
     width: 100%;
     justify-content: center;
-    padding: 12px 20px;
+    padding: 14px 20px;
   }
 
-  .book-btn:hover,
-  .view-btn:hover {
+  .book-btn:hover {
     transform: none;
   }
 }
@@ -465,13 +441,12 @@
   }
 
   .info-item.price {
-    font-size: 19px;
+    font-size: 20px;
   }
 
-  .book-btn,
-  .view-btn {
+  .book-btn {
     font-size: 14px;
-    padding: 11px 18px;
+    padding: 12px 18px;
   }
 }
 

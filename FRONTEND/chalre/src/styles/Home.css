@@ -239,12 +239,13 @@
 .hero {
   margin-top: clamp(80px, 15vw, 100px);
   text-align: center;
-  padding: clamp(40px, 8vw, 90px) 20px clamp(120px, 20vw, 230px);
+  padding: clamp(40px, 8vw, 90px) 20px clamp(60px, 12vw, 100px);
   color: #1c7c31;
   background-image: url("/hero-banner.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  position: relative;
 }
 
 .hero h1 {
@@ -253,10 +254,12 @@
   margin-top: clamp(-20px, -3vw, -40px);
   font-family: 'Times New Roman', Times, serif;
   line-height: 1.2;
+  margin-bottom: 12px;
 }
 
 .hero p {
-  margin-top: 12px;
+  margin-top: 0;
+  margin-bottom: 40px;
   font-size: clamp(16px, 2.5vw, 19px);
   opacity: 0.95;
   font-family: 'Times New Roman', Times, serif;
@@ -275,20 +278,20 @@
   border-radius: 12px;
   padding: 10px;
   max-width: min(1100px, 95%);
-  margin: 40px auto 0;
+  margin: 0 auto;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
-  transition: all 0.01s ease;
+  transition: all 0.3s ease;
   gap: 8px;
+  position: relative;
 }
 
 .home-search-bar:not(.search-sticky) {
   position: relative;
-  margin-top: -10px;
 }
 
 .search-sticky {
   position: fixed;
-  top: 80px;
+  top: 90px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 90;
@@ -315,21 +318,23 @@
 }
 
 .search-item label {
-  font-size: clamp(14px, 2vw, 18px);
+  font-size: clamp(12px, 1.5vw, 14px);
   font-weight: 600;
   font-family: 'Times New Roman', Times, serif;
   color: #6b7280;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
+  line-height: 1.2;
 }
 
 .seat-label {
   color: #6b7280;
   font-family: 'Times New Roman', Times, serif;
-  font-size: clamp(14px, 2vw, 18px);
+  font-size: clamp(12px, 1.5vw, 14px);
   display: flex;
   align-items: center;
   height: 100%;
-  line-height: 1;
+  line-height: 1.2;
+  margin-bottom: 4px;
 }
 
 .seat-input {
@@ -345,7 +350,7 @@
   background: transparent;
   font-size: clamp(14px, 2vw, 16px);
   font-family: 'Times New Roman', Times, serif;
-  line-height: 1;
+  line-height: 1.4;
   padding: 0;
   width: 60px;
 }
@@ -358,10 +363,11 @@
 .search-item input {
   border: none;
   outline: none;
-  font-size: clamp(13px, 1.8vw, 15px);
+  font-size: clamp(14px, 2vw, 16px);
   padding: 6px 0;
   background: transparent;
   width: 100%;
+  line-height: 1.4;
 }
 
 .search-item input:focus {
@@ -372,7 +378,7 @@
 
 .search-item input::placeholder {
   color: #687869;
-  font-size: clamp(14px, 2vw, 18px);
+  font-size: clamp(14px, 2vw, 16px);
   font-weight: 500;
   font-family: 'Times New Roman', Times, serif;
   opacity: 1;
@@ -771,7 +777,7 @@
 
 @media (max-width: 480px) {
   .hero {
-    padding: 30px 15px 100px;
+    padding: 30px 15px 80px;
   }
 
   .features {
@@ -793,6 +799,7 @@
   border: none;
   outline: none;
   background: transparent;
-  font-size: clamp(13px, 1.8vw, 15px);
+  font-size: clamp(14px, 2vw, 16px);
   width: 100%;
+  line-height: 1.4;
 }

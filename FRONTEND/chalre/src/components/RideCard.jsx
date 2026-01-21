@@ -15,13 +15,12 @@ export default function RideCard({ ride }) {
   // Extract location names (first part before comma)
   const getLocationName = (fullLocation) => {
     if (!fullLocation) return "";
-    // If location has a comma, take the first part, otherwise take the whole string
     return fullLocation.split(',')[0].trim();
   };
 
   return (
     <div className={`ride-card ${isFull ? "full" : ""}`}>
-      {/* HEADER */}
+      {/* HEADER - LOCATIONS */}
       <div className="ride-card-header">
         {/* START LOCATION */}
         <div className="location">
@@ -34,6 +33,7 @@ export default function RideCard({ ride }) {
           </div>
         </div>
 
+        {/* ARROW SEPARATOR */}
         <ArrowRight className="arrow-icon" />
 
         {/* END LOCATION */}
@@ -48,8 +48,9 @@ export default function RideCard({ ride }) {
         </div>
       </div>
 
-      {/* DETAILS */}
+      {/* BOTTOM ROW - DATE, SEATS, PRICE, BUTTON (ALL IN ONE LINE) */}
       <div className="ride-info">
+        {/* DATE & TIME */}
         <div className="info-item">
           <Clock />
           <span>
@@ -57,6 +58,7 @@ export default function RideCard({ ride }) {
           </span>
         </div>
 
+        {/* SEATS LEFT */}
         <div className="info-item">
           <Users />
           <span>
@@ -64,11 +66,10 @@ export default function RideCard({ ride }) {
           </span>
         </div>
 
+        {/* PRICE */}
         <div className="info-item price">
           <IndianRupee />
-          <span>
-            <strong>Price:</strong> ₹{ride.price}
-          </span>
+          <span>₹{ride.price}</span>
         </div>
 
         {/* BOOK BUTTON */}
