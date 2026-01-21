@@ -34,4 +34,22 @@ public class AdminVerificationController {
 
         return ResponseEntity.ok(adminVerificationService.getVerificationDetails(userId));
     }
+
+    // 3. Approve Driver
+    @PostMapping("/approve/{userId}")
+    public ResponseEntity<?> approveDriver(@PathVariable Long userId) {
+        adminVerificationService.approveDriver(userId);
+        return ResponseEntity.ok("Driver approved successfully");
+    }
+
+    // 4. Reject Driver
+    @PostMapping("/reject/{userId}")
+    public ResponseEntity<?> rejectDriver(
+            @PathVariable Long userId,
+            @RequestBody(required = false) java.util.Map<String, String> body) {
+        
+        String remarks = body != null ? body.get("remarks") : null;
+        adminVerificationService.rejectDriver(userId, remarks);
+        return ResponseEntity.ok("Driver rejected successfully");
+    }
 }

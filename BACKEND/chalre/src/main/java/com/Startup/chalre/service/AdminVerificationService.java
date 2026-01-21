@@ -64,4 +64,28 @@ public class AdminVerificationService {
                 ).collect(Collectors.toList())
         );
     }
+
+    // ▬▬▬ 3. Approve Driver ▬▬▬
+    public void approveDriver(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setVerificationStatus("APPROVED");
+        user.setIsDriverVerified(true);
+        user.setVerificationRemarks("Documents Verified by Admin");
+
+        userRepository.save(user);
+    }
+
+    // ▬▬▬ 4. Reject Driver ▬▬▬
+    public void rejectDriver(Long userId, String remarks) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setVerificationStatus("REJECTED");
+        user.setIsDriverVerified(false);
+        user.setVerificationRemarks(remarks != null && !remarks.isEmpty() ? remarks : "Documents Rejected by Admin");
+
+        userRepository.save(user);
+    }
 }

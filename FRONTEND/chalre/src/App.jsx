@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -22,9 +22,15 @@ import HelpCenter from "./pages/HelpCenter"
 import AboutChalRe from "./pages/AboutChalRe";
 import JoinOurTeam from "./pages/JoinOurTeam";
 
+// Admin Imports
+import AdminRoute from "./utils/AdminRoute";
+import AdminLayout from "./layouts/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import VerificationList from "./pages/admin/VerificationList";
+import VerificationDetail from "./pages/admin/VerificationDetail";
+
 export default function App() {
   return (
-
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
@@ -99,7 +105,21 @@ export default function App() {
         <Route path="/help-center" element={<HelpCenter />} />
         <Route path="/about" element={<AboutChalRe />} />
         <Route path="/careers" element={<JoinOurTeam />} />
+      </Route>
 
+      {/* 🛡️ ADMIN PANEL ROUTES */}
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }
+      >
+        <Route index element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="verifications" element={<VerificationList />} />
+        <Route path="verifications/:userId" element={<VerificationDetail />} />
       </Route>
 
       <Route path="/login" element={<Login />} />
