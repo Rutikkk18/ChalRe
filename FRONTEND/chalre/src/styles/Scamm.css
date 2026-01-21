@@ -1,10 +1,12 @@
 /* ================================
-   SCAM AWARENESS PAGE - FULLY RESPONSIVE & POLISHED
+   SCAM AWARENESS PAGE - POLISHED & RESPONSIVE
 ================================ */
 
 /* ---------- GLOBAL RESET ---------- */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 /* ---------- MAIN WRAPPER ---------- */
@@ -12,7 +14,8 @@
   background: linear-gradient(135deg, #eafff0, #c8f7d4);
   min-height: 100vh;
   font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  animation: fadeIn 0.5s ease;
+  animation: fadeIn 0.6s ease;
+  padding-bottom: clamp(40px, 8vw, 60px);
 }
 
 @keyframes fadeIn {
@@ -26,16 +29,17 @@
 
 /* ---------- HERO SECTION ---------- */
 .scam-hero {
-  background: linear-gradient(135deg, #eafff0, #c8f7d4);
-  padding: clamp(60px, 12vw, 80px) clamp(16px, 3vw, 20px);
+  background: linear-gradient(135deg, #d4f5e0, #a8e6c5);
+  padding: clamp(50px, 10vw, 80px) clamp(20px, 4vw, 40px);
+  margin-bottom: clamp(40px, 8vw, 60px);
 }
 
 .scam-hero-inner {
-  max-width: min(1100px, 100%);
-  margin: auto;
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: clamp(40px, 8vw, 60px);
+  gap: clamp(40px, 8vw, 80px);
   flex-wrap: wrap;
 }
 
@@ -45,23 +49,20 @@
   min-width: min(300px, 100%);
   display: flex;
   justify-content: center;
-  margin-top: clamp(30px, 6vw, 50px);
 }
 
 .scam-image img {
   width: 100%;
-  max-width: min(420px, 100%);
+  max-width: 450px;
   height: auto;
   object-fit: contain;
-  background: linear-gradient(135deg, #eafff0, #c8f7d4);
-  padding: clamp(16px, 3vw, 20px);
-  border-radius: clamp(14px, 2vw, 16px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
 }
 
 .scam-image img:hover {
-  transform: scale(1.02);
+  transform: scale(1.03);
 }
 
 /* ---------- HERO TEXT ---------- */
@@ -71,481 +72,372 @@
 }
 
 .scam-hero-text h2 {
-  font-size: clamp(28px, 5vw, 34px);
+  font-size: clamp(28px, 5vw, 42px);
   color: #0f5132;
-  margin-bottom: clamp(14px, 3vw, 16px);
-  max-width: 100%;
-  line-height: 1.3;
+  margin-bottom: clamp(16px, 3vw, 20px);
+  line-height: 1.2;
   font-weight: 700;
 }
 
 .scam-hero-text p {
-  font-size: clamp(16px, 2.5vw, 17px);
-  line-height: 1.6;
-  color: #3f4f46;
-  max-width: 100%;
+  font-size: clamp(16px, 2.5vw, 18px);
+  line-height: 1.7;
+  color: #2d5f4a;
 }
 
 /* ---------- CONTENT SECTION ---------- */
 .scam-content {
-  max-width: min(900px, 100%);
-  margin: clamp(60px, 12vw, 80px) auto;
-  padding: 0 clamp(16px, 3vw, 20px);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 40px);
   display: flex;
   flex-direction: column;
-  gap: clamp(30px, 6vw, 40px);
+  gap: clamp(40px, 8vw, 60px);
 }
 
 /* ---------- CARDS ---------- */
 .scam-card {
   background: #ffffff;
-  padding: clamp(40px, 8vw, 60px) clamp(30px, 6vw, 40px);
-  border-radius: clamp(16px, 3vw, 20px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  max-width: min(1200px, 100%);
-  margin: clamp(40px, 8vw, 80px) auto;
-  width: 100%;
-  font-family: 'Times New Roman', Times, serif;
-  transition: box-shadow 0.3s ease;
+  padding: clamp(40px, 8vw, 60px) clamp(30px, 6vw, 50px);
+  border-radius: 24px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .scam-card:hover {
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
 }
 
-.scam-card h3 {
-  font-size: clamp(20px, 4vw, 22px);
-  margin-bottom: clamp(10px, 2vw, 12px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* ---------- TITLES ---------- */
+.scam-title {
+  text-align: center;
+  font-size: clamp(26px, 5vw, 36px);
   font-weight: 700;
   color: #0f5132;
+  margin-bottom: clamp(35px, 7vw, 50px);
   line-height: 1.3;
-  text-align: center;
 }
 
-.scam-card p,
-.scam-card li {
-  font-size: clamp(15px, 2vw, 16px);
-  line-height: 1.6;
-  color: #4b5563;
+.scam-titile {
+  text-align: center;
+  font-size: clamp(24px, 4.5vw, 32px);
+  font-weight: 700;
+  color: #0f5132;
+  margin-bottom: clamp(16px, 3vw, 20px);
+  line-height: 1.3;
 }
 
 .sc-p {
   text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-/* ---------- LIST ---------- */
-.scam-card ul {
-  padding-left: clamp(18px, 3vw, 20px);
-  margin: clamp(12px, 3vw, 16px) 0;
-}
-
-.scam-card ul li {
-  margin-bottom: clamp(8px, 2vw, 10px);
-}
-
-/* ---------- ACTION SECTION ---------- */
-.scam-action-section {
-  max-width: min(1200px, 100%);
-  margin: clamp(60px, 12vw, 90px) auto clamp(40px, 8vw, 90px);
-  padding: 0 clamp(16px, 3vw, 20px);
-  font-family: 'Times New Roman', Times, serif;
-}
-
-.scam-action-title {
-  font-size: clamp(30px, 5vw, 38px);
-  font-weight: 700;
-  color: #0f3f46;
-  margin-bottom: clamp(40px, 8vw, 50px);
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  line-height: 1.3;
-}
-
-/* ---------- ACTION GRID ---------- */
-.scam-action-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
-  gap: clamp(40px, 8vw, 60px);
-}
-
-.scam-action-item h4 {
-  font-size: clamp(18px, 3vw, 20px);
-  font-weight: 600;
-  color: #0f3f46;
-  margin-bottom: clamp(12px, 2vw, 14px);
-  line-height: 1.3;
-}
-
-.scam-action-item p {
-  font-size: clamp(15px, 2vw, 16px);
+  font-size: clamp(15px, 2vw, 17px);
   line-height: 1.7;
-  color: #5f7c82;
+  color: #4b5563;
+  max-width: 700px;
+  margin: 0 auto clamp(24px, 5vw, 30px);
 }
 
 /* ---------- SCAM GRID ---------- */
-.scam-title {
-  text-align: center;
-  font-size: clamp(30px, 5vw, 36px);
-  font-weight: 700;
-  color: #0f3d2e;
-  margin-bottom: clamp(40px, 8vw, 50px);
-  line-height: 1.3;
-}
-
 .scam-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
-  gap: clamp(35px, 7vw, 50px);
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: clamp(30px, 6vw, 40px);
 }
 
 .scam-item {
   text-align: left;
+  padding: clamp(20px, 4vw, 30px);
+  background: #f9fafb;
+  border-radius: 16px;
+  transition: all 0.3s ease;
 }
 
-/* ---------- ICON ---------- */
+.scam-item:hover {
+  background: #f0f9f4;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(15, 81, 50, 0.1);
+}
+
 .scam-icon {
-  font-size: clamp(30px, 6vw, 34px);
-  margin-bottom: clamp(12px, 3vw, 14px);
-  color: #0f766e;
+  font-size: clamp(32px, 6vw, 40px);
+  margin-bottom: clamp(12px, 3vw, 16px);
+  display: block;
 }
 
 .scam-item h4 {
-  font-size: clamp(18px, 3vw, 20px);
+  font-size: clamp(18px, 3.5vw, 22px);
   font-weight: 600;
-  color: #0f3d2e;
-  margin-bottom: clamp(8px, 2vw, 10px);
-  line-height: 1.3;
+  color: #0f5132;
+  margin-bottom: clamp(10px, 2vw, 14px);
+  line-height: 1.4;
 }
 
 .scam-item p {
-  font-size: clamp(15px, 2vw, 16px);
-  line-height: 1.6;
+  font-size: clamp(14px, 2vw, 16px);
+  line-height: 1.7;
   color: #4b5563;
 }
 
 /* ---------- DARK CARD ---------- */
 .scam-card.dark {
-  background: #0f5132;
+  background: linear-gradient(135deg, #0f5132, #0a3d24);
   color: #ffffff;
   padding: clamp(50px, 10vw, 70px) clamp(40px, 8vw, 60px);
-  border-radius: clamp(14px, 3vw, 16px);
-  max-width: min(1200px, 100%);
 }
 
 .scam-dark-title {
-  font-size: clamp(32px, 6vw, 40px);
+  font-size: clamp(26px, 5vw, 36px);
   font-weight: 700;
   margin-bottom: clamp(40px, 8vw, 50px);
-  max-width: 100%;
+  text-align: center;
   line-height: 1.3;
 }
 
-/* ---------- DARK GRID ---------- */
 .scam-dark-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: clamp(40px, 8vw, 60px);
 }
 
+.scam-dark-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: clamp(25px, 5vw, 35px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.scam-dark-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-5px);
+}
+
+.scam-dark-icon {
+  font-size: clamp(36px, 7vw, 44px);
+  margin-bottom: clamp(16px, 3vw, 20px);
+  display: block;
+}
+
 .scam-dark-item h4 {
-  font-size: clamp(20px, 4vw, 22px);
+  font-size: clamp(20px, 4vw, 24px);
   font-weight: 600;
-  margin: clamp(16px, 3vw, 18px) 0 clamp(10px, 2vw, 12px);
+  margin-bottom: clamp(12px, 2vw, 16px);
   line-height: 1.3;
+  color: #ffffff;
 }
 
 .scam-dark-item p {
-  font-size: clamp(15px, 2vw, 16px);
+  font-size: clamp(14px, 2vw, 16px);
   line-height: 1.7;
   color: #e6f4ec;
 }
 
-.scam-dark-icon {
-  font-size: clamp(36px, 7vw, 42px);
-}
-
 .scam-note {
-  margin-top: clamp(12px, 3vw, 14px);
-  font-weight: 500;
-  color: #b7e4c7;
-  font-size: clamp(14px, 2vw, 15px);
-}
-
-/* ---------- BUTTON ---------- */
-.scam-btn {
-  margin-top: clamp(14px, 3vw, 16px);
-  background: #00aaff !important;
-  color: white !important;
-  border: none;
-  padding: clamp(11px, 2vw, 12px) clamp(22px, 4vw, 26px);
-  border-radius: clamp(20px, 4vw, 25px);
-  font-size: clamp(14px, 2vw, 15px);
+  margin-top: clamp(14px, 3vw, 18px);
   font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  appearance: none;
-  -webkit-appearance: none;
-  transition: all 0.3s ease;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+  color: #b7e4c7;
+  font-size: clamp(13px, 2vw, 15px);
+  padding: clamp(10px, 2vw, 12px);
+  background: rgba(183, 228, 199, 0.15);
+  border-radius: 8px;
+  border-left: 3px solid #b7e4c7;
 }
 
-.scam-btn:hover {
-  background: #008fd1 !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 170, 255, 0.3);
+/* ---------- ACTION SECTION ---------- */
+.scam-action-section {
+  background: #ffffff;
+  padding: clamp(50px, 10vw, 70px) clamp(40px, 8vw, 60px);
+  border-radius: 24px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+}
+
+.scam-action-title {
+  font-size: clamp(26px, 5vw, 36px);
+  font-weight: 700;
+  color: #0f5132;
+  margin-bottom: clamp(40px, 8vw, 50px);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.scam-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: clamp(30px, 6vw, 40px);
+}
+
+.scam-action-item {
+  background: #f9fafb;
+  padding: clamp(25px, 5vw, 35px);
+  border-radius: 16px;
+  border-left: 4px solid #10b981;
+  transition: all 0.3s ease;
+}
+
+.scam-action-item:hover {
+  background: #f0f9f4;
+  transform: translateX(5px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+}
+
+.action-icon {
+  font-size: clamp(28px, 5vw, 36px);
+  margin-bottom: clamp(12px, 2vw, 16px);
+  display: block;
+}
+
+.scam-action-item h4 {
+  font-size: clamp(18px, 3.5vw, 22px);
+  font-weight: 600;
+  color: #0f5132;
+  margin-bottom: clamp(12px, 2vw, 16px);
+  line-height: 1.4;
+}
+
+.scam-action-item p {
+  font-size: clamp(14px, 2vw, 16px);
+  line-height: 1.7;
+  color: #4b5563;
+  font-style: italic;
+  padding: clamp(12px, 2vw, 16px);
+  background: #ffffff;
+  border-radius: 8px;
 }
 
 /* ---------- SECURITY SECTION ---------- */
 .security-section {
-  max-width: min(1200px, 100%);
-  margin: clamp(60px, 12vw, 80px) auto;
-  padding: clamp(30px, 6vw, 40px) clamp(16px, 3vw, 20px);
-  background: white;
-  font-family: 'Times New Roman', Times, serif;
-  border-radius: clamp(20px, 4vw, 30px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  width: 100%;
+  background: #ffffff;
+  padding: clamp(50px, 10vw, 70px) clamp(40px, 8vw, 60px);
+  border-radius: 24px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
 }
 
 .security-title {
   text-align: center;
-  font-size: clamp(30px, 5vw, 36px);
+  font-size: clamp(26px, 5vw, 36px);
   font-weight: 700;
   color: #0f5132;
-  margin-bottom: clamp(30px, 6vw, 40px);
+  margin-bottom: clamp(35px, 7vw, 50px);
   line-height: 1.3;
 }
 
 .security-block {
-  margin-bottom: clamp(25px, 5vw, 30px);
+  margin-bottom: clamp(25px, 5vw, 35px);
 }
 
 .security-block h4 {
-  font-size: clamp(17px, 3vw, 18px);
+  font-size: clamp(18px, 3.5vw, 22px);
   font-weight: 600;
   color: #0f5132;
-  margin-bottom: clamp(8px, 2vw, 10px);
+  margin-bottom: clamp(12px, 2vw, 16px);
   line-height: 1.3;
 }
 
 .security-block p {
-  font-size: clamp(14px, 2vw, 15px);
+  font-size: clamp(14px, 2vw, 16px);
   line-height: 1.7;
-  color: #555;
+  color: #4b5563;
 }
 
 .security-block ul {
-  padding-left: clamp(16px, 3vw, 18px);
-  margin: clamp(10px, 2vw, 12px) 0;
+  padding-left: clamp(20px, 4vw, 30px);
+  margin: clamp(12px, 2vw, 16px) 0;
 }
 
 .security-block ul li {
-  font-size: clamp(14px, 2vw, 15px);
+  font-size: clamp(14px, 2vw, 16px);
   line-height: 1.8;
-  color: #555;
-  margin-bottom: clamp(8px, 2vw, 10px);
+  color: #4b5563;
+  margin-bottom: clamp(10px, 2vw, 14px);
 }
 
 .security-block ul li strong {
   color: #0f5132;
+  font-weight: 600;
+}
+
+.security-block code {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #0f5132;
+  font-family: "Courier New", monospace;
 }
 
 hr {
   border: none;
-  border-top: 1px solid #e5e5e5;
-  margin: clamp(25px, 5vw, 30px) 0;
+  border-top: 2px solid #e5e7eb;
+  margin: clamp(30px, 6vw, 40px) 0;
+  opacity: 0.6;
 }
 
-/* ---------- SECURITY BUTTON ---------- */
+/* ---------- BUTTONS ---------- */
+.scam-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  border: none;
+  padding: clamp(14px, 2.5vw, 16px) clamp(28px, 5vw, 40px);
+  border-radius: 30px;
+  font-size: clamp(14px, 2vw, 16px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+}
+
+.scam-btn:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.scam-btn:active {
+  transform: translateY(-1px);
+}
+
 .security-btn {
   text-align: center;
-  margin-top: clamp(30px, 6vw, 40px);
+  margin-top: clamp(35px, 7vw, 50px);
 }
 
 .security-btn button {
-  background: #00a8e8 !important;
-  color: #fff !important;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff;
   border: none;
-  padding: clamp(13px, 2vw, 14px) clamp(24px, 5vw, 28px);
-  font-size: clamp(14px, 2vw, 15px);
+  padding: clamp(14px, 2.5vw, 16px) clamp(28px, 5vw, 40px);
+  font-size: clamp(14px, 2vw, 16px);
   font-weight: 600;
-  border-radius: clamp(25px, 5vw, 30px);
+  border-radius: 30px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: inherit;
-  appearance: none;
-  -webkit-appearance: none;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
 }
 
 .security-btn button:hover {
-  background: #008ec4 !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 168, 232, 0.3);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
 }
 
-/* ---------- APP PROMO ---------- */
-.app-promo {
-  background: linear-gradient(90deg, #2fd1ff, #00a8e8);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: clamp(40px, 8vw, 60px) clamp(30px, 6vw, 80px);
-  color: #003b44;
-  border-radius: clamp(20px, 4vw, 30px);
-  max-width: min(1050px, 100%);
-  margin: clamp(40px, 8vw, 60px) auto;
-  gap: clamp(30px, 6vw, 40px);
-  flex-wrap: wrap;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+.security-btn button:active {
+  transform: translateY(-1px);
 }
 
-.app-promo-text {
-  max-width: 100%;
-  flex: 1;
-  min-width: min(280px, 100%);
+/* ---------- REPORT CARD ---------- */
+.scam-card.report-card {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border: 2px solid #f59e0b;
 }
 
-.app-promo-text h3 {
-  font-size: clamp(22px, 4vw, 26px);
-  font-weight: 700;
-  margin-bottom: clamp(8px, 2vw, 10px);
-  line-height: 1.3;
+.scam-card.report-card .scam-titile {
+  color: #92400e;
 }
 
-.app-promo-text p {
-  font-size: clamp(14px, 2vw, 15px);
-  margin-bottom: clamp(18px, 4vw, 20px);
-  line-height: 1.5;
-}
-
-.store-buttons {
-  display: flex;
-  gap: clamp(10px, 2vw, 12px);
-  flex-wrap: wrap;
-}
-
-.store-buttons img {
-  height: clamp(38px, 8vw, 45px);
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.store-buttons img:hover {
-  transform: scale(1.05);
-}
-
-.app-promo-image {
-  flex-shrink: 0;
-}
-
-.app-promo-image img {
-  height: clamp(200px, 40vw, 300px);
-  width: auto;
-  max-width: 100%;
-}
-
-/* ---------- FOOTER ---------- */
-.site-footer {
-  background: #f2f2f2;
-  padding: clamp(40px, 8vw, 60px) clamp(30px, 6vw, 80px);
-  border-radius: clamp(20px, 4vw, 30px);
-  max-width: min(1050px, 100%);
-  margin: clamp(40px, 8vw, 60px) auto clamp(30px, 6vw, 40px);
-}
-
-.footer-columns {
-  display: flex;
-  justify-content: space-between;
-  gap: clamp(30px, 6vw, 40px);
-  flex-wrap: wrap;
-}
-
-.footer-col {
-  flex: 1;
-  min-width: min(200px, 100%);
-}
-
-.footer-col h4 {
-  font-size: clamp(14px, 2vw, 15px);
-  font-weight: 700;
-  margin-bottom: clamp(12px, 3vw, 14px);
-  color: #003b44;
-}
-
-.footer-col p {
-  font-size: clamp(13px, 2vw, 14px);
-  color: #444;
-  margin-bottom: clamp(8px, 2vw, 10px);
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.footer-col p:hover {
-  text-decoration: underline;
-  color: #00a8e8;
-}
-
-.lang-btn {
-  margin-top: clamp(18px, 4vw, 20px);
-  padding: clamp(9px, 2vw, 10px) clamp(14px, 3vw, 16px);
-  border-radius: clamp(16px, 3vw, 20px);
-  border: 1px solid #ddd;
-  background: #fff !important;
-  cursor: pointer;
-  font-size: clamp(12px, 1.8vw, 13px);
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.lang-btn:hover {
-  border-color: #00a8e8;
-  background: #f0f9ff !important;
-}
-
-.social-icons {
-  display: flex;
-  gap: clamp(12px, 3vw, 14px);
-  margin-top: clamp(18px, 4vw, 20px);
-  flex-wrap: wrap;
-}
-
-.social-icons span {
-  width: clamp(30px, 6vw, 34px);
-  height: clamp(30px, 6vw, 34px);
-  border-radius: 50%;
-  background: #00a8e8;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: clamp(12px, 2vw, 14px);
-}
-
-.social-icons span:hover {
-  background: #008fd1;
-  transform: scale(1.1);
-}
-
-/* ---------- TABLET RESPONSIVE ---------- */
-@media (max-width: 1024px) {
-  .scam-card,
-  .security-section,
-  .app-promo,
-  .site-footer {
-    margin-left: auto;
-    margin-right: auto;
-  }
+.scam-card.report-card .sc-p {
+  color: #78350f;
 }
 
 /* ---------- MOBILE RESPONSIVE ---------- */
@@ -559,121 +451,69 @@ hr {
     text-align: center;
   }
 
-  .scam-action-grid,
   .scam-grid,
-  .scam-dark-grid {
+  .scam-dark-grid,
+  .scam-action-grid {
     grid-template-columns: 1fr;
   }
+}
 
-  .app-promo {
-    flex-direction: column;
-    text-align: center;
+/* ---------- TABLET ---------- */
+@media (max-width: 768px) {
+  .scam-hero {
+    padding: clamp(40px, 8vw, 60px) clamp(20px, 4vw, 30px);
   }
 
-  .app-promo-text {
-    max-width: 100%;
-  }
-
-  .app-promo-image img {
-    margin-top: clamp(25px, 5vw, 30px);
-    height: clamp(180px, 35vw, 240px);
-  }
-
-  .store-buttons {
-    justify-content: center;
-  }
-
-  .footer-columns {
-    flex-direction: column;
-  }
-
-  .footer-col {
-    min-width: 100%;
+  .scam-card,
+  .scam-action-section,
+  .security-section {
+    padding: clamp(35px, 7vw, 50px) clamp(25px, 5vw, 40px);
   }
 }
 
 /* ---------- SMALL MOBILE ---------- */
-@media (max-width: 640px) {
+@media (max-width: 480px) {
   .scam-hero {
-    padding: 50px 16px;
+    padding: 40px 20px;
   }
 
-  .scam-card {
+  .scam-card,
+  .scam-action-section,
+  .security-section {
     padding: 30px 20px;
   }
 
   .scam-card.dark {
-    padding: 40px 24px;
-  }
-
-  .security-section {
-    padding: 30px 18px;
-  }
-
-  .app-promo {
-    padding: 30px 20px;
-  }
-
-  .site-footer {
-    padding: 40px 20px;
+    padding: 40px 25px;
   }
 }
 
-/* ---------- EXTRA SMALL MOBILE ---------- */
-@media (max-width: 400px) {
-  .scam-hero-text h2 {
-    font-size: 26px;
-  }
-
-  .scam-card {
-    padding: 24px 18px;
-  }
-
-  .scam-btn {
-    font-size: 14px;
-    padding: 11px 20px;
-  }
-}
-
-/* ---------- LANDSCAPE MODE ---------- */
-@media (max-height: 600px) and (orientation: landscape) {
-  .scam-hero {
-    padding: 40px 20px;
-  }
-
-  .scam-image {
-    margin-top: 20px;
-  }
-}
-
-/* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
+/* ---------- ACCESSIBILITY ---------- */
 .scam-btn:focus-visible,
-.security-btn button:focus-visible,
-.lang-btn:focus-visible {
-  outline: 2px solid #00a8e8;
-  outline-offset: 2px;
+.security-btn button:focus-visible {
+  outline: 3px solid #10b981;
+  outline-offset: 3px;
 }
 
-.social-icons span:focus-visible {
-  outline: 2px solid #00a8e8;
-  outline-offset: 2px;
-}
-
-/* ---------- REDUCE MOTION (ACCESSIBILITY) ---------- */
+/* ---------- REDUCE MOTION ---------- */
 @media (prefers-reduced-motion: reduce) {
   .scam-main,
   .scam-card,
+  .scam-item,
+  .scam-dark-item,
+  .scam-action-item,
   .scam-btn,
-  .security-btn button,
-  .social-icons span,
-  .store-buttons img {
+  .security-btn button {
     animation: none;
     transition: none;
   }
 
   .scam-card:hover,
+  .scam-item:hover,
+  .scam-dark-item:hover,
+  .scam-action-item:hover,
   .scam-btn:hover,
-  .social-icons span:hover {
+  .security-btn button:hover {
     transform: none;
   }
 }
@@ -681,14 +521,12 @@ hr {
 /* ---------- PRINT STYLES ---------- */
 @media print {
   .scam-btn,
-  .security-btn,
-  .app-promo,
-  .site-footer,
-  .social-icons {
+  .security-btn {
     display: none;
   }
 
   .scam-card,
+  .scam-action-section,
   .security-section {
     box-shadow: none;
     border: 1px solid #ddd;
@@ -697,5 +535,11 @@ hr {
 
   .scam-main {
     background: white;
+  }
+
+  .scam-card.dark {
+    background: #0f5132;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
