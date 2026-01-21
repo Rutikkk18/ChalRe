@@ -2,6 +2,7 @@
 import { MapPin, Users, Clock, IndianRupee, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "../styles/ridecard.css";
+
 export default function RideCard({ ride }) {
   const navigate = useNavigate();
   const isFull = Number(ride?.availableSeats) <= 0;
@@ -11,6 +12,13 @@ export default function RideCard({ ride }) {
     navigate(`/book-ride/${ride.id}`);
   };
 
+  // Extract location names (first part before comma)
+  const getLocationName = (fullLocation) => {
+    if (!fullLocation) return "";
+    // If location has a comma, take the first part, otherwise take the whole string
+    return fullLocation.split(',')[0].trim();
+  };
+
   return (
     <div className={`ride-card ${isFull ? "full" : ""}`}>
       {/* HEADER */}
@@ -18,9 +26,12 @@ export default function RideCard({ ride }) {
         {/* START LOCATION */}
         <div className="location">
           <MapPin />
-          <span>
-            <strong>Start Location:</strong> {ride.startLocation}
-          </span>
+          <div>
+            <span className="location-name">
+              {getLocationName(ride.startLocation)}
+            </span>
+            <span className="location-address">{ride.startLocation}</span>
+          </div>
         </div>
 
         <ArrowRight className="arrow-icon" />
@@ -28,9 +39,12 @@ export default function RideCard({ ride }) {
         {/* END LOCATION */}
         <div className="location">
           <MapPin />
-          <span>
-            <strong>End Location:</strong> {ride.endLocation}
-          </span>
+          <div>
+            <span className="location-name">
+              {getLocationName(ride.endLocation)}
+            </span>
+            <span className="location-address">{ride.endLocation}</span>
+          </div>
         </div>
       </div>
 
@@ -56,13 +70,12 @@ export default function RideCard({ ride }) {
             <strong>Price:</strong> ₹{ride.price}
           </span>
         </div>
-        {/* BOOK BUTTON */}
-      <button className="book-btn" onClick={goToBooking} disabled={isFull}>
-        {isFull ? "Ride Full" : "Book Ride"}
-      </button>
-      </div>
 
-      
+        {/* BOOK BUTTON */}
+        <button className="book-btn" onClick={goToBooking} disabled={isFull}>
+          {isFull ? "Ride Full" : "Book Ride"}
+        </button>
+      </div>
     </div>
   );
 }
