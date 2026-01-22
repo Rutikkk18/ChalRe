@@ -279,6 +279,7 @@
   padding: 10px;
   max-width: min(1100px, 95%);
   margin: 0 auto;
+  margin-bottom: 100px;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
   transition: all 0.3s ease;
   gap: 8px;
@@ -399,7 +400,7 @@
   font-size: clamp(14px, 1.8vw, 16px);
   font-weight: 600;
   cursor: pointer;
-  height: 50px;
+  height: 40px;
   min-width: 90px;
   padding: 0 clamp(10px, 2vw, 20px);
   margin-right: clamp(10px, 3vw, 60px);
