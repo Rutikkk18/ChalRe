@@ -99,46 +99,70 @@ public class UserService {
             throw new IllegalStateException("Firebase authentication failed");
         }
 
-        // 🔥 IMPORTANT FIX:
-        // Do NOT block login on isEmailVerified()
-        // OAuth providers (Google) are already trusted by Firebase
-
+        String uid = decodedToken.getUid();
         String email = decodedToken.getEmail();
+
         if (email == null || email.isBlank()) {
             throw new IllegalStateException("Email missing from Firebase token");
         }
 
-        log.info("Firebase user verified: email={}, uid={}", email, decodedToken.getUid());
+        log.info("Firebase user verified: email={}, uid={}", email, uid);
 
-        String incomingPhone = request.getPhone() != null ? request.getPhone().trim() : null;
-        User user = userRepository.findByEmail(email).orElse(null);
+        // Step 1: Try to find user by uid
+        User user = userRepository.findByUid(uid).orElse(null);
 
+        // Step 2: If not found, try to find by email (legacy fallback)
         if (user == null) {
-            if (incomingPhone == null || incomingPhone.isEmpty()) {
-                throw new IllegalArgumentException("Phone number is required to finish signup");
-            }
-
-            if (userRepository.findByPhone(incomingPhone).isPresent()) {
-                throw new IllegalArgumentException("Phone number already registered");
-            }
-
-            user = new User();
-            user.setEmail(email);
-            user.setName(resolveName(request, decodedToken));
-            user.setPhone(incomingPhone);
-            user.setRole("USER");
-        } else {
-            if ((user.getPhone() == null || user.getPhone().isBlank())
-                    && incomingPhone != null && !incomingPhone.isEmpty()) {
-                user.setPhone(incomingPhone);
-            }
-            if (user.getName() == null || user.getName().isBlank()) {
-                user.setName(resolveName(request, decodedToken));
+            user = userRepository.findByEmail(email).orElse(null);
+            if (user != null) {
+                // Step 3: If found by email but no uid, update user with uid
+                log.info("Legacy user found by email. Updating UID.");
+                user.setUid(uid);
             }
         }
 
-        if (user.getPhone() == null || user.getPhone().isBlank()) {
-            throw new IllegalArgumentException("Phone number is required");
+        String incomingPhone = request.getPhone() != null ? request.getPhone().trim() : null;
+
+        // Step 4: If not found at all, create new User
+        if (user == null) {
+            log.info("Creating new user for UID: {}", uid);
+            user = new User();
+            user.setUid(uid);
+            user.setEmail(email);
+            user.setName(resolveName(request, decodedToken));
+            user.setRole("USER");
+
+            // Set phone only if provided (non-null/non-empty)
+            if (incomingPhone != null && !incomingPhone.isEmpty()) {
+                if (userRepository.findByPhone(incomingPhone).isPresent()) {
+                    throw new IllegalArgumentException("Phone number already registered");
+                }
+                user.setPhone(incomingPhone);
+            }
+            // Removed exception: Phone number is required to finish signup
+        } else {
+            // Update existing user details
+            if (user.getUid() == null) {
+                user.setUid(uid);
+            }
+            
+            // Update phone if provided and not set, or update if different? 
+            // Stick to legacy behavior: update if null, or maybe update if provided?
+            // User might have new phone. 
+            // Current Plan says "Step 4: If not found at all...". 
+            // For existing, let's just ensure UID is set. 
+            // Also update phone if missing in DB but provided in request (helpful for migration)
+            if ((user.getPhone() == null || user.getPhone().isBlank()) && incomingPhone != null && !incomingPhone.isEmpty()) {
+                 if (userRepository.findByPhone(incomingPhone).isPresent()) {
+                     // Check if it is NOT this user (though finding by phone for null phone user won't match self)
+                     throw new IllegalArgumentException("Phone number already registered");
+                 }
+                 user.setPhone(incomingPhone);
+            }
+            
+            if (user.getName() == null || user.getName().isBlank()) {
+                user.setName(resolveName(request, decodedToken));
+            }
         }
 
         userRepository.save(user);

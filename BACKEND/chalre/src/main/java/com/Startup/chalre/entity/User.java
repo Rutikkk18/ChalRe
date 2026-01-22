@@ -19,10 +19,13 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    @Column(unique = true)
+    private String uid;
 
     @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = true, unique = true)
     private String phone;
 
     private String profileImage;  // URL to profile image
