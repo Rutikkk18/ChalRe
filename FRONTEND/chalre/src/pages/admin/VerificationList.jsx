@@ -3,7 +3,6 @@ import api from "../../api/axios";
 import { Link } from "react-router-dom";
 import "../../styles/verificationList.css";
 
-
 export default function VerificationList() {
     const [verifications, setVerifications] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -17,7 +16,7 @@ export default function VerificationList() {
         setLoading(true);
         try {
             const res = await api.get(`/admin/verifications?status=${statusFilter}`);
-            setVerifications(res.data);
+            setVerifications(res.data || []);
         } catch (err) {
             console.error("Failed to fetch verifications", err);
         } finally {
@@ -64,13 +63,16 @@ export default function VerificationList() {
                                     ? item.verificationStatus.toLowerCase()
                                     : "";
 
+                                // ✅ FIX: backend sends nested user object
+                                const user = item.user || {};
+
                                 return (
                                     <tr key={item.userId}>
                                         <td>{item.userId}</td>
-                                        <td>{item.userName}</td>
-                                        <td>{item.userEmail}</td>
-                                        <td>{item.userPhone}</td>
-                                        <td>{item.docCount} files</td>
+                                        <td>{user.name || "-"}</td>
+                                        <td>{user.email || "-"}</td>
+                                        <td>{user.phone || "-"}</td>
+                                        <td>{item.documents?.length || 0} files</td>
                                         <td>
                                             <span className={`status-badge ${statusClass}`}>
                                                 {item.verificationStatus}

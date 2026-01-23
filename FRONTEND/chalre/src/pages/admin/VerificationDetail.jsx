@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import "../../styles/verificationList.css";
 
-
 export default function VerificationDetail() {
     const { userId } = useParams();
     const navigate = useNavigate();
@@ -72,6 +71,10 @@ export default function VerificationDetail() {
         ? data.verificationStatus.toLowerCase()
         : "";
 
+    // ✅ FIX: backend sends nested user object
+    const user = data.user || {};
+    const documents = data.documents || [];
+
     return (
         <div className="verification-details">
             <button className="back-btn" onClick={() => navigate(-1)}>
@@ -82,9 +85,9 @@ export default function VerificationDetail() {
 
             <div className="detail-card">
                 <h2>User Info</h2>
-                <p><strong>Name:</strong> {data.userName}</p>
-                <p><strong>Email:</strong> {data.userEmail}</p>
-                <p><strong>Phone:</strong> {data.userPhone}</p>
+                <p><strong>Name:</strong> {user.name || "-"}</p>
+                <p><strong>Email:</strong> {user.email || "-"}</p>
+                <p><strong>Phone:</strong> {user.phone || "-"}</p>
                 <p>
                     <strong>Status:</strong>{" "}
                     <span className={`status-badge ${statusClass}`}>
@@ -97,13 +100,13 @@ export default function VerificationDetail() {
             </div>
 
             <div className="detail-card">
-                <h2>Documents ({data.documents.length})</h2>
+                <h2>Documents ({documents.length})</h2>
 
-                {data.documents.length === 0 ? (
+                {documents.length === 0 ? (
                     <p>No documents uploaded.</p>
                 ) : (
                     <div className="docs-grid">
-                        {data.documents.map((doc, idx) => (
+                        {documents.map((doc, idx) => (
                             <div key={idx} className="doc-item">
                                 <p><strong>Type:</strong> {doc.docType}</p>
                                 <p className="uploaded-time">
