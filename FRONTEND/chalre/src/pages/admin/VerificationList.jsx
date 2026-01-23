@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { Link } from "react-router-dom";
-import "../styles/verificationList.css";
+import "../../styles/verificationList.css";
+
 
 export default function VerificationList() {
     const [verifications, setVerifications] = useState([]);
