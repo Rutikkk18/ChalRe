@@ -17,7 +17,7 @@ export default function Register() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -26,8 +26,10 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError("");
+
+    // 🔥 IMPORTANT: clear any stale auth data
+    localStorage.clear();
 
     if (!form.phone.trim()) {
       setError("Phone number is required");
@@ -43,19 +45,16 @@ export default function Register() {
         form.password
       );
 
-      // best-effort profile update for display name
-      await updateProfile(userCred.user, { displayName: form.name }).catch(() => {});
+      // Set display name in Firebase (source of truth)
+      await updateProfile(userCred.user, {
+        displayName: form.name
+      }).catch(() => {});
 
+      // Send verification mail
       await sendEmailVerification(userCred.user);
 
-      localStorage.setItem(
-        "registrationProfile",
-        JSON.stringify({
-          name: form.name,
-          phone: form.phone,
-          email: form.email
-        })
-      );
+      // ❌ DO NOT store profile in localStorage
+      // Backend user will be created after verified login
 
       navigate("/verify-email");
     } catch (err) {
@@ -63,8 +62,8 @@ export default function Register() {
         err?.code === "auth/email-already-in-use"
           ? "Email already registered. Please login."
           : err?.code === "auth/weak-password"
-            ? "Password should be at least 6 characters."
-            : err?.message || "Registration failed. Please try again.";
+          ? "Password should be at least 6 characters."
+          : err?.message || "Registration failed. Please try again.";
       setError(message);
     } finally {
       setLoading(false);
@@ -78,33 +77,36 @@ export default function Register() {
 
         {error && <p className="error">{error}</p>}
 
-        <input 
-          name="name" 
-          placeholder="Name" 
+        <input
+          name="name"
+          placeholder="Name"
           onChange={handleChange}
           autoComplete="name"
           required
         />
-        <input 
-          type="email" 
-          name="email" 
-          placeholder="Email" 
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
           onChange={handleChange}
           autoComplete="email"
           required
         />
-        <input 
-          type="password" 
-          name="password" 
-          placeholder="Password" 
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
           onChange={handleChange}
           autoComplete="new-password"
           required
         />
-        <input 
-          type="tel" 
-          name="phone" 
-          placeholder="Phone" 
+
+        <input
+          type="tel"
+          name="phone"
+          placeholder="Phone"
           onChange={handleChange}
           autoComplete="tel"
           pattern="[0-9]{10}"
@@ -116,7 +118,6 @@ export default function Register() {
           {loading ? "Sending verification..." : "Create Account"}
         </button>
 
-        
         <p>
           Already have an account?
           <a href="/login"> Login</a>

@@ -26,46 +26,46 @@ export default function Login() {
     setError("");
     setLoading(true);
 
+    // 🔥 IMPORTANT: remove stale registration data
+    localStorage.clear();
+
     try {
-      const credential = await signInWithEmailAndPassword(auth, email, password);
-      
-      // Force refresh the Firebase user to get latest emailVerified status
+      const credential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Refresh user to get latest verification state
       await credential.user.reload();
 
-      // Check email verification status after reload
       if (!credential.user.emailVerified) {
-        // Redirect to verify-email page (do NOT send email again, just show the page)
-        // Do NOT show error message - just redirect silently
         setLoading(false);
         navigate("/verify-email");
         return;
       }
 
-      // User is verified - proceed with login
+      // ✅ Firebase is source of truth
       const idToken = await credential.user.getIdToken();
-      const registrationProfile = localStorage.getItem("registrationProfile");
-      const parsedProfile = registrationProfile ? JSON.parse(registrationProfile) : {};
+      const firebaseUser = credential.user;
 
       const payload = {
         idToken,
-        phone: parsedProfile.phone || undefined,
-        name: parsedProfile.name || undefined
+        name: firebaseUser.displayName || undefined
+        // phone can be added later via profile update
       };
 
       const res = await api.post("/auth/firebase-login", payload);
-      console.log("LOGIN RESPONSE", res.data);
       const token = res.data.token;
 
-      // MUST WAIT SO USER GETS STORED BEFORE REDIRECT
+      // Save JWT + fetch /me
       await login(token);
-
-      // Clear registration profile after successful login
-      localStorage.removeItem("registrationProfile");
 
       navigate("/dashboard");
     } catch (err) {
-      // Only show error for actual login failures (not for unverified email)
-      const errorMessage = handleError(err, { showAlert: false }) || "Login failed. Please try again.";
+      const errorMessage =
+        handleError(err, { showAlert: false }) ||
+        "Login failed. Please try again.";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -87,7 +87,6 @@ export default function Login() {
           required
         />
 
-        {/* Password Input with Toggle */}
         <div className="password-input-wrapper">
           <input
             type={showPassword ? "text" : "password"}
