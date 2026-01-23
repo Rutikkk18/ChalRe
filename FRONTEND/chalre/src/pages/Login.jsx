@@ -58,10 +58,18 @@ export default function Login() {
       const res = await api.post("/auth/firebase-login", payload);
       const token = res.data.token;
 
-      // Save JWT + fetch /me
+     
       await login(token);
 
-      navigate("/dashboard");
+// fetch updated user from context storage
+const storedUser = JSON.parse(localStorage.getItem("user"));
+
+if (storedUser?.role === "ADMIN") {
+  navigate("/admin/dashboard");
+} else {
+  navigate("/dashboard");
+}
+
     } catch (err) {
       const errorMessage =
         handleError(err, { showAlert: false }) ||
