@@ -1,0 +1,107 @@
+.verification-details {
+    padding: 20px;
+}
+
+.back-btn {
+    margin-bottom: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.detail-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.doc-item {
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.uploaded-time {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.doc-preview {
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    margin-top: 10px;
+    background: #f9f9f9;
+}
+
+.doc-link {
+    display: block;
+    margin-top: 10px;
+    color: #007bff;
+}
+
+.actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+.status-badge.pending { background: #fff3cd; color: #856404; }
+.status-badge.approved { background: #d4edda; color: #155724; }
+.status-badge.rejected { background: #f8d7da; color: #721c24; }
+
+.btn-approve {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-reject {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    padding: 10px 20px;
+}
+
+.reject-box {
+    background: #fff3cd;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #ffeeba;
+    max-width: 500px;
+}
+
+.reject-box textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.reject-actions {
+    display: flex;
+    gap: 10px;
+}
