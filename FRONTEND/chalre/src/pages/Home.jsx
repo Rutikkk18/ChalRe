@@ -66,6 +66,7 @@ export default function Home() {
               value={search.date}
               min={new Date().toISOString().split("T")[0]}
               onChange={(e) => updateSearch("date", e.target.value)}
+              placeholder="Date"
             />
           </div>
 
