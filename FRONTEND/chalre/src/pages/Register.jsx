@@ -28,8 +28,7 @@ export default function Register() {
     e.preventDefault();
     setError("");
 
-    // 🔥 IMPORTANT: clear any stale auth data
-    localStorage.clear();
+    sessionStorage.clear();
 
     if (!form.phone.trim()) {
       setError("Phone number is required");
@@ -45,16 +44,15 @@ export default function Register() {
         form.password
       );
 
-      // Set display name in Firebase (source of truth)
       await updateProfile(userCred.user, {
         displayName: form.name
       }).catch(() => {});
 
-      // Send verification mail
       await sendEmailVerification(userCred.user);
 
-      // ❌ DO NOT store profile in localStorage
-      // Backend user will be created after verified login
+      // ✅ TEMPORARILY STORE DETAILS FOR FIRST LOGIN
+      sessionStorage.setItem("pendingName", form.name);
+      sessionStorage.setItem("pendingPhone", form.phone);
 
       navigate("/verify-email");
     } catch (err) {

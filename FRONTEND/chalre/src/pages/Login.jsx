@@ -26,9 +26,6 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    // 🔥 IMPORTANT: remove stale registration data
-    localStorage.clear();
-
     try {
       const credential = await signInWithEmailAndPassword(
         auth,
@@ -36,7 +33,6 @@ export default function Login() {
         password
       );
 
-      // Refresh user to get latest verification state
       await credential.user.reload();
 
       if (!credential.user.emailVerified) {
@@ -45,30 +41,31 @@ export default function Login() {
         return;
       }
 
-      // ✅ Firebase is source of truth
       const idToken = await credential.user.getIdToken();
-      const firebaseUser = credential.user;
 
+      // 🔥 READ TEMP DATA FROM REGISTER
       const payload = {
         idToken,
-        name: firebaseUser.displayName || undefined
-        // phone can be added later via profile update
+        name: sessionStorage.getItem("pendingName") || undefined,
+        phone: sessionStorage.getItem("pendingPhone") || undefined
       };
 
       const res = await api.post("/auth/firebase-login", payload);
       const token = res.data.token;
 
-     
       await login(token);
 
-// fetch updated user from context storage
-const storedUser = JSON.parse(localStorage.getItem("user"));
+      // ✅ CLEANUP
+      sessionStorage.removeItem("pendingName");
+      sessionStorage.removeItem("pendingPhone");
 
-if (storedUser?.role === "ADMIN") {
-  navigate("/admin/dashboard");
-} else {
-  navigate("/dashboard");
-}
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+
+      if (storedUser?.role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
 
     } catch (err) {
       const errorMessage =
@@ -108,7 +105,6 @@ if (storedUser?.role === "ADMIN") {
             type="button"
             className="password-toggle-btn"
             onClick={togglePasswordVisibility}
-            aria-label={showPassword ? "Hide password" : "Show password"}
             tabIndex="-1"
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}

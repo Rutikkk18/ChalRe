@@ -10,11 +10,11 @@ import com.Startup.chalre.repository.UserRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +25,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    // =========================
+    // NORMAL REGISTER (NON FIREBASE)
+    // =========================
     public User registeruser(UserRegisterDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
@@ -37,11 +40,18 @@ public class UserService {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
-        user.setRole(dto.getRole() != null && !dto.getRole().isEmpty() ? dto.getRole() : "USER");
+        user.setRole(
+                dto.getRole() != null && !dto.getRole().isEmpty()
+                        ? dto.getRole()
+                        : "USER"
+        );
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         return userRepository.save(user);
     }
 
+    // =========================
+    // NORMAL LOGIN (NON FIREBASE)
+    // =========================
     public User validateLogin(LoginDTO dto) {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -49,7 +59,6 @@ public class UserService {
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
-
         return user;
     }
 
@@ -62,6 +71,9 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    // =========================
+    // PROFILE UPDATE
+    // =========================
     @Transactional
     public User updateProfile(Long userId, UserUpdateDTO dto) {
         User user = userRepository.findById(userId)
@@ -83,6 +95,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // =========================
+    // 🔥 FIREBASE LOGIN (FIXED)
+    // =========================
+    @Transactional
     public String loginWithFirebaseToken(FirebaseLoginRequest request) {
 
         log.info("Firebase login request received");
@@ -93,9 +109,10 @@ public class UserService {
 
         FirebaseToken decodedToken;
         try {
-            decodedToken = FirebaseAuth.getInstance().verifyIdToken(request.getIdToken());
+            decodedToken = FirebaseAuth.getInstance()
+                    .verifyIdToken(request.getIdToken());
         } catch (FirebaseAuthException e) {
-            log.error("Firebase token verification failed: {}", e.getMessage());
+            log.error("Firebase token verification failed", e);
             throw new IllegalStateException("Firebase authentication failed");
         }
 
@@ -106,70 +123,81 @@ public class UserService {
             throw new IllegalStateException("Email missing from Firebase token");
         }
 
-        log.info("Firebase user verified: email={}, uid={}", email, uid);
+        log.info("Firebase verified: email={}, uid={}", email, uid);
 
-        // Step 1: Try to find user by uid
+        // 1️⃣ Try UID
         User user = userRepository.findByUid(uid).orElse(null);
 
-        // Step 2: If not found, try to find by email (legacy fallback)
+        // 2️⃣ Fallback by email (legacy users)
         if (user == null) {
             user = userRepository.findByEmail(email).orElse(null);
-            if (user != null) {
-                // Step 3: If found by email but no uid, update user with uid
-                log.info("Legacy user found by email. Updating UID.");
+            if (user != null && user.getUid() == null) {
                 user.setUid(uid);
             }
         }
 
-        String incomingPhone = request.getPhone() != null ? request.getPhone().trim() : null;
+        String incomingPhone =
+                request.getPhone() != null ? request.getPhone().trim() : null;
 
-        // Step 4: If not found at all, create new User
+        // 3️⃣ New user
         if (user == null) {
-            log.info("Creating new user for UID: {}", uid);
+            log.info("Creating new Firebase user");
+
             user = new User();
             user.setUid(uid);
             user.setEmail(email);
             user.setName(resolveName(request, decodedToken));
             user.setRole("USER");
 
-            // Set phone only if provided (non-null/non-empty)
             if (incomingPhone != null && !incomingPhone.isEmpty()) {
-                if (userRepository.findByPhone(incomingPhone).isPresent()) {
-                    throw new IllegalArgumentException("Phone number already registered");
-                }
+                userRepository.findByPhone(incomingPhone)
+                        .ifPresent(u -> {
+                            throw new IllegalArgumentException(
+                                    "Phone number already registered"
+                            );
+                        });
                 user.setPhone(incomingPhone);
             }
-            // Removed exception: Phone number is required to finish signup
-        } else {
-            // Update existing user details
+        }
+        // 4️⃣ Existing user
+        else {
             if (user.getUid() == null) {
                 user.setUid(uid);
             }
-            
-            // Update phone if provided and not set, or update if different? 
-            // Stick to legacy behavior: update if null, or maybe update if provided?
-            // User might have new phone. 
-            // Current Plan says "Step 4: If not found at all...". 
-            // For existing, let's just ensure UID is set. 
-            // Also update phone if missing in DB but provided in request (helpful for migration)
-            if ((user.getPhone() == null || user.getPhone().isBlank()) && incomingPhone != null && !incomingPhone.isEmpty()) {
-                 if (userRepository.findByPhone(incomingPhone).isPresent()) {
-                     // Check if it is NOT this user (though finding by phone for null phone user won't match self)
-                     throw new IllegalArgumentException("Phone number already registered");
-                 }
-                 user.setPhone(incomingPhone);
+
+            if ((user.getPhone() == null || user.getPhone().isBlank())
+                    && incomingPhone != null
+                    && !incomingPhone.isEmpty()) {
+
+                userRepository.findByPhone(incomingPhone)
+                        .ifPresent(u -> {
+                            if (!u.getId().equals(user.getId())) {
+                                throw new IllegalArgumentException(
+                                        "Phone number already registered"
+                                );
+                            }
+                        });
+                user.setPhone(incomingPhone);
             }
-            
+
             if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(resolveName(request, decodedToken));
             }
         }
 
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
+        log.info("User saved successfully: {}", user.getEmail());
+
         return jwtUtil.generateToken(user);
     }
 
-    private String resolveName(FirebaseLoginRequest request, FirebaseToken decodedToken) {
+    // =========================
+    // NAME RESOLVER
+    // =========================
+    private String resolveName(
+            FirebaseLoginRequest request,
+            FirebaseToken decodedToken
+    ) {
         if (request.getName() != null && !request.getName().trim().isEmpty()) {
             return request.getName().trim();
         }
