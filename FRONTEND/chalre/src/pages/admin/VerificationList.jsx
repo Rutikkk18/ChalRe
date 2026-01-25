@@ -59,23 +59,20 @@ export default function VerificationList() {
                         </thead>
                         <tbody>
                             {verifications.map((item) => {
-                                const statusClass = item.verificationStatus
-                                    ? item.verificationStatus.toLowerCase()
+                                const statusClass = item.status
+                                    ? item.status.toLowerCase()
                                     : "";
-
-                                // ✅ FIX: backend sends nested user object
-                                const user = item.user || {};
 
                                 return (
                                     <tr key={item.userId}>
                                         <td>{item.userId}</td>
-                                        <td>{user.name || "-"}</td>
-                                        <td>{user.email || "-"}</td>
-                                        <td>{user.phone || "-"}</td>
-                                        <td>{item.documents?.length || 0} files</td>
+                                        <td>{item.name || "-"}</td>
+                                        <td>{item.email || "-"}</td>
+                                        <td>{item.phone || "-"}</td>
+                                        <td>{item.documentsCount} files</td>
                                         <td>
                                             <span className={`status-badge ${statusClass}`}>
-                                                {item.verificationStatus}
+                                                {item.status}
                                             </span>
                                         </td>
                                         <td>

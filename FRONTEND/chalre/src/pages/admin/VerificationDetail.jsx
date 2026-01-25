@@ -67,12 +67,10 @@ export default function VerificationDetail() {
     if (loading) return <div>Loading details...</div>;
     if (!data) return <div>User not found.</div>;
 
-    const statusClass = data.verificationStatus
-        ? data.verificationStatus.toLowerCase()
+    const statusClass = data.status
+        ? data.status.toLowerCase()
         : "";
 
-    // ✅ FIX: backend sends nested user object
-    const user = data.user || {};
     const documents = data.documents || [];
 
     return (
@@ -85,17 +83,17 @@ export default function VerificationDetail() {
 
             <div className="detail-card">
                 <h2>User Info</h2>
-                <p><strong>Name:</strong> {user.name || "-"}</p>
-                <p><strong>Email:</strong> {user.email || "-"}</p>
-                <p><strong>Phone:</strong> {user.phone || "-"}</p>
+                <p><strong>Name:</strong> {data.name || "-"}</p>
+                <p><strong>Email:</strong> {data.email || "-"}</p>
+                <p><strong>Phone:</strong> {data.phone || "-"}</p>
                 <p>
                     <strong>Status:</strong>{" "}
                     <span className={`status-badge ${statusClass}`}>
-                        {data.verificationStatus}
+                        {data.status}
                     </span>
                 </p>
-                {data.verificationRemarks && (
-                    <p><strong>Remarks:</strong> {data.verificationRemarks}</p>
+                {data.remarks && (
+                    <p><strong>Remarks:</strong> {data.remarks}</p>
                 )}
             </div>
 
@@ -113,15 +111,15 @@ export default function VerificationDetail() {
                                     Uploaded: {new Date(doc.uploadedAt).toLocaleString()}
                                 </p>
 
-                                {/\.(jpeg|jpg|png|gif|webp)$/i.test(doc.docUrl) ? (
+                                {/\.(jpeg|jpg|png|gif|webp)$/i.test(doc.url) ? (
                                     <img
-                                        src={doc.docUrl}
+                                        src={doc.url}
                                         alt={doc.docType}
                                         className="doc-preview"
                                     />
                                 ) : (
                                     <a
-                                        href={doc.docUrl}
+                                        href={doc.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="doc-link"
@@ -136,7 +134,7 @@ export default function VerificationDetail() {
             </div>
 
             <div className="actions">
-                {data.verificationStatus === "PENDING" && !showRejectInput && (
+                {data.status === "PENDING" && !showRejectInput && (
                     <>
                         <button
                             className="btn-approve"
