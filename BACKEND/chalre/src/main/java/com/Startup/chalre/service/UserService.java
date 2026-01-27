@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -96,7 +98,7 @@ public class UserService {
     }
 
     // =========================
-    // 🔥 FIREBASE LOGIN (FIXED)
+    // 🔥 FIREBASE LOGIN (COMPILATION SAFE)
     // =========================
     @Transactional
     public String loginWithFirebaseToken(FirebaseLoginRequest request) {
@@ -150,12 +152,13 @@ public class UserService {
             user.setRole("USER");
 
             if (incomingPhone != null && !incomingPhone.isEmpty()) {
-                userRepository.findByPhone(incomingPhone)
-                        .ifPresent(u -> {
-                            throw new IllegalArgumentException(
-                                    "Phone number already registered"
-                            );
-                        });
+                Optional<User> phoneOwner =
+                        userRepository.findByPhone(incomingPhone);
+                if (phoneOwner.isPresent()) {
+                    throw new IllegalArgumentException(
+                            "Phone number already registered"
+                    );
+                }
                 user.setPhone(incomingPhone);
             }
         }
@@ -169,14 +172,15 @@ public class UserService {
                     && incomingPhone != null
                     && !incomingPhone.isEmpty()) {
 
-                userRepository.findByPhone(incomingPhone)
-                        .ifPresent(u -> {
-                            if (!u.getId().equals(user.getId())) {
-                                throw new IllegalArgumentException(
-                                        "Phone number already registered"
-                                );
-                            }
-                        });
+                Optional<User> phoneOwner =
+                        userRepository.findByPhone(incomingPhone);
+
+                if (phoneOwner.isPresent()
+                        && !phoneOwner.get().getId().equals(user.getId())) {
+                    throw new IllegalArgumentException(
+                            "Phone number already registered"
+                    );
+                }
                 user.setPhone(incomingPhone);
             }
 
