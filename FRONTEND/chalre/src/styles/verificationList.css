@@ -1,53 +1,279 @@
+/* ================================
+   VERIFICATION LIST - MODERN & RESPONSIVE
+================================ */
+
+/* ---------- MAIN WRAPPER ---------- */
 .verification-list {
-    padding: 20px;
+  padding: clamp(20px, 4vw, 40px);
+  max-width: 1400px;
+  margin: 0 auto;
+  animation: fadeIn 0.5s ease;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- HEADER ---------- */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: clamp(20px, 4vw, 28px);
+  gap: clamp(12px, 3vw, 16px);
+  flex-wrap: wrap;
+}
+
+.header h1 {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .header select {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+  padding: clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 16px);
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  background: #ffffff;
+  font-size: clamp(13px, 2vw, 14px);
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
 }
 
+.header select:hover {
+  border-color: #667eea;
+}
+
+.header select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* ---------- TABLE CONTAINER ---------- */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- ADMIN TABLE ---------- */
 .admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  min-width: 600px;
 }
 
 .admin-table th,
 .admin-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
+  padding: clamp(12px, 2vw, 16px) clamp(14px, 3vw, 18px);
+  border-bottom: 1px solid #f3f4f6;
+  text-align: left;
+  font-size: clamp(13px, 2vw, 14px);
 }
 
 .admin-table th {
-    background: #f8f9fa;
+  background: #f9fafb;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  font-size: clamp(11px, 1.8vw, 12px);
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e5e7eb;
 }
 
+.admin-table td {
+  color: #6b7280;
+}
+
+.admin-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ---------- STATUS BADGE ---------- */
 .status-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.85rem;
+  padding: clamp(5px, 1vw, 6px) clamp(10px, 2vw, 14px);
+  border-radius: 20px;
+  font-size: clamp(11px, 1.8vw, 13px);
+  font-weight: 600;
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
 }
 
-.status-badge.pending { background: #fff3cd; color: #856404; }
-.status-badge.approved { background: #d4edda; color: #155724; }
-.status-badge.rejected { background: #f8d7da; color: #721c24; }
+.status-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
 
+.status-badge.approved {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.status-badge.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* ---------- VIEW BUTTON ---------- */
 .view-btn {
-    color: #007bff;
-    text-decoration: none;
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: clamp(13px, 2vw, 14px);
+  padding: clamp(6px, 1vw, 8px) clamp(12px, 2vw, 16px);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: inline-block;
 }
 
 .view-btn:hover {
-    text-decoration: underline;
+  background: #f0f4ff;
+  color: #764ba2;
+  text-decoration: none;
+  transform: translateX(3px);
+}
+
+.view-btn:active {
+  transform: translateX(1px);
+}
+
+/* ---------- EMPTY STATE ---------- */
+.empty-state {
+  text-align: center;
+  padding: clamp(40px, 8vw, 60px) clamp(20px, 4vw, 30px);
+  color: #9ca3af;
+}
+
+.empty-state p {
+  font-size: clamp(14px, 2vw, 16px);
+  margin: 0;
+}
+
+/* ---------- TABLET RESPONSIVE ---------- */
+@media (max-width: 1024px) {
+  .table-container {
+    border-radius: 8px;
+  }
+}
+
+/* ---------- MOBILE RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .verification-list {
+    padding: clamp(16px, 3vw, 24px);
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header select {
+    width: 100%;
+  }
+
+  .table-container {
+    border-radius: 0;
+    margin: 0 -16px;
+    box-shadow: none;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .admin-table {
+    min-width: 100%;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 12px 10px;
+  }
+}
+
+/* ---------- SMALL MOBILE ---------- */
+@media (max-width: 480px) {
+  .verification-list {
+    padding: 16px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .status-badge {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .view-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
+/* ---------- ACCESSIBILITY ---------- */
+.header select:focus-visible,
+.view-btn:focus-visible {
+  outline: 3px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* ---------- REDUCE MOTION ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .verification-list,
+  .admin-table tbody tr,
+  .view-btn,
+  .header select {
+    animation: none;
+    transition: none;
+  }
+
+  .admin-table tbody tr:hover,
+  .view-btn:hover {
+    transform: none;
+  }
+}
+
+/* ---------- PRINT STYLES ---------- */
+@media print {
+  .header select,
+  .view-btn {
+    display: none;
+  }
+
+  .table-container {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+
+  .admin-table tbody tr:hover {
+    background: transparent;
+  }
 }
