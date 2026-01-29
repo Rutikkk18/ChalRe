@@ -344,8 +344,8 @@ export default function RideDetails() {
 
             {/* DRIVER CARD + DETAILS */}
             <div className="rd-driver card">
-              <div className="driver-left">
-                <div className="driver-avatar">
+              <div className="rd-driver-left">
+                <div className="rd-driver-avatar">
                   {ride.driver?.profileImage ? (
                        <img
                       src={user?.profileImage || "/profileimage.png"}
@@ -358,14 +358,14 @@ export default function RideDetails() {
                     <div className="placeholder">{(ride.driver?.name || "D").charAt(0)}</div>
                   )}
                 </div>
-                <div className="driver-info">
-                  <div className="driver-name">
+                <div className="rd-driver-info">
+                  <div className="rd-driver-name">
                     {ride.driver?.name || "Driver"}
                     {ride.driver?.isDriverVerified && <CheckCircle className="verified" />}
                   </div>
-                  <div className="driver-sub">{ride.driver?.phone || "—"}</div>
+                  <div className="rd-driver-sub">{ride.driver?.phone || "—"}</div>
                   {ride.driver?.avgRating && ride.driver.avgRating > 0 && (
-                    <div className="driver-rating">
+                    <div className="rd-driver-rating">
                       <Star size={16} fill="#fbbf24" color="#fbbf24" />
                       <span>{ride.driver.avgRating.toFixed(1)}</span>
                       <span className="rating-count">({ride.driver.ratingCount || 0} reviews)</span>
@@ -374,7 +374,7 @@ export default function RideDetails() {
                 </div>
               </div>
 
-              <div className="driver-actions">
+              <div className="rd-driver-actions">
                 {ride.driver?.phone ? (
                   <a className="btn-ghost" href={`tel:${ride.driver.phone}`}>
                     <Phone /> Contact
