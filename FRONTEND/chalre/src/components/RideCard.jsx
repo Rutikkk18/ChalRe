@@ -7,14 +7,9 @@ export default function RideCard({ ride }) {
   const navigate = useNavigate();
   const isFull = Number(ride?.availableSeats) <= 0;
 
-  const goToBooking = (e) => {
-    e.stopPropagation(); // Prevent card click when clicking button
+  const goToBooking = () => {
     if (isFull) return;
     navigate(`/book-ride/${ride.id}`);
-  };
-
-  const goToRideDetails = () => {
-    navigate(`/ridedetails/${ride.id}`);
   };
 
   // Extract location names (first part before comma)
@@ -24,18 +19,7 @@ export default function RideCard({ ride }) {
   };
 
   return (
-    <div 
-      className={`ride-card ${isFull ? "full" : ""}`}
-      onClick={goToRideDetails}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          goToRideDetails();
-        }
-      }}
-    >
+    <div className={`ride-card ${isFull ? "full" : ""}`}>
       {/* HEADER - LOCATIONS */}
       <div className="ride-card-header">
         {/* START LOCATION */}
@@ -49,8 +33,8 @@ export default function RideCard({ ride }) {
           </div>
         </div>
 
-        {/* ARROW SEPARATOR - Large and Centered */}
-        <ArrowRight className="arrow-icon" strokeWidth={2.5} />
+        {/* ARROW SEPARATOR */}
+        <ArrowRight className="arrow-icon" />
 
         {/* END LOCATION */}
         <div className="location">
@@ -64,18 +48,22 @@ export default function RideCard({ ride }) {
         </div>
       </div>
 
-      {/* BOTTOM ROW - DATE, SEATS, PRICE, BUTTON (HORIZONTAL LAYOUT) */}
+      {/* BOTTOM ROW - DATE, SEATS, PRICE, BUTTON (ALL IN ONE LINE) */}
       <div className="ride-info">
         {/* DATE & TIME */}
-        <div className="info-item date-time">
+        <div className="info-item">
           <Clock />
-          <span>{ride.date} • {ride.time}</span>
+          <span>
+            <strong>Date & Time:</strong> {ride.date} • {ride.time}
+          </span>
         </div>
 
         {/* SEATS LEFT */}
-        <div className="info-item seats">
+        <div className="info-item">
           <Users />
-          <span>{ride.availableSeats}</span>
+          <span>
+            <strong>Seats Left:</strong> {ride.availableSeats}
+          </span>
         </div>
 
         {/* PRICE */}
@@ -85,11 +73,7 @@ export default function RideCard({ ride }) {
         </div>
 
         {/* BOOK BUTTON */}
-        <button 
-          className="book-btn" 
-          onClick={goToBooking} 
-          disabled={isFull}
-        >
+        <button className="book-btn" onClick={goToBooking} disabled={isFull}>
           {isFull ? "Ride Full" : "Book Ride"}
         </button>
       </div>
