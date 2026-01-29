@@ -1,7 +1,7 @@
 // RideCard.jsx
 import { MapPin, Users, Clock, IndianRupee, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import "./RideCard.css";
+import "../styles/ridecard.css";
 
 export default function RideCard({ ride }) {
   const navigate = useNavigate();
