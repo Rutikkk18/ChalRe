@@ -6,6 +6,7 @@
 .admin-dashboard {
   padding: clamp(20px, 4vw, 40px);
   max-width: 100%;
+  margin-top: clamp(20px, 3vw, 60px);
 }
 
 .admin-dashboard h1 {

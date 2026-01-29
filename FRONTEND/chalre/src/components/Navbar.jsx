@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
+
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const location = useLocation();
@@ -38,6 +39,14 @@ export default function Navbar() {
           <Link to="/dashboard">Dashboard</Link>
         )}
 
+        
+            {user?.role === "ADMIN" && (
+      <Link to="/admin/dashboard" className="nav-admin-btn">
+        Admin Dashboard
+      </Link>
+    )}
+
+
         {/* RIGHT SIDE BUTTONS */}
         {!user ? (
           currentPath !== "/register" && (
@@ -50,6 +59,7 @@ export default function Navbar() {
             Logout
           </button>
         )}
+
       </div>
     </nav>
   );
