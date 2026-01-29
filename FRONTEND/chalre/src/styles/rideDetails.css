@@ -674,6 +674,30 @@
     padding: 20px 16px;
   }
 }
+/* ---------- DESKTOP GRID LAYOUT ---------- */
+@media (min-width: 1025px) {
+  .rd-container {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* Left column content */
+  .rd-summary,
+  .rd-driver,
+  .rd-extra,
+  .ratings-section {
+    grid-column: 1 / 2;
+  }
+
+  /* Right booking panel */
+  .rd-book {
+    grid-column: 2 / 3;
+    position: sticky;
+    top: 120px; /* below navbar */
+  }
+}
 
 /* ---------- MOBILE RESPONSIVE ---------- */
 @media (max-width: 768px) {
