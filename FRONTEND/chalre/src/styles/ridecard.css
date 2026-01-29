@@ -1,90 +1,85 @@
 /* ================================
-   RIDE CARD - MODERN & RESPONSIVE
-   Matching exact design specifications
+   RIDE CARD - REDESIGNED & FULLY RESPONSIVE
+   Professional • Modern • Clean Layout
 ================================ */
 
 /* ---------- THEME VARIABLES ---------- */
 :root {
   --green-dark: #0f5132;
   --green-main: #28a745;
-  --green-hover: #239a42;
-  --border-soft: #e5e7eb;
+  --border-soft: #dbeee1;
   --border-focus: #3fae55;
-  --text-dark: #1f2937;
+  --text-dark: #1f2933;
   --text-muted: #6b7280;
-  --bg-card: #ffffff;
-  --bg-hover: #f9fafb;
-  --radius-card: 16px;
-  --radius-btn: 10px;
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ---------- GLOBAL RESET ---------- */
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
-/* ---------- RIDE CARD CONTAINER ---------- */
+/* ---------- RIDE CARD ---------- */
 .ride-card {
-  background: var(--bg-card);
-  border-radius: var(--radius-card);
-  padding: 24px;
-  box-shadow: var(--shadow-card);
-  border: 2px solid var(--green-main); /* Full green border - always visible */
-  transition: var(--transition);
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(15, 81, 50, 0.08);
+  border: 1.5px solid var(--border-soft);
+  transition: all 0.3s ease;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ride-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-  border-color: var(--green-hover); /* Darker green on hover */
-}
-
-.ride-card:active:not(.full) {
-  transform: translateY(0);
-  box-shadow: var(--shadow-card);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(15, 81, 50, 0.12);
+  border-color: var(--border-focus);
 }
 
 /* ---------- FULL STATE ---------- */
 .ride-card.full {
   opacity: 0.7;
-  border-color: #fca5a5;
-  background: #fef2f2;
-  pointer-events: none;
-  cursor: not-allowed;
+  border-color: #f5d0d0;
+  background: #fef5f5;
 }
 
 .ride-card.full:hover {
-  transform: none;
-  box-shadow: var(--shadow-card);
+  transform: translateY(-1px);
 }
 
-/* ---------- CARD HEADER (ROUTE SECTION) ---------- */
+/* ---------- CARD HEADER (ROUTE) ---------- */
 .ride-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: 20px;
   padding-bottom: 20px;
-  border-bottom: 1px solid var(--border-soft);
-  margin-bottom: 20px;
+  border-bottom: 1.5px solid #f0f0f0;
 }
 
-/* ---------- LOCATION STYLING ---------- */
+/* ---------- LOCATION ---------- */
 .location {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   flex: 1;
   min-width: 0;
 }
@@ -94,84 +89,77 @@
   height: 22px;
   flex-shrink: 0;
   color: var(--green-main);
-  margin-top: 3px;
-  stroke-width: 2;
+  margin-top: 2px;
 }
 
 .location > div {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
 
-/* Location Name - Bold and prominent */
+/* Location Name (Bold, Large) */
 .location-name {
   display: block;
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-dark);
   line-height: 1.3;
-  letter-spacing: -0.01em;
+  margin-bottom: 4px;
 }
 
-/* Full Address - Smaller, gray text */
+/* Full Address (Small, Gray) */
 .location-address {
   display: block;
   font-size: 13px;
   font-weight: 400;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-/* ---------- ARROW ICON - LARGE & CENTERED ---------- */
+/* ---------- ARROW ICON ---------- */
 .arrow-icon {
-  width: 40px !important;
-  height: 40px !important;
   color: var(--green-main) !important;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  align-self: center;
-  margin: 0 16px;
-  stroke-width: 2.5;
+  transition: transform 0.3s ease;
+  margin: 0 8px;
 }
 
 .ride-card:hover .arrow-icon {
-  transform: translateX(6px);
-  color: var(--green-hover) !important;
+  transform: translateX(4px);
 }
 
-/* ---------- RIDE INFO (BOTTOM SECTION) - SPREAD HORIZONTALLY ---------- */
+/* ---------- RIDE INFO (BOTTOM SECTION) - HORIZONTAL LAYOUT ---------- */
 .ride-info {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
   align-items: center;
-  justify-content: space-between; /* Spread items across full width */
-  gap: 20px;
-  flex-wrap: wrap;
+  gap: 24px;
 }
 
-/* ---------- INFO ITEMS ---------- */
+/* ---------- INFO ITEM ---------- */
 .info-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
-  font-weight: 500;
   color: var(--text-dark);
-  white-space: nowrap;
-  flex-shrink: 0;
+  font-size: 14px;
 }
 
 .info-item svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
   color: var(--text-muted);
-  stroke-width: 2;
+}
+
+.info-item strong {
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-right: 4px;
 }
 
 .info-item span {
@@ -179,196 +167,256 @@
   color: var(--text-dark);
 }
 
-/* Date & Time Item - Left side */
-.info-item.date-time {
-  flex-shrink: 0;
-}
-
-.info-item.date-time span {
-  font-weight: 500;
-}
-
-/* Seats Item - Middle left */
-.info-item.seats {
-  flex-shrink: 0;
-}
-
-/* Price Item - Middle right, larger and prominent */
+/* ---------- PRICE ITEM ---------- */
 .info-item.price {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--green-dark);
-  gap: 6px;
-  flex-shrink: 0;
+  margin: 0;
+  white-space: nowrap;
 }
 
 .info-item.price svg {
-  width: 26px;
-  height: 26px;
   color: var(--green-main);
-  stroke-width: 2.5;
+  width: 24px;
+  height: 24px;
 }
 
-/* ---------- BOOK BUTTON - Right side ---------- */
+/* ---------- BOOK BUTTON ---------- */
 .book-btn {
-  padding: 14px 36px;
-  background: linear-gradient(135deg, var(--green-main) 0%, var(--green-hover) 100%);
-  color: white;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #28a745, #1e8e3a) !important;
+  color: white !important;
   border: none;
-  border-radius: var(--radius-btn);
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
+  transition: all 0.3s ease;
   font-size: 15px;
-  font-family: inherit;
-  transition: var(--transition);
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
   white-space: nowrap;
-  letter-spacing: 0.01em;
-  position: relative;
-  overflow: hidden;
-  margin-left: auto; /* Push to the right */
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
-.book-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+.book-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .book-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--green-hover) 0%, #1a7a32 100%);
+  background: linear-gradient(135deg, #239a42, #1a7a32) !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(40, 167, 69, 0.3);
-}
-
-.book-btn:hover:not(:disabled)::before {
-  opacity: 1;
+  box-shadow: 0 6px 18px rgba(40, 167, 69, 0.35);
 }
 
 .book-btn:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
 }
 
 .book-btn:disabled {
-  background: #9ca3af;
+  background: #9ca3af !important;
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
   opacity: 0.7;
 }
 
-.book-btn:focus-visible {
-  outline: 3px solid rgba(40, 167, 69, 0.4);
-  outline-offset: 2px;
+/* ---------- VIEW BUTTON ---------- */
+.view-btn {
+  padding: 11px 24px;
+  background: #f0f4ff !important;
+  color: #4f46e5 !important;
+  border: 1.5px solid #e0e7ff;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 15px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.view-btn:hover:not(:disabled) {
+  background: #e0e7ff !important;
+  border-color: #c7d2fe;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.view-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* ---------- DRIVER INFO ---------- */
+.driver-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  margin-top: 4px;
+}
+
+.driver-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--green-main);
+  flex-shrink: 0;
+}
+
+.driver-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.driver-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.driver-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.driver-rating svg {
+  width: 14px;
+  height: 14px;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+/* ---------- BADGES ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.instant {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge.verified {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge.full {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 /* ---------- TABLET (768px - 1024px) ---------- */
 @media (max-width: 1024px) {
   .ride-card {
-    padding: 20px;
+    padding: 18px 20px;
   }
 
   .ride-card-header {
-    gap: 24px;
-  }
-
-  .arrow-icon {
-    width: 36px !important;
-    height: 36px !important;
-    margin: 0 12px;
-  }
-
-  .ride-info {
     gap: 16px;
   }
 
-  .info-item.price {
-    font-size: 24px;
+  .ride-info {
+    gap: 20px;
   }
 
-  .book-btn {
-    padding: 12px 30px;
+  .arrow-icon {
+    width: 28px;
+    height: 28px;
+    margin: 0 4px;
   }
 }
 
 /* ---------- MOBILE (below 768px) ---------- */
 @media (max-width: 768px) {
   .ride-card {
-    padding: 18px;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .ride-card:hover {
+    transform: translateY(-1px);
   }
 
   .ride-card-header {
     flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
+    align-items: flex-start;
+    gap: 12px;
     padding-bottom: 16px;
   }
 
-  .location {
-    width: 100%;
-  }
-
   .location-name {
-    font-size: 17px;
+    font-size: 16px;
   }
 
   .location-address {
     font-size: 12px;
-    white-space: normal;
   }
 
-  /* Arrow rotates 90 degrees and centers */
   .arrow-icon {
-    width: 32px !important;
-    height: 32px !important;
     transform: rotate(90deg);
+    width: 24px;
+    height: 24px;
     align-self: center;
-    margin: 8px 0;
+    margin: 4px 0;
   }
 
   .ride-card:hover .arrow-icon {
     transform: rotate(90deg) translateY(4px);
   }
 
-  /* Stack info items vertically on mobile */
+  /* Stack all items vertically on mobile */
   .ride-info {
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .info-item {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .info-item.date-time,
-  .info-item.seats {
-    font-size: 14px;
+    justify-content: flex-start;
   }
 
   .info-item.price {
-    font-size: 24px;
-    justify-content: center;
+    font-size: 22px;
+    justify-content: flex-start;
   }
 
   .book-btn {
     width: 100%;
-    padding: 16px 24px;
-    font-size: 16px;
-    margin-left: 0;
     justify-content: center;
+    padding: 14px 20px;
   }
 
-  .book-btn:hover:not(:disabled) {
+  .book-btn:hover {
     transform: none;
   }
 }
@@ -376,52 +424,8 @@
 /* ---------- SMALL MOBILE (below 480px) ---------- */
 @media (max-width: 480px) {
   .ride-card {
-    padding: 16px;
-    border-radius: 14px;
-  }
-
-  .location-name {
-    font-size: 16px;
-  }
-
-  .location-address {
-    font-size: 11px;
-  }
-
-  .arrow-icon {
-    width: 28px !important;
-    height: 28px !important;
-  }
-
-  .info-item.date-time,
-  .info-item.seats {
-    font-size: 13px;
-  }
-
-  .info-item svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .info-item.price {
-    font-size: 22px;
-  }
-
-  .info-item.price svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .book-btn {
-    padding: 14px 20px;
-    font-size: 15px;
-  }
-}
-
-/* ---------- EXTRA SMALL (below 360px) ---------- */
-@media (max-width: 360px) {
-  .ride-card {
     padding: 14px;
+    border-radius: 12px;
   }
 
   .location-name {
@@ -432,9 +436,8 @@
     font-size: 11px;
   }
 
-  .info-item.date-time,
-  .info-item.seats {
-    font-size: 12px;
+  .info-item {
+    font-size: 13px;
   }
 
   .info-item.price {
@@ -442,31 +445,63 @@
   }
 
   .book-btn {
-    padding: 12px 18px;
     font-size: 14px;
+    padding: 12px 18px;
+  }
+}
+
+/* ---------- EXTRA SMALL (below 360px) ---------- */
+@media (max-width: 360px) {
+  .ride-card {
+    padding: 12px;
+  }
+
+  .location-name {
+    font-size: 14px;
+  }
+
+  .location-address {
+    font-size: 11px;
+  }
+
+  .info-item {
+    font-size: 12px;
+  }
+
+  .info-item.price {
+    font-size: 18px;
   }
 }
 
 /* ---------- LANDSCAPE MODE ---------- */
 @media (max-height: 600px) and (orientation: landscape) {
   .ride-card {
-    padding: 16px 20px;
+    padding: 14px 16px;
+    gap: 12px;
   }
 
   .ride-card-header {
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-  }
-
-  .ride-info {
-    gap: 16px;
+    padding-bottom: 10px;
   }
 }
 
-/* ---------- ACCESSIBILITY ---------- */
+/* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
+.book-btn:focus-visible,
+.view-btn:focus-visible {
+  outline: 3px solid rgba(40, 167, 69, 0.4);
+  outline-offset: 2px;
+}
+
+.ride-card:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- REDUCE MOTION (ACCESSIBILITY) ---------- */
 @media (prefers-reduced-motion: reduce) {
   .ride-card,
   .book-btn,
+  .view-btn,
   .arrow-icon {
     animation: none;
     transition: none;
@@ -474,6 +509,7 @@
 
   .ride-card:hover,
   .book-btn:hover,
+  .view-btn:hover,
   .ride-card:hover .arrow-icon {
     transform: none;
   }
@@ -481,7 +517,8 @@
 
 /* ---------- PRINT STYLES ---------- */
 @media print {
-  .book-btn {
+  .book-btn,
+  .view-btn {
     display: none;
   }
 
@@ -502,18 +539,15 @@
   pointer-events: none;
 }
 
-.ride-card.loading::after {
+.book-btn.loading::after {
   content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 40px;
-  height: 40px;
-  margin: -20px 0 0 -20px;
-  border: 3px solid var(--border-soft);
-  border-top-color: var(--green-main);
+  width: 14px;
+  height: 14px;
+  border: 2px solid white;
+  border-top-color: transparent;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.6s linear infinite;
+  margin-left: 6px;
 }
 
 @keyframes spin {
@@ -522,35 +556,35 @@
   }
 }
 
-/* ---------- DARK MODE SUPPORT (Optional) ---------- */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-card: #1f2937;
-    --text-dark: #f9fafb;
-    --text-muted: #9ca3af;
-    --border-soft: #374151;
-    --bg-hover: #111827;
-  }
+/* ---------- SKELETON LOADER ---------- */
+.ride-card.skeleton {
+  pointer-events: none;
+  animation: skeleton-loading 1.5s infinite;
+}
 
-  .ride-card {
-    background: var(--bg-card);
+@keyframes skeleton-loading {
+  0%, 100% {
+    opacity: 0.5;
   }
-
-  .location-name {
-    color: var(--text-dark);
-  }
-
-  .location-address {
-    color: var(--text-muted);
-  }
-
-  .info-item span {
-    color: var(--text-dark);
+  50% {
+    opacity: 0.8;
   }
 }
 
-/* ---------- FOCUS RING ---------- */
-.ride-card:focus-visible {
-  outline: 2px solid var(--green-main);
-  outline-offset: 2px;
+.ride-card.skeleton .location,
+.ride-card.skeleton .info-item {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  color: transparent;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
