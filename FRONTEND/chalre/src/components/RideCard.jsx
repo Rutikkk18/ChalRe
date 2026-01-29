@@ -1,15 +1,20 @@
 // RideCard.jsx
 import { MapPin, Users, Clock, IndianRupee, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import "../styles/ridecard.css";
+import "./RideCard.css";
 
 export default function RideCard({ ride }) {
   const navigate = useNavigate();
   const isFull = Number(ride?.availableSeats) <= 0;
 
-  const goToBooking = () => {
+  const goToBooking = (e) => {
+    e.stopPropagation(); // Prevent card click when clicking button
     if (isFull) return;
     navigate(`/book-ride/${ride.id}`);
+  };
+
+  const goToRideDetails = () => {
+    navigate(`/ridedetails/${ride.id}`);
   };
 
   // Extract location names (first part before comma)
@@ -19,7 +24,18 @@ export default function RideCard({ ride }) {
   };
 
   return (
-    <div className={`ride-card ${isFull ? "full" : ""}`}>
+    <div 
+      className={`ride-card ${isFull ? "full" : ""}`}
+      onClick={goToRideDetails}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          goToRideDetails();
+        }
+      }}
+    >
       {/* HEADER - LOCATIONS */}
       <div className="ride-card-header">
         {/* START LOCATION */}
@@ -33,8 +49,8 @@ export default function RideCard({ ride }) {
           </div>
         </div>
 
-        {/* ARROW SEPARATOR */}
-        <ArrowRight className="arrow-icon" />
+        {/* ARROW SEPARATOR - Large and Centered */}
+        <ArrowRight className="arrow-icon" strokeWidth={2.5} />
 
         {/* END LOCATION */}
         <div className="location">
@@ -48,22 +64,18 @@ export default function RideCard({ ride }) {
         </div>
       </div>
 
-      {/* BOTTOM ROW - DATE, SEATS, PRICE, BUTTON (ALL IN ONE LINE) */}
+      {/* BOTTOM ROW - DATE, SEATS, PRICE, BUTTON (HORIZONTAL LAYOUT) */}
       <div className="ride-info">
         {/* DATE & TIME */}
-        <div className="info-item">
+        <div className="info-item date-time">
           <Clock />
-          <span>
-            <strong>Date & Time:</strong> {ride.date} • {ride.time}
-          </span>
+          <span>{ride.date} • {ride.time}</span>
         </div>
 
         {/* SEATS LEFT */}
-        <div className="info-item">
+        <div className="info-item seats">
           <Users />
-          <span>
-            <strong>Seats Left:</strong> {ride.availableSeats}
-          </span>
+          <span>{ride.availableSeats}</span>
         </div>
 
         {/* PRICE */}
@@ -73,7 +85,11 @@ export default function RideCard({ ride }) {
         </div>
 
         {/* BOOK BUTTON */}
-        <button className="book-btn" onClick={goToBooking} disabled={isFull}>
+        <button 
+          className="book-btn" 
+          onClick={goToBooking} 
+          disabled={isFull}
+        >
           {isFull ? "Ride Full" : "Book Ride"}
         </button>
       </div>

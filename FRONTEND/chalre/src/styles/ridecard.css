@@ -1,85 +1,112 @@
 /* ================================
-   RIDE CARD - REDESIGNED & FULLY RESPONSIVE
-   Professional • Modern • Clean Layout
+   RIDE CARD - MODERN & RESPONSIVE
+   Updated to match design specifications
 ================================ */
 
 /* ---------- THEME VARIABLES ---------- */
 :root {
   --green-dark: #0f5132;
   --green-main: #28a745;
-  --border-soft: #dbeee1;
+  --green-hover: #239a42;
+  --border-soft: #e5e7eb;
   --border-focus: #3fae55;
-  --text-dark: #1f2933;
+  --text-dark: #1f2937;
   --text-muted: #6b7280;
-  --radius-md: 12px;
-  --radius-sm: 8px;
-  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --bg-card: #ffffff;
+  --bg-hover: #f9fafb;
+  --radius-card: 16px;
+  --radius-btn: 10px;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ---------- GLOBAL RESET ---------- */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* ---------- RIDE CARD ---------- */
+/* ---------- RIDE CARD CONTAINER ---------- */
 .ride-card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 20px 24px;
-  box-shadow: 0 2px 12px rgba(15, 81, 50, 0.08);
-  border: 1.5px solid var(--border-soft);
-  transition: all 0.3s ease;
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  border: 2px solid #d1fae5; /* Light green border for clickable cards */
+  transition: var(--transition);
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  animation: slideIn 0.4s ease;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.ride-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green-main), var(--green-hover));
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .ride-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(15, 81, 50, 0.12);
-  border-color: var(--border-focus);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  border-color: #86efac; /* Brighter green on hover */
+  background: #f0fdf4; /* Very subtle green tint on hover */
+}
+
+.ride-card:hover::before {
+  opacity: 1;
+}
+
+.ride-card:active:not(.full) {
+  transform: translateY(0);
+  border-color: var(--green-main);
+  box-shadow: var(--shadow-card);
 }
 
 /* ---------- FULL STATE ---------- */
 .ride-card.full {
   opacity: 0.7;
-  border-color: #f5d0d0;
-  background: #fef5f5;
+  border-color: #fca5a5;
+  background: #fef2f2;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .ride-card.full:hover {
-  transform: translateY(-1px);
+  transform: none;
+  box-shadow: var(--shadow-card);
 }
 
-/* ---------- CARD HEADER (ROUTE) ---------- */
+.ride-card.full::before {
+  background: #dc2626;
+}
+
+/* ---------- CARD HEADER (ROUTE SECTION) ---------- */
 .ride-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 32px;
   padding-bottom: 20px;
-  border-bottom: 1.5px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 20px;
 }
 
-/* ---------- LOCATION ---------- */
+/* ---------- LOCATION STYLING ---------- */
 .location {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   flex: 1;
   min-width: 0;
 }
@@ -89,77 +116,83 @@
   height: 22px;
   flex-shrink: 0;
   color: var(--green-main);
-  margin-top: 2px;
+  margin-top: 3px;
+  stroke-width: 2;
 }
 
 .location > div {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-/* Location Name (Bold, Large) */
+/* Location Name - Bold and prominent */
 .location-name {
   display: block;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   color: var(--text-dark);
   line-height: 1.3;
-  margin-bottom: 4px;
+  letter-spacing: -0.01em;
 }
 
-/* Full Address (Small, Gray) */
+/* Full Address - Smaller, gray text */
 .location-address {
   display: block;
   font-size: 13px;
   font-weight: 400;
   color: var(--text-muted);
-  line-height: 1.4;
+  line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* ---------- ARROW ICON ---------- */
+/* ---------- ARROW ICON - LARGE & CENTERED ---------- */
 .arrow-icon {
+  width: 40px !important;
+  height: 40px !important;
   color: var(--green-main) !important;
-  width: 32px;
-  height: 32px;
   flex-shrink: 0;
-  transition: transform 0.3s ease;
-  margin: 0 8px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  align-self: center;
+  margin: 0 16px;
+  stroke-width: 2.5;
 }
 
 .ride-card:hover .arrow-icon {
-  transform: translateX(4px);
+  transform: translateX(6px);
+  color: var(--green-hover) !important;
 }
 
-/* ---------- RIDE INFO (BOTTOM SECTION) - HORIZONTAL LAYOUT ---------- */
+/* ---------- RIDE INFO (BOTTOM SECTION) ---------- */
 .ride-info {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 24px;
+  flex-wrap: nowrap;
 }
 
-/* ---------- INFO ITEM ---------- */
+/* ---------- INFO ITEMS ---------- */
 .info-item {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
   color: var(--text-dark);
-  font-size: 14px;
+  white-space: nowrap;
 }
 
 .info-item svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
   color: var(--text-muted);
-}
-
-.info-item strong {
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-right: 4px;
+  stroke-width: 2;
 }
 
 .info-item span {
@@ -167,256 +200,196 @@
   color: var(--text-dark);
 }
 
-/* ---------- PRICE ITEM ---------- */
+/* Date & Time Item */
+.info-item.date-time {
+  flex: 1;
+  min-width: 0;
+}
+
+.info-item.date-time span {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Seats Item */
+.info-item.seats {
+  flex-shrink: 0;
+}
+
+/* Price Item - Larger and prominent */
 .info-item.price {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--green-dark);
-  margin: 0;
-  white-space: nowrap;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .info-item.price svg {
+  width: 26px;
+  height: 26px;
   color: var(--green-main);
-  width: 24px;
-  height: 24px;
+  stroke-width: 2.5;
 }
 
 /* ---------- BOOK BUTTON ---------- */
 .book-btn {
-  padding: 12px 32px;
-  background: linear-gradient(135deg, #28a745, #1e8e3a) !important;
-  color: white !important;
+  padding: 14px 36px;
+  background: linear-gradient(135deg, var(--green-main) 0%, var(--green-hover) 100%);
+  color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-btn);
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.3s ease;
   font-size: 15px;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
-  white-space: nowrap;
   font-family: inherit;
-  appearance: none;
-  -webkit-appearance: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  transition: var(--transition);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
 }
 
-.book-btn svg {
-  width: 16px;
-  height: 16px;
+.book-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .book-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #239a42, #1a7a32) !important;
+  background: linear-gradient(135deg, var(--green-hover) 0%, #1a7a32 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(40, 167, 69, 0.35);
+  box-shadow: 0 4px 16px rgba(40, 167, 69, 0.3);
+}
+
+.book-btn:hover:not(:disabled)::before {
+  opacity: 1;
 }
 
 .book-btn:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
 }
 
 .book-btn:disabled {
-  background: #9ca3af !important;
+  background: #9ca3af;
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
   opacity: 0.7;
 }
 
-/* ---------- VIEW BUTTON ---------- */
-.view-btn {
-  padding: 11px 24px;
-  background: #f0f4ff !important;
-  color: #4f46e5 !important;
-  border: 1.5px solid #e0e7ff;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  font-size: 15px;
-  flex-shrink: 0;
-  white-space: nowrap;
-  font-family: inherit;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-.view-btn:hover:not(:disabled) {
-  background: #e0e7ff !important;
-  border-color: #c7d2fe;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-}
-
-.view-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-/* ---------- DRIVER INFO ---------- */
-.driver-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
-  background: #f9fafb;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  margin-top: 4px;
-}
-
-.driver-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--green-main);
-  flex-shrink: 0;
-}
-
-.driver-details {
-  flex: 1;
-  min-width: 0;
-}
-
-.driver-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-dark);
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.driver-rating {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-.driver-rating svg {
-  width: 14px;
-  height: 14px;
-  color: #f59e0b;
-  flex-shrink: 0;
-}
-
-/* ---------- BADGES ---------- */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.badge.instant {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.badge.verified {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.badge.full {
-  background: #fee2e2;
-  color: #991b1b;
+.book-btn:focus-visible {
+  outline: 3px solid rgba(40, 167, 69, 0.4);
+  outline-offset: 2px;
 }
 
 /* ---------- TABLET (768px - 1024px) ---------- */
 @media (max-width: 1024px) {
   .ride-card {
-    padding: 18px 20px;
+    padding: 20px;
   }
 
   .ride-card-header {
-    gap: 16px;
+    gap: 24px;
+  }
+
+  .arrow-icon {
+    width: 36px !important;
+    height: 36px !important;
+    margin: 0 12px;
   }
 
   .ride-info {
     gap: 20px;
   }
 
-  .arrow-icon {
-    width: 28px;
-    height: 28px;
-    margin: 0 4px;
+  .info-item.price {
+    font-size: 24px;
+  }
+
+  .book-btn {
+    padding: 12px 30px;
   }
 }
 
 /* ---------- MOBILE (below 768px) ---------- */
 @media (max-width: 768px) {
   .ride-card {
-    padding: 16px;
-    gap: 16px;
-  }
-
-  .ride-card:hover {
-    transform: translateY(-1px);
+    padding: 18px;
   }
 
   .ride-card-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    align-items: stretch;
+    gap: 16px;
     padding-bottom: 16px;
   }
 
+  .location {
+    width: 100%;
+  }
+
   .location-name {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .location-address {
     font-size: 12px;
+    white-space: normal;
   }
 
+  /* Arrow rotates 90 degrees and centers */
   .arrow-icon {
+    width: 32px !important;
+    height: 32px !important;
     transform: rotate(90deg);
-    width: 24px;
-    height: 24px;
     align-self: center;
-    margin: 4px 0;
+    margin: 8px 0;
   }
 
   .ride-card:hover .arrow-icon {
     transform: rotate(90deg) translateY(4px);
   }
 
-  /* Stack all items vertically on mobile */
+  /* Stack info items vertically */
   .ride-info {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
   }
 
   .info-item {
+    width: 100%;
     justify-content: flex-start;
   }
 
+  .info-item.date-time,
+  .info-item.seats {
+    font-size: 14px;
+  }
+
   .info-item.price {
-    font-size: 22px;
+    font-size: 24px;
     justify-content: flex-start;
   }
 
   .book-btn {
     width: 100%;
-    justify-content: center;
-    padding: 14px 20px;
+    padding: 16px 24px;
+    font-size: 16px;
   }
 
-  .book-btn:hover {
+  .book-btn:hover:not(:disabled) {
     transform: none;
   }
 }
@@ -424,8 +397,52 @@
 /* ---------- SMALL MOBILE (below 480px) ---------- */
 @media (max-width: 480px) {
   .ride-card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .location-name {
+    font-size: 16px;
+  }
+
+  .location-address {
+    font-size: 11px;
+  }
+
+  .arrow-icon {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .info-item.date-time,
+  .info-item.seats {
+    font-size: 13px;
+  }
+
+  .info-item svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .info-item.price {
+    font-size: 22px;
+  }
+
+  .info-item.price svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .book-btn {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+}
+
+/* ---------- EXTRA SMALL (below 360px) ---------- */
+@media (max-width: 360px) {
+  .ride-card {
     padding: 14px;
-    border-radius: 12px;
   }
 
   .location-name {
@@ -436,8 +453,9 @@
     font-size: 11px;
   }
 
-  .info-item {
-    font-size: 13px;
+  .info-item.date-time,
+  .info-item.seats {
+    font-size: 12px;
   }
 
   .info-item.price {
@@ -445,71 +463,39 @@
   }
 
   .book-btn {
-    font-size: 14px;
     padding: 12px 18px;
-  }
-}
-
-/* ---------- EXTRA SMALL (below 360px) ---------- */
-@media (max-width: 360px) {
-  .ride-card {
-    padding: 12px;
-  }
-
-  .location-name {
     font-size: 14px;
-  }
-
-  .location-address {
-    font-size: 11px;
-  }
-
-  .info-item {
-    font-size: 12px;
-  }
-
-  .info-item.price {
-    font-size: 18px;
   }
 }
 
 /* ---------- LANDSCAPE MODE ---------- */
 @media (max-height: 600px) and (orientation: landscape) {
   .ride-card {
-    padding: 14px 16px;
-    gap: 12px;
+    padding: 16px 20px;
   }
 
   .ride-card-header {
-    padding-bottom: 10px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+
+  .ride-info {
+    gap: 16px;
   }
 }
 
-/* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
-.book-btn:focus-visible,
-.view-btn:focus-visible {
-  outline: 3px solid rgba(40, 167, 69, 0.4);
-  outline-offset: 2px;
-}
-
-.ride-card:focus-visible {
-  outline: 2px solid var(--border-focus);
-  outline-offset: 2px;
-}
-
-/* ---------- REDUCE MOTION (ACCESSIBILITY) ---------- */
+/* ---------- ACCESSIBILITY ---------- */
 @media (prefers-reduced-motion: reduce) {
   .ride-card,
   .book-btn,
-  .view-btn,
-  .arrow-icon {
+  .arrow-icon,
+  .ride-card::before {
     animation: none;
     transition: none;
   }
 
   .ride-card:hover,
   .book-btn:hover,
-  .view-btn:hover,
   .ride-card:hover .arrow-icon {
     transform: none;
   }
@@ -517,8 +503,7 @@
 
 /* ---------- PRINT STYLES ---------- */
 @media print {
-  .book-btn,
-  .view-btn {
+  .book-btn {
     display: none;
   }
 
@@ -531,6 +516,10 @@
   .ride-card:hover {
     transform: none;
   }
+
+  .ride-card::before {
+    display: none;
+  }
 }
 
 /* ---------- LOADING STATE ---------- */
@@ -539,15 +528,18 @@
   pointer-events: none;
 }
 
-.book-btn.loading::after {
+.ride-card.loading::after {
   content: "";
-  width: 14px;
-  height: 14px;
-  border: 2px solid white;
-  border-top-color: transparent;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 3px solid var(--border-soft);
+  border-top-color: var(--green-main);
   border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-  margin-left: 6px;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -556,35 +548,35 @@
   }
 }
 
-/* ---------- SKELETON LOADER ---------- */
-.ride-card.skeleton {
-  pointer-events: none;
-  animation: skeleton-loading 1.5s infinite;
+/* ---------- DARK MODE SUPPORT (Optional) ---------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-card: #1f2937;
+    --text-dark: #f9fafb;
+    --text-muted: #9ca3af;
+    --border-soft: #374151;
+    --bg-hover: #111827;
+  }
+
+  .ride-card {
+    background: var(--bg-card);
+  }
+
+  .location-name {
+    color: var(--text-dark);
+  }
+
+  .location-address {
+    color: var(--text-muted);
+  }
+
+  .info-item span {
+    color: var(--text-dark);
+  }
 }
 
-@keyframes skeleton-loading {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-.ride-card.skeleton .location,
-.ride-card.skeleton .info-item {
-  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 4px;
-  color: transparent;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+/* ---------- FOCUS RING ---------- */
+.ride-card:focus-visible {
+  outline: 2px solid var(--green-main);
+  outline-offset: 2px;
 }
