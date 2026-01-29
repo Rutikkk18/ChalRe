@@ -1,6 +1,6 @@
 /* ================================
    RIDE CARD - MODERN & RESPONSIVE
-   Updated to match design specifications
+   Matching exact design specifications
 ================================ */
 
 /* ---------- THEME VARIABLES ---------- */
@@ -34,7 +34,7 @@
   border-radius: var(--radius-card);
   padding: 24px;
   box-shadow: var(--shadow-card);
-  border: 2px solid #d1fae5; /* Light green border for clickable cards */
+  border: 2px solid var(--green-main); /* Full green border - always visible */
   transition: var(--transition);
   width: 100%;
   max-width: 1200px;
@@ -44,32 +44,14 @@
   cursor: pointer;
 }
 
-.ride-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--green-main), var(--green-hover));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
 .ride-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
-  border-color: #86efac; /* Brighter green on hover */
-  background: #f0fdf4; /* Very subtle green tint on hover */
-}
-
-.ride-card:hover::before {
-  opacity: 1;
+  border-color: var(--green-hover); /* Darker green on hover */
 }
 
 .ride-card:active:not(.full) {
   transform: translateY(0);
-  border-color: var(--green-main);
   box-shadow: var(--shadow-card);
 }
 
@@ -85,10 +67,6 @@
 .ride-card.full:hover {
   transform: none;
   box-shadow: var(--shadow-card);
-}
-
-.ride-card.full::before {
-  background: #dc2626;
 }
 
 /* ---------- CARD HEADER (ROUTE SECTION) ---------- */
@@ -167,13 +145,13 @@
   color: var(--green-hover) !important;
 }
 
-/* ---------- RIDE INFO (BOTTOM SECTION) ---------- */
+/* ---------- RIDE INFO (BOTTOM SECTION) - SPREAD HORIZONTALLY ---------- */
 .ride-info {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: nowrap;
+  justify-content: space-between; /* Spread items across full width */
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 /* ---------- INFO ITEMS ---------- */
@@ -185,6 +163,7 @@
   font-weight: 500;
   color: var(--text-dark);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .info-item svg {
@@ -200,24 +179,21 @@
   color: var(--text-dark);
 }
 
-/* Date & Time Item */
+/* Date & Time Item - Left side */
 .info-item.date-time {
-  flex: 1;
-  min-width: 0;
+  flex-shrink: 0;
 }
 
 .info-item.date-time span {
   font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* Seats Item */
+/* Seats Item - Middle left */
 .info-item.seats {
   flex-shrink: 0;
 }
 
-/* Price Item - Larger and prominent */
+/* Price Item - Middle right, larger and prominent */
 .info-item.price {
   font-size: 26px;
   font-weight: 700;
@@ -233,7 +209,7 @@
   stroke-width: 2.5;
 }
 
-/* ---------- BOOK BUTTON ---------- */
+/* ---------- BOOK BUTTON - Right side ---------- */
 .book-btn {
   padding: 14px 36px;
   background: linear-gradient(135deg, var(--green-main) 0%, var(--green-hover) 100%);
@@ -251,6 +227,7 @@
   letter-spacing: 0.01em;
   position: relative;
   overflow: hidden;
+  margin-left: auto; /* Push to the right */
 }
 
 .book-btn::before {
@@ -310,7 +287,7 @@
   }
 
   .ride-info {
-    gap: 20px;
+    gap: 16px;
   }
 
   .info-item.price {
@@ -361,16 +338,16 @@
     transform: rotate(90deg) translateY(4px);
   }
 
-  /* Stack info items vertically */
+  /* Stack info items vertically on mobile */
   .ride-info {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     gap: 14px;
   }
 
   .info-item {
     width: 100%;
-    justify-content: flex-start;
+    justify-content: center;
   }
 
   .info-item.date-time,
@@ -380,13 +357,15 @@
 
   .info-item.price {
     font-size: 24px;
-    justify-content: flex-start;
+    justify-content: center;
   }
 
   .book-btn {
     width: 100%;
     padding: 16px 24px;
     font-size: 16px;
+    margin-left: 0;
+    justify-content: center;
   }
 
   .book-btn:hover:not(:disabled) {
@@ -488,8 +467,7 @@
 @media (prefers-reduced-motion: reduce) {
   .ride-card,
   .book-btn,
-  .arrow-icon,
-  .ride-card::before {
+  .arrow-icon {
     animation: none;
     transition: none;
   }
@@ -515,10 +493,6 @@
 
   .ride-card:hover {
     transform: none;
-  }
-
-  .ride-card::before {
-    display: none;
   }
 }
 
