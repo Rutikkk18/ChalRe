@@ -472,6 +472,24 @@ html, body {
   background: transparent !important;
   border: none !important;
 }
+.forgot-password-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.forgot-password-btn:hover {
+  text-decoration: underline;
+}
+
+.success {
+  color: green;
+  font-size: 14px;
+}
+
 
 /* Mobile optimization */
 @media (max-width: 480px) {

@@ -7,6 +7,8 @@ import { auth } from "../../Firebfase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Eye, EyeOff } from "lucide-react";
 import "../styles/auth.css";
+import { sendPasswordResetEmail } from "firebase/auth";
+
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -16,6 +18,11 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
+  const [resetMessage, setResetMessage] = useState("");
+
+
+
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -77,6 +84,29 @@ export default function Login() {
     }
   };
 
+  const handleForgotPassword = async () => {
+  setError("");
+  setResetMessage("");
+
+  if (!email) {
+    setError("Please enter your email to reset password.");
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    setResetMessage(
+      "Password reset email sent. Please check your inbox."
+    );
+  } catch (err) {
+    const msg =
+      handleError(err, { showAlert: false }) ||
+      "Failed to send reset email.";
+    setError(msg);
+  }
+};
+
+
   return (
     <div className="login-container">
       <form className="login-box" onSubmit={handleSubmit}>
@@ -107,13 +137,25 @@ export default function Login() {
             onClick={togglePasswordVisibility}
             tabIndex="-1"
           >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
           </button>
         </div>
 
         <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
+
+                <button
+          type="button"
+          className="forgot-password-btn"
+          onClick={handleForgotPassword}
+        >
+          Forgot password?
+        </button>
+
+        {resetMessage && <p className="success">{resetMessage}</p>}
+
+
 
         <p>
           Don't have an account?

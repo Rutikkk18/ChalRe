@@ -100,6 +100,14 @@ export default function Register() {
           autoComplete="new-password"
           required
         />
+        <button
+            type="button"
+            className="password-toggle-btn"
+            onClick={togglePasswordVisibility}
+            tabIndex="-1"
+          >
+            {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+          </button>
 
         <input
           type="tel"
@@ -111,6 +119,7 @@ export default function Register() {
           title="Please enter a valid 10-digit phone number"
           required
         />
+        
 
         <button type="submit" disabled={loading}>
           {loading ? "Sending verification..." : "Create Account"}

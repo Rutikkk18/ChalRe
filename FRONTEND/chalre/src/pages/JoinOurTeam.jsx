@@ -115,7 +115,7 @@ export default function JoinOurTeam() {
                 <section className="jot-cta">
                     <h3>Interested in joining us in the future?</h3>
                     <p>Drop us a hello, and let's stay in touch.</p>
-                    <a href="mailto:contact@chalre.com" className="jot-btn">
+                    <a href="mailto:chalreofficial@gmail.com" className="jot-btn">
                         Get in Touch
                     </a>
                 </section>
