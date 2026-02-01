@@ -275,144 +275,142 @@ export default function RideDetails() {
   };
 
   if (loading) {
-    return <div className="rd-wrapper"><div className="rd-loading">Loading ride…</div></div>;
+    return <div className="ridedetails__wrapper"><div className="ridedetails__loading">Loading ride…</div></div>;
   }
 
   if (err && !ride) {
-    return <div className="rd-wrapper"><div className="rd-error">{err}</div></div>;
+    return <div className="ridedetails__wrapper"><div className="ridedetails__error">{err}</div></div>;
   }
 
   return (
-    <div className="rd-wrapper">
-      <div className="rd-container">
+    <div className="ridedetails__wrapper">
+      <div className="ridedetails__container">
         {/* Top / Back */}
-        <div className="rd-top">
-          <button className="rd-back" onClick={() => navigate(-1)}>← Back</button>
-          <h2>Ride Details</h2>
+        <div className="ridedetails__top">
+          <button className="ridedetails__back-btn" onClick={() => navigate(-1)}>← Back</button>
+          <h2 className="ridedetails__title">Ride Details</h2>
         </div>
 
         {ride && (
           <>
             {/* SUMMARY CARD */}
-            <div className="rd-summary card">
-              <div className="rd-locations">
-                <div className="rd-from">
-                  <MapPin className="icon" />
+            <div className="ridedetails__summary-card">
+              <div className="ridedetails__locations">
+                <div className="ridedetails__from">
+                  <MapPin className="ridedetails__location-icon" />
                   <div>
-                    <div className="label">From</div>
-                    <div className="value">{ride.startLocation || ride.from}</div>
+                    <div className="ridedetails__location-label">From</div>
+                    <div className="ridedetails__location-value">{ride.startLocation || ride.from}</div>
                   </div>
                 </div>
 
-                <div className="rd-arrow">→</div>
+                <div className="ridedetails__arrow">→</div>
 
-                <div className="rd-to">
-                  <MapPin className="icon" />
+                <div className="ridedetails__to">
+                  <MapPin className="ridedetails__location-icon" />
                   <div>
-                    <div className="label">To</div>
-                    <div className="value">{ride.endLocation || ride.to}</div>
+                    <div className="ridedetails__location-label">To</div>
+                    <div className="ridedetails__location-value">{ride.endLocation || ride.to}</div>
                   </div>
                 </div>
               </div>
 
-              <div className="rd-meta">
-                <div className="meta-item">
-                  <Clock className="icon" />
+              <div className="ridedetails__meta">
+                <div className="ridedetails__meta-item">
+                  <Clock className="ridedetails__meta-icon" />
                   <div>
-                    <div className="label">Date & Time</div>
-                    <div className="value">{ride.date} • {ride.time}</div>
+                    <div className="ridedetails__meta-label">Date & Time</div>
+                    <div className="ridedetails__meta-value">{ride.date} • {ride.time}</div>
                   </div>
                 </div>
 
-                <div className="meta-item">
-                  <Users className="icon" />
+                <div className="ridedetails__meta-item">
+                  <Users className="ridedetails__meta-icon" />
                   <div>
-                    <div className="label">Seats left</div>
-                    <div className="value">{ride.availableSeats}</div>
+                    <div className="ridedetails__meta-label">Seats left</div>
+                    <div className="ridedetails__meta-value">{ride.availableSeats}</div>
                   </div>
                 </div>
 
-                <div className="meta-item price">
-                  <IndianRupee className="icon" />
+                <div className="ridedetails__meta-item ridedetails__price">
+                  <IndianRupee className="ridedetails__meta-icon" />
                   <div>
-                    <div className="label">Price / seat</div>
-                    <div className="value">{ride.price}</div>
+                    <div className="ridedetails__meta-label">Price / seat</div>
+                    <div className="ridedetails__meta-value">{ride.price}</div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* DRIVER CARD + DETAILS */}
-            <div className="rd-driver card">
-              <div className="rd-driver-left">
-                <div className="rd-driver-avatar">
+            <div className="ridedetails__driver-card">
+              <div className="ridedetails__driver-left">
+                <div className="ridedetails__driver-avatar">
                   {ride.driver?.profileImage ? (
                        <img
-                      src={user?.profileImage || "/profileimage.png"}
+                      src={ride.driver?.profileImage || "/profileimage.png"}
                       alt="Profile"
-                      className="profile-avatar"
+                      className="ridedetails__profile-avatar"
                     />
-
-
                   ) : (
-                    <div className="placeholder">{(ride.driver?.name || "D").charAt(0)}</div>
+                    <div className="ridedetails__avatar-placeholder">{(ride.driver?.name || "D").charAt(0)}</div>
                   )}
                 </div>
-                <div className="rd-driver-info">
-                  <div className="rd-driver-name">
+                <div className="ridedetails__driver-info">
+                  <div className="ridedetails__driver-name">
                     {ride.driver?.name || "Driver"}
-                    {ride.driver?.isDriverVerified && <CheckCircle className="verified" />}
+                    {ride.driver?.isDriverVerified && <CheckCircle className="ridedetails__verified-badge" />}
                   </div>
-                  <div className="rd-driver-sub">{ride.driver?.phone || "—"}</div>
+                  <div className="ridedetails__driver-sub">{ride.driver?.phone || "—"}</div>
                   {ride.driver?.avgRating && ride.driver.avgRating > 0 && (
-                    <div className="rd-driver-rating">
+                    <div className="ridedetails__driver-rating">
                       <Star size={16} fill="#fbbf24" color="#fbbf24" />
                       <span>{ride.driver.avgRating.toFixed(1)}</span>
-                      <span className="rating-count">({ride.driver.ratingCount || 0} reviews)</span>
+                      <span className="ridedetails__rating-count">({ride.driver.ratingCount || 0} reviews)</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="rd-driver-actions">
+              <div className="ridedetails__driver-actions">
                 {ride.driver?.phone ? (
-                  <a className="btn-ghost" href={`tel:${ride.driver.phone}`}>
+                  <a className="ridedetails__contact-btn" href={`tel:${ride.driver.phone}`}>
                     <Phone /> Contact
                   </a>
                 ) : (
-                  <div className="muted">No contact available</div>
+                  <div className="ridedetails__muted">No contact available</div>
                 )}
               </div>
             </div>
 
             {/* EXTRA INFO + MAP */}
-            <div className="rd-extra card">
-              <div className="extra-row">
+            <div className="ridedetails__extra-card">
+              <div className="ridedetails__extra-row">
                 <div><strong>Vehicle:</strong> {ride.vehicle?.model || ride.carModel || "—"}</div>
                 <div><strong>Ride type:</strong> {ride.rideType || ride.type || "Car"}</div>
                 <div><strong>Luggage:</strong> {ride.luggageAllowed ? "Yes" : "No"}</div>
               </div>
 
-              <div className="map-placeholder">
+              <div className="ridedetails__map-placeholder">
                 {/* You can plug an actual map later (Google/Leaflet) */}
-                <div className="map-box">Map preview (future)</div>
+                <div className="ridedetails__map-box">Map preview (future)</div>
               </div>
 
               {ride.note && (
-                <div className="ride-note">
+                <div className="ridedetails__ride-note">
                   <strong>Note:</strong> {ride.note}
                 </div>
               )}
 
               {/* Driver Ratings */}
               {driverRatings.length > 0 && (
-                <div className="ratings-section">
+                <div className="ridedetails__ratings-section">
                   <h4>Driver Reviews</h4>
-                  <div className="ratings-list">
+                  <div className="ridedetails__ratings-list">
                     {driverRatings.slice(0, 5).map((rating) => (
-                      <div key={rating.id} className="rating-item">
-                        <div className="rating-header">
-                          <div className="rating-stars">
+                      <div key={rating.id} className="ridedetails__rating-item">
+                        <div className="ridedetails__rating-header">
+                          <div className="ridedetails__rating-stars">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <Star
                                 key={star}
@@ -422,14 +420,14 @@ export default function RideDetails() {
                               />
                             ))}
                           </div>
-                          <span className="rating-date">
+                          <span className="ridedetails__rating-date">
                             {new Date(rating.createdAt).toLocaleDateString()}
                           </span>
                         </div>
                         {rating.comment && (
-                          <p className="rating-comment">{rating.comment}</p>
+                          <p className="ridedetails__rating-comment">{rating.comment}</p>
                         )}
-                        <p className="rating-author">by {rating.rater?.name || "Anonymous"}</p>
+                        <p className="ridedetails__rating-author">by {rating.rater?.name || "Anonymous"}</p>
                       </div>
                     ))}
                   </div>
@@ -438,85 +436,80 @@ export default function RideDetails() {
             </div>
 
             {/* BOOKING PANEL */}
-            <div className="rd-book card">
-              <div className="book-left">
-                <label>Seats</label>
-                <div className="seats-control">
-                  <button disabled={noSeatsLeft || seats <= 1} onClick={() => setSeats((s) => Math.max(1, s - 1))}>-</button>
-                  <div className="seats-count">{seats}</div>
-                  <button disabled={noSeatsLeft || seats >= ride.availableSeats} onClick={() => setSeats((s) => Math.min(ride.availableSeats, s + 1))}>+</button>
+            <div className="ridedetails__book-card">
+              <div className="ridedetails__book-left">
+                <label className="ridedetails__seats-label">Seats</label>
+                <div className="ridedetails__seats-control">
+                  <button 
+                    className="ridedetails__seats-btn"
+                    disabled={noSeatsLeft || seats <= 1} 
+                    onClick={() => setSeats((s) => Math.max(1, s - 1))}
+                  >
+                    -
+                  </button>
+                  <div className="ridedetails__seats-count">{seats}</div>
+                  <button 
+                    className="ridedetails__seats-btn"
+                    disabled={noSeatsLeft || seats >= ride.availableSeats} 
+                    onClick={() => setSeats((s) => Math.min(ride.availableSeats, s + 1))}
+                  >
+                    +
+                  </button>
                 </div>
               </div>
 
-              <div className="book-right">
-                <div className="total">
-                  <div className="label">Total</div>
-                  <div className="amount">₹ {totalPrice()}</div>
+              <div className="ridedetails__book-right">
+                <div className="ridedetails__total">
+                  <div className="ridedetails__total-label">Total</div>
+                  <div className="ridedetails__total-amount">₹ {totalPrice()}</div>
                 </div>
 
                 {/* Payment Method Selection */}
-                <div className="payment-selection" style={{ marginBottom: "1rem" }}>
-                  <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "600" }}>
+                <div className="ridedetails__payment-selection">
+                  <label className="ridedetails__payment-label">
                     Payment Method
                   </label>
-                  <div style={{ display: "flex", gap: "1rem", flexDirection: "column" }}>
-                    <label style={{ 
-                      display: "flex", 
-                      alignItems: "center", 
-                      gap: "0.5rem",
-                      cursor: "pointer",
-                      padding: "0.75rem",
-                      border: paymentMethod === "CASH" ? "2px solid #1c7c31" : "1px solid #d1d5db",
-                      borderRadius: "8px",
-                      background: paymentMethod === "CASH" ? "#f0fdf4" : "white"
-                    }}>
+                  <div className="ridedetails__payment-options">
+                    <label className={`ridedetails__payment-option ${paymentMethod === "CASH" ? "ridedetails__payment-option--active" : ""}`}>
                       <input
                         type="radio"
                         name="paymentMethod"
                         value="CASH"
                         checked={paymentMethod === "CASH"}
                         onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="ridedetails__payment-radio"
                       />
                       <IndianRupee size={18} />
                       <span>Pay with Cash</span>
-                      <span style={{ marginLeft: "auto", fontSize: "0.875rem", color: "#6b7280" }}>Pay directly to driver</span>
+                      <span className="ridedetails__payment-desc">Pay directly to driver</span>
                     </label>
-                    <label style={{ 
-                      display: "flex", 
-                      alignItems: "center", 
-                      gap: "0.5rem",
-                      cursor: "pointer",
-                      padding: "0.75rem",
-                      border: paymentMethod === "ONLINE" ? "2px solid #1c7c31" : "1px solid #d1d5db",
-                      borderRadius: "8px",
-                      background: paymentMethod === "ONLINE" ? "#f0fdf4" : "white"
-                    }}>
+                    <label className={`ridedetails__payment-option ${paymentMethod === "ONLINE" ? "ridedetails__payment-option--active" : ""}`}>
                       <input
                         type="radio"
                         name="paymentMethod"
                         value="ONLINE"
                         checked={paymentMethod === "ONLINE"}
                         onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="ridedetails__payment-radio"
                       />
                       <CreditCard size={18} />
                       <span>Online Payment</span>
-                      <span style={{ marginLeft: "auto", fontSize: "0.875rem", color: "#6b7280" }}>Pay securely online</span>
+                      <span className="ridedetails__payment-desc">Pay securely online</span>
                     </label>
                   </div>
                 </div>
 
-                <div className="book-actions">
+                <div className="ridedetails__book-actions">
                   <button 
-                    className="btn-primary" 
+                    className="ridedetails__book-btn" 
                     disabled={bookingLoading || noSeatsLeft} 
                     onClick={handleBookRide}
-                    style={{ width: "100%" }}
                   >
                     {bookingLoading ? "Processing..." : paymentMethod === "CASH" ? "Book Ride" : "Proceed to Pay"}
                   </button>
                 </div>
 
-                {err && <div className="rd-error-msg">{err}</div>}
+                {err && <div className="ridedetails__error-msg">{err}</div>}
               </div>
             </div>
           </>
