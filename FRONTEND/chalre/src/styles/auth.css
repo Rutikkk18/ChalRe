@@ -472,19 +472,57 @@ html, body {
   background: transparent !important;
   border: none !important;
 }
+/* Forgot Password Button - Override global button styles */
 .forgot-password-btn {
-  background: none;
-  border: none;
-  color: #2563eb;
-  margin-top: 10px;
+  background: none !important;
+  border: none !important;
+  color: #525353 !important;
+  padding: 0 !important;
+  margin-top: 10px !important;
+  margin-left: 110px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  width: auto !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  transition: none !important;
 }
 
 .forgot-password-btn:hover {
   text-decoration: underline;
+  transform: none !important;
+  box-shadow: none !important;
+  background: none !important;
 }
 
+.forgot-password-btn:active {
+  transform: none !important;
+}
+
+.forgot-password-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Extra specificity to override .login-box button */
+.login-box .forgot-password-btn,
+.register-box .forgot-password-btn {
+  background: none !important;
+  border: none !important;
+  color: #717272 !important;
+  padding: 0 !important;
+  width: auto !important;
+  box-shadow: none !important;
+  margin-top: 10px !important;
+}
+
+.login-box .forgot-password-btn:hover,
+.register-box .forgot-password-btn:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  background: none !important;
+}
 .success {
   color: green;
   font-size: 14px;
