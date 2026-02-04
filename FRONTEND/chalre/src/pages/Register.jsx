@@ -6,6 +6,7 @@ import {
   updateProfile
 } from "firebase/auth";
 import { auth } from "../../Firebfase";
+import { Eye, EyeOff } from "lucide-react";
 import "../styles/auth.css";
 
 export default function Register() {
@@ -15,6 +16,7 @@ export default function Register() {
     password: "",
     phone: ""
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -22,6 +24,10 @@ export default function Register() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
@@ -92,15 +98,16 @@ export default function Register() {
           required
         />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          autoComplete="new-password"
-          required
-        />
-        <button
+        <div className="password-input-wrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Password"
+            onChange={handleChange}
+            autoComplete="new-password"
+            required
+          />
+          <button
             type="button"
             className="password-toggle-btn"
             onClick={togglePasswordVisibility}
@@ -108,6 +115,7 @@ export default function Register() {
           >
             {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
           </button>
+        </div>
 
         <input
           type="tel"
@@ -119,7 +127,6 @@ export default function Register() {
           title="Please enter a valid 10-digit phone number"
           required
         />
-        
 
         <button type="submit" disabled={loading}>
           {loading ? "Sending verification..." : "Create Account"}
