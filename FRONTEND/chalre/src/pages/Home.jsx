@@ -40,91 +40,94 @@ export default function Home() {
         </p>
 
         <div className={`home-search-bar ${scrolled ? "search-sticky" : ""}`}>
-          <div className="search-item">
-            <LocationAutocomplete
-              value={search.from}
-              onChange={(val) => updateSearch("from", val)}
-              placeholder="Leaving From"
-            />
-          </div>
+  <div className="search-item location-from">
+    <LocationAutocomplete
+      value={search.from}
+      onChange={(val) => updateSearch("from", val)}
+      placeholder="📍Leaving From"
+    />
+  </div>
 
-          <div className="divider" />
+  <div className="divider" />
 
-          <div className="search-item">
-            <LocationAutocomplete
-              value={search.to}
-              onChange={(val) => updateSearch("to", val)}
-              placeholder="Going to"
-            />
-          </div>
+  <div className="search-item location-to">
+    <LocationAutocomplete
+      value={search.to}
+      onChange={(val) => updateSearch("to", val)}
+      placeholder="🎯Going to"
+    />
+  </div>
 
-          <div className="divider" />
+  <div className="divider" />
 
-          <div className="search-item small">
-            <input
-              type="date"
-              value={search.date}
-              min={new Date().toISOString().split("T")[0]}
-              onChange={(e) => updateSearch("date", e.target.value)}
-              placeholder="Date"
-            />
-          </div>
+  <div className="search-item small date-input">
+    <input
+      type="date"
+      value={search.date}
+      min={new Date().toISOString().split("T")[0]}
+      onChange={(e) => updateSearch("date", e.target.value)}
+      placeholder="Date"
+    />
+  </div>
 
-          <div className="divider" />
+  <div className="divider" />
 
-          <div className="search-item small">
-            <div className="seat-input">
-              <span className="seat-label">Seats </span>
-              <input
-                type="number"
-                min="1"
-                max="10"
-                value={search.passengers}
-                onChange={(e) =>
-                  updateSearch("passengers", e.target.value)
-                }
-              />
-            </div>
-          </div>
+  <div className="search-item small seats-input">
+    <div className="seat-input">
+      <span className="seat-label">Seats </span>
+      <input
+        type="number"
+        min="1"
+        max="10"
+        value={search.passengers}
+        onChange={(e) =>
+          updateSearch("passengers", e.target.value)
+        }
+      />
+    </div>
+  </div>
 
-          <button
-            className="search-action"
-            onClick={() => {
-              // Validate from and to
-              if (!search.from.trim() || !search.to.trim()) {
-                alert("Please enter both 'Leaving From' and 'Going to' locations.");
-                return;
-              }
-              // Navigate to /search with state
-              navigate("/search", { state: { from: search.from, to: search.to, date: search.date, passengers: search.passengers } });
-            }}
-          >
-            Search
-          </button>
-        </div>
-      </header>
-      <div class="divider gradient"></div>
+  <button
+    className="search-action"
+    onClick={() => {
+      // Validate from and to
+      if (!search.from.trim() || !search.to.trim()) {
+        alert("Please enter both 'Leaving From' and 'Going to' locations.");
+        return;
+      }
+      // Navigate to /search with state
+      navigate("/search", { state: { from: search.from, to: search.to, date: search.date, passengers: search.passengers } });
+    }}
+  >
+    Search
+  </button>
+</div>
+</header>
+<div className="divider gradient"></div>
 
-      {/* FEATURES SECTION */}
-      <section className="features">
-        <div className="feature-card">
-          <h3>Verified Users</h3>
-          <p>Every rider undergoes document verification for safety and trust.</p>
-        </div>
+     {/* FEATURES SECTION */}
+<section className="features">
+  <div className="feature-card">
+    <div className="feature-icon">✓</div>
+    <h3>Verified Users</h3>
+    <p>Every rider undergoes document verification for safety and trust.</p>
+  </div>
 
-        <div className="feature-card">
-          <h3>Smart Matching</h3>
-          <p>
-            Find rides going your way in seconds using our auto-matching engine.
-          </p>
-        </div>
+  <div className="feature-card">
+    <div className="feature-icon">⚡</div>
+    <h3>Smart Matching</h3>
+    <p>
+      Find rides going your way in seconds using our auto-matching engine.
+    </p>
+  </div>
 
-        <div className="feature-card">
-          <h3>Secure Payments</h3>
-          <p>
-            Pay securely with multiple payment options. Fast and reliable transactions.
-          </p>
-        </div>
+  <div className="feature-card">
+    <div className="feature-icon">🔒</div>
+    <h3>Secure Payments</h3>
+    <p>
+      Pay securely with multiple payment options. Fast and reliable transactions.
+    </p>
+  </div>
         <div class="divider gradient" />
       </section>
 
