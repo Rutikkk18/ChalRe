@@ -336,9 +336,9 @@ export default function SearchRides() {
                 </div>
               </div>
 
-              {/* Car Type */}
+              {/* velhicle Type */}
               <div className="filter-group">
-                <label>Car Model</label>
+                <label>Vehicle Model</label>
                 <select
                   value={carType}
                   onChange={(e) => setCarType(e.target.value)}
@@ -347,9 +347,9 @@ export default function SearchRides() {
                   <option value="SEDAN">Sedan</option>
                   <option value="SUV">SUV</option>
                   <option value="HATCHBACK">Hatchback</option>
-                  <option value="COUPE">Coupe</option>
-                  <option value="CONVERTIBLE">Convertible</option>
-                  <option value="WAGON">Wagon</option>
+                  <option value="Bullet">Bullet</option>
+                  <option value="Splendor">Splendor</option>
+                  <option value="Shine">Shine</option>
                 </select>
               </div>
 
@@ -396,41 +396,6 @@ export default function SearchRides() {
                       onChange={(e) => setSeatsAvailable("")}
                     />
                     <span>All</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Ride Type */}
-              <div className="filter-group">
-                <label>Ride Type</label>
-                <div className="checkbox-group">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={rideType.includes("instant")}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setRideType([...rideType, "instant"]);
-                        } else {
-                          setRideType(rideType.filter((t) => t !== "instant"));
-                        }
-                      }}
-                    />
-                    <span>Instant Booking</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={rideType.includes("request")}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setRideType([...rideType, "request"]);
-                        } else {
-                          setRideType(rideType.filter((t) => t !== "request"));
-                        }
-                      }}
-                    />
-                    <span>Request Approval</span>
                   </label>
                 </div>
               </div>

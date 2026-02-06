@@ -188,6 +188,32 @@
   background: var(--green-soft) !important;
 }
 
+/* ---------- UNIVERSAL FIX FOR ALL INPUT WRAPPERS ---------- */
+.form-row > * {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.form-row > * > input,
+.form-row input {
+  padding: clamp(10px, 1.5vw, 12px) clamp(12px, 2vw, 14px) !important;
+  border-radius: var(--radius-md) !important;
+  font-size: clamp(14px, 1.8vw, 15px) !important;
+  border: 1.5px solid var(--border-soft) !important;
+  background: var(--green-light) !important;
+  transition: all 0.25s ease !important;
+  width: 100% !important;
+  outline: none !important;
+}
+
+.form-row > * > input:focus,
+.form-row input:focus {
+  border-color: var(--border-focus) !important;
+  background: #ffffff !important;
+  box-shadow: var(--shadow-focus) !important;
+}
+
 /* ---------- MAIN CONTENT LAYOUT - FIXED! ---------- */
 .search-content-layout {
   display: grid;
@@ -728,4 +754,40 @@
   .search-content-layout {
     grid-template-columns: 1fr;
   }
+}
+
+
+/* ---------- FILTER SIDEBAR SCROLLBAR ---------- */
+.filters-sidebar,
+.filters-sidebar *,
+.sidebar-content {
+  scrollbar-width: thin;
+  scrollbar-color: #43bf60 #e8f5ed; /* Green thumb, light green track */
+}
+
+.filters-sidebar::-webkit-scrollbar,
+.filters-sidebar *::-webkit-scrollbar,
+.sidebar-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.filters-sidebar::-webkit-scrollbar-track,
+.filters-sidebar *::-webkit-scrollbar-track,
+.sidebar-content::-webkit-scrollbar-track {
+  background: #e8f5ed; /* Light green track */
+  border-radius: 10px;
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb,
+.filters-sidebar *::-webkit-scrollbar-thumb,
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: #4bc969; /* Green thumb */
+  border-radius: 10px;
+  border: 2px solid #e8f5ed; /* Creates gap effect */
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb:hover,
+.filters-sidebar *::-webkit-scrollbar-thumb:hover,
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #7ae0a4; /* Darker green on hover */
 }

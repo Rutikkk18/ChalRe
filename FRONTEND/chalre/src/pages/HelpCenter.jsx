@@ -38,6 +38,12 @@ export default function HelpCenter() {
       id: 6,
       question: "How do I get started with ChalRe?",
       answer: "Getting started is free and easy. Create an account, add a few basic details, and you're ready to book or publish rides. Everything can be managed directly through our app or website."
+    },
+
+    {
+      id: 7,
+      question: "who do I get started with ChalRe?",
+      answer: "Getting started is free and easy. Create an account, add a few basic details, and you're ready to book or publish rides. Everything can be managed directly through our app or website."
     }
   ];
 

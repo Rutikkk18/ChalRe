@@ -44,7 +44,7 @@ export default function Home() {
     <LocationAutocomplete
       value={search.from}
       onChange={(val) => updateSearch("from", val)}
-      placeholder="📍Leaving From"
+      placeholder="Leaving From"
     />
   </div>
 
@@ -54,7 +54,7 @@ export default function Home() {
     <LocationAutocomplete
       value={search.to}
       onChange={(val) => updateSearch("to", val)}
-      placeholder="🎯Going to"
+      placeholder="Going to"
     />
   </div>
 
@@ -154,7 +154,10 @@ export default function Home() {
             Follow these tips to help protect yourself.
           </p>
 
-          <button className="fraud-btn" onClick={() => navigate("/scam")}>Learn more</button>
+          <button className="fraud-btn" onClick={() => navigate("/scam")}>
+      Learn more
+      <span className="btn-icon">→</span>
+    </button>
         </div>
       </div>
 
@@ -222,15 +225,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="help-item">
-              <h4>What determines the price of a ride?</h4>
-              <p>
-                Ride prices vary based on distance, timing, and demand. Drivers set
-                the cost per seat, so prices can differ between trips. You can browse
-                popular routes to get an idea of typical prices or search directly for
-                your journey.
-              </p>
-            </div>
+          
           </div>
 
           {/* RIGHT COLUMN */}
@@ -259,14 +254,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="help-item">
-              <h4>How do I get started with ChalRe?</h4>
-              <p>
-                Getting started is free and easy. Create an account, add a few basic
-                details, and you’re ready to book or publish rides. Everything can be
-                managed directly through our app or website.
-              </p>
-            </div>
+          
           </div>
         </div>
 

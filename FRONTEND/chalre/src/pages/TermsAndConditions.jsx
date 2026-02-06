@@ -6,7 +6,7 @@ const TermsAndConditions = () => {
       <h1>Terms & Conditions</h1>
 
       <p className="terms-updated">
-        Last updated: January 2025
+        Last updated: January 2026
       </p>
 
       <section className="terms-section">
