@@ -233,7 +233,7 @@ export default function SearchRides() {
         <form className="search-form" onSubmit={handleSearch}>
           {/* START LOCATION */}
           <div className="form-row">
-            <label>Start Location</label>
+            
             <LocationAutocomplete
               value={startLocation}
               placeholder="Enter start point"
@@ -243,7 +243,7 @@ export default function SearchRides() {
 
           {/* END LOCATION */}
           <div className="form-row">
-            <label>End Location</label>
+            
             <LocationAutocomplete
               value={endLocation}
               placeholder="Enter destination"
@@ -253,7 +253,7 @@ export default function SearchRides() {
 
           {/* DATE */}
           <div className="form-row">
-            <label>Date</label>
+            
             <input
               type="date"
               value={date}
@@ -263,7 +263,7 @@ export default function SearchRides() {
 
           {/* SEATS */}
           <div className="form-row">
-            <label>Seats</label>
+            
             <input
               type="number"
               min="1"

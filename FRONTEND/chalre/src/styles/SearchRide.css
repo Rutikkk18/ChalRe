@@ -51,7 +51,7 @@
   margin-bottom: clamp(16px, 3vw, 24px);
   background: #ffffff;
   border-radius: var(--radius-lg);
-  padding: clamp(16px, 3vw, 20px) clamp(16px, 3vw, 24px);
+  padding: clamp(6px, 1vw, 8px) clamp(16px, 3vw, 24px);
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
   transition: box-shadow 0.3s ease, transform 0.2s ease;
