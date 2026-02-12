@@ -36,7 +36,7 @@ export default function Home() {
       <header className="hero">
         <h1>Miles Better Together </h1>
         <p>
-          A modern way to connect with nearby people. Safe, fast, affordable travel.
+          A modern way to connect with nearby people. Safe, fast & affordable travel.
         </p>
 
         <div className={`home-search-bar ${scrolled ? "search-sticky" : ""}`}>

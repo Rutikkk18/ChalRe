@@ -20,7 +20,7 @@ export default function RideCard({ ride }) {
 
   return (
     <div className={`ride-card ${isFull ? "full" : ""}`}>
-      {/* HEADER - LOCATIONS */}
+      {/* HEADER - LOCATIONS WITH ARROW */}
       <div className="ride-card-header">
         {/* START LOCATION */}
         <div className="location">
@@ -33,7 +33,7 @@ export default function RideCard({ ride }) {
           </div>
         </div>
 
-        {/* ARROW SEPARATOR */}
+        {/* ARROW SEPARATOR - LARGER */}
         <ArrowRight className="arrow-icon" />
 
         {/* END LOCATION */}
@@ -48,34 +48,37 @@ export default function RideCard({ ride }) {
         </div>
       </div>
 
-      {/* BOTTOM ROW - DATE, SEATS, PRICE, BUTTON (ALL IN ONE LINE) */}
+      {/* BOTTOM ROW - HORIZONTAL LAYOUT */}
       <div className="ride-info">
-        {/* DATE & TIME */}
-        <div className="info-item">
+        {/* LEFT SIDE - DATE */}
+        <div className="info-item date-item">
           <Clock />
           <span>
             <strong>Date & Time:</strong> {ride.date} • {ride.time}
           </span>
         </div>
 
-        {/* SEATS LEFT */}
-        <div className="info-item">
-          <Users />
-          <span>
-            <strong>Seats Left:</strong> {ride.availableSeats}
-          </span>
-        </div>
+        {/* RIGHT SIDE - SEATS, PRICE, BUTTON */}
+        <div className="info-right">
+          {/* SEATS */}
+          <div className="info-item seats-item">
+            <Users />
+            <span>
+              <strong>Seats Left:</strong> {ride.availableSeats}
+            </span>
+          </div>
 
-        {/* PRICE */}
-        <div className="info-item price">
-          <IndianRupee />
-          <span>₹{ride.price}</span>
-        </div>
+          {/* PRICE */}
+          <div className="info-item price">
+            <IndianRupee />
+            <span>₹{ride.price}</span>
+          </div>
 
-        {/* BOOK BUTTON */}
-        <button className="book-btn" onClick={goToBooking} disabled={isFull}>
-          {isFull ? "Ride Full" : "Book Ride"}
-        </button>
+          {/* BOOK BUTTON */}
+          <button className="book-btn" onClick={goToBooking} disabled={isFull}>
+            {isFull ? "Ride Full" : "Book Ride"}
+          </button>
+        </div>
       </div>
     </div>
   );
