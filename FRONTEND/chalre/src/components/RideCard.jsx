@@ -1,5 +1,5 @@
 // RideCard.jsx
-import { MapPin, Users, Clock, IndianRupee, ArrowRight } from "lucide-react";
+import { MapPin, Users, Clock, IndianRupee } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "../styles/ridecard.css";
 
@@ -12,73 +12,79 @@ export default function RideCard({ ride }) {
     navigate(`/book-ride/${ride.id}`);
   };
 
-  // Extract location names (first part before comma)
   const getLocationName = (fullLocation) => {
     if (!fullLocation) return "";
-    return fullLocation.split(',')[0].trim();
+    return fullLocation.split(",")[0].trim();
   };
 
   return (
     <div className={`ride-card ${isFull ? "full" : ""}`}>
-      {/* HEADER - LOCATIONS WITH ARROW */}
+      {/* HEADER - LOCATIONS */}
       <div className="ride-card-header">
-        {/* START LOCATION */}
+        {/* START */}
         <div className="location">
           <MapPin />
           <div>
             <span className="location-name">
               {getLocationName(ride.startLocation)}
             </span>
-            <span className="location-address">{ride.startLocation}</span>
+            <span className="location-address">
+              {ride.startLocation}
+            </span>
           </div>
         </div>
 
-        {/* ARROW SEPARATOR - LARGER */}
-        <ArrowRight className="arrow-icon" />
+        {/* LONG ARROW */}
+        <div className="route-arrow">
+          <div className="line"></div>
+          <div className="arrow-head">➜</div>
+        </div>
 
-        {/* END LOCATION */}
+        {/* END */}
         <div className="location">
           <MapPin />
           <div>
             <span className="location-name">
               {getLocationName(ride.endLocation)}
             </span>
-            <span className="location-address">{ride.endLocation}</span>
+            <span className="location-address">
+              {ride.endLocation}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* BOTTOM ROW - HORIZONTAL LAYOUT */}
-      <div className="ride-info">
-        {/* LEFT SIDE - DATE */}
-        <div className="info-item date-item">
+      {/* ROW 1 - DATE + SEATS */}
+      <div className="ride-row">
+        <div className="info-item">
           <Clock />
           <span>
             <strong>Date & Time:</strong> {ride.date} • {ride.time}
           </span>
         </div>
 
-        {/* RIGHT SIDE - SEATS, PRICE, BUTTON */}
-        <div className="info-right">
-          {/* SEATS */}
-          <div className="info-item seats-item">
-            <Users />
-            <span>
-              <strong>Seats Left:</strong> {ride.availableSeats}
-            </span>
-          </div>
-
-          {/* PRICE */}
-          <div className="info-item price">
-            <IndianRupee />
-            <span>₹{ride.price}</span>
-          </div>
-
-          {/* BOOK BUTTON */}
-          <button className="book-btn" onClick={goToBooking} disabled={isFull}>
-            {isFull ? "Ride Full" : "Book Ride"}
-          </button>
+        <div className="info-item">
+          <Users />
+          <span>
+            <strong>Seats Left:</strong> {ride.availableSeats}
+          </span>
         </div>
+      </div>
+
+      {/* ROW 2 - PRICE + BUTTON */}
+      <div className="ride-row">
+        <div className="info-item price">
+          <IndianRupee />
+          <span>{ride.price}</span>
+        </div>
+
+        <button
+          className="book-btn"
+          onClick={goToBooking}
+          disabled={isFull}
+        >
+          {isFull ? "Ride Full" : "Book Ride"}
+        </button>
       </div>
     </div>
   );

@@ -25,18 +25,16 @@
 /* ---------- RIDE CARD ---------- */
 .ride-card {
   background: #ffffff;
-  border-radius: 16px;
-  padding: 24px 28px;
+  border-radius: 14px;
+  padding: 20px 24px;
   box-shadow: 0 2px 12px rgba(15, 81, 50, 0.08);
   border: 1.5px solid var(--border-soft);
   transition: all 0.3s ease;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
   animation: slideIn 0.4s ease;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 @keyframes slideIn {
@@ -51,7 +49,7 @@
 }
 
 .ride-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(15, 81, 50, 0.12);
   border-color: var(--border-focus);
 }
@@ -72,7 +70,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 20px;
   padding-bottom: 20px;
   border-bottom: 1.5px solid #f0f0f0;
 }
@@ -81,14 +79,14 @@
 .location {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   flex: 1;
   min-width: 0;
 }
 
 .location svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
   color: var(--green-main);
   margin-top: 2px;
@@ -102,7 +100,7 @@
 /* Location Name (Bold, Large) */
 .location-name {
   display: block;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-dark);
   line-height: 1.3;
@@ -120,35 +118,40 @@
   text-overflow: ellipsis;
 }
 
-/* ---------- ARROW ICON - LARGER ---------- */
-.arrow-icon {
-  color: var(--green-main) !important;
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-  margin: 0 12px;
-  stroke-width: 2.5;
+/* ---------- LONG ROUTE ARROW ---------- */
+.route-arrow {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin: 0 20px;
 }
 
-.ride-card:hover .arrow-icon {
-  transform: translateX(6px);
+.route-arrow .line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(to right, #28a745, #1e8e3a);
 }
+
+.route-arrow .arrow-head {
+  font-size: 20px;
+  color: var(--green-main);
+  margin-left: 6px;
+}
+/* ---------- RIDE ROWS ---------- */
+.ride-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
 
 /* ---------- RIDE INFO (BOTTOM SECTION) - HORIZONTAL LAYOUT ---------- */
 .ride-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-/* ---------- INFO RIGHT SIDE (SEATS + PRICE + BUTTON) ---------- */
-.info-right {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
   align-items: center;
   gap: 24px;
-  flex-shrink: 0;
 }
 
 /* ---------- INFO ITEM ---------- */
@@ -158,7 +161,6 @@
   gap: 8px;
   color: var(--text-dark);
   font-size: 14px;
-  white-space: nowrap;
 }
 
 .info-item svg {
@@ -179,40 +181,47 @@
   color: var(--text-dark);
 }
 
-/* ---------- DATE ITEM (LEFT SIDE) ---------- */
-.date-item {
-  flex: 1;
-  min-width: 0;
-}
-
-.date-item span {
-  white-space: normal;
-}
-
-/* ---------- SEATS ITEM ---------- */
-.seats-item {
-  flex-shrink: 0;
-}
-
 /* ---------- PRICE ITEM ---------- */
 .info-item.price {
   font-size: 26px;
   font-weight: 700;
   color: var(--green-dark);
-  margin: 0;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
+
+
 
 .info-item.price svg {
   color: var(--green-main);
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
+}
+
+
+@media (max-width: 768px) {
+
+  .ride-card-header {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .route-arrow {
+    width: 100%;
+  }
+
+  .ride-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .book-btn {
+    width: 100%;
+  }
 }
 
 /* ---------- BOOK BUTTON ---------- */
 .book-btn {
-  padding: 12px 36px;
+  padding: 12px 32px;
   background: linear-gradient(135deg, #28a745, #1e8e3a) !important;
   color: white !important;
   border: none;
@@ -364,69 +373,32 @@
   color: #991b1b;
 }
 
-/* ---------- LARGE DESKTOP (1400px+) ---------- */
-@media (min-width: 1400px) {
-  .ride-card {
-    padding: 28px 32px;
-  }
-
-  .location-name {
-    font-size: 22px;
-  }
-
-  .arrow-icon {
-    width: 44px;
-    height: 44px;
-  }
-
-  .info-item.price {
-    font-size: 28px;
-  }
-}
-
 /* ---------- TABLET (768px - 1024px) ---------- */
 @media (max-width: 1024px) {
   .ride-card {
-    padding: 20px 24px;
-    gap: 20px;
+    padding: 18px 20px;
   }
 
   .ride-card-header {
-    gap: 20px;
-  }
-
-  .location-name {
-    font-size: 18px;
-  }
-
-  .arrow-icon {
-    width: 36px;
-    height: 36px;
-    margin: 0 8px;
+    gap: 16px;
   }
 
   .ride-info {
     gap: 20px;
   }
 
-  .info-right {
-    gap: 20px;
-  }
-
-  .info-item.price {
-    font-size: 24px;
-  }
-
-  .book-btn {
-    padding: 12px 28px;
+  .arrow-icon {
+    width: 28px;
+    height: 28px;
+    margin: 0 4px;
   }
 }
 
 /* ---------- MOBILE (below 768px) ---------- */
 @media (max-width: 768px) {
   .ride-card {
-    padding: 18px 20px;
-    gap: 18px;
+    padding: 16px;
+    gap: 16px;
   }
 
   .ride-card:hover {
@@ -436,55 +408,42 @@
   .ride-card-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
-    padding-bottom: 18px;
-  }
-
-  .location {
-    width: 100%;
+    gap: 12px;
+    padding-bottom: 16px;
   }
 
   .location-name {
-    font-size: 17px;
+    font-size: 16px;
   }
 
   .location-address {
     font-size: 12px;
   }
 
-  /* Rotate arrow for vertical layout */
   .arrow-icon {
     transform: rotate(90deg);
-    width: 32px;
-    height: 32px;
-    align-self: flex-start;
-    margin: 0 0 0 16px;
+    width: 24px;
+    height: 24px;
+    align-self: center;
+    margin: 4px 0;
   }
 
   .ride-card:hover .arrow-icon {
     transform: rotate(90deg) translateY(4px);
   }
 
-  /* Stack bottom info vertically */
+  /* Stack all items vertically on mobile */
   .ride-info {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .info-right {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
-  }
-
-  .date-item,
-  .seats-item {
+  .info-item {
     justify-content: flex-start;
   }
 
   .info-item.price {
-    font-size: 24px;
+    font-size: 22px;
     justify-content: flex-start;
   }
 
@@ -492,7 +451,6 @@
     width: 100%;
     justify-content: center;
     padding: 14px 20px;
-    font-size: 16px;
   }
 
   .book-btn:hover {
@@ -503,81 +461,20 @@
 /* ---------- SMALL MOBILE (below 480px) ---------- */
 @media (max-width: 480px) {
   .ride-card {
-    padding: 16px;
-    border-radius: 14px;
-    gap: 16px;
-  }
-
-  .location svg {
-    width: 22px;
-    height: 22px;
+    padding: 14px;
+    border-radius: 12px;
   }
 
   .location-name {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .location-address {
     font-size: 11px;
   }
 
-  .arrow-icon {
-    width: 28px;
-    height: 28px;
-    margin-left: 12px;
-  }
-
   .info-item {
     font-size: 13px;
-  }
-
-  .info-item svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .info-item.price {
-    font-size: 22px;
-  }
-
-  .info-item.price svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .book-btn {
-    font-size: 15px;
-    padding: 13px 18px;
-  }
-}
-
-/* ---------- EXTRA SMALL (below 360px) ---------- */
-@media (max-width: 360px) {
-  .ride-card {
-    padding: 14px;
-    gap: 14px;
-  }
-
-  .location svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .location-name {
-    font-size: 15px;
-  }
-
-  .location-address {
-    font-size: 10px;
-  }
-
-  .arrow-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  .info-item {
-    font-size: 12px;
   }
 
   .info-item.price {
@@ -586,28 +483,42 @@
 
   .book-btn {
     font-size: 14px;
-    padding: 12px 16px;
+    padding: 12px 18px;
+  }
+}
+
+/* ---------- EXTRA SMALL (below 360px) ---------- */
+@media (max-width: 360px) {
+  .ride-card {
+    padding: 12px;
+  }
+
+  .location-name {
+    font-size: 14px;
+  }
+
+  .location-address {
+    font-size: 11px;
+  }
+
+  .info-item {
+    font-size: 12px;
+  }
+
+  .info-item.price {
+    font-size: 18px;
   }
 }
 
 /* ---------- LANDSCAPE MODE ---------- */
 @media (max-height: 600px) and (orientation: landscape) {
   .ride-card {
-    padding: 16px 20px;
-    gap: 14px;
+    padding: 14px 16px;
+    gap: 12px;
   }
 
   .ride-card-header {
-    padding-bottom: 12px;
-  }
-
-  .location-name {
-    font-size: 16px;
-  }
-
-  .arrow-icon {
-    width: 32px;
-    height: 32px;
+    padding-bottom: 10px;
   }
 }
 
@@ -713,4 +624,4 @@
   100% {
     background-position: 200% 0;
   }
-}
+} 
