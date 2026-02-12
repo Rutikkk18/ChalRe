@@ -37,7 +37,7 @@ export default function RideCard({ ride }) {
         {/* LONG ARROW */}
         <div className="route-arrow">
           <div className="line"></div>
-          <div className="arrow-head">➜</div>
+          <div className="arrow-head">→</div>
         </div>
 
         {/* END */}
