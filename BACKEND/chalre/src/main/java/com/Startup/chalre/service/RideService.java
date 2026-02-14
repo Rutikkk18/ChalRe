@@ -92,8 +92,8 @@ public class RideService {
     LocalDate today = LocalDate.now();
     rideRepository.findByStatus("ACTIVE");
 
-        return rideRepository.findAll().stream()
-            .filter(ride -> ride.getAvailableSeats() > 0)
+        return rideRepository.findByStatus("ACTIVE").stream()
+                .filter(ride -> ride.getAvailableSeats() > 0)
 
             .filter(ride -> {
                 try {
@@ -194,40 +194,43 @@ public class RideService {
     }
 
 
-    public List<Ride> getMyRides(User driver) {
-        return rideRepository.findByDriver(driver);
-    }
-
     public Map<String, List<Ride>> getMyRidesSeparated(User driver) {
-    List<Ride> allRides = rideRepository.findByDriver(driver);
-    LocalDate today = LocalDate.now();
-    
-    List<Ride> upcoming = new ArrayList<>();
-    List<Ride> past = new ArrayList<>();
-    
-    for (Ride ride : allRides) {
-        try {
-            LocalDate rideDate = LocalDate.parse(ride.getDate());
-            
-            // If ride date is before today → PAST
-            if (rideDate.isBefore(today)) {
+
+        List<Ride> allRides = rideRepository.findByDriver(driver);
+        LocalDate today = LocalDate.now();
+
+        List<Ride> upcoming = new ArrayList<>();
+        List<Ride> past = new ArrayList<>();
+
+        for (Ride ride : allRides) {
+
+            // 🔥 First priority → if cancelled, always past
+            if ("CANCELLED".equals(ride.getStatus())) {
                 past.add(ride);
-            } 
-            // If ride date is today or future → UPCOMING
-            else {
+                continue;
+            }
+
+            try {
+                LocalDate rideDate = LocalDate.parse(ride.getDate());
+
+                if (rideDate.isBefore(today)) {
+                    past.add(ride);
+                } else {
+                    upcoming.add(ride);
+                }
+
+            } catch (Exception e) {
+                // safer default
                 upcoming.add(ride);
             }
-        } catch (Exception e) {
-            // If date parsing fails, consider it upcoming (safer default)
-            upcoming.add(ride);
         }
+
+        Map<String, List<Ride>> result = new HashMap<>();
+        result.put("upcoming", upcoming);
+        result.put("past", past);
+
+        return result;
     }
-    
-    Map<String, List<Ride>> result = new HashMap<>();
-    result.put("upcoming", upcoming);
-    result.put("past", past);
-    return result;
-}
 
     public Map<String, Object> getRideBookings(Long rideId, User driver) {
         Ride ride = rideRepository.findById(rideId)
