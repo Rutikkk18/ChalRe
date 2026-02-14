@@ -92,7 +92,8 @@ public class RideService {
     LocalDate today = LocalDate.now();
     rideRepository.findByStatus("ACTIVE");
 
-        return rideRepository.findByStatus("ACTIVE").stream()
+        return rideRepository.findAll().stream()
+
                 .filter(ride -> ride.getAvailableSeats() > 0)
 
             .filter(ride -> {
