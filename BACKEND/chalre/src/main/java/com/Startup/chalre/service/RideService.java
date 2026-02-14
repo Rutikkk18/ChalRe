@@ -1,5 +1,4 @@
 package com.Startup.chalre.service;
-
 import com.Startup.chalre.DTO.RideDTO;
 import com.Startup.chalre.DTO.RideUpdateDTO;
 import com.Startup.chalre.entity.Booking;
@@ -11,7 +10,6 @@ import com.Startup.chalre.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,35 +30,37 @@ public class RideService {
 
     // CREATE RIDE
     public Ride createRide(RideDTO dto, User driver) {
-        // Validate date and time - no past rides
+
+// Validate date and time - no past rides
         try {
             LocalDate rideDate = LocalDate.parse(dto.getDate());
             LocalDate today = LocalDate.now();
-            
+
             if (rideDate.isBefore(today)) {
                 throw new RuntimeException("Cannot create a ride in the past");
             }
-            
-            // If ride is today, validate time is in the future
+
+// If ride is today, validate time is in the future
             if (rideDate.equals(today) && dto.getTime() != null && !dto.getTime().isEmpty()) {
                 try {
                     LocalTime rideTime = LocalTime.parse(dto.getTime());
                     LocalTime now = LocalTime.now();
-                    
+
                     if (rideTime.isBefore(now)) {
                         throw new RuntimeException("Cannot create a ride with past time for today");
                     }
                 } catch (Exception e) {
-                    // If time parsing fails, continue (invalid format will be caught elsewhere)
+// If time parsing fails, continue (invalid format will be caught elsewhere)
                 }
             }
+
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw e;
             }
-            // If date parsing fails, continue (invalid format will be caught elsewhere)
+// If date parsing fails, continue (invalid format will be caught elsewhere)
         }
-        
+
         Ride ride = new Ride();
         ride.setStartLocation(dto.getStartLocation());
         ride.setEndLocation(dto.getEndLocation());
@@ -76,7 +76,7 @@ public class RideService {
 
         Ride saved = rideRepository.save(ride);
 
-        // 🔔 NOTIFICATION
+// 🔔 NOTIFICATION
         notificationService.sendNotification(
                 driver,
                 "Ride Created",
@@ -89,45 +89,35 @@ public class RideService {
     }
 
     public List<Ride> getallRides() {
-    LocalDate today = LocalDate.now();
-    rideRepository.findByStatus("ACTIVE");
-
+        LocalDate today = LocalDate.now();
         return rideRepository.findAll().stream()
-
                 .filter(ride -> ride.getAvailableSeats() > 0)
+                .filter(ride -> {
+                    try {
+                        LocalDate rideDate = LocalDate.parse(ride.getDate());
+                        return !rideDate.isBefore(today); // Show today and future dates
+                    } catch (Exception e) {
+                        return false; // If date parsing fails, hide the ride
+                    }
+                })
+                .toList();
+    }
 
-            .filter(ride -> {
-                try {
-                    LocalDate rideDate = LocalDate.parse(ride.getDate());
-                    return !rideDate.isBefore(today); // Show today and future dates
-                } catch (Exception e) {
-                    return false; // If date parsing fails, hide the ride
-                }
-            })
-            .toList();
-}
-
-    public List<Ride> searchRides(String from, String to, String date, Integer seats, 
-                                   Double minPrice, Double maxPrice, String carType, 
-                                   String genderPreference, String userGender) {
+    public List<Ride> searchRides(String from, String to, String date, Integer seats, Double minPrice, Double maxPrice, String carType, String genderPreference, String userGender) {
 
         List<Ride> rides = rideRepository
                 .findByStartLocationIgnoreCaseAndEndLocationIgnoreCase(from, to)
                 .stream()
-
                 .filter(ride -> ride.getAvailableSeats() > 0)
                 .toList();
 
         LocalDate today = LocalDate.now();
-
         rides = rides.stream()
                 .filter(ride -> {
                     LocalDate rideDate = LocalDate.parse(ride.getDate());
                     return !rideDate.isBefore(today);
                 })
                 .toList();
-
-
 
         if (date != null && !date.isEmpty()) {
             rides = rides.stream()
@@ -141,34 +131,37 @@ public class RideService {
                     .toList();
         }
 
-        // Price filter
+// Price filter
         if (minPrice != null) {
             rides = rides.stream()
                     .filter(r -> r.getPrice() >= minPrice)
                     .toList();
         }
+
         if (maxPrice != null) {
             rides = rides.stream()
                     .filter(r -> r.getPrice() <= maxPrice)
                     .toList();
         }
 
-        // Car type filter
+// Car type filter
         if (carType != null && !carType.isEmpty()) {
             rides = rides.stream()
                     .filter(r -> r.getCarType() != null && r.getCarType().equalsIgnoreCase(carType))
                     .toList();
         }
 
-        // Gender preference filter
+// Gender preference filter
         if (genderPreference != null && !genderPreference.isEmpty()) {
             rides = rides.stream()
                     .filter(r -> {
-                        // If ride has no gender preference, show it
+
+// If ride has no gender preference, show it
                         if (r.getGenderPreference() == null || r.getGenderPreference().isEmpty()) {
                             return true;
                         }
-                        // If user gender matches ride preference
+
+// If user gender matches ride preference
                         if (userGender != null && !userGender.isEmpty()) {
                             if (r.getGenderPreference().equals("MALE_ONLY") && userGender.equals("MALE")) {
                                 return true;
@@ -176,10 +169,12 @@ public class RideService {
                             if (r.getGenderPreference().equals("FEMALE_ONLY") && userGender.equals("FEMALE")) {
                                 return true;
                             }
-                            // If ride has preference but user doesn't match, hide it
+
+// If ride has preference but user doesn't match, hide it
                             return false;
                         }
-                        // If no user gender provided, show all rides
+
+// If no user gender provided, show all rides
                         return true;
                     })
                     .toList();
@@ -188,12 +183,14 @@ public class RideService {
         return rides;
     }
 
-
     public Ride getRideById(Long id) {
         return rideRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
     }
 
+    public List<Ride> getMyRides(User driver) {
+        return rideRepository.findByDriver(driver);
+    }
 
     public Map<String, List<Ride>> getMyRidesSeparated(User driver) {
 
@@ -204,24 +201,19 @@ public class RideService {
         List<Ride> past = new ArrayList<>();
 
         for (Ride ride : allRides) {
-
-            // 🔥 First priority → if cancelled, always past
-            if ("CANCELLED".equals(ride.getStatus())) {
-                past.add(ride);
-                continue;
-            }
-
             try {
                 LocalDate rideDate = LocalDate.parse(ride.getDate());
 
+// If ride date is before today → PAST
                 if (rideDate.isBefore(today)) {
                     past.add(ride);
-                } else {
+                }
+// If ride date is today or future → UPCOMING
+                else {
                     upcoming.add(ride);
                 }
-
             } catch (Exception e) {
-                // safer default
+// If date parsing fails, consider it upcoming (safer default)
                 upcoming.add(ride);
             }
         }
@@ -234,6 +226,7 @@ public class RideService {
     }
 
     public Map<String, Object> getRideBookings(Long rideId, User driver) {
+
         Ride ride = rideRepository.findById(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
@@ -242,6 +235,7 @@ public class RideService {
         }
 
         List<Booking> bookings = bookingRepository.findByRide(ride);
+
         List<Booking> activeBookings = bookings.stream()
                 .filter(b -> "BOOKED".equals(b.getStatus()))
                 .toList();
@@ -258,6 +252,7 @@ public class RideService {
 
     // UPDATE RIDE
     public Ride updateRide(Long rideId, RideUpdateDTO dto, User driver) {
+
         Ride ride = rideRepository.findById(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
@@ -265,31 +260,32 @@ public class RideService {
             throw new RuntimeException("You are not the owner of this ride");
         }
 
-        // Validate date and time if being updated
+// Validate date and time if being updated
         String newDate = dto.getDate() != null ? dto.getDate() : ride.getDate();
         String newTime = dto.getTime() != null ? dto.getTime() : ride.getTime();
-        
+
         try {
             LocalDate rideDate = LocalDate.parse(newDate);
             LocalDate today = LocalDate.now();
-            
+
             if (rideDate.isBefore(today)) {
                 throw new RuntimeException("Cannot update ride to a past date");
             }
-            
-            // If ride is today, validate time is in the future
+
+// If ride is today, validate time is in the future
             if (rideDate.equals(today) && newTime != null && !newTime.isEmpty()) {
                 try {
                     LocalTime rideTime = LocalTime.parse(newTime);
                     LocalTime now = LocalTime.now();
-                    
+
                     if (rideTime.isBefore(now)) {
                         throw new RuntimeException("Cannot update ride to a past time for today");
                     }
                 } catch (Exception e) {
-                    // If time parsing fails, continue
+// If time parsing fails, continue
                 }
             }
+
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw e;
@@ -309,7 +305,7 @@ public class RideService {
 
         Ride updated = rideRepository.save(ride);
 
-        // 🔔 NOTIFICATION
+// 🔔 NOTIFICATION
         notificationService.sendNotification(
                 driver,
                 "Ride Updated",
@@ -324,6 +320,7 @@ public class RideService {
     // CANCEL RIDE (Driver) - Refunds all passengers
     @Transactional
     public String cancelRide(Long rideId, User driver) {
+
         Ride ride = rideRepository.findById(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
@@ -331,37 +328,39 @@ public class RideService {
             throw new RuntimeException("You are not the owner of this ride");
         }
 
-        // Get all bookings for this ride
+// Get all bookings for this ride
         List<Booking> bookings = bookingRepository.findByRide(ride);
-        
         int refundedCount = 0;
         int totalRefundAmount = 0;
 
-        // Cancel all bookings and refund passengers
+// Cancel all bookings and refund passengers
         for (Booking booking : bookings) {
+
             if ("BOOKED".equals(booking.getStatus())) {
-                // Cancel the booking
+
+// Cancel the booking
                 booking.setStatus("CANCELLED");
 
-                // Mark payment as refunded if payment was PAID
+// Mark payment as refunded if payment was PAID
                 if ("PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
+
                     long pricePaise = (long) (ride.getPrice() * 100);
                     long refundAmount = pricePaise * booking.getSeatsBooked();
-                    
+
                     booking.setPaymentStatus("REFUNDED");
                     refundedCount++;
                     totalRefundAmount += refundAmount;
-                    // Note: Actual refund processing would be handled by payment gateway/webhook
+
+// Note: Actual refund processing would be handled by payment gateway/webhook
                 }
 
                 bookingRepository.save(booking);
 
-                // 🔔 Notify passenger
+// 🔔 Notify passenger
                 notificationService.sendNotification(
                         booking.getUser(),
                         "Ride Cancelled by Driver",
-                        "The ride from " + ride.getStartLocation() + " to " + ride.getEndLocation() + 
-                        " has been cancelled by the driver. Refund will be processed.",
+                        "The ride from " + ride.getStartLocation() + " to " + ride.getEndLocation() + " has been cancelled by the driver. Refund will be processed.",
                         "RIDE_CANCELLED_BY_DRIVER",
                         Map.of(
                                 "rideId", ride.getId().toString(),
@@ -371,11 +370,10 @@ public class RideService {
             }
         }
 
-        // Mark ride as cancelled instead of deleting
-        ride.setStatus("CANCELLED");
-        rideRepository.save(ride);
+// Delete the ride
+        rideRepository.delete(ride);
 
-        // 🔔 Notify driver
+// 🔔 Notify driver
         notificationService.sendNotification(
                 driver,
                 "Ride Cancelled",
@@ -390,6 +388,7 @@ public class RideService {
     // DELETE RIDE (Hard delete - use cancelRide instead if there are bookings)
     @Transactional
     public String deleteRide(Long rideId, User driver) {
+
         Ride ride = rideRepository.findById(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
@@ -397,7 +396,7 @@ public class RideService {
             throw new RuntimeException("You are not the owner of this ride");
         }
 
-        // Check if there are any bookings
+// Check if there are any bookings
         List<Booking> bookings = bookingRepository.findByRide(ride);
         boolean hasActiveBookings = bookings.stream()
                 .anyMatch(b -> "BOOKED".equals(b.getStatus()));
@@ -408,7 +407,7 @@ public class RideService {
 
         rideRepository.delete(ride);
 
-        // 🔔 NOTIFICATION
+// 🔔 NOTIFICATION
         notificationService.sendNotification(
                 driver,
                 "Ride Deleted",
