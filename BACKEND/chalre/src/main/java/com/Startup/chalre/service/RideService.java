@@ -90,9 +90,11 @@ public class RideService {
 
     public List<Ride> getallRides() {
     LocalDate today = LocalDate.now();
-    
-    return rideRepository.findAll().stream()
+    rideRepository.findByStatus("ACTIVE");
+
+        return rideRepository.findAll().stream()
             .filter(ride -> ride.getAvailableSeats() > 0)
+
             .filter(ride -> {
                 try {
                     LocalDate rideDate = LocalDate.parse(ride.getDate());
@@ -365,8 +367,9 @@ public class RideService {
             }
         }
 
-        // Delete the ride
-        rideRepository.delete(ride);
+        // Mark ride as cancelled instead of deleting
+        ride.setStatus("CANCELLED");
+        rideRepository.save(ride);
 
         // 🔔 Notify driver
         notificationService.sendNotification(

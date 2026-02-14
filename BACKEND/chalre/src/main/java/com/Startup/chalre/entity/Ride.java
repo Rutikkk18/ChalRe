@@ -44,6 +44,11 @@ public class Ride {
     @ManyToOne
     private User driver;
 
+    @Column(nullable = false)
+    private String status = "ACTIVE";
+
+
+
     public LocalDateTime getRideDateTime() {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");

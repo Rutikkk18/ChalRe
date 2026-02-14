@@ -19,6 +19,8 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT r FROM Ride r WHERE r.id = :id")
     Optional<Ride> findByIdForUpdate(Long id);
+    List<Ride> findByStatus(String status);
+
 
 
 }
