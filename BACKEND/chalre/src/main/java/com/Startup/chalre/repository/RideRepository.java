@@ -12,16 +12,17 @@ import java.util.Optional;
 
 public interface RideRepository extends JpaRepository<Ride, Long> {
 
+    // ❌ OLD METHOD - Exact match (keep it for now, but won't use it)
     List<Ride> findByStartLocationIgnoreCaseAndEndLocationIgnoreCase(String startLocation, String endLocation);
+
+    // ✅ NEW METHOD - Partial match (CONTAINS)
+    List<Ride> findByStartLocationContainingIgnoreCaseAndEndLocationContainingIgnoreCase(String startLocation, String endLocation);
 
     List<Ride> findByDriver(User driver);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT r FROM Ride r WHERE r.id = :id")
     Optional<Ride> findByIdForUpdate(Long id);
+
     List<Ride> findByStatus(String status);
-
-
-
 }
-

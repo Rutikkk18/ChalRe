@@ -105,8 +105,9 @@ public class RideService {
 
     public List<Ride> searchRides(String from, String to, String date, Integer seats, Double minPrice, Double maxPrice, String carType, String genderPreference, String userGender) {
 
+        // ✅ CHANGED: Use CONTAINING for partial/fuzzy matching
         List<Ride> rides = rideRepository
-                .findByStartLocationIgnoreCaseAndEndLocationIgnoreCase(from, to)
+                .findByStartLocationContainingIgnoreCaseAndEndLocationContainingIgnoreCase(from, to)
                 .stream()
                 .filter(ride -> ride.getAvailableSeats() > 0)
                 .toList();
@@ -114,8 +115,12 @@ public class RideService {
         LocalDate today = LocalDate.now();
         rides = rides.stream()
                 .filter(ride -> {
-                    LocalDate rideDate = LocalDate.parse(ride.getDate());
-                    return !rideDate.isBefore(today);
+                    try {
+                        LocalDate rideDate = LocalDate.parse(ride.getDate());
+                        return !rideDate.isBefore(today);
+                    } catch (Exception e) {
+                        return false; // If date parsing fails, hide the ride
+                    }
                 })
                 .toList();
 
@@ -131,7 +136,7 @@ public class RideService {
                     .toList();
         }
 
-// Price filter
+        // Price filter
         if (minPrice != null) {
             rides = rides.stream()
                     .filter(r -> r.getPrice() >= minPrice)
@@ -144,24 +149,24 @@ public class RideService {
                     .toList();
         }
 
-// Car type filter
+        // Car type filter
         if (carType != null && !carType.isEmpty()) {
             rides = rides.stream()
                     .filter(r -> r.getCarType() != null && r.getCarType().equalsIgnoreCase(carType))
                     .toList();
         }
 
-// Gender preference filter
+        // Gender preference filter
         if (genderPreference != null && !genderPreference.isEmpty()) {
             rides = rides.stream()
                     .filter(r -> {
 
-// If ride has no gender preference, show it
+                        // If ride has no gender preference, show it
                         if (r.getGenderPreference() == null || r.getGenderPreference().isEmpty()) {
                             return true;
                         }
 
-// If user gender matches ride preference
+                        // If user gender matches ride preference
                         if (userGender != null && !userGender.isEmpty()) {
                             if (r.getGenderPreference().equals("MALE_ONLY") && userGender.equals("MALE")) {
                                 return true;
@@ -170,11 +175,11 @@ public class RideService {
                                 return true;
                             }
 
-// If ride has preference but user doesn't match, hide it
+                            // If ride has preference but user doesn't match, hide it
                             return false;
                         }
 
-// If no user gender provided, show all rides
+                        // If no user gender provided, show all rides
                         return true;
                     })
                     .toList();
