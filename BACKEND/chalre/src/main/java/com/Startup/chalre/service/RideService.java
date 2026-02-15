@@ -328,20 +328,28 @@ public class RideService {
             throw new RuntimeException("You are not the owner of this ride");
         }
 
-// Get all bookings for this ride
+        // 🚨 CHECK FOR ACTIVE BOOKINGS FIRST - BLOCK IF EXISTS
         List<Booking> bookings = bookingRepository.findByRide(ride);
+        boolean hasActiveBookings = bookings.stream()
+                .anyMatch(b -> "BOOKED".equals(b.getStatus()));
+
+        if (hasActiveBookings) {
+            throw new RuntimeException("Cannot cancel ride with active bookings. Please ask passengers to cancel their bookings first.");
+        }
+
+        // ✅ No active bookings exist - proceed with cancellation
         int refundedCount = 0;
         int totalRefundAmount = 0;
 
-// Cancel all bookings and refund passengers
+        // Cancel all bookings and refund passengers (only cancelled/old bookings at this point)
         for (Booking booking : bookings) {
 
             if ("BOOKED".equals(booking.getStatus())) {
 
-// Cancel the booking
+                // Cancel the booking
                 booking.setStatus("CANCELLED");
 
-// Mark payment as refunded if payment was PAID
+                // Mark payment as refunded if payment was PAID
                 if ("PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
 
                     long pricePaise = (long) (ride.getPrice() * 100);
@@ -351,12 +359,12 @@ public class RideService {
                     refundedCount++;
                     totalRefundAmount += refundAmount;
 
-// Note: Actual refund processing would be handled by payment gateway/webhook
+                    // Note: Actual refund processing would be handled by payment gateway/webhook
                 }
 
                 bookingRepository.save(booking);
 
-// 🔔 Notify passenger
+                // 🔔 Notify passenger
                 notificationService.sendNotification(
                         booking.getUser(),
                         "Ride Cancelled by Driver",
@@ -370,10 +378,10 @@ public class RideService {
             }
         }
 
-// Delete the ride
+        // Delete the ride
         rideRepository.delete(ride);
 
-// 🔔 Notify driver
+        // 🔔 Notify driver
         notificationService.sendNotification(
                 driver,
                 "Ride Cancelled",
