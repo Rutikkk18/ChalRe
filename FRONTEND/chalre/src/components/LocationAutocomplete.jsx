@@ -82,20 +82,20 @@ const LocationAutocomplete = ({
 
   return (
     <div className="autocomplete-wrapper" ref={wrapperRef}>
-      <input
-        type="text"
-        value={query}
-        placeholder={placeholder}
-        autoComplete="off"
-        onChange={(e) => {
-          // ✅ ONLY local update while typing
-          setQuery(e.target.value);
-        }}
-        onFocus={() => {
-          if (suggestions.length > 0) setShow(true);
-        }}
-      />
-
+              <input
+            type="text"
+            value={query}
+            placeholder={placeholder}
+            autoComplete="off"
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setQuery(newValue); // ✅ Update local state
+              onChange(newValue); // ✅ Update parent state immediately
+            }}
+            onFocus={() => {
+              if (suggestions.length > 0) setShow(true);
+            }}
+          />
       {show && (
         <div className="autocomplete-dropdown">
           {loading && (

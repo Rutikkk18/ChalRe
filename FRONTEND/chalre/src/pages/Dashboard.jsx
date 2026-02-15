@@ -85,20 +85,32 @@ export default function Dashboard() {
         </div>
 
         {/* DRIVER STATUS */}
-        <div className="status-grid">
-          <div className="status-card">
-            <CheckCircle />
-            <div>
-              <span>Driver Status</span>
-              <strong>{user.verificationStatus}</strong>
-            </div>
-            {user.verificationStatus === "NOT_SUBMITTED" && (
-              <button onClick={() => navigate("/verification")}>
-                Get Verified
-              </button>
-            )}
-          </div>
-        </div>
+<div className="status-grid">
+  <div className="status-card">
+    <CheckCircle />
+    <div>
+      <span>Driver Status</span>
+      <strong>{user.verificationStatus}</strong>
+    </div>
+    
+    {/* Show "Get Verified" button for NOT_SUBMITTED */}
+    {user.verificationStatus === "NOT_SUBMITTED" && (
+      <button onClick={() => navigate("/verification")}>
+        Get Verified
+      </button>
+    )}
+    
+    {/* 🔥 ADD THIS: Show "Re-submit Documents" button for REJECTED */}
+    {user.verificationStatus === "REJECTED" && (
+      <button 
+        onClick={() => navigate("/verification")}
+        style={{ background: '#dc3545' }}
+      >
+        Re-submit Documents
+      </button>
+    )}
+  </div>
+</div>
 
         {/* 💰 UPI SETUP */}
         <div className="upi-section">

@@ -95,49 +95,67 @@ export default function VerificationPage() {
         <p className="success-msg">Your verification is approved 🎉</p>
       )}
 
-      {/* UPLOAD FORM */}
-      {status !== "APPROVED" && (
-        <>
-          <h3 className="section-title">Upload Documents</h3>
+     {/* UPLOAD FORM - Allow for NOT_SUBMITTED, PENDING, and REJECTED */}
+{(status === "NOT_SUBMITTED" || status === "PENDING" || status === "REJECTED") && (
+  <>
+    <h3 className="section-title">
+      {status === "REJECTED" ? "Re-upload Documents" : "Upload Documents"}
+    </h3>
 
-          {docs.map((doc, index) => (
-            <div className="doc-card" key={index}>
-              <input
-                type="file"
-                accept="image/*,.pdf"
-                onChange={(e) =>
-                  updateDoc(index, "file", e.target.files[0])
-                }
-              />
+    {/* 🔥 ADD THIS: Show rejection reason prominently */}
+    {status === "REJECTED" && remarks && (
+      <div className="rejection-notice">
+        <strong>⚠️ Rejection Reason:</strong>
+        <p>{remarks}</p>
+        <p className="help-text">Please fix the issues mentioned above and re-submit your documents.</p>
+      </div>
+    )}
 
-              <select
-                value={doc.type}
-                onChange={(e) =>
-                  updateDoc(index, "type", e.target.value)
-                }
-              >
-                <option value="">Select Type</option>
-                <option value="ID_CARD">ID Card</option>
-                <option value="LICENSE">Driving License</option>
-                <option value="PROFILE_PHOTO">Profile Photo</option>
-                <option value="OTHER">Other</option>
-              </select>
-            </div>
-          ))}
+    {docs.map((doc, index) => (
+      <div className="doc-card" key={index}>
+        <input
+          type="file"
+          accept="image/*,.pdf"
+          onChange={(e) =>
+            updateDoc(index, "file", e.target.files[0])
+          }
+        />
 
-          <button className="add-btn" onClick={addDoc}>
-            + Add More
-          </button>
+        <select
+          value={doc.type}
+          onChange={(e) =>
+            updateDoc(index, "type", e.target.value)
+          }
+        >
+          <option value="">Select Type</option>
+          <option value="ID_CARD">ID Card</option>
+          <option value="LICENSE">Driving License</option>
+          <option value="PROFILE_PHOTO">Profile Photo</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
+    ))}
 
-          <button
-            className="submit-btn"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? "Submitting..." : "Submit Verification"}
-          </button>
-        </>
-      )}
+    <button className="add-btn" onClick={addDoc}>
+      + Add More
+    </button>
+
+    <button
+      className="submit-btn"
+      onClick={handleSubmit}
+      disabled={loading}
+    >
+      {loading ? "Submitting..." : status === "REJECTED" ? "Re-submit Verification" : "Submit Verification"}
+    </button>
+  </>
+)}
+
+{/* SHOW MESSAGE FOR PENDING STATUS */}
+{status === "PENDING" && (
+  <div className="pending-notice">
+    <p>⏳ Your documents are under review. You'll be notified once admin reviews them.</p>
+  </div>
+)}
     </div>
   );
 }
