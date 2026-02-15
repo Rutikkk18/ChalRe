@@ -328,20 +328,12 @@ public class RideService {
             throw new RuntimeException("You are not the owner of this ride");
         }
 
-        // 🚨 CHECK FOR ACTIVE BOOKINGS FIRST - BLOCK IF EXISTS
+        // Get all bookings for this ride
         List<Booking> bookings = bookingRepository.findByRide(ride);
-        boolean hasActiveBookings = bookings.stream()
-                .anyMatch(b -> "BOOKED".equals(b.getStatus()));
-
-        if (hasActiveBookings) {
-            throw new RuntimeException("Cannot cancel ride with active bookings. Please ask passengers to cancel their bookings first.");
-        }
-
-        // ✅ No active bookings exist - proceed with cancellation
         int refundedCount = 0;
         int totalRefundAmount = 0;
 
-        // Cancel all bookings and refund passengers (only cancelled/old bookings at this point)
+        // Cancel all bookings and refund passengers
         for (Booking booking : bookings) {
 
             if ("BOOKED".equals(booking.getStatus())) {
@@ -362,8 +354,6 @@ public class RideService {
                     // Note: Actual refund processing would be handled by payment gateway/webhook
                 }
 
-                bookingRepository.save(booking);
-
                 // 🔔 Notify passenger
                 notificationService.sendNotification(
                         booking.getUser(),
@@ -376,9 +366,13 @@ public class RideService {
                         )
                 );
             }
+
+            // 🔑 FIX: Break the relationship before deleting ride
+            booking.setRide(null);
+            bookingRepository.save(booking);
         }
 
-        // Delete the ride
+        // Delete the ride (safe now - no bookings reference it)
         rideRepository.delete(ride);
 
         // 🔔 Notify driver

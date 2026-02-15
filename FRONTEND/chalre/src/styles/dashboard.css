@@ -446,6 +446,7 @@
   align-items: center;
   gap: clamp(10px, 2vw, 14px); /* ✅ horizontal gap */
   flex-wrap: wrap; /* mobile safe */
+  margin-top: clamp(10px, 2vw, 12px); /* ADD THIS - spacing from paragraph above */
 }
 
 
@@ -457,8 +458,17 @@
   }
 
   .upi-section input {
-    max-width: 100%;
-  }
+  width: 100%;
+  max-width: 400px;
+  margin: 0 0 clamp(10px, 2vw, 12px) 0; /* ADD BOTTOM MARGIN */
+  padding: clamp(9px, 1.5vw, 10px);
+  border-radius: clamp(6px, 1.5vw, 8px);
+  border: 1.5px solid #ddd;
+  font-size: clamp(14px, 2vw, 15px);
+  font-family: inherit;
+  transition: all 0.25s ease;
+  background: white;
+}
 }
 /* ---------- TABLET RESPONSIVE ---------- */
 @media (max-width: 900px) {

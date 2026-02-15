@@ -102,6 +102,10 @@
   transition: all 0.25s ease;
   font-family: inherit;
   width: 100%;
+   -webkit-appearance: none;  /* ADD THIS */
+  -moz-appearance: none;     /* ADD THIS */
+  appearance: none;           /* ADD THIS */
+  box-shadow: none;          /* ADD THIS */
 }
 
 .offer-form input::placeholder,
