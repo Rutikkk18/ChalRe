@@ -7,545 +7,517 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;  /* 🔧 Prevent horizontal scroll */
+  overflow-x: hidden;
+}
+
+::placeholder {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #adb5bd;
 }
 
 /* ================================
    LOGIN/AUTH PAGE CONTAINER
 ================================ */
-.login-container {
-  width: 100vw;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: clamp(20px, 4vw, 40px) clamp(16px, 3vw, 20px);  /* 🔧 Responsive padding */
-  background: linear-gradient(135deg, #eafff0, #c8f7d4);
-  font-family:'Times New Roman', Times, serif;
-  box-sizing: border-box;
-}
-
-/* ================================
-   LOGIN BOX (CARD) - RESPONSIVE
-================================ */
-.login-box {
-  width: 100%;
-  max-width: 400px;  /* 🔧 Max-width instead of fixed width */
-  padding: clamp(28px, 5vw, 36px) clamp(24px, 4vw, 32px);  /* 🔧 Responsive padding */
-  background: #ffffff;
-  border-radius: clamp(12px, 2vw, 16px);
-  border: none;
-  box-shadow: 0 20px 45px rgba(0, 100, 0, 0.18);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-sizing: border-box;
-}
-
-.login-box:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 28px 60px rgba(0, 100, 0, 0.25);
-}
-
-/* ================================
-   HEADING - RESPONSIVE
-================================ */
-.login-box h2 {
-  text-align: center;
-  margin-bottom: clamp(20px, 4vw, 24px);
-  font-size: clamp(22px, 4vw, 26px);  /* 🔧 Responsive font size */
-  font-weight: 700;
-  color: #1c7c31;
-  line-height: 1.2;
-}
-
-/* ================================
-   INPUT FIELDS - RESPONSIVE
-================================ */
-.login-box input {
-  width: 100%;
-  margin-bottom: clamp(14px, 3vw, 18px);
-  padding: clamp(12px, 2vw, 14px);  /* 🔧 Responsive padding */
-  border-radius: clamp(6px, 1.5vw, 8px);
-  border: 1.5px solid #d9e8dc;
-  font-size: clamp(14px, 2vw, 15px);  /* 🔧 Responsive font size */
-  background: #f7fff9;
-  transition: border 0.25s ease, box-shadow 0.25s ease;
-  box-sizing: border-box;
-  font-family: inherit;
-}
-
-.login-box input::placeholder {
-  color: #8fa696;
-  font-size: clamp(13px, 1.8vw, 14px);
-}
-
-.login-box input:focus {
-  outline: none;
-  border-color: #1c7c31;
-  box-shadow: 0 0 0 3px rgba(28, 124, 49, 0.15);
-  background: #ffffff;
-}
-
-/* ================================
-   LOGIN BUTTON - RESPONSIVE
-================================ */
-.login-box button {
-  width: 100%;
-  padding: clamp(12px, 2vw, 14px);  /* 🔧 Responsive padding */
-  margin-top: clamp(6px, 1.5vw, 8px);
-  background: linear-gradient(135deg, #1c7c31, #3dbf64) !important;  /* 🔧 Force color */
-  color: white !important;
-  border: none;
-  border-radius: clamp(8px, 1.5vw, 10px);
-  font-size: clamp(15px, 2vw, 16px);  /* 🔧 Responsive font size */
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  font-family: inherit;
-  box-sizing: border-box;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-.login-box button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(28, 124, 49, 0.35);
-}
-
-.login-box button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.login-box button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ================================
-   ERROR MESSAGE - RESPONSIVE
-================================ */
-.login-box .error {
-  background: #fee;
-  color: #c33 !important;  /* 🔧 Force color */
-  padding: clamp(10px, 2vw, 12px);
-  border-radius: clamp(6px, 1vw, 8px);
-  margin-bottom: clamp(14px, 3vw, 18px);
-  font-size: clamp(13px, 1.8vw, 14px);  /* 🔧 Responsive font size */
-  text-align: center;
-  border: 1px solid #fcc;
-  font-weight: 500;
-}
-
-/* ================================
-   BOTTOM TEXT/LINKS - RESPONSIVE
-================================ */
-.login-box p {
-  text-align: center;
-  margin-top: clamp(16px, 3vw, 20px);
-  font-size: clamp(13px, 1.8vw, 14px);  /* 🔧 Responsive font size */
-  color: #4a5568;
-  line-height: 1.5;
-}
-
-.login-box p a {
-  color: #1c7c31 !important;  /* 🔧 Force color */
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s ease;
-  margin-left: 4px;
-}
-
-.login-box p a:hover {
-  color: #3dbf64 !important;
-  text-decoration: underline;
-}
-
-/* ================================
-   REGISTER CONTAINER (if used)
-================================ */
-.register-container {
+.auth-login-container {
   width: 100vw;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: clamp(20px, 4vw, 40px) clamp(16px, 3vw, 20px);
-  background: linear-gradient(135deg, #eafff0, #c8f7d4);
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(145deg, #72f481 0%, #bfeebf 35%, #cae6c6 65%, #72f481 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   box-sizing: border-box;
 }
 
-.register-box {
+/* ================================
+   FORM CARD
+================================ */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #ffffff;
+  padding: 36px 32px;
   width: 100%;
-  max-width: 400px;
-  padding: clamp(28px, 5vw, 36px) clamp(24px, 4vw, 32px);
-  background: #ffffff;
-  border-radius: clamp(12px, 2vw, 16px);
+  max-width: 460px;
+  border-radius: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  box-sizing: border-box;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.10), 0 1.5px 6px rgba(0,0,0,0.04);
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: clamp(24px, 4vw, 28px);
+  font-weight: 700;
+  color: #000000;
+  line-height: 1.2;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* ================================
+   FLEX COLUMN & LABELS
+================================ */
+.auth-flex-column {
+  margin-bottom: 2px;
+}
+
+.auth-flex-column > label {
+  color: #151717;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ================================
+   INPUT CONTAINER
+================================ */
+.auth-inputForm {
+  border: 1.5px solid #e2e8e4;
+  border-radius: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+  padding-right: 10px;
+  transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  position: relative;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.auth-inputForm svg {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.auth-input {
+  margin-left: 10px;
+  border-radius: 10px;
   border: none;
-  box-shadow: 0 20px 45px rgba(0, 100, 0, 0.18);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  font-family: inherit;
+  background: transparent !important;
+  color: #151717;
+  box-shadow: none !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.auth-input:focus {
+  outline: none;
+  background: transparent !important;
+}
+
+/* ===== FIX: Browser autofill blue/yellow background ===== */
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus,
+.auth-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #151717 !important;
+  caret-color: #151717;
+  transition: background-color 99999s ease-in-out 0s;
+}
+
+.auth-inputForm:focus-within {
+  border: 1.5px solid #3d8b5e;
+  box-shadow: 0 0 0 3px rgba(61, 139, 94, 0.10);
+}
+
+/* ================================
+   PASSWORD TOGGLE BUTTON
+================================ */
+.auth-password-toggle-btn {
+  position: absolute;
+  right: 10px;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  color: #6c757d !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px !important;
+  transition: color 0.2s ease;
+  margin: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  box-shadow: none !important;
+  min-width: auto !important;
+}
+
+.auth-password-toggle-btn:hover {
+  color: #3d8b5e !important;
+  transform: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.auth-password-toggle-btn:active {
+  transform: none !important;
+}
+
+.auth-password-toggle-btn svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* ================================
+   FLEX ROW (Remember me / Forgot password)
+================================ */
+.auth-flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.auth-flex-row > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.auth-flex-row > div > label {
+  font-size: 14px;
+  color: #444;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.auth-flex-row > div > input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  accent-color: #3d8b5e;
+}
+
+.auth-span {
+  font-size: 14px;
+  margin-left: 5px;
+  color: #3d8b5e;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.auth-span:hover {
+  color: #2a6642;
+  text-decoration: underline;
+}
+
+/* ================================
+   SUBMIT BUTTON
+================================ */
+.auth-button-submit {
+  margin: 16px 0 8px 0;
+  background-color: #7ce567 !important;
+  border: none;
+  color: white !important;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 12px;
+  height: 50px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: none !important;
+  letter-spacing: 0.3px;
+}
+
+.auth-button-submit:hover:not(:disabled) {
+  background-color: #08890b !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.auth-button-submit:active {
+  transform: none !important;
+}
+
+.auth-button-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ================================
+   TEXT & LINKS
+================================ */
+.auth-p {
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+/* ================================
+   OR WITH DIVIDER — FIXED
+   Replace <p class="auth-p auth-line"> with:
+   <div class="auth-divider"><span>Or With</span></div>
+================================ */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 12px 0 8px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: #e0e4e2;
+}
+
+.auth-divider span {
+  font-size: 13px;
+  color: #999;
+  white-space: nowrap;
+  font-weight: 400;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ================================
+   SOCIAL LOGIN BUTTONS
+================================ */
+.auth-btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  gap: 10px;
+  border: 1.5px solid #e2e8e4;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  color: #151717;
+  font-size: 14px;
+}
+
+.auth-btn:hover {
+  border-color: #3d8b5e;
+  box-shadow: 0 0 0 3px rgba(61, 139, 94, 0.08);
+}
+
+.auth-btn svg {
+  flex-shrink: 0;
+}
+
+/* ================================
+   ERROR & SUCCESS MESSAGES
+================================ */
+.auth-error {
+  background: #fff5f5;
+  color: #c0392b !important;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #fad4d4;
+  font-weight: 500;
+}
+
+.auth-success {
+  background: #f0faf4;
+  color: #27ae60 !important;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #b2dfce;
+  font-weight: 500;
+}
+
+/* ================================
+   REGISTER CONTAINER
+================================ */
+.auth-register-container {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(20px, 4vw, 40px) clamp(16px, 3vw, 20px);
+  background: linear-gradient(145deg, #72f481 0%, #bfeebf 35%, #cae6c6 65%, #72f481 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   box-sizing: border-box;
 }
 
-.register-box:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 28px 60px rgba(0, 100, 0, 0.25);
+.auth-register-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #ffffff;
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 460px;
+  border-radius: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  box-sizing: border-box;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.10), 0 1.5px 6px rgba(0,0,0,0.04);
 }
 
-.register-box h2 {
+.auth-register-box h2 {
   text-align: center;
-  margin-bottom: clamp(20px, 4vw, 24px);
-  font-size: clamp(22px, 4vw, 26px);
+  margin-bottom: 10px;
+  font-size: clamp(24px, 4vw, 28px);
   font-weight: 700;
-  color: #1c7c31;
+  color: #151717;
   line-height: 1.2;
 }
 
-.register-box input,
-.register-box select {
+.auth-register-box input,
+.auth-register-box select {
   width: 100%;
   margin-bottom: clamp(14px, 3vw, 18px);
   padding: clamp(12px, 2vw, 14px);
   border-radius: clamp(6px, 1.5vw, 8px);
-  border: 1.5px solid #d9e8dc;
-  font-size: clamp(14px, 2vw, 15px);
-  background: #f7fff9;
+  border: 1.5px solid #e2e8e4;
+  font-size: 14px;
+  background: #fff;
   transition: border 0.25s ease, box-shadow 0.25s ease;
   box-sizing: border-box;
   font-family: inherit;
 }
 
-.register-box input::placeholder {
-  color: #8fa696;
-  font-size: clamp(13px, 1.8vw, 14px);
-}
-
-.register-box input:focus,
-.register-box select:focus {
+.auth-register-box input:focus,
+.auth-register-box select:focus {
   outline: none;
-  border-color: #1c7c31;
-  box-shadow: 0 0 0 3px rgba(28, 124, 49, 0.15);
+  border-color: #3d8b5e;
+  box-shadow: 0 0 0 3px rgba(61, 139, 94, 0.10);
   background: #ffffff;
 }
 
-.register-box button {
-  width: 100%;
-  padding: clamp(12px, 2vw, 14px);
-  margin-top: clamp(6px, 1.5vw, 8px);
-  background: linear-gradient(135deg, #1c7c31, #3dbf64) !important;
-  color: white !important;
+.auth-register-box button {
+  margin: 20px 0 10px 0;
+  background-color: #1a1a1a !important;
   border: none;
-  border-radius: clamp(8px, 1.5vw, 10px);
-  font-size: clamp(15px, 2vw, 16px);
+  color: white !important;
+  font-size: 15px;
   font-weight: 600;
+  border-radius: 12px;
+  height: 50px;
+  width: 100%;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  font-family: inherit;
-  box-sizing: border-box;
-  appearance: none;
-  -webkit-appearance: none;
+  transition: background-color 0.2s ease;
 }
 
-.register-box button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(28, 124, 49, 0.35);
+.auth-register-box button:hover:not(:disabled) {
+  background-color: #333333 !important;
 }
 
-.register-box button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.register-box button:disabled {
+.auth-register-box button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.register-box .error {
-  background: #fee;
-  color: #c33 !important;
-  padding: clamp(10px, 2vw, 12px);
-  border-radius: clamp(6px, 1vw, 8px);
-  margin-bottom: clamp(14px, 3vw, 18px);
-  font-size: clamp(13px, 1.8vw, 14px);
-  text-align: center;
-  border: 1px solid #fcc;
-  font-weight: 500;
-}
-
-.register-box p {
-  text-align: center;
-  margin-top: clamp(16px, 3vw, 20px);
-  font-size: clamp(13px, 1.8vw, 14px);
-  color: #4a5568;
-  line-height: 1.5;
-}
-
-.register-box p a {
-  color: #1c7c31 !important;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s ease;
-  margin-left: 4px;
-}
-
-.register-box p a:hover {
-  color: #3dbf64 !important;
-  text-decoration: underline;
 }
 
 /* ================================
    RESPONSIVE BREAKPOINTS
 ================================ */
 
-/* Tablet and below */
 @media (max-width: 768px) {
-  .login-container,
-  .register-container {
+  .auth-login-container,
+  .auth-register-container {
     padding: 24px 16px;
   }
 
-  .login-box,
-  .register-box {
+  .auth-form,
+  .auth-register-box {
     max-width: 100%;
     padding: 28px 24px;
   }
-
-  .login-box:hover,
-  .register-box:hover {
-    transform: none;  /* 🔧 Disable hover effect on touch devices */
-  }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
-  .login-container,
-  .register-container {
+  .auth-login-container,
+  .auth-register-container {
     padding: 20px 12px;
   }
 
-  .login-box,
-  .register-box {
+  .auth-form,
+  .auth-register-box {
     padding: 24px 20px;
-    border-radius: 12px;
+    border-radius: 16px;
   }
 
-  .login-box h2,
-  .register-box h2 {
-    font-size: 22px;
-    margin-bottom: 20px;
+  .auth-form h2,
+  .auth-register-box h2 {
+    font-size: 24px;
   }
 
-  .login-box input,
-  .register-box input,
-  .register-box select {
-    padding: 12px;
+  .auth-inputForm {
+    height: 46px;
+  }
+
+  .auth-input {
     font-size: 14px;
-    margin-bottom: 14px;
   }
 
-  .login-box button,
-  .register-box button {
-    padding: 12px;
-    font-size: 15px;
+  .auth-button-submit,
+  .auth-btn {
+    height: 46px;
+    font-size: 14px;
   }
 
-  .login-box p,
-  .register-box p {
+  .auth-p {
     font-size: 13px;
+  }
+
+  .auth-flex-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
 
-/* Extra small mobile */
 @media (max-width: 360px) {
-  .login-container,
-  .register-container {
+  .auth-login-container,
+  .auth-register-container {
     padding: 16px 10px;
   }
 
-  .login-box,
-  .register-box {
+  .auth-form,
+  .auth-register-box {
     padding: 20px 16px;
   }
 
-  .login-box h2,
-  .register-box h2 {
-    font-size: 20px;
+  .auth-form h2,
+  .auth-register-box h2 {
+    font-size: 22px;
   }
 
-  .login-box input,
-  .register-box input,
-  .register-box select {
+  .auth-inputForm {
+    height: 42px;
+  }
+
+  .auth-input {
     font-size: 13px;
   }
 }
 
-/* Landscape mobile fix */
 @media (max-height: 600px) and (orientation: landscape) {
-  .login-container,
-  .register-container {
+  .auth-login-container,
+  .auth-register-container {
     padding: 20px 16px;
     min-height: auto;
   }
 
-  .login-box,
-  .register-box {
+  .auth-form,
+  .auth-register-box {
     margin: 20px auto;
   }
-} 
-
-/* ================================
-/* ================================
-   PASSWORD INPUT WRAPPER WITH TOGGLE
-   High Visibility Button
-================================ */
-.password-input-wrapper {
-  position: relative;
-  width: 100%;
-  margin-bottom: clamp(14px, 3vw, 18px);
-}
-
-.password-input-wrapper input {
-  width: 100%;
-  padding-right: 50px; /* Space for eye icon */
-  margin-bottom: 0; /* Remove default margin since wrapper has it */
-}
-
-/* Password Toggle Button - HIGH VISIBILITY */
-.password-toggle-btn {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent !important;
-  border: none !important;
-  cursor: pointer;
-  color: #1c7c31 !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px !important;
-  transition: color 0.2s ease;
-  margin: 0 !important;
-  width: auto !important;
-  height: auto !important;
-  border-radius: 4px !important;
-  box-shadow: none !important;
-  
-}
-
-.password-toggle-btn svg {
-  width: 15px !important;
-  height: 15px !important;
-  stroke-width: 2.5px;
-  color: #1c7c31 !important;
-}
-
-
-
-.password-toggle-btn:focus {
-  outline: 2px solid rgba(28, 124, 49, 0.3) !important;
-  outline-offset: 2px;
-  color: #1c7c31 !important;
-}
-
-.password-toggle-btn:active {
-  transform: translateY(-50%);
-  background: transparent !important;
-}
-
-/* Ensure button doesn't inherit login-box button styles */
-.login-box .password-toggle-btn,
-.register-box .password-toggle-btn {
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 6px !important;
-  margin: 0 !important;
-  min-width: auto !important;
-  width: auto !important;
-  height: auto !important;
-  border: none !important;
-}
-
-.login-box .password-toggle-btn:hover,
-.register-box .password-toggle-btn:hover {
-  transform: translateY(-50%);
-  box-shadow: none !important;
-  background: transparent !important;
-  border: none !important;
-}
-/* Forgot Password Button - Override global button styles */
-.forgot-password-btn {
-  background: none !important;
-  border: none !important;
-  color: #525353 !important;
-  padding: 0 !important;
-  margin-top: 10px !important;
-  margin-left: 110px;
-  cursor: pointer;
-  font-size: 14px !important;
-  font-weight: 400 !important;
-  width: auto !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  transition: none !important;
-}
-
-.forgot-password-btn:hover {
-  text-decoration: underline;
-  transform: none !important;
-  box-shadow: none !important;
-  background: none !important;
-}
-
-.forgot-password-btn:active {
-  transform: none !important;
-}
-
-.forgot-password-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Extra specificity to override .login-box button */
-.login-box .forgot-password-btn,
-.register-box .forgot-password-btn {
-  background: none !important;
-  border: none !important;
-  color: #717272 !important;
-  padding: 0 !important;
-  width: auto !important;
-  box-shadow: none !important;
-  margin-top: 10px !important;
-
-
-}
-
-.login-box .forgot-password-btn:hover,
-.register-box .forgot-password-btn:hover {
-  transform: none !important;
-  box-shadow: none !important;
-  background: none !important;
-}
-.success {
-  color: green;
-  font-size: 14px;
-}
-
-
-/* Mobile optimization */
-@media (max-width: 480px) {
-  .password-toggle-btn {
-    right: 10px;
-    padding: 8px !important;
-  }
-
-  .password-input-wrapper input {
-    padding-right: 45px;
-  }
-}
-
-/* Extra emphasis on focus for accessibility */
-.password-toggle-btn:focus-visible {
-  outline: 2px solid rgba(28, 124, 49, 0.4) !important;
-  outline-offset: 2px;
-  background: transparent !important;
 }
