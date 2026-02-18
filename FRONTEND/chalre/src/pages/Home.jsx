@@ -4,7 +4,8 @@ import LocationAutocomplete from "../components/LocationAutocomplete";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
-import CustomDatePicker from "../components/CustomDatePicker";
+import CustomDatePicker from "../components/Customdatepicker";
+
 export default function Home() {
   const navigate = useNavigate();
 
