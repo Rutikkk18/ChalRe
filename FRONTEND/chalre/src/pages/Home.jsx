@@ -4,7 +4,7 @@ import LocationAutocomplete from "../components/LocationAutocomplete";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
-
+import CustomDatePicker from "../components/CustomDatePicker";
 export default function Home() {
   const navigate = useNavigate();
 
@@ -60,15 +60,13 @@ export default function Home() {
 
   <div className="divider" />
 
-  <div className="search-item small date-input">
-    <input
-      type="date"
-      value={search.date}
-      min={new Date().toISOString().split("T")[0]}
-      onChange={(e) => updateSearch("date", e.target.value)}
-      placeholder="Date"
-    />
-  </div>
+<div className="search-item small cdp-search-item">
+  <CustomDatePicker
+    value={search.date}
+    onChange={(val) => updateSearch("date", val)}
+    placeholder="Date"
+  />
+</div>
 
   <div className="divider" />
 
@@ -108,13 +106,13 @@ export default function Home() {
      {/* FEATURES SECTION */}
 <section className="features">
   <div className="feature-card">
-    <div className="feature-icon">✓</div>
+    <div className="feature-icon">✔</div>
     <h3>Verified Users</h3>
     <p>Every rider undergoes document verification for safety and trust.</p>
   </div>
 
   <div className="feature-card">
-    <div className="feature-icon">⚡</div>
+    <div className="feature-icon">🤖</div>
     <h3>Smart Matching</h3>
     <p>
       Find rides going your way in seconds using our auto-matching engine.
@@ -122,7 +120,7 @@ export default function Home() {
   </div>
 
   <div className="feature-card">
-    <div className="feature-icon">🔒</div>
+    <div className="feature-icon">🛡️</div>
     <h3>Secure Payments</h3>
     <p>
       Pay securely with multiple payment options. Fast and reliable transactions.

@@ -1,0 +1,367 @@
+/* ================================
+   CUSTOM DATE PICKER - ChalRe
+================================ */
+
+.cdp-wrapper {
+  position: relative;
+  width: 100%;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.cdp-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 6px 0;
+  user-select: none;
+  min-height: 36px;
+}
+
+.cdp-icon {
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.cdp-trigger:hover .cdp-icon,
+.cdp-trigger.active .cdp-icon {
+  color: #024110;
+}
+
+.cdp-value {
+  font-size: clamp(14px, 2vw, 16px);
+  color: #111827;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.cdp-value.placeholder {
+  color: #687869;
+  font-weight: 500;
+}
+
+/* Dropdown panel */
+.cdp-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow:
+    0 20px 60px rgba(2, 65, 16, 0.18),
+    0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1.5px solid rgba(2, 65, 16, 0.12);
+  width: 300px;
+  padding: 16px;
+  z-index: 999;
+  animation: cdp-pop 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes cdp-pop {
+  from { opacity: 0; transform: translateX(-50%) scale(0.92) translateY(-6px); }
+  to   { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+}
+
+/* Header row */
+.cdp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.cdp-nav {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  color: #374151;
+}
+
+.cdp-nav:hover:not(:disabled) {
+  background: #f0fdf4;
+  color: #024110;
+}
+
+.cdp-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.cdp-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.cdp-header-labels {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cdp-month-label,
+.cdp-year-label {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f3d2e;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.cdp-month-label:hover,
+.cdp-year-label:hover {
+  background: #f0fdf4;
+  color: #024110;
+}
+
+/* Weekday headers */
+.cdp-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
+.cdp-weekday {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 0;
+}
+
+/* Day grid */
+.cdp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cdp-cell {
+  height: 34px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: 500;
+  color: #1f2937;
+  background: none;
+  border: none;
+  cursor: pointer;         /* restored after unset */
+  box-sizing: border-box;  /* restored after unset */
+  transition: background 0.15s ease, color 0.15s ease;
+  position: relative;
+}
+
+/* FIX: removed aspect-ratio (caused giant cell) and transform scale on selected */
+.cdp-cell {
+  height: 34px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: 500;
+  color: #1f2937;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  position: relative;
+}
+
+.cdp-cell.empty {
+  pointer-events: none;
+  background: none;
+}
+
+.cdp-cell.day:hover:not(.disabled):not(.selected) {
+  background: #f0fdf4;
+  color: #024110;
+}
+
+.cdp-cell.disabled {
+  color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.cdp-cell.today:not(.selected) {
+  font-weight: 800;
+  color: #024110;
+}
+
+.cdp-cell.today:not(.selected)::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #024110;
+}
+
+/* FIX: no transform scale — just color/background change */
+.cdp-cell.selected {
+  background: linear-gradient(135deg, #024110, #1fa055);
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(2, 65, 16, 0.3);
+}
+
+/* Footer */
+.cdp-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f0fdf4;
+}
+
+.cdp-today-btn,
+.cdp-clear-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 10px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.cdp-today-btn {
+  color: #024110;
+}
+
+.cdp-today-btn:hover {
+  background: #f0fdf4;
+}
+
+.cdp-clear-btn {
+  color: #9ca3af;
+}
+
+.cdp-clear-btn:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Month picker grid */
+.cdp-months-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.cdp-month-cell {
+  padding: 10px 4px;
+  text-align: center;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  background: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cdp-month-cell:hover:not(.selected) {
+  background: #f0fdf4;
+  color: #024110;
+}
+
+.cdp-month-cell.selected {
+  background: linear-gradient(135deg, #024110, #1fa055);
+  color: white;
+  font-weight: 700;
+}
+
+/* Year picker grid */
+.cdp-years-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.cdp-year-cell {
+  padding: 12px 4px;
+  text-align: center;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  background: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cdp-year-cell:hover:not(.selected) {
+  background: #f0fdf4;
+  color: #024110;
+}
+
+.cdp-year-cell.selected {
+  background: linear-gradient(135deg, #024110, #1fa055);
+  color: white;
+  font-weight: 700;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .cdp-dropdown {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(300px, 90vw);
+  }
+
+  @keyframes cdp-pop {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+}
+
+
+.cdp-cell.empty {
+  pointer-events: none;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  visibility: hidden;
+}

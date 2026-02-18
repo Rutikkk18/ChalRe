@@ -21,7 +21,7 @@
   --radius-sm: 8px;
 
   --shadow-soft: 0 8px 24px rgba(15, 81, 50, 0.08);
-  --shadow-hover: 0 12px 28px rgba(15, 81, 50, 0.12);
+  --shadow-hover: 0 12px 28px rgba(31, 51, 42, 0.12);
   --shadow-focus: 0 0 0 4px rgba(63, 174, 85, 0.15);
 }
 
@@ -189,14 +189,15 @@
 }
 
 /* ---------- UNIVERSAL FIX FOR ALL INPUT WRAPPERS ---------- */
-.form-row > * {
+.form-row:not(.cdp-search-row) > * {
   border: none !important;
   box-shadow: none !important;
   background: transparent !important;
 }
 
-.form-row > * > input,
-.form-row input {
+
+.form-row:not(.cdp-search-row) > * > input,
+.form-row:not(.cdp-search-row) input {
   padding: clamp(10px, 1.5vw, 12px) clamp(12px, 2vw, 14px) !important;
   border-radius: var(--radius-md) !important;
   font-size: clamp(14px, 1.8vw, 15px) !important;
@@ -790,4 +791,35 @@
 .filters-sidebar *::-webkit-scrollbar-thumb:hover,
 .sidebar-content::-webkit-scrollbar-thumb:hover {
   background: #7ae0a4; /* Darker green on hover */
+}
+
+
+
+/* Scope form-row input styles away from date picker */
+.form-row:not(.cdp-search-row) input {
+  padding: clamp(10px, 1.5vw, 12px) clamp(12px, 2vw, 14px);
+  border-radius: var(--radius-md);
+  font-size: clamp(14px, 1.8vw, 15px);
+  border: 1.5px solid var(--border-soft);
+  background: var(--green-light);
+  transition: all 0.25s ease;
+  width: 100%;
+}
+
+/* Give the date picker the same styled box as other inputs */
+.cdp-search-row .cdp-trigger {
+  padding: clamp(10px, 1.5vw, 12px) clamp(12px, 2vw, 14px);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-soft);
+  background: var(--green-light) !important;
+  width: 100%;
+  min-height: 44px;
+  transition: all 0.25s ease;
+}
+
+.cdp-search-row .cdp-trigger:hover,
+.cdp-search-row .cdp-trigger.active {
+  border-color: var(--border-focus);
+  background: #ffffff !important;
+  box-shadow: var(--shadow-focus);
 }

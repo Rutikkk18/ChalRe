@@ -6,7 +6,7 @@ import RideCard from "../components/RideCard";
 import "../styles/SearchRide.css";
 import { Filter, X } from "lucide-react";
 import LocationAutocomplete from "../components/LocationAutocomplete";
-
+import CustomDatePicker from "../components/CustomDatePicker";
 
 export default function SearchRides() {
   const location = useLocation();
@@ -252,25 +252,26 @@ export default function SearchRides() {
           </div>
 
           {/* DATE */}
-          <div className="form-row">
-            
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
+         <div className="form-row cdp-search-row">
+  <CustomDatePicker
+    value={date}
+    onChange={(val) => setDate(val)}
+    placeholder="Date"
+  />
+</div>
 
           {/* SEATS */}
           <div className="form-row">
             
-            <input
-              type="number"
-              min="1"
-              max="10"
-              value={seats}
-              onChange={(e) => setSeats(Number(e.target.value))}
-            />
+           <input
+  type="number"
+  min="1"
+  max="10"
+  value={seats}
+  placeholder="Seats"
+  onChange={(e) => setSeats(Number(e.target.value))}
+/>
+
           </div>
 
           {/* BUTTONS */}
