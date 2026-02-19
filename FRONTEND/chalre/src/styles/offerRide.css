@@ -1,8 +1,6 @@
 /* ================================
-   OFFER RIDE PAGE - UPDATED DESIGN
+   OFFER RIDE PAGE - FIXED & POLISHED
 ================================ */
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Instrument+Serif&display=swap');
 
 /* ---------- GLOBAL RESET ---------- */
 * {
@@ -10,24 +8,22 @@
 }
 
 /* ---------- WRAPPER ---------- */
+/* Background removed from wrapper — your app layout handles the page.
+   Wrapper just centers the card. */
 .offer-wrapper {
-  max-width: min(900px, 100%);
-  margin: clamp(80px, 12vw, 100px) auto clamp(20px, 4vw, 30px);
-  padding: clamp(20px, 4vw, 30px) clamp(16px, 3vw, 20px);
-  animation: fadeIn 0.5s ease;
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
-  background-color: #edfaf3;
-  background-image:
-    radial-gradient(ellipse 80% 50% at 15% 0%, rgba(16, 185, 129, 0.10) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 85% 100%, rgba(52, 211, 153, 0.07) 0%, transparent 55%);
+  width: 100%;
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  padding: clamp(32px, 5vw, 48px) clamp(16px, 4vw, 24px) clamp(40px, 6vw, 64px);
+  margin-top: clamp(70px, 10vw, 90px);
+  animation: fadeIn 0.45s ease;
+  font-family: 'Times New Roman', Times, serif;
+  min-height: calc(100vh - 70px);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -35,13 +31,13 @@
 .offer-card {
   background: #ffffff;
   width: 100%;
-  max-width: 520px;
+  max-width: 480px;          /* tighter — prevents stretching */
   padding: 0;
-  border-radius: 24px;
+  border-radius: 20px;
   box-shadow:
-    0 0 0 1px rgba(16, 185, 129, 0.07),
-    0 8px 20px -4px rgba(16, 185, 129, 0.10),
-    0 32px 64px -16px rgba(16, 185, 129, 0.15);
+    0 0 0 1px rgba(16, 185, 129, 0.08),
+    0 6px 18px -4px rgba(16, 185, 129, 0.12),
+    0 28px 56px -12px rgba(0, 0, 0, 0.09);
   border: none;
   overflow: hidden;
   transition: box-shadow 0.3s ease;
@@ -49,69 +45,71 @@
 
 .offer-card:hover {
   box-shadow:
-    0 0 0 1px rgba(16, 185, 129, 0.10),
-    0 12px 28px -4px rgba(16, 185, 129, 0.14),
-    0 40px 72px -16px rgba(16, 185, 129, 0.18);
+    0 0 0 1px rgba(16, 185, 129, 0.12),
+    0 10px 24px -4px rgba(16, 185, 129, 0.15),
+    0 36px 64px -12px rgba(0, 0, 0, 0.12);
 }
 
 /* ---------- HEADER ---------- */
 .offer-header {
-  padding: 40px 40px 28px;
+  padding: 36px 36px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  border-bottom: 1px solid #f0fdf4;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .offer-icon-ring {
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: linear-gradient(145deg, #ecfdf5, #d1fae5);
   border: 1.5px solid #a7f3d0;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   color: #059669;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 3px 12px rgba(16, 185, 129, 0.18);
 }
 
 .offer-icon-ring svg {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
 }
 
 .offer-card h2 {
-  font-family: 'Instrument Serif', Georgia, serif;
-  font-size: clamp(1.75rem, 4vw, 2rem);
-  font-weight: 400;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: clamp(1.6rem, 3.5vw, 1.9rem);
+  font-weight: 700;
   color: #111827;
-  letter-spacing: -0.3px;
-  line-height: 1.1;
+  letter-spacing: -0.2px;
+  line-height: 1.15;
   margin: 0;
 }
 
 .offer-subtitle {
   margin-top: 6px;
-  font-size: 0.8125rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.875rem;
   color: #6b7280;
   font-weight: 400;
+  font-style: italic;
 }
 
 /* ---------- DIVIDER ---------- */
 .offer-divider {
   height: 1px;
-  background: #f0fdf4;
+  background: #f3f4f6;
 }
 
 /* ---------- FORM ---------- */
 .offer-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 32px 40px 40px;
+  gap: 22px;
+  padding: 28px 36px 36px;
 }
 
 .offer-form.loading {
@@ -119,7 +117,7 @@
   pointer-events: none;
 }
 
-/* ---------- SECTION LABEL ---------- */
+/* ---------- SECTION ---------- */
 .offer-section {
   display: flex;
   flex-direction: column;
@@ -127,9 +125,10 @@
 }
 
 .offer-section-label {
-  font-size: 0.6875rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: #10b981;
   margin: 0;
@@ -142,14 +141,14 @@
 }
 
 .route-connector {
-  padding: 2px 0 2px 18px;
+  padding: 2px 0 2px 17px;
   display: flex;
   align-items: center;
 }
 
 .route-connector-line {
   width: 2px;
-  height: 28px;
+  height: 26px;
   background-image: repeating-linear-gradient(
     to bottom,
     #10b981 0px, #10b981 4px,
@@ -168,7 +167,7 @@
 
 .field-icon {
   position: absolute;
-  left: 13px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #10b981;
@@ -184,13 +183,11 @@
   height: 15px;
 }
 
-/* Icon pinned to top for textarea */
 .field-icon-top {
-  top: 13px;
+  top: 12px;
   transform: none;
 }
 
-/* Focus-within highlight icon */
 .offer-icon-field:focus-within .field-icon {
   color: #059669;
 }
@@ -199,26 +196,26 @@
 .row {
   display: flex;
   flex-direction: column;
-  gap: clamp(5px, 1vw, 6px);
+  gap: 5px;
 }
 
 .row-half {
   display: flex;
-  gap: clamp(10px, 2vw, 12px);
-  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .row-half > div,
 .row-half > .offer-icon-field {
   flex: 1;
-  min-width: min(180px, 100%);
+  min-width: 0;
 }
 
 /* ---------- FORM LABELS ---------- */
 .offer-form label {
-  font-weight: 600;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: 700;
   color: #0f5132;
-  font-size: clamp(14px, 2vw, 15px);
+  font-size: 0.875rem;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -226,7 +223,7 @@
 
 .offer-form label .required {
   color: #dc3545;
-  font-size: clamp(16px, 2.5vw, 18px);
+  font-size: 1rem;
 }
 
 /* ---------- INPUTS ---------- */
@@ -234,13 +231,13 @@
 .offer-form select,
 .offer-form textarea {
   width: 100%;
-  padding: 11px 14px 11px 38px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: clamp(13px, 1.8vw, 14px);
+  padding: 10px 13px 10px 36px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.875rem;
   color: #111827;
   background: #f9fafb;
   border: 1.5px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 9px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   -webkit-appearance: none;
@@ -252,7 +249,8 @@
 .offer-form input::placeholder,
 .offer-form textarea::placeholder {
   color: #9ca3af;
-  font-size: clamp(13px, 1.8vw, 14px);
+  font-size: 0.8125rem;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .offer-form input:focus,
@@ -265,10 +263,10 @@
 
 /* ---------- TEXTAREA ---------- */
 .offer-form textarea {
-  min-height: clamp(90px, 15vw, 100px);
+  min-height: 88px;
   resize: vertical;
-  line-height: 1.5;
-  padding-top: 11px;
+  line-height: 1.6;
+  padding-top: 10px;
 }
 
 /* ---------- SELECT ---------- */
@@ -276,104 +274,107 @@
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%230f5132' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right clamp(10px, 2vw, 12px) center;
-  padding-right: clamp(32px, 6vw, 36px);
+  background-position: right 12px center;
+  padding-right: 34px;
 }
 
 /* ---------- SUCCESS MESSAGE ---------- */
 .success-msg {
   background: #d1f3da;
   color: #0a7a32 !important;
-  padding: clamp(9px, 2vw, 10px) clamp(12px, 2vw, 14px);
-  border-radius: 10px;
+  padding: 10px 14px;
+  border-radius: 9px;
   font-weight: 600;
   border-left: 4px solid #10b981;
-  margin: 0 40px;
-  font-size: clamp(14px, 2vw, 15px);
+  margin: 12px 36px 0;
+  font-size: 0.875rem;
   line-height: 1.5;
   animation: slideIn 0.4s ease;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 /* ---------- ERROR MESSAGE ---------- */
 .error-msg {
   background: #f8d7da;
   color: #a94442 !important;
-  padding: clamp(9px, 2vw, 10px) clamp(12px, 2vw, 14px);
-  border-radius: 10px;
+  padding: 10px 14px;
+  border-radius: 9px;
   border-left: 4px solid #dc3545;
-  margin: 0 40px;
+  margin: 12px 36px 0;
   font-weight: 600;
-  font-size: clamp(14px, 2vw, 15px);
+  font-size: 0.875rem;
   line-height: 1.5;
   animation: slideIn 0.4s ease;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(-16px); }
+  from { opacity: 0; transform: translateX(-14px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 /* ---------- SUBMIT BUTTON ---------- */
 .btn-submit1 {
   margin-top: 4px;
-  padding: clamp(13px, 2vw, 14px) clamp(18px, 3vw, 20px);
+  padding: 13px 20px;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
   color: white !important;
-  font-size: clamp(14px, 2.2vw, 15px);
-  font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
-  letter-spacing: 0.02em;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-family: 'Times New Roman', Times, serif;
+  letter-spacing: 0.03em;
   border: none;
-  border-radius: 12px;
+  border-radius: 11px;
   cursor: pointer;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.30);
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.32);
   -webkit-appearance: none;
   appearance: none;
 }
 
 .btn-submit1 svg {
-  width: clamp(16px, 2.5vw, 18px);
-  height: clamp(16px, 2.5vw, 18px);
+  width: 17px;
+  height: 17px;
 }
 
 .btn-submit1:hover:not(:disabled) {
   background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.36);
 }
 
 .btn-submit1:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.24);
 }
 
 .btn-submit1:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  background: #6c757d !important;
+  background: #9ca3af !important;
   box-shadow: none;
 }
 
-/* ---------- FORM SECTIONS (legacy support) ---------- */
+/* ---------- FORM SECTIONS (legacy) ---------- */
 .form-section {
-  padding: clamp(16px, 3vw, 20px);
+  padding: clamp(14px, 2.5vw, 18px);
   background: #f9fafb;
-  border-radius: clamp(8px, 1.5vw, 10px);
+  border-radius: 10px;
   border: 1px solid #e5e7eb;
-  margin-bottom: clamp(16px, 3vw, 18px);
+  margin-bottom: clamp(14px, 2.5vw, 18px);
 }
 
 .form-section h3 {
-  margin: 0 0 clamp(12px, 3vw, 16px) 0;
-  font-size: clamp(18px, 3vw, 20px);
+  margin: 0 0 14px 0;
+  font-size: 1.0625rem;
   color: #0f5132;
-  font-weight: 600;
+  font-weight: 700;
+  font-family: 'Times New Roman', Times, serif;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -383,34 +384,36 @@
 .info-text {
   background: #e0f2fe;
   color: #075985;
-  padding: clamp(10px, 2vw, 12px);
-  border-radius: clamp(6px, 1vw, 8px);
+  padding: 10px 12px;
+  border-radius: 8px;
   border-left: 3px solid #0284c7;
-  margin-bottom: clamp(14px, 3vw, 16px);
-  font-size: clamp(13px, 1.8vw, 14px);
+  margin-bottom: 14px;
+  font-size: 0.8125rem;
   line-height: 1.5;
+  font-family: 'Times New Roman', Times, serif;
 }
 
-/* ---------- CHECKBOX/RADIO ---------- */
+/* ---------- CHECKBOX / RADIO ---------- */
 .checkbox-group,
 .radio-group {
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 2vw, 12px);
+  gap: 10px;
 }
 
 .checkbox-label,
 .radio-label {
   display: flex;
   align-items: center;
-  gap: clamp(8px, 2vw, 10px);
+  gap: 10px;
   cursor: pointer;
-  padding: clamp(10px, 2vw, 12px);
+  padding: 10px 12px;
   background: #f9fafb;
   border: 1.5px solid #e5e7eb;
-  border-radius: clamp(6px, 1vw, 8px);
+  border-radius: 8px;
   transition: all 0.2s ease;
-  font-size: clamp(14px, 2vw, 15px);
+  font-size: 0.875rem;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .checkbox-label:hover,
@@ -421,14 +424,14 @@
 
 .checkbox-label input[type="checkbox"],
 .radio-label input[type="radio"] {
-  width: clamp(18px, 3vw, 20px);
-  height: clamp(18px, 3vw, 20px);
+  width: 18px;
+  height: 18px;
   cursor: pointer;
   accent-color: #10b981;
   margin: 0;
 }
 
-/* ---------- VALIDATION STATES ---------- */
+/* ---------- VALIDATION ---------- */
 .offer-form input.invalid,
 .offer-form select.invalid,
 .offer-form textarea.invalid {
@@ -439,7 +442,7 @@
 .offer-form input.invalid:focus,
 .offer-form select.invalid:focus,
 .offer-form textarea.invalid:focus {
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.12);
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.10);
 }
 
 .offer-form input.valid,
@@ -452,90 +455,87 @@
 /* ---------- FIELD ERROR / HELPER ---------- */
 .field-error {
   color: #dc3545;
-  font-size: clamp(12px, 1.8vw, 13px);
+  font-size: 0.75rem;
   margin-top: 4px;
   display: flex;
   align-items: center;
   gap: 4px;
-  font-weight: 500;
+  font-weight: 600;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .field-helper {
   color: #6b7280;
-  font-size: clamp(12px, 1.8vw, 13px);
+  font-size: 0.75rem;
   margin-top: 4px;
   line-height: 1.4;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 /* ---------- TABLET ---------- */
 @media (max-width: 768px) {
   .offer-form {
-    padding: 24px 28px 32px;
+    padding: 22px 26px 30px;
   }
-
   .offer-header {
-    padding: 32px 28px 24px;
+    padding: 28px 26px 20px;
   }
-
   .success-msg,
   .error-msg {
-    margin: 0 28px;
+    margin-left: 26px;
+    margin-right: 26px;
   }
-
-  .btn-submit1:hover {
+  .btn-submit1:hover:not(:disabled) {
     transform: none;
   }
 }
 
 /* ---------- MOBILE ---------- */
-@media (max-width: 600px) {
+@media (max-width: 560px) {
   .offer-wrapper {
-    padding: 16px 12px;
-    margin-top: 70px;
+    padding: 20px 12px 40px;
+    margin-top: 65px;
   }
-
   .offer-header {
-    padding: 28px 20px 20px;
+    padding: 24px 20px 18px;
   }
-
   .offer-form {
-    padding: 20px 20px 28px;
-    gap: 20px;
+    padding: 18px 20px 26px;
+    gap: 18px;
   }
-
   .success-msg,
   .error-msg {
-    margin: 0 20px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
-
   .row-half {
     flex-direction: column;
-    gap: 14px;
-  }
-
-  .row-half > div,
-  .row-half > .offer-icon-field {
-    min-width: 100%;
+    gap: 12px;
   }
 }
 
 /* ---------- SMALL MOBILE ---------- */
 @media (max-width: 400px) {
   .offer-header {
-    padding: 24px 16px 18px;
+    padding: 20px 16px 16px;
   }
-
   .offer-form {
-    padding: 16px 16px 24px;
+    padding: 16px 16px 22px;
   }
-
   .success-msg,
   .error-msg {
-    margin: 0 16px;
+    margin-left: 16px;
+    margin-right: 16px;
   }
 }
 
-/* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
+/* ---------- LANDSCAPE ---------- */
+@media (max-height: 600px) and (orientation: landscape) {
+  .offer-wrapper { margin-top: 58px; padding-top: 20px; }
+  .offer-form textarea { min-height: 72px; }
+}
+
+/* ---------- FOCUS VISIBLE ---------- */
 .offer-form input:focus-visible,
 .offer-form select:focus-visible,
 .offer-form textarea:focus-visible {
@@ -551,14 +551,12 @@
 /* ---------- REDUCE MOTION ---------- */
 @media (prefers-reduced-motion: reduce) {
   .offer-wrapper,
-  .offer-card,
   .success-msg,
   .error-msg,
   .btn-submit1 {
     animation: none;
     transition: none;
   }
-
   .btn-submit1:hover,
   .offer-card:hover {
     transform: none;
@@ -569,5 +567,5 @@
 @media print {
   .btn-submit1 { display: none; }
   .offer-card { box-shadow: none; border: 1px solid #ddd; }
-  .offer-wrapper { margin: 0; padding: 0; background: none; }
+  .offer-wrapper { margin: 0; padding: 0; }
 }
