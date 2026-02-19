@@ -6,7 +6,7 @@ import RideCard from "../components/RideCard";
 import "../styles/SearchRide.css";
 import { Filter, X } from "lucide-react";
 import LocationAutocomplete from "../components/LocationAutocomplete";
-import CustomDatePicker from "../components/Customdatepicker";
+import CustomDatePicker from "../components/CustomDatePicker";
 
 export default function SearchRides() {
   const location = useLocation();
