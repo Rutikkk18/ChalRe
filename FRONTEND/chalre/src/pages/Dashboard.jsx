@@ -39,105 +39,131 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="dash-container">
+    <div className="dash-page">
+
       {/* HEADER */}
       <div className="dash-header">
-        <h1>Dashboard</h1>
+        <h1 className="dash-title">Dashboard</h1>
         <NotificationBell />
       </div>
 
-      {/* OUTER CARD (textured inset style) */}
-      <div className="card">
-        <div className="card-overlay" />
-        <div className="card-inner">
+      {/* OUTER CARD SHELL */}
+      <div className="dash-card">
+        <div className="dash-card-noise" />
 
-          {/* PROFILE */}
-          <div className="profile-section">
-            <div className="avatar-wrapper">
+        <div className="dash-card-inner">
+
+          {/* ── PROFILE ── */}
+          <div className="dash-profile">
+            <div className="dash-avatar">
               <img
                 src={user.profileImage || "/profileimage.png"}
                 alt="Profile"
-                className="profile-avatar"
+                className="dash-avatar-img"
               />
             </div>
-            <div className="profile-info">
-              <h2>{user.name}</h2>
-              <p className="email">{user.email}</p>
+            <div className="dash-profile-info">
+              <span className="dash-name">{user.name}</span>
+              <span className="dash-email">{user.email}</span>
             </div>
           </div>
 
-          <div className="dash-divider" />
+          <div className="dash-sep" />
 
-          {/* DRIVER STATUS */}
-          <div className="status-grid">
-            <div className="status-card">
-              <CheckCircle className="status-icon" />
-              <div className="status-text">
-                <span>Driver Status</span>
-                <strong>{user.verificationStatus}</strong>
-              </div>
-              {user.verificationStatus === "NOT_SUBMITTED" && (
-                <button className="status-btn" onClick={() => navigate("/verification")}>
-                  Get Verified
-                </button>
-              )}
-              {user.verificationStatus === "REJECTED" && (
-                <button className="status-btn status-btn--danger" onClick={() => navigate("/verification")}>
-                  Re-submit
-                </button>
-              )}
+          {/* ── DRIVER STATUS ── */}
+          <div className="dash-status">
+            <CheckCircle className="dash-status-icon" />
+            <div className="dash-status-text">
+              <span>Driver Status</span>
+              <strong>{user.verificationStatus}</strong>
             </div>
+            {user.verificationStatus === "NOT_SUBMITTED" && (
+              <button
+                className="dash-inline-btn"
+                onClick={() => navigate("/verification")}
+              >
+                Get Verified
+              </button>
+            )}
+            {user.verificationStatus === "REJECTED" && (
+              <button
+                className="dash-inline-btn dash-inline-btn--red"
+                onClick={() => navigate("/verification")}
+              >
+                Re-submit
+              </button>
+            )}
           </div>
 
-          <div className="dash-divider" />
+          <div className="dash-sep" />
 
-          {/* UPI SETUP */}
-          <div className="upi-section">
-            <h3><CreditCard size={16} /> UPI for Payments</h3>
-            <p className="muted">Required to receive payments when you offer rides</p>
-            <div className="upi-row">
+          {/* ── UPI ── */}
+          <div className="dash-upi">
+            <div className="dash-upi-title">
+              <CreditCard size={15} />
+              <span>UPI for Payments</span>
+            </div>
+            <p className="dash-upi-desc">
+              Required to receive payments when you offer rides
+            </p>
+            <div className="dash-upi-row">
               <input
                 type="text"
+                className="dash-upi-input"
                 placeholder="yourupi@bank"
                 value={upiId}
                 onChange={(e) => setUpiId(e.target.value)}
               />
-              <button onClick={saveUpiId} disabled={loading}>
+              <button
+                className="dash-upi-btn"
+                onClick={saveUpiId}
+                disabled={loading}
+              >
                 {user.upiId ? "Update" : "Save"}
               </button>
             </div>
-            {error && <p className="error-text">{error}</p>}
+            {error && <p className="dash-error">{error}</p>}
           </div>
 
-          <div className="dash-divider" />
+          <div className="dash-sep" />
 
-          {/* PRIMARY ACTIONS */}
-          <div className="primary-actions">
-            <button className="primary-btn" onClick={() => navigate("/search")}>
+          {/* ── PRIMARY ACTIONS ── */}
+          <div className="dash-primary">
+            <button
+              className="dash-primary-btn dash-primary-btn--solid"
+              onClick={() => navigate("/search")}
+            >
               <Search size={16} />
               Search Ride
             </button>
-            <button className="primary-btn primary-btn--outline" onClick={() => navigate("/offer")}>
+            <button
+              className="dash-primary-btn dash-primary-btn--outline"
+              onClick={() => navigate("/offer")}
+            >
               <Plus size={16} />
               Offer a Ride
             </button>
           </div>
 
-          <div className="dash-divider" />
+          <div className="dash-sep" />
 
-          {/* SECONDARY ACTIONS */}
-          <div className="secondary-actions">
-            <button onClick={() => navigate("/myrides")}>
-              <Car size={15} /> My Rides
+          {/* ── SECONDARY ACTIONS ── */}
+          <div className="dash-secondary">
+            <button className="dash-sec-btn" onClick={() => navigate("/myrides")}>
+              <Car size={17} />
+              <span>My Rides</span>
             </button>
-            <button onClick={() => navigate("/mybookings")}>
-              <Calendar size={15} /> My Bookings
+            <button className="dash-sec-btn" onClick={() => navigate("/mybookings")}>
+              <Calendar size={17} />
+              <span>My Bookings</span>
             </button>
-            <button onClick={() => navigate("/profile")}>
-              <User size={15} /> Edit Profile
+            <button className="dash-sec-btn" onClick={() => navigate("/profile")}>
+              <User size={17} />
+              <span>Edit Profile</span>
             </button>
-            <button onClick={() => navigate("/notifications")}>
-              <Bell size={15} /> Notifications
+            <button className="dash-sec-btn" onClick={() => navigate("/notifications")}>
+              <Bell size={17} />
+              <span>Notifications</span>
             </button>
           </div>
 
