@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/rideDetails.css";
-import { MapPin, Clock, Users, IndianRupee, Phone, CheckCircle, Star, CreditCard } from "lucide-react";
+import { Users, IndianRupee, Phone, CheckCircle, Star, CreditCard } from "lucide-react";
 import loadRazorpay from "../utils/loadRazorpay";
 import { BACKEND_URL } from "../config";
 
@@ -38,9 +38,9 @@ export default function RideDetails() {
     setLoading(true);
     setErr("");
     try {
-      const res = await api.get(`/rides/${rideId}`); // backend: GET /api/rides/:id
+      const res = await api.get(`/rides/${rideId}`);
       setRide(res.data);
-      setSeats(Number(res.data?.availableSeats) > 0 ? 1 : 0); // Default to 1 seat when available
+      setSeats(Number(res.data?.availableSeats) > 0 ? 1 : 0);
       if (Number(res.data?.availableSeats) <= 0) {
         setErr("No seats available for this ride.");
       }
@@ -51,7 +51,6 @@ export default function RideDetails() {
       setLoading(false);
     }
   }
-
 
   const fetchDriverRatings = async () => {
     if (!ride?.driver?.id) return;
@@ -93,53 +92,34 @@ export default function RideDetails() {
     setErr("");
     try {
       if (paymentMethod === "CASH") {
-        // CASH payment: Book directly without payment
-        // Explicitly do NOT include paymentId
-        const res = await api.post("/bookings/create", {
+        await api.post("/bookings/create", {
           rideId: Number(ride.id),
           seats: Number(seats),
           paymentMethod: "CASH"
-          // paymentId is intentionally omitted for CASH payments
         });
-
-        // Navigate to my bookings
         navigate("/mybookings");
       } else {
-        // ONLINE payment: Create Razorpay order and open checkout
         const totalCostPaise = Math.round(ride.price * seats * 100);
 
-        // Create Razorpay order
         const orderRes = await api.post("/payments/order", {
           rideId: Number(ride.id),
           amountPaise: totalCostPaise
         });
 
-        // Validate response
         if (!orderRes.data || !orderRes.data.orderId || !orderRes.data.key) {
           setErr("Invalid response from payment server. Please try again.");
           setBookingLoading(false);
           return;
         }
 
-        // REFACTORED: No paymentId in response - payment record will be created after verification
         const { orderId, amount, key, currency } = orderRes.data;
 
-        // Debug logging (remove in production)
-        console.log("🔍 Razorpay Order Details:");
-        console.log("   Order ID:", orderId);
-        console.log("   Amount:", amount, "paise (₹" + (amount / 100).toFixed(2) + ")");
-        console.log("   Key:", key.substring(0, 15) + "...");
-        console.log("   Currency:", currency || "INR");
-        console.log("   Note: Payment record will be created after successful payment");
-
-        // Validate key format
         if (!key.startsWith("rzp_")) {
           setErr("Invalid Razorpay key format. Please contact support.");
           setBookingLoading(false);
           return;
         }
 
-        // Load Razorpay script
         const razorpayLoaded = await loadRazorpay();
         if (!razorpayLoaded) {
           setErr("Failed to load Razorpay. Please check your internet connection.");
@@ -147,119 +127,70 @@ export default function RideDetails() {
           return;
         }
 
-        // Validate Razorpay is available
         if (!window.Razorpay) {
           setErr("Razorpay SDK not loaded. Please refresh the page.");
           setBookingLoading(false);
           return;
         }
 
-        // Open Razorpay checkout
         const options = {
-          key: key, // Key from backend (must match the key used to create order)
-          amount: amount, // Amount in paise (must match order amount)
+          key,
+          amount,
           currency: currency || "INR",
           name: "Ride Booking",
           description: `Ride from ${ride.startLocation} to ${ride.endLocation}`,
-          order_id: orderId, // Order ID from backend (must match)
+          order_id: orderId,
           handler: async function (response) {
-            // REFACTORED: Collect payment details AFTER successful payment
-            console.log("✅ Payment successful:", response);
-            
             try {
-              // Step 1: Verify payment and create payment record
-              // Backend will verify signature FIRST, then create payment record
               const verifyRes = await api.post("/payments/verify", {
                 rideId: Number(ride.id),
-                amountPaise: totalCostPaise, // Send amount for validation
+                amountPaise: totalCostPaise,
                 razorpayOrderId: response.razorpay_order_id,
                 razorpayPaymentId: response.razorpay_payment_id,
                 razorpaySignature: response.razorpay_signature
               });
 
-              console.log("✅ Payment verified and record created:", verifyRes.data);
-              
-              // Extract paymentId from verification response (created after verification)
               const paymentId = verifyRes.data.id;
 
-              // Step 2: Create booking with verified payment
-              const bookingRes = await api.post("/bookings/create", {
+              await api.post("/bookings/create", {
                 rideId: Number(ride.id),
                 seats: Number(seats),
                 paymentMethod: "ONLINE",
-                paymentId: paymentId // Use paymentId from verification response
+                paymentId
               });
 
               navigate("/mybookings");
             } catch (err) {
-              console.error("❌ Payment verification failed:", err);
               const errorMsg = err.response?.data || err.message || "Payment verification failed";
               setErr(`Payment verification failed: ${errorMsg}. Please contact support if amount was deducted.`);
               setBookingLoading(false);
             }
           },
-          prefill: {
-            name: "",
-            email: "",
-            contact: ""
-          },
-          notes: {
-            rideId: ride.id.toString(),
-            seats: seats.toString()
-          },
-          theme: {
-            color: "#1c7c31"
-          },
+          prefill: { name: "", email: "", contact: "" },
+          notes: { rideId: ride.id.toString(), seats: seats.toString() },
+          theme: { color: "#1c7c31" },
           modal: {
-            ondismiss: function() {
-              console.log("⚠️ Payment modal dismissed by user");
+            ondismiss: function () {
               setBookingLoading(false);
             }
           }
-        };
-
-        // Add error handler for Razorpay checkout
-        options.handler_error = function(error) {
-          console.error("❌ Razorpay checkout error:", error);
-          setBookingLoading(false);
-          
-          let errorMessage = "Payment failed. ";
-          if (error.error) {
-            if (error.error.code === "BAD_REQUEST_ERROR") {
-              errorMessage += "Invalid payment details. Please try again.";
-            } else if (error.error.description) {
-              errorMessage += error.error.description;
-            } else {
-              errorMessage += error.error.reason || "Unknown error";
-            }
-          } else {
-            errorMessage += "Please try again or contact support.";
-          }
-          
-          setErr(errorMessage);
         };
 
         try {
           const razorpay = new window.Razorpay(options);
           razorpay.open();
         } catch (err) {
-          console.error("❌ Failed to open Razorpay checkout:", err);
           setErr("Failed to open payment gateway. Please try again.");
           setBookingLoading(false);
         }
       }
     } catch (e) {
-      console.error(e);
-      
-      // Use error handler utility for consistent error message extraction
-      let errorMessage = paymentMethod === "CASH" 
-        ? "Booking failed. Try again." 
+      let errorMessage = paymentMethod === "CASH"
+        ? "Booking failed. Try again."
         : "Failed to initiate payment. Try again.";
-      
+
       if (e.response?.data) {
         const errorData = e.response.data;
-        
-        // If error is an object (from GlobalExceptionHandler), extract the error message
         if (typeof errorData === 'object' && errorData.error) {
           errorMessage = errorData.error;
         } else if (typeof errorData === 'string') {
@@ -268,166 +199,151 @@ export default function RideDetails() {
           errorMessage = errorData.message;
         }
       }
-      
+
       setErr(errorMessage);
       setBookingLoading(false);
     }
   };
 
   if (loading) {
-    return <div className="ridedetails__wrapper"><div className="ridedetails__loading">Loading ride…</div></div>;
+    return <div className="rd__wrapper"><div className="rd__loading">Loading ride…</div></div>;
   }
 
   if (err && !ride) {
-    return <div className="ridedetails__wrapper"><div className="ridedetails__error">{err}</div></div>;
+    return <div className="rd__wrapper"><div className="rd__error">{err}</div></div>;
   }
 
   return (
-    <div className="ridedetails__wrapper">
-      <div className="ridedetails__container">
-        {/* Top / Back */}
-        <div className="ridedetails__top">
-          <button className="ridedetails__back-btn" onClick={() => navigate(-1)}>← Back</button>
-          <h2 className="ridedetails__title">Ride Details</h2>
-        </div>
+    <div className="rd__wrapper">
+      <div className="rd__container">
+        <button className="rd__back-btn" onClick={() => navigate(-1)}>← Back</button>
+        <h1 className="rd__page-title">Ride details</h1>
 
         {ride && (
-          <>
-            {/* SUMMARY CARD */}
-            <div className="ridedetails__summary-card">
-              <div className="ridedetails__locations">
-                <div className="ridedetails__from">
-                  <MapPin className="ridedetails__location-icon" />
-                  <div>
-                    <div className="ridedetails__location-label">From</div>
-                    <div className="ridedetails__location-value">{ride.startLocation || ride.from}</div>
-                  </div>
-                </div>
+          <div className="rd__layout">
+            {/* ── LEFT COLUMN ── */}
+            <div className="rd__left">
 
-                <div className="ridedetails__arrow">→</div>
-
-                <div className="ridedetails__to">
-                  <MapPin className="ridedetails__location-icon" />
-                  <div>
-                    <div className="ridedetails__location-label">To</div>
-                    <div className="ridedetails__location-value">{ride.endLocation || ride.to}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="ridedetails__meta">
-                <div className="ridedetails__meta-item">
-                  <Clock className="ridedetails__meta-icon" />
-                  <div>
-                    <div className="ridedetails__meta-label">Date & Time</div>
-                    <div className="ridedetails__meta-value">{ride.date} • {ride.time}</div>
-                  </div>
-                </div>
-
-                <div className="ridedetails__meta-item">
-                  <Users className="ridedetails__meta-icon" />
-                  <div>
-                    <div className="ridedetails__meta-label">Seats left</div>
-                    <div className="ridedetails__meta-value">{ride.availableSeats}</div>
-                  </div>
-                </div>
-
-                <div className="ridedetails__meta-item ridedetails__price">
-                  <IndianRupee className="ridedetails__meta-icon" />
-                  <div>
-                    <div className="ridedetails__meta-label">Price / seat</div>
-                    <div className="ridedetails__meta-value">{ride.price}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* DRIVER CARD + DETAILS */}
-            <div className="ridedetails__driver-card">
-              <div className="ridedetails__driver-left">
-                <div className="ridedetails__driver-avatar">
-                  {ride.driver?.profileImage ? (
-                       <img
-                      src={ride.driver?.profileImage || "/profileimage.png"}
-                      alt="Profile"
-                      className="ridedetails__profile-avatar"
-                    />
-                  ) : (
-                    <div className="ridedetails__avatar-placeholder">{(ride.driver?.name || "D").charAt(0)}</div>
-                  )}
-                </div>
-                <div className="ridedetails__driver-info">
-                  <div className="ridedetails__driver-name">
-                    {ride.driver?.name || "Driver"}
-                    {ride.driver?.isDriverVerified && <CheckCircle className="ridedetails__verified-badge" />}
-                  </div>
-                  <div className="ridedetails__driver-sub">{ride.driver?.phone || "—"}</div>
-                  {ride.driver?.avgRating && ride.driver.avgRating > 0 && (
-                    <div className="ridedetails__driver-rating">
-                      <Star size={16} fill="#fbbf24" color="#fbbf24" />
-                      <span>{ride.driver.avgRating.toFixed(1)}</span>
-                      <span className="ridedetails__rating-count">({ride.driver.ratingCount || 0} reviews)</span>
+              {/* Route timeline */}
+              <div className="rd__card rd__route-card">
+                <div className="rd__timeline">
+                  <div className="rd__timeline-row">
+                    <div className="rd__timeline-time">
+                      <span className="rd__time">{ride.time}</span>
+                      {ride.duration && <span className="rd__duration">{ride.duration}</span>}
                     </div>
-                  )}
+                    <div className="rd__timeline-track">
+                      <div className="rd__dot rd__dot--filled" />
+                      <div className="rd__line" />
+                      <div className="rd__dot rd__dot--outline" />
+                    </div>
+                    <div className="rd__timeline-places">
+                      <div className="rd__place-block">
+                        <span className="rd__place-name">{ride.startLocation || ride.from}</span>
+                      </div>
+                      <div className="rd__place-block rd__place-block--bottom">
+                        <span className="rd__place-name">{ride.endLocation || ride.to}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="ridedetails__driver-actions">
-                {ride.driver?.phone ? (
-                  <a className="ridedetails__contact-btn" href={`tel:${ride.driver.phone}`}>
-                    <Phone /> Contact
-                  </a>
-                ) : (
-                  <div className="ridedetails__muted">No contact available</div>
+              {/* Driver card */}
+              <div className="rd__card rd__driver-card">
+                <div className="rd__driver-row">
+                  <div className="rd__driver-avatar">
+                    {ride.driver?.profileImage ? (
+                      <img src={ride.driver.profileImage} alt="Profile" className="rd__avatar-img" />
+                    ) : (
+                      <div className="rd__avatar-placeholder">{(ride.driver?.name || "D").charAt(0)}</div>
+                    )}
+                  </div>
+                  <div className="rd__driver-info">
+                    <span className="rd__driver-name">
+                      {ride.driver?.name || "Driver"}
+                      {ride.driver?.isDriverVerified && <CheckCircle className="rd__verified" />}
+                    </span>
+                    {ride.driver?.avgRating > 0 && (
+                      <div className="rd__rating-row">
+                        <Star size={14} fill="#fbbf24" color="#fbbf24" />
+                        <span>{ride.driver.avgRating.toFixed(1)}</span>
+                        <span className="rd__rating-count">({ride.driver.ratingCount || 0})</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="rd__driver-chevron">›</div>
+                </div>
+              </div>
+
+              {/* Ride info */}
+              <div className="rd__card rd__info-card">
+                <div className="rd__info-row">
+                  <span className="rd__info-icon">⚡</span>
+                  <span className="rd__info-text">Your booking will be confirmed instantly</span>
+                </div>
+                <div className="rd__divider" />
+                <div className="rd__info-row">
+                  <Users size={18} className="rd__info-icon-svg" />
+                  <span className="rd__info-text">Max. {ride.availableSeats} seat{ride.availableSeats !== 1 ? "s" : ""} available</span>
+                </div>
+                <div className="rd__divider" />
+                <div className="rd__info-row">
+                  <span className="rd__info-icon">🚗</span>
+                  <span className="rd__info-text">{ride.vehicle?.model || ride.carModel || "—"}</span>
+                </div>
+                {ride.luggageAllowed !== undefined && (
+                  <>
+                    <div className="rd__divider" />
+                    <div className="rd__info-row">
+                      <span className="rd__info-icon">🧳</span>
+                      <span className="rd__info-text">Luggage: {ride.luggageAllowed ? "Allowed" : "Not allowed"}</span>
+                    </div>
+                  </>
+                )}
+                {ride.note && (
+                  <>
+                    <div className="rd__divider" />
+                    <div className="rd__info-row">
+                      <span className="rd__info-icon">📝</span>
+                      <span className="rd__info-text">{ride.note}</span>
+                    </div>
+                  </>
                 )}
               </div>
-            </div>
 
-            {/* EXTRA INFO + MAP */}
-            <div className="ridedetails__extra-card">
-              <div className="ridedetails__extra-row">
-                <div><strong>Vehicle:</strong> {ride.vehicle?.model || ride.carModel || "—"}</div>
-                <div><strong>Ride type:</strong> {ride.rideType || ride.type || "Car"}</div>
-                <div><strong>Luggage:</strong> {ride.luggageAllowed ? "Yes" : "No"}</div>
-              </div>
-
-              <div className="ridedetails__map-placeholder">
-                {/* You can plug an actual map later (Google/Leaflet) */}
-                <div className="ridedetails__map-box">Map preview (future)</div>
-              </div>
-
-              {ride.note && (
-                <div className="ridedetails__ride-note">
-                  <strong>Note:</strong> {ride.note}
+              {/* Contact button */}
+              {ride.driver?.phone && (
+                <div className="rd__card rd__contact-card">
+                  <a className="rd__contact-btn" href={`tel:${ride.driver.phone}`}>
+                    <Phone size={16} />
+                    Contact {ride.driver?.name || "driver"}
+                  </a>
                 </div>
               )}
 
-              {/* Driver Ratings */}
+              {/* Driver reviews */}
               {driverRatings.length > 0 && (
-                <div className="ridedetails__ratings-section">
-                  <h4>Driver Reviews</h4>
-                  <div className="ridedetails__ratings-list">
+                <div className="rd__card rd__reviews-card">
+                  <h3 className="rd__reviews-title">Driver Reviews</h3>
+                  <div className="rd__reviews-list">
                     {driverRatings.slice(0, 5).map((rating) => (
-                      <div key={rating.id} className="ridedetails__rating-item">
-                        <div className="ridedetails__rating-header">
-                          <div className="ridedetails__rating-stars">
+                      <div key={rating.id} className="rd__review-item">
+                        <div className="rd__review-header">
+                          <div className="rd__review-stars">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <Star
                                 key={star}
-                                size={14}
+                                size={13}
                                 fill={star <= rating.stars ? "#fbbf24" : "none"}
                                 color={star <= rating.stars ? "#fbbf24" : "#d1d5db"}
                               />
                             ))}
                           </div>
-                          <span className="ridedetails__rating-date">
-                            {new Date(rating.createdAt).toLocaleDateString()}
-                          </span>
+                          <span className="rd__review-date">{new Date(rating.createdAt).toLocaleDateString()}</span>
                         </div>
-                        {rating.comment && (
-                          <p className="ridedetails__rating-comment">{rating.comment}</p>
-                        )}
-                        <p className="ridedetails__rating-author">by {rating.rater?.name || "Anonymous"}</p>
+                        {rating.comment && <p className="rd__review-comment">{rating.comment}</p>}
+                        <p className="rd__review-author">by {rating.rater?.name || "Anonymous"}</p>
                       </div>
                     ))}
                   </div>
@@ -435,84 +351,110 @@ export default function RideDetails() {
               )}
             </div>
 
-            {/* BOOKING PANEL */}
-            <div className="ridedetails__book-card">
-              <div className="ridedetails__book-left">
-                <label className="ridedetails__seats-label">Seats</label>
-                <div className="ridedetails__seats-control">
-                  <button 
-                    className="ridedetails__seats-btn"
-                    disabled={noSeatsLeft || seats <= 1} 
-                    onClick={() => setSeats((s) => Math.max(1, s - 1))}
-                  >
-                    -
-                  </button>
-                  <div className="ridedetails__seats-count">{seats}</div>
-                  <button 
-                    className="ridedetails__seats-btn"
-                    disabled={noSeatsLeft || seats >= ride.availableSeats} 
-                    onClick={() => setSeats((s) => Math.min(ride.availableSeats, s + 1))}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
+            {/* ── RIGHT COLUMN (sticky booking card) ── */}
+            <div className="rd__right">
+              <div className="rd__booking-card">
+                {/* Date */}
+                {ride.date && (
+                  <div className="rd__booking-date">{ride.date}</div>
+                )}
 
-              <div className="ridedetails__book-right">
-                <div className="ridedetails__total">
-                  <div className="ridedetails__total-label">Total</div>
-                  <div className="ridedetails__total-amount">₹ {totalPrice()}</div>
-                </div>
-
-                {/* Payment Method Selection */}
-                <div className="ridedetails__payment-selection">
-                  <label className="ridedetails__payment-label">
-                    Payment Method
-                  </label>
-                  <div className="ridedetails__payment-options">
-                    <label className={`ridedetails__payment-option ${paymentMethod === "CASH" ? "ridedetails__payment-option--active" : ""}`}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="CASH"
-                        checked={paymentMethod === "CASH"}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="ridedetails__payment-radio"
-                      />
-                      <IndianRupee size={18} />
-                      <span>Pay with Cash</span>
-                      <span className="ridedetails__payment-desc">Pay directly to driver</span>
-                    </label>
-                    <label className={`ridedetails__payment-option ${paymentMethod === "ONLINE" ? "ridedetails__payment-option--active" : ""}`}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="ONLINE"
-                        checked={paymentMethod === "ONLINE"}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="ridedetails__payment-radio"
-                      />
-                      <CreditCard size={18} />
-                      <span>Online Payment</span>
-                      <span className="ridedetails__payment-desc">Pay securely online</span>
-                    </label>
+                {/* Mini route */}
+                <div className="rd__booking-route">
+                  <div className="rd__booking-timeline">
+                    <div className="rd__booking-dot rd__booking-dot--filled" />
+                    <div className="rd__booking-line" />
+                    <div className="rd__booking-dot rd__booking-dot--outline" />
+                  </div>
+                  <div className="rd__booking-places">
+                    <div className="rd__booking-place">
+                      <span className="rd__booking-time">{ride.time}</span>
+                      <span className="rd__booking-place-name">{ride.startLocation || ride.from}</span>
+                    </div>
+                    <div className="rd__booking-place">
+                      <span className="rd__booking-place-name">{ride.endLocation || ride.to}</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="ridedetails__book-actions">
-                  <button 
-                    className="ridedetails__book-btn" 
-                    disabled={bookingLoading || noSeatsLeft} 
-                    onClick={handleBookRide}
-                  >
-                    {bookingLoading ? "Processing..." : paymentMethod === "CASH" ? "Book Ride" : "Proceed to Pay"}
-                  </button>
+                <div className="rd__booking-divider" />
+
+                {/* Driver mini */}
+                <div className="rd__booking-driver">
+                  <div className="rd__booking-driver-avatar">
+                    {ride.driver?.profileImage ? (
+                      <img src={ride.driver.profileImage} alt="Profile" className="rd__avatar-img" />
+                    ) : (
+                      <div className="rd__avatar-placeholder rd__avatar-placeholder--sm">{(ride.driver?.name || "D").charAt(0)}</div>
+                    )}
+                  </div>
+                  <span className="rd__booking-driver-name">{ride.driver?.name || "Driver"}</span>
                 </div>
 
-                {err && <div className="ridedetails__error-msg">{err}</div>}
+                <div className="rd__booking-divider" />
+
+                {/* Seats + price */}
+                <div className="rd__booking-price-row">
+                  <div className="rd__booking-seats-control">
+                    <button
+                      className="rd__seats-btn"
+                      disabled={noSeatsLeft || seats <= 1}
+                      onClick={() => setSeats((s) => Math.max(1, s - 1))}
+                    >−</button>
+                    <span className="rd__seats-count">{seats} passenger{seats !== 1 ? "s" : ""}</span>
+                    <button
+                      className="rd__seats-btn"
+                      disabled={noSeatsLeft || seats >= ride.availableSeats}
+                      onClick={() => setSeats((s) => Math.min(ride.availableSeats, s + 1))}
+                    >+</button>
+                  </div>
+                  <div className="rd__booking-total">
+                    <IndianRupee size={16} />
+                    <span>{totalPrice()}</span>
+                  </div>
+                </div>
+
+                <div className="rd__booking-divider" />
+
+                {/* Payment method */}
+                <div className="rd__payment-options">
+                  <label className={`rd__payment-option ${paymentMethod === "CASH" ? "rd__payment-option--active" : ""}`}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="CASH"
+                      checked={paymentMethod === "CASH"}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
+                    <IndianRupee size={15} />
+                    <span>Cash</span>
+                  </label>
+                  <label className={`rd__payment-option ${paymentMethod === "ONLINE" ? "rd__payment-option--active" : ""}`}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="ONLINE"
+                      checked={paymentMethod === "ONLINE"}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
+                    <CreditCard size={15} />
+                    <span>Online</span>
+                  </label>
+                </div>
+
+                {/* Book button */}
+                <button
+                  className="rd__book-btn"
+                  disabled={bookingLoading || noSeatsLeft}
+                  onClick={handleBookRide}
+                >
+                  {bookingLoading ? "Processing..." : paymentMethod === "CASH" ? "Book" : "Proceed to Pay"}
+                </button>
+
+                {err && <div className="rd__error-msg">{err}</div>}
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
