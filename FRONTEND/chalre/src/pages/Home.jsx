@@ -7,7 +7,7 @@ import Footer from "../components/Footer";
 import CustomDatePicker from "../components/CustomDatePicker";
 
 export default function Home() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
   const [search, setSearch] = useState({
     from: "",

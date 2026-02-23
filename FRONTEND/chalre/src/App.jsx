@@ -21,6 +21,7 @@ import TermsAndConditions from "./pages/TermsAndConditions"
 import HelpCenter from "./pages/HelpCenter"
 import AboutChalRe from "./pages/AboutChalRe";
 import JoinOurTeam from "./pages/JoinOurTeam";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Admin Imports
 import AdminRoute from "./utils/AdminRoute";
@@ -31,7 +32,10 @@ import VerificationDetail from "./pages/admin/VerificationDetail";
 
 export default function App() {
   return (
+    <>
+    <ScrollToTop />
     <Routes>
+    
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<SearchRides />} />
@@ -135,5 +139,6 @@ export default function App() {
 
       <Route path="/verify-email" element={<VerifyEmail />} />
     </Routes>
+    </>
   );
 }
