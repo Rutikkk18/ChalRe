@@ -4,9 +4,6 @@ import api from "../api/axios";
 import "../styles/offerRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 
-// ⚠️ Save the uploaded image as: src/assets/ride-sharing-scene.png
-import rideSceneImg from "../assets/ride-sharing-scene.png";
-
 export default function OfferRide() {
   const [form, setForm] = useState({
     from: "",
@@ -104,19 +101,10 @@ export default function OfferRide() {
   };
 
   return (
+    // ✅ Image is applied as CSS background-image on this element
+    // No separate <img> or fixed-position div needed
     <div className="offer-page">
-
-      {/* ── Full-bleed background image ── */}
-      <div className="offer-bg">
-        <img src={rideSceneImg} alt="" className="offer-bg-img" aria-hidden="true" />
-        {/* right-side dark scrim so image edge doesn't clash */}
-        <div className="offer-bg-scrim" />
-      </div>
-
-      {/* ── Scrollable content layer ── */}
       <div className="offer-content">
-
-        {/* ── Card (sits on the white/light left area) ── */}
         <div className="offer-card">
 
           {/* Header */}
@@ -142,13 +130,11 @@ export default function OfferRide() {
 
           <form className={`offer-form${loading ? " loading" : ""}`} onSubmit={handleSubmit}>
 
-            {/* ── Route ── */}
+            {/* Route */}
             <div className="offer-section">
               <p className="offer-section-label">Route</p>
-
               <div className="offer-route-stack">
 
-                {/* Pickup */}
                 <div className="offer-icon-field">
                   <span className="field-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -164,12 +150,10 @@ export default function OfferRide() {
                   />
                 </div>
 
-                {/* Dashed connector */}
                 <div className="route-connector">
                   <div className="route-connector-line" />
                 </div>
 
-                {/* Drop */}
                 <div className="offer-icon-field">
                   <span className="field-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -188,7 +172,7 @@ export default function OfferRide() {
               </div>
             </div>
 
-            {/* ── Schedule ── */}
+            {/* Schedule */}
             <div className="offer-section">
               <p className="offer-section-label">Schedule</p>
               <div className="row-half">
@@ -231,12 +215,11 @@ export default function OfferRide() {
               </div>
             </div>
 
-            {/* ── Ride Details ── */}
+            {/* Ride Details */}
             <div className="offer-section">
               <p className="offer-section-label">Ride Details</p>
 
               <div className="row-half">
-
                 <div className="offer-icon-field">
                   <span className="field-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -273,7 +256,6 @@ export default function OfferRide() {
                     required
                   />
                 </div>
-
               </div>
 
               <div className="offer-icon-field">
@@ -287,7 +269,7 @@ export default function OfferRide() {
                 </span>
                 <input
                   type="text"
-                  placeholder="Car model (optional)"
+                  placeholder="Vehicle model (optional)"
                   value={form.carModel}
                   onChange={(e) => updateField("carModel", e.target.value)}
                 />
@@ -312,7 +294,7 @@ export default function OfferRide() {
 
             </div>
 
-            {/* ── Submit ── */}
+            {/* Submit */}
             <button className="btn-submit1" disabled={loading}>
               {loading ? (
                 <><span className="btn-spinner" /><span>Posting Ride…</span></>
@@ -330,11 +312,7 @@ export default function OfferRide() {
 
           </form>
         </div>
-        {/* ── End card ── */}
-
       </div>
-      {/* ── End content ── */}
-
     </div>
   );
 }
