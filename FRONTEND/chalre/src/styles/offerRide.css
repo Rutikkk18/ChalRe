@@ -8,6 +8,31 @@
 * { box-sizing: border-box; }
 
 /* ─────────────────────────────────────────
+   GLOBAL OVERRIDES
+   Kills any white/opaque background set by
+   App.css / index.css on html, body, #root
+   so the fixed bg image can show through.
+───────────────────────────────────────── */
+html,
+body {
+  background: transparent !important;
+}
+
+#root {
+  background: transparent !important;
+  overflow-x: visible !important;
+}
+
+/* Common layout wrapper class names — add yours here if different */
+.app-layout,
+.layout-wrapper,
+.main-layout,
+.page-wrapper,
+.main-content {
+  background: transparent !important;
+}
+
+/* ─────────────────────────────────────────
    PAGE SHELL
 ───────────────────────────────────────── */
 .offer-page {
@@ -15,19 +40,19 @@
   width: 100%;
   min-height: 100vh;
   margin-top: clamp(60px, 8vw, 80px);
-  /* fallback bg while image loads */
-  background: #f0fdf4;
+  background: transparent;
   font-family: 'DM Sans', sans-serif;
   overflow-x: hidden;
 }
 
 /* ─────────────────────────────────────────
-   BACKGROUND IMAGE (full bleed, fixed)
+   BACKGROUND IMAGE
+   position: fixed → stays while card scrolls
 ───────────────────────────────────────── */
 .offer-bg {
   position: fixed;
   inset: 0;
-  top: clamp(60px, 8vw, 80px);   /* sit below navbar */
+  top: clamp(60px, 8vw, 80px);
   z-index: 0;
   pointer-events: none;
 }
@@ -36,25 +61,22 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: right center;   /* keep the people visible on the right */
+  object-position: right center;
   display: block;
 }
 
-/* subtle right-edge darkening so image fades into viewport edge */
 .offer-bg-scrim {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      to right,
-      rgba(255,255,255,0.0) 50%,   /* left half: fully transparent → image shows */
-      rgba(255,255,255,0.0) 65%,
-      rgba(0,0,0,0.10)     100%
-    );
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0.0) 45%,
+    rgba(0,0,0,0.08) 100%
+  );
 }
 
 /* ─────────────────────────────────────────
-   CONTENT LAYER (scrollable, above bg)
+   CONTENT LAYER  (above bg)
 ───────────────────────────────────────── */
 .offer-content {
   position: relative;
@@ -62,8 +84,8 @@
   width: 100%;
   min-height: calc(100vh - clamp(60px, 8vw, 80px));
   display: flex;
-  align-items: flex-start;          /* top-align card */
-  justify-content: flex-start;      /* push card to the left */
+  align-items: flex-start;
+  justify-content: flex-start;
   padding: clamp(28px, 4vw, 48px) clamp(18px, 5vw, 64px);
   animation: pageIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -80,16 +102,16 @@
   width: 100%;
   max-width: 448px;
   background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 24px;
-  border: 1px solid rgba(255,255,255,0.75);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   overflow: hidden;
   box-shadow:
     0 0 0 1px rgba(16, 185, 129, 0.10),
     0 8px 24px -4px rgba(16, 185, 129, 0.14),
     0 32px 64px -12px rgba(0, 0, 0, 0.14),
-    0 2px 6px  rgba(0,0,0,0.04);
+    0 2px 6px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.35s ease, transform 0.35s ease;
 }
 
@@ -125,7 +147,7 @@
   color: #fff;
   box-shadow:
     0 4px 14px rgba(16, 185, 129, 0.38),
-    0 1px 3px  rgba(0,0,0,0.08);
+    0 1px 3px rgba(0, 0, 0, 0.08);
 }
 .offer-icon-ring svg { width: 22px; height: 22px; }
 
@@ -155,7 +177,7 @@
 .offer-divider { height: 1px; background: #f0f1f3; }
 
 /* ─────────────────────────────────────────
-   SUCCESS / ERROR BANNERS
+   BANNERS
 ───────────────────────────────────────── */
 .success-msg,
 .error-msg {
@@ -187,7 +209,7 @@
 }
 
 /* ─────────────────────────────────────────
-   FORM SHELL
+   FORM
 ───────────────────────────────────────── */
 .offer-form {
   display: flex;
@@ -223,10 +245,7 @@
 /* ─────────────────────────────────────────
    ROUTE STACK
 ───────────────────────────────────────── */
-.offer-route-stack {
-  display: flex;
-  flex-direction: column;
-}
+.offer-route-stack { display: flex; flex-direction: column; }
 
 .route-connector {
   padding: 2px 0 2px 17px;
@@ -268,26 +287,15 @@
 }
 .field-icon svg { width: 15px; height: 15px; }
 
-.field-icon-top {
-  top: 12px;
-  transform: none;
-}
+.field-icon-top { top: 12px; transform: none; }
 
-.offer-icon-field:focus-within .field-icon {
-  color: #10b981;
-}
+.offer-icon-field:focus-within .field-icon { color: #10b981; }
 
 /* ─────────────────────────────────────────
    ROW HELPERS
 ───────────────────────────────────────── */
-.row-half {
-  display: flex;
-  gap: 10px;
-}
-.row-half > .offer-icon-field {
-  flex: 1;
-  min-width: 0;
-}
+.row-half { display: flex; gap: 10px; }
+.row-half > .offer-icon-field { flex: 1; min-width: 0; }
 
 /* ─────────────────────────────────────────
    INPUTS · SELECTS · TEXTAREA
@@ -300,7 +308,7 @@
   font-family: 'DM Sans', sans-serif;
   font-size: 0.875rem;
   color: #111827;
-  background: rgba(249, 250, 251, 0.85);
+  background: rgba(249, 250, 251, 0.9);
   border: 1.5px solid #e5e7eb;
   border-radius: 10px;
   outline: none;
@@ -370,12 +378,10 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(16, 185, 129, 0.40);
 }
-
 .btn-submit1:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.26);
 }
-
 .btn-submit1:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -383,7 +389,6 @@
   box-shadow: none;
 }
 
-/* Spinner inside button */
 .btn-spinner {
   display: inline-block;
   width: 16px;
@@ -394,11 +399,10 @@
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
 }
-
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ─────────────────────────────────────────
-   FOCUS VISIBLE (accessibility)
+   FOCUS VISIBLE
 ───────────────────────────────────────── */
 .offer-form input:focus-visible,
 .offer-form select:focus-visible,
@@ -406,7 +410,6 @@
   outline: 2px solid #10b981;
   outline-offset: 2px;
 }
-
 .btn-submit1:focus-visible {
   outline: 2px solid #34d399;
   outline-offset: 2px;
@@ -417,23 +420,20 @@
 ───────────────────────────────────────── */
 .offer-form input.invalid,
 .offer-form select.invalid,
-.offer-form textarea.invalid  { border-color: #ef4444; background: #fff5f5; }
+.offer-form textarea.invalid { border-color: #ef4444; background: #fff5f5; }
 
 .offer-form input.valid,
 .offer-form select.valid,
-.offer-form textarea.valid    { border-color: #10b981; background: #f0fdf4; }
+.offer-form textarea.valid   { border-color: #10b981; background: #f0fdf4; }
 
 /* ─────────────────────────────────────────
-   RESPONSIVE  –  ≤ 900 px
-   (image stays as bg; card goes full-width)
+   ≤ 900px
 ───────────────────────────────────────── */
 @media (max-width: 900px) {
-  .offer-bg-img {
-    object-position: 70% center;   /* shift image right so card doesn't cover faces */
-  }
+  .offer-bg-img { object-position: 70% center; }
 
   .offer-content {
-    justify-content: center;       /* center the card */
+    justify-content: center;
     padding: clamp(20px, 4vw, 36px) clamp(14px, 4vw, 28px) 48px;
   }
 
@@ -446,46 +446,43 @@
 }
 
 /* ─────────────────────────────────────────
-   RESPONSIVE  –  ≤ 600 px
+   ≤ 600px
 ───────────────────────────────────────── */
 @media (max-width: 600px) {
-  .offer-page  { margin-top: 60px; }
-  .offer-bg    { top: 60px; }
+  .offer-page { margin-top: 60px; }
+  .offer-bg   { top: 60px; }
 
-  /* On small screens show a tinted colour bg instead of busy image */
-  .offer-bg-img  { opacity: 0.18; }
+  .offer-bg-img   { opacity: 0.15; }
   .offer-bg-scrim { display: none; }
-  .offer-page  { background: #f0fdf4; }
+  .offer-page     { background: #f0fdf4 !important; }
 
-  .offer-content {
-    padding: 18px 12px 40px;
-  }
+  .offer-content { padding: 18px 12px 40px; }
 
   .offer-card {
     border-radius: 18px;
-    background: rgba(255,255,255,0.98);
+    background: rgba(255, 255, 255, 0.98);
   }
 
-  .offer-header   { padding: 22px 20px 18px; }
-  .offer-form     { padding: 18px 20px 24px; gap: 16px; }
+  .offer-header { padding: 22px 20px 18px; }
+  .offer-form   { padding: 18px 20px 24px; gap: 16px; }
 
   .success-msg,
-  .error-msg      { margin-left: 20px; margin-right: 20px; }
+  .error-msg  { margin-left: 20px; margin-right: 20px; }
 
-  .row-half       { flex-direction: column; gap: 10px; }
+  .row-half   { flex-direction: column; gap: 10px; }
 
   .btn-submit1:hover:not(:disabled) { transform: none; }
 }
 
 /* ─────────────────────────────────────────
-   RESPONSIVE  –  ≤ 380 px
+   ≤ 380px
 ───────────────────────────────────────── */
 @media (max-width: 380px) {
-  .offer-header { padding: 18px 16px 16px; gap: 12px; }
+  .offer-header    { padding: 18px 16px 16px; gap: 12px; }
   .offer-icon-ring { width: 42px; height: 42px; border-radius: 11px; }
-  .offer-form   { padding: 16px 16px 20px; }
+  .offer-form      { padding: 16px 16px 20px; }
   .success-msg,
-  .error-msg    { margin-left: 16px; margin-right: 16px; }
+  .error-msg       { margin-left: 16px; margin-right: 16px; }
 }
 
 /* ─────────────────────────────────────────
@@ -504,10 +501,10 @@
 @media (prefers-reduced-motion: reduce) {
   .offer-content,
   .success-msg,
-  .error-msg     { animation: none; }
+  .error-msg   { animation: none; }
   .btn-submit1,
-  .offer-card    { transition: none; transform: none !important; }
-  .btn-spinner   { animation: none; }
+  .offer-card  { transition: none; transform: none !important; }
+  .btn-spinner { animation: none; }
 }
 
 /* ─────────────────────────────────────────
