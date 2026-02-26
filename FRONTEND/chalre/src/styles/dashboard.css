@@ -1,18 +1,51 @@
 /* ================================
    DASHBOARD – CHALRE
+   City-bg image · Card on left
    Clean · Classic · Responsive
 ================================ */
 
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── PAGE WRAPPER ── */
+/* ── GLOBAL — keep body neutral ── */
+html, body {
+  background: #f0f4f8 !important;
+  overflow-x: hidden;
+}
+#root {
+  background: transparent !important;
+}
+
+/* ── PAGE WRAPPER ──
+   Image is background-image here — contained,
+   never bleeds over the navbar                */
 .dash-page {
-  min-height: 100vh;
-  background: linear-gradient(160deg, #f4faf5 0%, #eef6ef 100%);
-  padding: clamp(80px, 12vw, 100px) clamp(16px, 5vw, 24px) 40px;
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - clamp(60px, 8vw, 80px));
+
+  /* ✅ City image as contained background */
+  background-image: url('../assets/dashboard-city.png');
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+
+  /* Layout: card hugs the left white portion */
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  padding: clamp(28px, 4vw, 44px) clamp(18px, 5vw, 64px) clamp(40px, 5vw, 60px);
+
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+  animation: dashIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes dashIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── HEADER ── */
@@ -26,8 +59,9 @@
 }
 
 .dash-title {
-  font-size: clamp(22px, 5vw, 26px);
-  font-weight: 800;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(22px, 5vw, 27px);
+  font-weight: 700;
   color: #0a2614;
   letter-spacing: -0.3px;
 }
@@ -37,13 +71,28 @@
   position: relative;
   width: 100%;
   max-width: 480px;
-  background: #e4e4e4;
+
+  /* frosted glass look to sit beautifully over the light bg */
+  background: rgba(228, 228, 228, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
   border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
   padding: 8px;
   box-shadow:
+    rgba(50, 50, 93, 0.18) 0px 32px 64px -15px,
+    rgba(0, 0, 0, 0.20) 0px 18px 36px -18px,
+    rgba(10, 37, 64, 0.22) 0px -2px 5px 0px inset;
+  transition: box-shadow 0.35s ease, transform 0.35s ease;
+}
+
+.dash-card:hover {
+  box-shadow:
     rgba(50, 50, 93, 0.22) 0px 40px 80px -15px,
-    rgba(0, 0, 0, 0.25) 0px 24px 48px -24px,
-    rgba(10, 37, 64, 0.3) 0px -2px 5px 0px inset;
+    rgba(0, 0, 0, 0.25) 0px 24px 48px -20px,
+    rgba(10, 37, 64, 0.28) 0px -2px 6px 0px inset;
+  transform: translateY(-2px);
 }
 
 /* Noise / texture overlay */
@@ -57,14 +106,16 @@
       #e4e4e4 0.0000001%,
       #9aa 0.000104%
     ) 60% 60% / 600% 600%;
-  filter: opacity(8%) contrast(110%);
+  filter: opacity(6%) contrast(110%);
 }
 
 /* ── INNER SURFACE ── */
 .dash-card-inner {
   position: relative;
   z-index: 1;
-  background: #f5f5f5;
+  background: rgba(245, 245, 245, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-radius: 26px;
   padding: clamp(18px, 5vw, 26px);
   display: flex;
@@ -112,6 +163,7 @@
 }
 
 .dash-name {
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(15px, 3.5vw, 17px);
   font-weight: 700;
   color: #0a2614;
@@ -176,7 +228,7 @@
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
-  font-family: inherit;
+  font-family: 'DM Sans', sans-serif;
   background: #024110;
   color: #fff;
   transition: background 0.2s;
@@ -184,17 +236,10 @@
   flex-shrink: 0;
 }
 
-.dash-inline-btn:hover {
-  background: #149349;
-}
+.dash-inline-btn:hover { background: #149349; }
 
-.dash-inline-btn--red {
-  background: #b91c1c;
-}
-
-.dash-inline-btn--red:hover {
-  background: #dc2626;
-}
+.dash-inline-btn--red { background: #b91c1c; }
+.dash-inline-btn--red:hover { background: #dc2626; }
 
 /* ── UPI SECTION ── */
 .dash-upi-title {
@@ -207,9 +252,7 @@
   margin-bottom: 4px;
 }
 
-.dash-upi-title svg {
-  color: #024110;
-}
+.dash-upi-title svg { color: #024110; }
 
 .dash-upi-desc {
   font-size: 12px;
@@ -231,15 +274,13 @@
   border-radius: 9px;
   border: 1.5px solid #d1d5db;
   font-size: 13px;
-  font-family: inherit;
+  font-family: 'DM Sans', sans-serif;
   background: #fff;
   color: #0a2614;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.dash-upi-input::placeholder {
-  color: #b0b8c0;
-}
+.dash-upi-input::placeholder { color: #b0b8c0; }
 
 .dash-upi-input:focus {
   outline: none;
@@ -254,7 +295,7 @@
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
-  font-family: inherit;
+  font-family: 'DM Sans', sans-serif;
   background: #024110;
   color: #fff;
   transition: background 0.2s;
@@ -262,14 +303,8 @@
   flex-shrink: 0;
 }
 
-.dash-upi-btn:hover:not(:disabled) {
-  background: #149349;
-}
-
-.dash-upi-btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
+.dash-upi-btn:hover:not(:disabled) { background: #149349; }
+.dash-upi-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .dash-error {
   font-size: 12px;
@@ -297,7 +332,7 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
-  font-family: inherit;
+  font-family: 'DM Sans', sans-serif;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
 }
 
@@ -325,9 +360,7 @@
   border-color: #149349;
 }
 
-.dash-primary-btn:active {
-  transform: translateY(0);
-}
+.dash-primary-btn:active { transform: translateY(0); }
 
 /* ── SECONDARY ACTIONS ── */
 .dash-secondary {
@@ -345,21 +378,18 @@
   padding: 14px 10px;
   border-radius: 12px;
   border: 1.5px solid #dde8df;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.85);
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;
   color: #1a3d25;
-  font-family: inherit;
+  font-family: 'DM Sans', sans-serif;
   transition: background 0.2s, border-color 0.2s, transform 0.15s;
   line-height: 1.2;
   text-align: center;
 }
 
-.dash-sec-btn svg {
-  color: #024110;
-  flex-shrink: 0;
-}
+.dash-sec-btn svg { color: #024110; flex-shrink: 0; }
 
 .dash-sec-btn:hover {
   background: #eef7f0;
@@ -368,18 +398,49 @@
   transform: translateY(-1px);
 }
 
-.dash-sec-btn:active {
-  transform: translateY(0);
-}
+.dash-sec-btn:active { transform: translateY(0); }
 
-/* ── RESPONSIVE ── */
-@media (max-width: 520px) {
+/* ─────────────────────────────────────────
+   ≤ 900px — center the card
+───────────────────────────────────────── */
+@media (max-width: 900px) {
   .dash-page {
-    padding-top: 75px;
-    padding-left: 12px;
-    padding-right: 12px;
+    align-items: center;
+    background-position: 75% center;
+    padding: clamp(20px, 4vw, 36px) clamp(14px, 4vw, 28px) 48px;
   }
 
+  .dash-card:hover { transform: none; }
+}
+
+/* ─────────────────────────────────────────
+   ≤ 600px — drop image, solid bg
+───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .dash-page {
+    background-image: none;
+    background-color: #f0f4f8;
+    align-items: center;
+    padding: 18px 12px 40px;
+  }
+
+  .dash-card {
+    background: #e4e4e4;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .dash-card-inner {
+    background: #f5f5f5;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ─────────────────────────────────────────
+   ≤ 520px
+───────────────────────────────────────── */
+@media (max-width: 520px) {
   .dash-card {
     border-radius: 26px;
     padding: 7px;
@@ -390,57 +451,44 @@
     padding: 18px 16px;
   }
 
-  .dash-card-noise {
-    border-radius: 26px;
-  }
+  .dash-card-noise { border-radius: 26px; }
 }
 
+/* ─────────────────────────────────────────
+   ≤ 380px
+───────────────────────────────────────── */
 @media (max-width: 380px) {
-  .dash-avatar {
-    width: 50px;
-    height: 50px;
-    min-width: 50px;
-  }
-
-  .dash-primary-btn {
-    font-size: 13px;
-    padding: 12px;
-  }
-
-  .dash-secondary {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .dash-sec-btn {
-    padding: 12px 8px;
-    font-size: 11px;
-  }
+  .dash-avatar { width: 50px; height: 50px; min-width: 50px; }
+  .dash-primary-btn { font-size: 13px; padding: 12px; }
+  .dash-sec-btn { padding: 12px 8px; font-size: 11px; }
 }
 
-/* On very narrow screens, stack the UPI row */
+/* ─────────────────────────────────────────
+   ≤ 340px — stack UPI row
+───────────────────────────────────────── */
 @media (max-width: 340px) {
-  .dash-upi-row {
-    flex-direction: column;
-  }
-
-  .dash-upi-btn {
-    width: 100%;
-  }
+  .dash-upi-row { flex-direction: column; }
+  .dash-upi-btn { width: 100%; }
 }
 
-/* Status card wraps on narrow */
+/* ─────────────────────────────────────────
+   ≤ 400px — wrap status card
+───────────────────────────────────────── */
 @media (max-width: 400px) {
-  .dash-status {
-    flex-wrap: wrap;
-  }
-
-  .dash-inline-btn {
-    width: 100%;
-    text-align: center;
-  }
+  .dash-status { flex-wrap: wrap; }
+  .dash-inline-btn { width: 100%; text-align: center; }
 }
 
-/* Accessibility */
+/* ─────────────────────────────────────────
+   LANDSCAPE PHONES
+───────────────────────────────────────── */
+@media (max-height: 600px) and (orientation: landscape) {
+  .dash-page { padding-top: 16px; }
+}
+
+/* ─────────────────────────────────────────
+   ACCESSIBILITY
+───────────────────────────────────────── */
 .dash-primary-btn:focus-visible,
 .dash-sec-btn:focus-visible,
 .dash-inline-btn:focus-visible,
@@ -450,24 +498,26 @@
   outline-offset: 2px;
 }
 
-/* Reduce motion */
+/* ─────────────────────────────────────────
+   REDUCE MOTION
+───────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+  .dash-page { animation: none; }
   .dash-primary-btn,
   .dash-sec-btn,
-  .dash-inline-btn {
+  .dash-inline-btn,
+  .dash-card {
     transition: background 0.2s;
     transform: none !important;
   }
 }
 
-/* Print */
+/* ─────────────────────────────────────────
+   PRINT
+───────────────────────────────────────── */
 @media print {
-  .dash-card {
-    box-shadow: none;
-    border: 1px solid #ccc;
-  }
+  .dash-page { background-image: none; background-color: #fff; }
+  .dash-card { box-shadow: none; border: 1px solid #ccc; }
   .dash-primary,
-  .dash-secondary {
-    display: none;
-  }
+  .dash-secondary { display: none; }
 }

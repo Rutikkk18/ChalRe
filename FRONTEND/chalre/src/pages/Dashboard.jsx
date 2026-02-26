@@ -39,6 +39,7 @@ export default function Dashboard() {
   };
 
   return (
+    /* ✅ Image applied as CSS background-image — fully contained, never overlaps navbar */
     <div className="dash-page">
 
       {/* HEADER */}
