@@ -44,7 +44,7 @@ export default function Dashboard() {
 
       {/* HEADER */}
       <div className="dash-header">
-        <h1 className="dash-title">Dashboard</h1>
+        
         <NotificationBell />
       </div>
 
