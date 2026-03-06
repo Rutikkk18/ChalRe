@@ -219,7 +219,7 @@
 .hero {
   margin-top: clamp(80px, 15vw, 100px);
   text-align: center;
-  padding: clamp(40px, 8vw, 90px) 20px clamp(180px, 28vw, 260px);
+  padding: clamp(40px, 8vw, 90px) 20px clamp(280px, 38vw, 380px);
   color: #145611;
   background-image: url("/hero-banner.png");
   background-size: cover;

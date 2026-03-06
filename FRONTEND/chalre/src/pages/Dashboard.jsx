@@ -39,14 +39,7 @@ export default function Dashboard() {
   };
 
   return (
-    /* ✅ Image applied as CSS background-image — fully contained, never overlaps navbar */
     <div className="dash-page">
-
-      {/* HEADER */}
-      <div className="dash-header">
-        
-        <NotificationBell />
-      </div>
 
       {/* OUTER CARD SHELL */}
       <div className="dash-card">
@@ -54,7 +47,7 @@ export default function Dashboard() {
 
         <div className="dash-card-inner">
 
-          {/* ── PROFILE ── */}
+          {/* ── PROFILE ROW (avatar + info + bell) ── */}
           <div className="dash-profile">
             <div className="dash-avatar">
               <img
@@ -66,6 +59,11 @@ export default function Dashboard() {
             <div className="dash-profile-info">
               <span className="dash-name">{user.name}</span>
               <span className="dash-email">{user.email}</span>
+            </div>
+
+            {/* Bell sits at far-right of the profile row */}
+            <div className="dash-bell-wrap">
+              <NotificationBell />
             </div>
           </div>
 

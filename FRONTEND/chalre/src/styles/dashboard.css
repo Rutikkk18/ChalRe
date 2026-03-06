@@ -17,22 +17,18 @@ html, body {
   background: transparent !important;
 }
 
-/* ── PAGE WRAPPER ──
-   Image is background-image here — contained,
-   never bleeds over the navbar                */
+/* ── PAGE WRAPPER ── */
 .dash-page {
   position: relative;
   width: 100%;
   min-height: calc(100vh - clamp(60px, 8vw, 80px));
 
-  /* ✅ City image as contained background */
   background-image: url('../assets/dashboard-city.png');
   background-size: cover;
   background-position: right center;
   background-repeat: no-repeat;
   background-attachment: scroll;
 
-  /* Layout: card hugs the left white portion */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -48,31 +44,12 @@ html, body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── HEADER ── */
-.dash-header {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.dash-title {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(22px, 5vw, 27px);
-  font-weight: 700;
-  color: #0a2614;
-  letter-spacing: -0.3px;
-}
-
 /* ── OUTER CARD ── */
 .dash-card {
   position: relative;
   width: 100%;
   max-width: 480px;
 
-  /* frosted glass look to sit beautifully over the light bg */
   background: rgba(228, 228, 228, 0.88);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -160,6 +137,7 @@ html, body {
   flex-direction: column;
   gap: 3px;
   min-width: 0;
+  flex: 1; /* takes remaining space, pushes bell to the right */
 }
 
 .dash-name {
@@ -178,6 +156,15 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ── NOTIFICATION BELL (inside card, top-right of profile row) ── */
+.dash-bell-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
 }
 
 /* ── DRIVER STATUS ── */
