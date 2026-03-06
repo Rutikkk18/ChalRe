@@ -32,7 +32,8 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: clamp(28px, 4vw, 44px) clamp(18px, 5vw, 64px) clamp(40px, 5vw, 60px);
+  /* top padding = navbar height + breathing room */
+  padding: clamp(80px, 10vw, 100px) clamp(18px, 5vw, 64px) clamp(40px, 5vw, 60px);
 
   font-family: 'DM Sans', sans-serif;
   overflow: hidden;
@@ -49,6 +50,7 @@ html, body {
   position: relative;
   width: 100%;
   max-width: 480px;
+  margin-top: 0; /* controlled by dash-page padding */
 
   background: rgba(228, 228, 228, 0.88);
   backdrop-filter: blur(18px);
@@ -394,7 +396,7 @@ html, body {
   .dash-page {
     align-items: center;
     background-position: 75% center;
-    padding: clamp(20px, 4vw, 36px) clamp(14px, 4vw, 28px) 48px;
+    padding: clamp(80px, 10vw, 100px) clamp(14px, 4vw, 28px) 48px;
   }
 
   .dash-card:hover { transform: none; }
@@ -408,7 +410,7 @@ html, body {
     background-image: none;
     background-color: #f0f4f8;
     align-items: center;
-    padding: 18px 12px 40px;
+    padding: 88px 12px 40px;
   }
 
   .dash-card {
