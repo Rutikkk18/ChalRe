@@ -102,7 +102,7 @@ export default function Home() {
   </button>
 </div>
 </header>
-<div className="divider gradient"></div>
+
 
      {/* FEATURES SECTION */}
 <section className="features">

@@ -228,7 +228,7 @@ const TermsAndConditions = () => {
             </p>
             <p>
               Have questions?{" "}
-              <a href="mailto:chalreofficial@gmail.com">support@chalre.com</a>
+              <a href="mailto:chalreofficial@gmail.com">chalreofficial@gmail.com</a>
             </p>
           </div>
         </footer>
