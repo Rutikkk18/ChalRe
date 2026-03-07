@@ -4,12 +4,24 @@ import api from "../api/axios";
 import "../styles/offerRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 
+// Auto-suggest end time: adds 2 hours to start time as a default
+function suggestEndTime(startTime) {
+  if (!startTime) return "";
+  const [h, m] = startTime.split(":").map(Number);
+  const date = new Date();
+  date.setHours(h + 2, m, 0, 0);
+  const hh = String(date.getHours()).padStart(2, "0");
+  const mm = String(date.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
 export default function OfferRide() {
   const [form, setForm] = useState({
     from: "",
     to: "",
     date: "",
     time: "",
+    endTime: "",
     seats: 1,
     price: "",
     carModel: "",
@@ -23,7 +35,14 @@ export default function OfferRide() {
   const [error, setError] = useState("");
 
   const updateField = (field, value) => {
-    setForm({ ...form, [field]: value });
+    setForm((prev) => {
+      const updated = { ...prev, [field]: value };
+      // When start time changes, auto-suggest end time if not manually set
+      if (field === "time" && value) {
+        updated.endTime = suggestEndTime(value);
+      }
+      return updated;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -46,6 +65,11 @@ export default function OfferRide() {
       }
     }
 
+    if (form.endTime && form.time && form.endTime <= form.time) {
+      setError("End time must be after the start time.");
+      return;
+    }
+
     if (form.price <= 0) {
       setError("Price must be greater than ₹0.");
       return;
@@ -66,6 +90,7 @@ export default function OfferRide() {
         endLocation: form.to,
         date: form.date,
         time: form.time,
+        endTime: form.endTime || null,
         availableSeats: form.seats,
         price: form.price,
         carModel: form.carModel || null,
@@ -81,6 +106,7 @@ export default function OfferRide() {
           to: "",
           date: "",
           time: "",
+          endTime: "",
           seats: 1,
           price: "",
           carModel: "",
@@ -101,8 +127,6 @@ export default function OfferRide() {
   };
 
   return (
-    // ✅ Image is applied as CSS background-image on this element
-    // No separate <img> or fixed-position div needed
     <div className="offer-page">
       <div className="offer-content">
         <div className="offer-card">
@@ -175,26 +199,29 @@ export default function OfferRide() {
             {/* Schedule */}
             <div className="offer-section">
               <p className="offer-section-label">Schedule</p>
-              <div className="row-half">
 
-                <div className="offer-icon-field">
-                  <span className="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
-                      <line x1="16" x2="16" y1="2" y2="6"/>
-                      <line x1="8"  x2="8"  y1="2" y2="6"/>
-                      <line x1="3"  x2="21" y1="10" y2="10"/>
-                    </svg>
-                  </span>
-                  <input
-                    type="date"
-                    value={form.date}
-                    onChange={(e) => updateField("date", e.target.value)}
-                    min={new Date().toISOString().split("T")[0]}
-                    required
-                  />
-                </div>
+              {/* Date — full width */}
+              <div className="offer-icon-field">
+                <span className="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                    <line x1="16" x2="16" y1="2" y2="6"/>
+                    <line x1="8"  x2="8"  y1="2" y2="6"/>
+                    <line x1="3"  x2="21" y1="10" y2="10"/>
+                  </svg>
+                </span>
+                <input
+                  type="date"
+                  value={form.date}
+                  onChange={(e) => updateField("date", e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
+                  required
+                />
+              </div>
+
+              {/* Start + End time side by side */}
+              <div className="row-half">
 
                 <div className="offer-icon-field">
                   <span className="field-icon">
@@ -209,7 +236,31 @@ export default function OfferRide() {
                     value={form.time}
                     onChange={(e) => updateField("time", e.target.value)}
                     required
+                    title="Start time"
                   />
+                  <span className="time-label">Departure</span>
+                </div>
+
+                <div className="offer-icon-field">
+                  <span className="field-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                  </span>
+                  <input
+                    type="time"
+                    value={form.endTime}
+                    onChange={(e) => updateField("endTime", e.target.value)}
+                    title="End time"
+                  />
+                  <span className="time-label">
+                    Arrival
+                    {form.endTime && form.time && form.endTime > form.time && (
+                      <span className="time-auto-tag">auto</span>
+                    )}
+                  </span>
                 </div>
 
               </div>
