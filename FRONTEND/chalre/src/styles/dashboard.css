@@ -23,21 +23,47 @@ html, body {
   width: 100%;
   min-height: calc(100vh - clamp(60px, 8vw, 80px));
 
-  background-image: url('../assets/dashboard-city.png');
-  background-size: cover;
-  background-position: right center;
-  background-repeat: no-repeat;
-  background-attachment: scroll;
+  /* No background here — image lives in ::before so mask doesn't clip content */
+  background: transparent;
 
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* top padding = navbar height + breathing room */
   padding: clamp(80px, 10vw, 100px) clamp(18px, 5vw, 64px) clamp(40px, 5vw, 60px);
 
   font-family: 'DM Sans', sans-serif;
   overflow: hidden;
   animation: dashIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── HERO IMAGE LAYER — masked independently so content stays sharp ── */
+.dash-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background-image: url('../assets/dashboard-city.png');
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+
+  /* Fade all four edges into the page bg — tweak % values to adjust fade width */
+  -webkit-mask-image:
+    linear-gradient(to right,  transparent 0%, black 15%, black 85%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 12%, black 80%, transparent 100%);
+  -webkit-mask-composite: source-in;
+          mask-image:
+    linear-gradient(to right,  transparent 0%, black 15%, black 85%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 12%, black 80%, transparent 100%);
+          mask-composite: intersect;
+}
+
+/* Ensure all direct children of dash-page sit above the ::before image layer */
+.dash-page > * {
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes dashIn {
@@ -407,10 +433,14 @@ html, body {
 ───────────────────────────────────────── */
 @media (max-width: 600px) {
   .dash-page {
-    background-image: none;
     background-color: #f0f4f8;
     align-items: center;
     padding: 88px 12px 40px;
+  }
+
+  /* Hide the image layer entirely on small screens */
+  .dash-page::before {
+    display: none;
   }
 
   .dash-card {
