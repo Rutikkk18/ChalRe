@@ -1,481 +1,645 @@
 /* ================================
-   RIDE CARD — Modern Editorial
-   Clean • Professional • Refined
+   RIDE CARD - REDESIGNED & FULLY RESPONSIVE
+   Professional • Modern • Clean Layout
 ================================ */
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
 /* ---------- THEME VARIABLES ---------- */
 :root {
-  --green-dark:   #0f5132;
-  --green-main:   #1a9e44;
-  --green-light:  #f0fdf4;
-  --green-mid:    #dcfce7;
-  --border-soft:  #e8f5ee;
-  --border-focus: #34c760;
-  --text-dark:    #111827;
-  --text-mid:     #374151;
-  --text-muted:   #6b7280;
-  --text-faint:   #9ca3af;
-  --radius-card:  16px;
-  --font-main:    'DM Sans', sans-serif;
-  --font-mono:    'DM Mono', monospace;
+  --green-dark: #0f5132;
+  --green-main: #28a745;
+  --border-soft: #dbeee1;
+  --border-focus: #3fae55;
+  --text-dark: #1f2933;
+  --text-muted: #6b7280;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* ---------- GLOBAL RESET ---------- */
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
-/* ============================================================
-   RIDE CARD
-============================================================ */
+/* ---------- RIDE CARD ---------- */
 .ride-card {
   background: #ffffff;
-  border-radius: var(--radius-card);
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(15, 81, 50, 0.08);
   border: 1.5px solid var(--border-soft);
-  box-shadow:
-    0 1px 3px rgba(0,0,0,0.04),
-    0 4px 16px rgba(15, 81, 50, 0.06);
-  padding: 0;
+  transition: all 0.3s ease;
   width: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  animation: rcSlideIn 0.35s ease both;
-  font-family: var(--font-main);
+  gap: 20px;
+  animation: slideIn 0.4s ease;
 }
 
-@keyframes rcSlideIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ride-card:hover {
   transform: translateY(-3px);
-  box-shadow:
-    0 2px 8px rgba(0,0,0,0.06),
-    0 12px 28px rgba(15, 81, 50, 0.11);
+  box-shadow: 0 6px 20px rgba(15, 81, 50, 0.12);
   border-color: var(--border-focus);
 }
 
-/* FULL STATE */
+/* ---------- FULL STATE ---------- */
 .ride-card.full {
-  opacity: 0.65;
-  border-color: #fca5a5;
-  background: #fff5f5;
+  opacity: 0.7;
+  border-color: #f5d0d0;
+  background: #fef5f5;
 }
+
 .ride-card.full:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(239,68,68,0.1);
 }
 
-/* ============================================================
-   TOP STRIP — Time + Route + Price
-============================================================ */
-.rc-top {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  align-items: center;
-  gap: 16px;
-  padding: 20px 22px 16px;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-/* ── Time blocks ── */
-.rc-time-block {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.rc-time-block--right {
-  text-align: right;
-}
-
-.rc-time {
-  font-family: var(--font-mono);
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--text-dark);
-  letter-spacing: -0.3px;
-  line-height: 1;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 2px;
-}
-
-.rc-time--muted {
-  color: var(--text-faint);
-  font-size: 17px;
-}
-
-.rc-plus1 {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--green-main);
-  font-family: var(--font-main);
-  top: -6px;
-  position: relative;
-}
-
-.rc-city {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 140px;
-}
-
-/* ── Route bar ── */
-.rc-route-bar {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex: 1;
-  min-width: 60px;
-}
-
-.rc-bar-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  border: 2px solid var(--green-main);
-  background: #fff;
-}
-
-.rc-bar-line {
-  flex: 1;
-  height: 1.5px;
-  background: linear-gradient(to right, var(--green-main), #86efac);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.rc-duration {
-  position: absolute;
-  top: -11px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-main);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: #fff;
-  padding: 1px 7px;
-  border-radius: 20px;
-  border: 1px solid #e5e7eb;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.rc-duration svg {
-  color: var(--green-main);
-  flex-shrink: 0;
-}
-
-/* ── Price block ── */
-.rc-price-block {
-  display: flex;
-  align-items: center;
-  padding-left: 16px;
-  border-left: 1px solid #f0f0f0;
-}
-
-.rc-price {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  font-family: var(--font-mono);
-  font-size: 22px;
-  font-weight: 500;
-  color: var(--green-dark);
-  white-space: nowrap;
-  letter-spacing: -0.5px;
-}
-
-.rc-price svg {
-  color: var(--green-main);
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-/* ============================================================
-   MIDDLE — Date + Seats
-============================================================ */
-.rc-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 22px;
-  background: #fafafa;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.rc-meta-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13px;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.rc-meta-item svg {
-  color: var(--text-faint);
-  flex-shrink: 0;
-}
-
-.rc-meta-item strong {
-  color: var(--text-dark);
-  font-weight: 700;
-}
-
-.rc-meta-dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #d1d5db;
-  flex-shrink: 0;
-}
-
-.rc-seats-full {
-  color: #dc2626;
-  font-weight: 700;
-}
-
-/* ============================================================
-   BOTTOM — Driver + Book button
-============================================================ */
-.rc-bottom {
+/* ---------- CARD HEADER (ROUTE) ---------- */
+.ride-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 14px 22px;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1.5px solid #f0f0f0;
 }
 
-/* ── Driver ── */
-.rc-driver {
+/* ---------- LOCATION ---------- */
+.location {
   display: flex;
-  align-items: center;
-  gap: 9px;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
   min-width: 0;
 }
 
-.rc-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--green-mid);
+.location svg {
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
+  color: var(--green-main);
+  margin-top: 2px;
 }
 
-.rc-avatar--fallback {
-  background: linear-gradient(135deg, var(--green-main), var(--green-dark));
-  color: #fff;
-  font-size: 14px;
+.location > div {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Location Name (Bold, Large) */
+.location-name {
+  display: block;
+  font-size: 18px;
   font-weight: 700;
-  font-family: var(--font-main);
+  color: var(--text-dark);
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+/* Full Address (Small, Gray) */
+.location-address {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- LONG ROUTE ARROW ---------- */
+.route-arrow {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin: 0 20px;
+}
+
+.route-arrow .line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(to right, #28a745, #1e8e3a);
+}
+
+.route-arrow .arrow-head {
+  font-size: 20px;
+  color: var(--green-main);
+  margin-left: 6px;
+}
+
+/* ---------- DRIVER INFO ---------- */
+.driver-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #f6fbf7 0%, #f0f9f2 100%);
+  border-radius: 12px;
+  border: 1px solid #d6f0dc;
+}
+
+.driver-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid var(--green-main);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+}
+
+.driver-avatar-placeholder {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #28a745, #1e8e3a);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.25);
 }
 
-.rc-driver-name {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--text-mid);
+.driver-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.driver-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.driver-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* ── Book button ── */
-.rc-book-btn {
-  padding: 10px 26px;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: #fff;
+.driver-verified-icon {
+  color: var(--green-main);
+  flex-shrink: 0;
+}
+
+.driver-rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.driver-rating-score {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-left: 4px;
+}
+
+.driver-rating-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.driver-new-badge {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+/* ---------- RIDE ROWS ---------- */
+.ride-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ---------- RIDE INFO (BOTTOM SECTION) - HORIZONTAL LAYOUT ---------- */
+.ride-info {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 24px;
+}
+
+/* ---------- INFO ITEM ---------- */
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dark);
+  font-size: 14px;
+}
+
+.info-item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.info-item strong {
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+.info-item span {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* ---------- PRICE ITEM ---------- */
+.info-item.price {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--green-dark);
+}
+
+.info-item.price svg {
+  color: var(--green-main);
+  width: 24px;
+  height: 24px;
+}
+
+/* ---------- BOOK BUTTON ---------- */
+.book-btn {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #28a745, #1e8e3a) !important;
+  color: white !important;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  font-family: var(--font-main);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
+  white-space: nowrap;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.book-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.book-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #239a42, #1a7a32) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(40, 167, 69, 0.35);
+}
+
+.book-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.book-btn:disabled {
+  background: #9ca3af !important;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.7;
+}
+
+/* ---------- VIEW BUTTON ---------- */
+.view-btn {
+  padding: 11px 24px;
+  background: #f0f4ff !important;
+  color: #4f46e5 !important;
+  border: 1.5px solid #e0e7ff;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 15px;
   flex-shrink: 0;
   white-space: nowrap;
-  box-shadow: 0 3px 10px rgba(34, 197, 94, 0.28);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  font-family: inherit;
   appearance: none;
   -webkit-appearance: none;
 }
 
-.rc-book-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #16a34a, #15803d);
+.view-btn:hover:not(:disabled) {
+  background: #e0e7ff !important;
+  border-color: #c7d2fe;
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.36);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
 }
 
-.rc-book-btn:active:not(:disabled) {
+.view-btn:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.22);
 }
 
-.rc-book-btn:disabled {
-  background: #d1d5db;
-  color: #9ca3af;
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
+/* ---------- BADGES ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.rc-book-btn:focus-visible {
-  outline: 3px solid rgba(34, 197, 94, 0.45);
+.badge.instant {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge.verified {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge.full {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ---------- TABLET (768px - 1024px) ---------- */
+@media (max-width: 1024px) {
+  .ride-card {
+    padding: 18px 20px;
+  }
+
+  .ride-card-header {
+    gap: 16px;
+  }
+
+  .ride-info {
+    gap: 20px;
+  }
+
+  .arrow-icon {
+    width: 28px;
+    height: 28px;
+    margin: 0 4px;
+  }
+}
+
+/* ---------- MOBILE (below 768px) ---------- */
+@media (max-width: 768px) {
+  .ride-card {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .ride-card:hover {
+    transform: translateY(-1px);
+  }
+
+  .ride-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 16px;
+  }
+
+  .location-name {
+    font-size: 16px;
+  }
+
+  .location-address {
+    font-size: 12px;
+  }
+
+  .arrow-icon {
+    transform: rotate(90deg);
+    width: 24px;
+    height: 24px;
+    align-self: center;
+    margin: 4px 0;
+  }
+
+  .ride-card:hover .arrow-icon {
+    transform: rotate(90deg) translateY(4px);
+  }
+
+  .ride-info {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .info-item {
+    justify-content: flex-start;
+  }
+
+  .info-item.price {
+    font-size: 22px;
+    justify-content: flex-start;
+  }
+
+  .book-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 20px;
+  }
+
+  .book-btn:hover {
+    transform: none;
+  }
+
+  .ride-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* ---------- SMALL MOBILE (below 480px) ---------- */
+@media (max-width: 480px) {
+  .ride-card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .location-name {
+    font-size: 15px;
+  }
+
+  .location-address {
+    font-size: 11px;
+  }
+
+  .info-item {
+    font-size: 13px;
+  }
+
+  .info-item.price {
+    font-size: 20px;
+  }
+
+  .book-btn {
+    font-size: 14px;
+    padding: 12px 18px;
+  }
+}
+
+/* ---------- EXTRA SMALL (below 360px) ---------- */
+@media (max-width: 360px) {
+  .ride-card {
+    padding: 12px;
+  }
+
+  .location-name {
+    font-size: 14px;
+  }
+
+  .location-address {
+    font-size: 11px;
+  }
+
+  .info-item {
+    font-size: 12px;
+  }
+
+  .info-item.price {
+    font-size: 18px;
+  }
+}
+
+/* ---------- LANDSCAPE MODE ---------- */
+@media (max-height: 600px) and (orientation: landscape) {
+  .ride-card {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .ride-card-header {
+    padding-bottom: 10px;
+  }
+}
+
+/* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
+.book-btn:focus-visible,
+.view-btn:focus-visible {
+  outline: 3px solid rgba(40, 167, 69, 0.4);
   outline-offset: 2px;
 }
 
-/* ============================================================
-   TABLET (768–1024px)
-============================================================ */
-@media (max-width: 1024px) {
-  .rc-top {
-    gap: 12px;
-    padding: 18px 18px 14px;
-  }
-  .rc-time { font-size: 18px; }
-  .rc-price { font-size: 20px; }
+.ride-card:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
 }
 
-/* ============================================================
-   MOBILE (below 768px)
-============================================================ */
-@media (max-width: 768px) {
-  .ride-card:hover { transform: translateY(-1px); }
-
-  /* Stack top strip: time row then price */
-  .rc-top {
-    grid-template-columns: auto 1fr auto;
-    grid-template-rows: auto auto;
-    padding: 16px 16px 12px;
-    gap: 12px 10px;
-  }
-
-  .rc-price-block {
-    grid-column: 1 / -1;
-    border-left: none;
-    border-top: 1px solid #f0f0f0;
-    padding-left: 0;
-    padding-top: 10px;
-  }
-
-  .rc-city { max-width: 110px; }
-  .rc-time { font-size: 17px; }
-  .rc-price { font-size: 19px; }
-
-  .rc-meta  { padding: 9px 16px; }
-  .rc-bottom { padding: 12px 16px; }
-
-  .rc-book-btn {
-    flex: 1;
-    justify-content: center;
-    padding: 11px 16px;
-  }
-  .rc-book-btn:hover { transform: none; }
-}
-
-/* ============================================================
-   SMALL MOBILE (below 480px)
-============================================================ */
-@media (max-width: 480px) {
-  .rc-top { padding: 14px 14px 11px; gap: 10px 8px; }
-  .rc-time { font-size: 15px; }
-  .rc-city { font-size: 11px; max-width: 90px; }
-  .rc-price { font-size: 17px; }
-  .rc-meta, .rc-bottom { padding: 9px 14px; }
-  .rc-duration { font-size: 10px; padding: 1px 5px; }
-}
-
-/* ============================================================
-   EXTRA SMALL (below 360px)
-============================================================ */
-@media (max-width: 360px) {
-  .rc-time { font-size: 14px; }
-  .rc-city { max-width: 75px; font-size: 10px; }
-  .rc-price { font-size: 15px; }
-  .rc-duration { display: none; }
-}
-
-/* ============================================================
-   LANDSCAPE PHONES
-============================================================ */
-@media (max-height: 600px) and (orientation: landscape) {
-  .rc-top    { padding: 12px 16px 10px; }
-  .rc-meta   { padding: 7px 16px; }
-  .rc-bottom { padding: 10px 16px; }
-}
-
-/* ============================================================
-   REDUCE MOTION
-============================================================ */
+/* ---------- REDUCE MOTION (ACCESSIBILITY) ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .ride-card { animation: none; transition: none; }
-  .ride-card:hover { transform: none; }
-  .rc-book-btn { transition: none; }
-  .rc-book-btn:hover { transform: none; }
+  .ride-card,
+  .book-btn,
+  .view-btn,
+  .arrow-icon {
+    animation: none;
+    transition: none;
+  }
+
+  .ride-card:hover,
+  .book-btn:hover,
+  .view-btn:hover,
+  .ride-card:hover .arrow-icon {
+    transform: none;
+  }
 }
 
-/* ============================================================
-   PRINT
-============================================================ */
+/* ---------- PRINT STYLES ---------- */
 @media print {
-  .rc-book-btn { display: none; }
+  .book-btn,
+  .view-btn {
+    display: none;
+  }
+
   .ride-card {
     box-shadow: none;
     border: 1px solid #ddd;
     page-break-inside: avoid;
   }
-  .ride-card:hover { transform: none; }
+
+  .ride-card:hover {
+    transform: none;
+  }
 }
 
-/* ============================================================
-   LOADING STATE
-============================================================ */
+/* ---------- LOADING STATE ---------- */
 .ride-card.loading {
-  opacity: 0.55;
+  opacity: 0.6;
   pointer-events: none;
 }
 
-/* ============================================================
-   SKELETON
-============================================================ */
+.book-btn.loading::after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-left: 6px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- SKELETON LOADER ---------- */
 .ride-card.skeleton {
   pointer-events: none;
+  animation: skeleton-loading 1.5s infinite;
 }
 
-.ride-card.skeleton .rc-time,
-.ride-card.skeleton .rc-city,
-.ride-card.skeleton .rc-price,
-.ride-card.skeleton .rc-driver-name,
-.ride-card.skeleton .rc-meta-item {
+@keyframes skeleton-loading {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.ride-card.skeleton .location,
+.ride-card.skeleton .info-item {
   background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
   background-size: 200% 100%;
-  animation: rcShimmer 1.5s infinite;
+  animation: shimmer 1.5s infinite;
   border-radius: 4px;
-  color: transparent !important;
+  color: transparent;
 }
 
-@keyframes rcShimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
