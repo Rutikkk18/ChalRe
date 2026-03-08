@@ -643,3 +643,25 @@
     background-position: 200% 0;
   }
 }
+
+
+/* ---------- LOCATION TIME ---------- */
+.location-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin-top: 5px;
+  background: #e8f5ec;
+  padding: 2px 8px;
+  border-radius: 20px;
+  width: fit-content;
+}
+
+.location-time--none {
+  color: var(--text-muted);
+  background: #f3f4f6;
+  font-weight: 400;
+}

@@ -23,7 +23,8 @@ export default function RideCard({ ride }) {
     <div className={`ride-card ${isFull ? "full" : ""}`}>
       {/* HEADER - LOCATIONS */}
       <div className="ride-card-header">
-        {/* START */}
+
+        {/* START LOCATION */}
         <div className="location">
           <MapPin />
           <div>
@@ -33,6 +34,11 @@ export default function RideCard({ ride }) {
             <span className="location-address">
               {ride.startLocation}
             </span>
+            {ride.time && (
+              <span className="location-time">
+                <Clock size={12} /> {ride.time}
+              </span>
+            )}
           </div>
         </div>
 
@@ -42,7 +48,7 @@ export default function RideCard({ ride }) {
           <div className="arrow-head">→</div>
         </div>
 
-        {/* END */}
+        {/* END LOCATION */}
         <div className="location">
           <MapPin />
           <div>
@@ -52,8 +58,18 @@ export default function RideCard({ ride }) {
             <span className="location-address">
               {ride.endLocation}
             </span>
+            {ride.endTime ? (
+              <span className="location-time">
+                <Clock size={12} /> {ride.endTime}
+              </span>
+            ) : (
+              <span className="location-time location-time--none">
+                No arrival time
+              </span>
+            )}
           </div>
         </div>
+
       </div>
 
       {/* DRIVER INFO */}
@@ -103,16 +119,11 @@ export default function RideCard({ ride }) {
       <div className="ride-row">
         <div className="info-item">
           <Clock />
-          <span>
-            <strong>Date & Time:</strong> {ride.date} • {ride.time}
-          </span>
+          <span><strong>Date:</strong> {ride.date}</span>
         </div>
-
         <div className="info-item">
           <Users />
-          <span>
-            <strong>Seats Left:</strong> {ride.availableSeats}
-          </span>
+          <span><strong>Seats Left:</strong> {ride.availableSeats}</span>
         </div>
       </div>
 
@@ -122,7 +133,6 @@ export default function RideCard({ ride }) {
           <IndianRupee />
           <span>{ride.price}</span>
         </div>
-
         <button
           className="book-btn"
           onClick={goToBooking}
