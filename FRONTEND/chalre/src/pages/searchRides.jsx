@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import api from "../api/axios";
 import RideCard from "../components/RideCard";
 import "../styles/SearchRide.css";
-import { Filter, MapPin, Navigation, Users } from "lucide-react";
+import { Filter } from "lucide-react";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import CustomDatePicker from "../components/CustomDatePicker";
 
@@ -215,8 +215,7 @@ export default function SearchRides() {
         <form className="search-form" onSubmit={handleSearch}>
 
           {/* FROM */}
-          <div className="search-field">
-            <MapPin size={16} className="search-field-icon" />
+          <div className="search-item">
             <LocationAutocomplete
               value={startLocation}
               placeholder="Leaving From"
@@ -224,11 +223,10 @@ export default function SearchRides() {
             />
           </div>
 
-          <div className="search-divider" />
+          <div className="sr-divider" />
 
           {/* TO */}
-          <div className="search-field">
-            <Navigation size={16} className="search-field-icon" />
+          <div className="search-item">
             <LocationAutocomplete
               value={endLocation}
               placeholder="Going to"
@@ -236,10 +234,10 @@ export default function SearchRides() {
             />
           </div>
 
-          <div className="search-divider" />
+          <div className="sr-divider" />
 
           {/* DATE */}
-          <div className="search-field cdp-search-field">
+          <div className="search-item small cdp-search-item">
             <CustomDatePicker
               value={date}
               onChange={(val) => setDate(val)}
@@ -247,24 +245,24 @@ export default function SearchRides() {
             />
           </div>
 
-          <div className="search-divider" />
+          <div className="sr-divider" />
 
           {/* SEATS */}
-          <div className="search-field seats-field">
-            <Users size={16} className="search-field-icon" />
-            <span className="seats-label">Seats</span>
-            <input
-              type="number"
-              min="1"
-              max="10"
-              value={seats}
-              onChange={(e) => setSeats(Number(e.target.value))}
-              className="seats-input"
-            />
+          <div className="search-item small">
+            <div className="sr-seat-input">
+              <span className="sr-seat-label">Seats</span>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={seats}
+                onChange={(e) => setSeats(Number(e.target.value))}
+              />
+            </div>
           </div>
 
           {/* BUTTONS */}
-          <div className="search-actions">
+          <div className="sr-actions">
             <button type="submit" className="btn-search">
               Search
             </button>
