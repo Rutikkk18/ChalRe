@@ -14,4 +14,5 @@ public class RideUpdateDTO {
     private String carType;  // Optional
     private String genderPreference;  // Optional
     private String note;  // Optional
+    private String endTime;
 }

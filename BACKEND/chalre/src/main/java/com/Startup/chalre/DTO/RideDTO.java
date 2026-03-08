@@ -1,6 +1,10 @@
 package com.Startup.chalre.DTO;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -30,5 +34,6 @@ public class RideDTO {
     private String carType;  // Optional: SEDAN, SUV, HATCHBACK, etc.
     private String genderPreference;  // Optional: MALE_ONLY, FEMALE_ONLY
     private String note;  // Optional
+    private String endTime;
 }
 

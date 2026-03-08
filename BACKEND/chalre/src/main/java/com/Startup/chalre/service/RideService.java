@@ -66,6 +66,7 @@ public class RideService {
         ride.setEndLocation(dto.getEndLocation());
         ride.setDate(dto.getDate());
         ride.setTime(dto.getTime());
+        ride.setEndTime(dto.getEndTime());
         ride.setAvailableSeats(dto.getAvailableSeats());
         ride.setPrice(dto.getPrice());
         ride.setCarModel(dto.getCarModel());
@@ -301,6 +302,7 @@ public class RideService {
         if (dto.getEndLocation() != null) ride.setEndLocation(dto.getEndLocation());
         if (dto.getDate() != null) ride.setDate(dto.getDate());
         if (dto.getTime() != null) ride.setTime(dto.getTime());
+        if (dto.getEndTime() != null) ride.setEndTime(dto.getEndTime());
         if (dto.getAvailableSeats() != null) ride.setAvailableSeats(dto.getAvailableSeats());
         if (dto.getPrice() != null) ride.setPrice(dto.getPrice());
         if (dto.getCarModel() != null) ride.setCarModel(dto.getCarModel());

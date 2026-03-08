@@ -28,6 +28,8 @@ public class Ride {
 
     private String time;
 
+    private String endTime;  // Optional: estimated arrival time
+
     private int availableSeats;
 
     private double price;
