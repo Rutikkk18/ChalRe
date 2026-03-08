@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import api from "../api/axios";
 import RideCard from "../components/RideCard";
 import "../styles/SearchRide.css";
-import { Filter, X } from "lucide-react";
+import { Filter, MapPin, Navigation, Users } from "lucide-react";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import CustomDatePicker from "../components/CustomDatePicker";
 
@@ -163,35 +163,24 @@ export default function SearchRides() {
     // Filter by ride type (if bookingType field exists on ride object)
     if (rideType.length > 0) {
       filtered = filtered.filter((ride) => {
-        // Check if ride has bookingType field
         if (ride.bookingType) {
-          if (rideType.includes("instant") && ride.bookingType === "INSTANT") {
-            return true;
-          }
-          if (rideType.includes("request") && ride.bookingType === "REQUEST") {
-            return true;
-          }
+          if (rideType.includes("instant") && ride.bookingType === "INSTANT") return true;
+          if (rideType.includes("request") && ride.bookingType === "REQUEST") return true;
           return false;
         }
-        // If field doesn't exist, include ride (don't filter out)
         return true;
       });
     }
 
-    // Filter by driver rating (if driver.rating or driver.averageRating exists)
+    // Filter by driver rating
     if (driverRating.length > 0) {
       filtered = filtered.filter((ride) => {
         if (ride.driver?.rating || ride.driver?.averageRating) {
           const rating = Number(ride.driver.rating || ride.driver.averageRating);
-          if (driverRating.includes("4") && rating >= 4) {
-            return true;
-          }
-          if (driverRating.includes("3") && rating >= 3 && rating < 4) {
-            return true;
-          }
+          if (driverRating.includes("4") && rating >= 4) return true;
+          if (driverRating.includes("3") && rating >= 3 && rating < 4) return true;
           return false;
         }
-        // If rating doesn't exist, include ride (don't filter out)
         return true;
       });
     }
@@ -201,16 +190,9 @@ export default function SearchRides() {
       filtered = filtered.filter((ride) => {
         if (!ride.time) return false;
         const [hours] = ride.time.split(":").map(Number);
-        
-        if (timePreference.includes("morning") && hours >= 6 && hours < 12) {
-          return true;
-        }
-        if (timePreference.includes("afternoon") && hours >= 12 && hours < 18) {
-          return true;
-        }
-        if (timePreference.includes("evening") && hours >= 18) {
-          return true;
-        }
+        if (timePreference.includes("morning") && hours >= 6 && hours < 12) return true;
+        if (timePreference.includes("afternoon") && hours >= 12 && hours < 18) return true;
+        if (timePreference.includes("evening") && hours >= 18) return true;
         return false;
       });
     }
@@ -228,61 +210,67 @@ export default function SearchRides() {
 
   return (
     <div className="search-wrapper">
-      {/* HORIZONTAL SEARCH BAR AT TOP */}
+      {/* UNIFIED SEARCH BAR */}
       <div className="search-container">
         <form className="search-form" onSubmit={handleSearch}>
-          {/* START LOCATION */}
-          <div className="form-row">
-            
+
+          {/* FROM */}
+          <div className="search-field">
+            <MapPin size={16} className="search-field-icon" />
             <LocationAutocomplete
               value={startLocation}
-              placeholder="Enter start point"
+              placeholder="Leaving From"
               onChange={setStartLocation}
             />
           </div>
 
-          {/* END LOCATION */}
-          <div className="form-row">
-            
+          <div className="search-divider" />
+
+          {/* TO */}
+          <div className="search-field">
+            <Navigation size={16} className="search-field-icon" />
             <LocationAutocomplete
               value={endLocation}
-              placeholder="Enter destination"
+              placeholder="Going to"
               onChange={setEndLocation}
             />
           </div>
 
+          <div className="search-divider" />
+
           {/* DATE */}
-         <div className="form-row cdp-search-row">
-  <CustomDatePicker
-    value={date}
-    onChange={(val) => setDate(val)}
-    placeholder="Date"
-  />
-</div>
+          <div className="search-field cdp-search-field">
+            <CustomDatePicker
+              value={date}
+              onChange={(val) => setDate(val)}
+              placeholder="Date"
+            />
+          </div>
+
+          <div className="search-divider" />
 
           {/* SEATS */}
-          <div className="form-row">
-            
-           <input
-  type="number"
-  min="1"
-  max="10"
-  value={seats}
-  placeholder="Seats"
-  onChange={(e) => setSeats(Number(e.target.value))}
-/>
-
+          <div className="search-field seats-field">
+            <Users size={16} className="search-field-icon" />
+            <span className="seats-label">Seats</span>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              value={seats}
+              onChange={(e) => setSeats(Number(e.target.value))}
+              className="seats-input"
+            />
           </div>
 
           {/* BUTTONS */}
-          <div className="form-actions">
-            <button type="submit" className="btn primary">
+          <div className="search-actions">
+            <button type="submit" className="btn-search">
               Search
             </button>
-
             <button
               type="button"
-              className="btn ghost"
+              className="btn-reset"
               onClick={() => {
                 setStartLocation("");
                 setEndLocation("");
@@ -292,7 +280,6 @@ export default function SearchRides() {
                 setMaxPrice("");
                 setCarType("");
                 setGenderPreference("");
-                // Reset new filters
                 setSeatsAvailable("");
                 setRideType([]);
                 setDriverRating([]);
@@ -337,13 +324,10 @@ export default function SearchRides() {
                 </div>
               </div>
 
-              {/* velhicle Type */}
+              {/* Vehicle Type */}
               <div className="filter-group">
                 <label>Vehicle Model</label>
-                <select
-                  value={carType}
-                  onChange={(e) => setCarType(e.target.value)}
-                >
+                <select value={carType} onChange={(e) => setCarType(e.target.value)}>
                   <option value="">All Types</option>
                   <option value="SEDAN">Sedan</option>
                   <option value="SUV">SUV</option>
@@ -358,46 +342,18 @@ export default function SearchRides() {
               <div className="filter-group">
                 <label>Seats Available</label>
                 <div className="checkbox-group">
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="seatsAvailable"
-                      value="1"
-                      checked={seatsAvailable === "1"}
-                      onChange={(e) => setSeatsAvailable(e.target.value)}
-                    />
-                    <span>1 seat</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="seatsAvailable"
-                      value="2"
-                      checked={seatsAvailable === "2"}
-                      onChange={(e) => setSeatsAvailable(e.target.value)}
-                    />
-                    <span>2 seats</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="seatsAvailable"
-                      value="3+"
-                      checked={seatsAvailable === "3+"}
-                      onChange={(e) => setSeatsAvailable(e.target.value)}
-                    />
-                    <span>3+ seats</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="radio"
-                      name="seatsAvailable"
-                      value=""
-                      checked={seatsAvailable === ""}
-                      onChange={(e) => setSeatsAvailable("")}
-                    />
-                    <span>All</span>
-                  </label>
+                  {["1", "2", "3+", ""].map((val) => (
+                    <label className="checkbox-label" key={val || "all"}>
+                      <input
+                        type="radio"
+                        name="seatsAvailable"
+                        value={val}
+                        checked={seatsAvailable === val}
+                        onChange={() => setSeatsAvailable(val)}
+                      />
+                      <span>{val === "" ? "All" : val === "3+" ? "3+ seats" : `${val} seat${val !== "1" ? "s" : ""}`}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 
@@ -405,34 +361,19 @@ export default function SearchRides() {
               <div className="filter-group">
                 <label>Driver Rating</label>
                 <div className="checkbox-group">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={driverRating.includes("4")}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setDriverRating([...driverRating, "4"]);
-                        } else {
-                          setDriverRating(driverRating.filter((r) => r !== "4"));
-                        }
-                      }}
-                    />
-                    <span>4★ & above</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={driverRating.includes("3")}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setDriverRating([...driverRating, "3"]);
-                        } else {
-                          setDriverRating(driverRating.filter((r) => r !== "3"));
-                        }
-                      }}
-                    />
-                    <span>3★ & above</span>
-                  </label>
+                  {[["4", "4★ & above"], ["3", "3★ & above"]].map(([val, label]) => (
+                    <label className="checkbox-label" key={val}>
+                      <input
+                        type="checkbox"
+                        checked={driverRating.includes(val)}
+                        onChange={(e) => {
+                          if (e.target.checked) setDriverRating([...driverRating, val]);
+                          else setDriverRating(driverRating.filter((r) => r !== val));
+                        }}
+                      />
+                      <span>{label}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 
@@ -440,48 +381,19 @@ export default function SearchRides() {
               <div className="filter-group">
                 <label>Time Preference</label>
                 <div className="checkbox-group">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={timePreference.includes("morning")}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setTimePreference([...timePreference, "morning"]);
-                        } else {
-                          setTimePreference(timePreference.filter((t) => t !== "morning"));
-                        }
-                      }}
-                    />
-                    <span>Morning (6-12)</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={timePreference.includes("afternoon")}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setTimePreference([...timePreference, "afternoon"]);
-                        } else {
-                          setTimePreference(timePreference.filter((t) => t !== "afternoon"));
-                        }
-                      }}
-                    />
-                    <span>Afternoon (12-18)</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={timePreference.includes("evening")}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setTimePreference([...timePreference, "evening"]);
-                        } else {
-                          setTimePreference(timePreference.filter((t) => t !== "evening"));
-                        }
-                      }}
-                    />
-                    <span>Evening (after 18)</span>
-                  </label>
+                  {[["morning", "Morning (6-12)"], ["afternoon", "Afternoon (12-18)"], ["evening", "Evening (after 18)"]].map(([val, label]) => (
+                    <label className="checkbox-label" key={val}>
+                      <input
+                        type="checkbox"
+                        checked={timePreference.includes(val)}
+                        onChange={(e) => {
+                          if (e.target.checked) setTimePreference([...timePreference, val]);
+                          else setTimePreference(timePreference.filter((t) => t !== val));
+                        }}
+                      />
+                      <span>{label}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
