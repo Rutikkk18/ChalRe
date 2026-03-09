@@ -1,42 +1,7 @@
 // RideCard.jsx
-import { Users, Clock, IndianRupee, Star, CheckCircle } from "lucide-react";
+import { Users, Clock, IndianRupee, Star, CheckCircle, Car, Motorbike, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "../styles/ridecard.css";
-
-function CarIcon() {
-  return (
-    <svg className="vehicle-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 17H3v-4l2-5h14l2 5v4h-2"/>
-      <circle cx="7.5" cy="17.5" r="1.5"/>
-      <circle cx="16.5" cy="17.5" r="1.5"/>
-      <path d="M5 17h9"/>
-    </svg>
-  );
-}
-
-function BikeIcon() {
-  return (
-    <svg className="vehicle-type-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="6" cy="17" r="3"/>
-      <circle cx="18" cy="17" r="3"/>
-      <path d="M6 17l4-7h4l2 4"/>
-      <path d="M14 10l1-3h3"/>
-      <path d="M10 10h4"/>
-    </svg>
-  );
-}
-
-function MapPinIcon() {
-  return (
-    <svg className="mappin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-      <circle cx="12" cy="10" r="3"/>
-    </svg>
-  );
-}
 
 export default function RideCard({ ride }) {
   const navigate = useNavigate();
@@ -65,7 +30,7 @@ export default function RideCard({ ride }) {
 
         {/* START LOCATION */}
         <div className="location">
-          <MapPinIcon />
+          <MapPin />
           <div>
             <span className="location-name">
               {getLocationName(ride.startLocation)}
@@ -91,7 +56,7 @@ export default function RideCard({ ride }) {
 
         {/* END LOCATION */}
         <div className="location">
-          <MapPinIcon />
+          <MapPin />
           <div>
             <span className="location-name">
               {getLocationName(ride.endLocation)}
@@ -104,14 +69,17 @@ export default function RideCard({ ride }) {
 
       </div>
 
-      {/* DRIVER INFO — compact inline style like screenshot */}
+      {/* DRIVER INFO — compact inline row */}
       {driver && (
         <div className="driver-info">
 
-          {/* Vehicle icon on the left */}
+          {/* Vehicle icon */}
           {hasVehicle && (
             <div className="vehicle-icon-wrap">
-              {isBike ? <BikeIcon /> : <CarIcon />}
+              {isBike
+                ? <Motorbike size={20} strokeWidth={1.8} className="vehicle-type-icon" />
+                : <Car size={20} strokeWidth={1.8} className="vehicle-type-icon" />
+              }
             </div>
           )}
 
@@ -136,7 +104,7 @@ export default function RideCard({ ride }) {
           {/* Name */}
           <span className="driver-name">{driver.name || "Driver"}</span>
 
-          {/* Rating — single star + number like screenshot */}
+          {/* Rating — single star + number */}
           {driver.avgRating > 0 ? (
             <div className="driver-rating">
               <Star size={13} fill="#f59e0b" color="#f59e0b" />
