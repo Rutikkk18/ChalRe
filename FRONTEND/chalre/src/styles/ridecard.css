@@ -38,14 +38,8 @@
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .ride-card:hover {
@@ -60,10 +54,7 @@
   border-color: #f5d0d0;
   background: #fef5f5;
 }
-
-.ride-card.full:hover {
-  transform: translateY(-1px);
-}
+.ride-card.full:hover { transform: translateY(-1px); }
 
 /* ---------- CARD HEADER (ROUTE) ---------- */
 .ride-card-header {
@@ -84,7 +75,7 @@
   min-width: 0;
 }
 
-.location svg {
+.mappin-icon {
   width: 22px;
   height: 22px;
   flex-shrink: 0;
@@ -97,7 +88,6 @@
   min-width: 0;
 }
 
-/* Location Name (Bold, Large) */
 .location-name {
   display: block;
   font-size: 18px;
@@ -107,7 +97,6 @@
   margin-bottom: 4px;
 }
 
-/* Full Address (Small, Gray) */
 .location-address {
   display: block;
   font-size: 13px;
@@ -118,12 +107,13 @@
   text-overflow: ellipsis;
 }
 
-/* ---------- LONG ROUTE ARROW ---------- */
+/* ---------- ROUTE ARROW WITH SPACED TIMES ---------- */
 .route-arrow {
   display: flex;
   align-items: center;
   flex: 1;
   margin: 0 20px;
+  gap: 0;
 }
 
 .route-arrow .line {
@@ -132,7 +122,7 @@
   background: linear-gradient(to right, #28a745, #1e8e3a);
 }
 
-/* ---------- ROUTE TIMES ---------- */
+/* ---------- ROUTE TIMES — spaced away from line ---------- */
 .route-time {
   font-size: 12px;
   font-weight: 600;
@@ -145,11 +135,11 @@
 }
 
 .route-time--start {
-  margin-right: 6px;
+  margin-right: 12px;
 }
 
 .route-time--end {
-  margin-left: 6px;
+  margin-left: 12px;
 }
 
 .route-time--none {
@@ -158,54 +148,77 @@
   font-weight: 400;
 }
 
-/* ---------- DRIVER INFO ---------- */
+/* ---------- DRIVER INFO — compact inline row ---------- */
 .driver-info {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 10px;
+  padding: 10px 14px;
   background: linear-gradient(135deg, #f6fbf7 0%, #f0f9f2 100%);
   border-radius: 12px;
   border: 1px solid #d6f0dc;
 }
 
+/* Vehicle icon box */
+.vehicle-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
+  border: 1.5px solid #d6f0dc;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.vehicle-type-icon {
+  width: 20px;
+  height: 20px;
+  color: #4b5563;
+}
+
+/* Avatar wrapper — holds avatar + verified badge */
+.driver-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
 .driver-avatar {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   object-fit: cover;
   border: 2.5px solid var(--green-main);
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+  display: block;
+  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.2);
 }
 
 .driver-avatar-placeholder {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: linear-gradient(135deg, #28a745, #1e8e3a);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.25);
+  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.25);
 }
 
-.driver-details {
-  flex: 1;
-  min-width: 0;
+/* Verified badge sits bottom-right of avatar */
+.driver-verified-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  color: var(--green-main);
+  background: #fff;
+  border-radius: 50%;
 }
 
-.driver-name-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
-}
-
+/* Driver name */
 .driver-name {
   font-size: 15px;
   font-weight: 700;
@@ -213,30 +226,27 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
-.driver-verified-icon {
-  color: var(--green-main);
-  flex-shrink: 0;
-}
-
+/* Rating — single star + number */
 .driver-rating {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .driver-rating-score {
   font-size: 13px;
   font-weight: 600;
   color: var(--text-dark);
-  margin-left: 4px;
 }
 
 .driver-rating-count {
   font-size: 12px;
   color: var(--text-muted);
-  margin-left: 2px;
 }
 
 .driver-new-badge {
@@ -246,6 +256,7 @@
   background: #f3f4f6;
   padding: 2px 8px;
   border-radius: 8px;
+  flex-shrink: 0;
 }
 
 /* ---------- RIDE ROWS ---------- */
@@ -254,14 +265,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 20px;
-}
-
-/* ---------- RIDE INFO (BOTTOM SECTION) - HORIZONTAL LAYOUT ---------- */
-.ride-info {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto;
-  align-items: center;
-  gap: 24px;
 }
 
 /* ---------- INFO ITEM ---------- */
@@ -327,10 +330,7 @@
   gap: 6px;
 }
 
-.book-btn svg {
-  width: 16px;
-  height: 16px;
-}
+.book-btn svg { width: 16px; height: 16px; }
 
 .book-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #239a42, #1a7a32) !important;
@@ -338,9 +338,7 @@
   box-shadow: 0 6px 18px rgba(40, 167, 69, 0.35);
 }
 
-.book-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
+.book-btn:active:not(:disabled) { transform: translateY(0); }
 
 .book-btn:disabled {
   background: #9ca3af !important;
@@ -375,9 +373,7 @@
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
 }
 
-.view-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
+.view-btn:active:not(:disabled) { transform: translateY(0); }
 
 /* ---------- BADGES ---------- */
 .badge {
@@ -390,53 +386,20 @@
   font-weight: 600;
   white-space: nowrap;
 }
-
-.badge.instant {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.badge.verified {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.badge.full {
-  background: #fee2e2;
-  color: #991b1b;
-}
+.badge.instant  { background: #dbeafe; color: #1e40af; }
+.badge.verified { background: #d1fae5; color: #065f46; }
+.badge.full     { background: #fee2e2; color: #991b1b; }
 
 /* ---------- TABLET (768px - 1024px) ---------- */
 @media (max-width: 1024px) {
-  .ride-card {
-    padding: 18px 20px;
-  }
-
-  .ride-card-header {
-    gap: 16px;
-  }
-
-  .ride-info {
-    gap: 20px;
-  }
-
-  .arrow-icon {
-    width: 28px;
-    height: 28px;
-    margin: 0 4px;
-  }
+  .ride-card { padding: 18px 20px; }
+  .ride-card-header { gap: 16px; }
 }
 
 /* ---------- MOBILE (below 768px) ---------- */
 @media (max-width: 768px) {
-  .ride-card {
-    padding: 16px;
-    gap: 16px;
-  }
-
-  .ride-card:hover {
-    transform: translateY(-1px);
-  }
+  .ride-card { padding: 16px; gap: 16px; }
+  .ride-card:hover { transform: translateY(-1px); }
 
   .ride-card-header {
     flex-direction: column;
@@ -445,54 +408,22 @@
     padding-bottom: 16px;
   }
 
-  .location-name {
-    font-size: 16px;
-  }
-
-  .location-address {
-    font-size: 12px;
-  }
-
-  .arrow-icon {
-    transform: rotate(90deg);
-    width: 24px;
-    height: 24px;
-    align-self: center;
-    margin: 4px 0;
-  }
-
-  .ride-card:hover .arrow-icon {
-    transform: rotate(90deg) translateY(4px);
-  }
+  .location-name    { font-size: 16px; }
+  .location-address { font-size: 12px; }
 
   .route-arrow {
     width: 100%;
     margin: 0;
   }
 
-  .ride-info {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .info-item {
-    justify-content: flex-start;
-  }
-
-  .info-item.price {
-    font-size: 22px;
-    justify-content: flex-start;
-  }
+  .info-item.price { font-size: 22px; }
 
   .book-btn {
     width: 100%;
     justify-content: center;
     padding: 14px 20px;
   }
-
-  .book-btn:hover {
-    transform: none;
-  }
+  .book-btn:hover { transform: none; }
 
   .ride-row {
     flex-direction: column;
@@ -503,126 +434,59 @@
 
 /* ---------- SMALL MOBILE (below 480px) ---------- */
 @media (max-width: 480px) {
-  .ride-card {
-    padding: 14px;
-    border-radius: 12px;
-  }
-
-  .location-name {
-    font-size: 15px;
-  }
-
-  .location-address {
-    font-size: 11px;
-  }
-
-  .info-item {
-    font-size: 13px;
-  }
-
-  .info-item.price {
-    font-size: 20px;
-  }
-
-  .book-btn {
-    font-size: 14px;
-    padding: 12px 18px;
-  }
+  .ride-card     { padding: 14px; border-radius: 12px; }
+  .location-name { font-size: 15px; }
+  .location-address { font-size: 11px; }
+  .info-item     { font-size: 13px; }
+  .info-item.price { font-size: 20px; }
+  .book-btn      { font-size: 14px; padding: 12px 18px; }
 }
 
 /* ---------- EXTRA SMALL (below 360px) ---------- */
 @media (max-width: 360px) {
-  .ride-card {
-    padding: 12px;
-  }
-
-  .location-name {
-    font-size: 14px;
-  }
-
-  .location-address {
-    font-size: 11px;
-  }
-
-  .info-item {
-    font-size: 12px;
-  }
-
-  .info-item.price {
-    font-size: 18px;
-  }
+  .ride-card     { padding: 12px; }
+  .location-name { font-size: 14px; }
+  .location-address { font-size: 11px; }
+  .info-item     { font-size: 12px; }
+  .info-item.price { font-size: 18px; }
 }
 
 /* ---------- LANDSCAPE MODE ---------- */
 @media (max-height: 600px) and (orientation: landscape) {
-  .ride-card {
-    padding: 14px 16px;
-    gap: 12px;
-  }
-
-  .ride-card-header {
-    padding-bottom: 10px;
-  }
+  .ride-card { padding: 14px 16px; gap: 12px; }
+  .ride-card-header { padding-bottom: 10px; }
 }
 
-/* ---------- FOCUS VISIBLE (ACCESSIBILITY) ---------- */
+/* ---------- FOCUS VISIBLE ---------- */
 .book-btn:focus-visible,
 .view-btn:focus-visible {
   outline: 3px solid rgba(40, 167, 69, 0.4);
   outline-offset: 2px;
 }
-
 .ride-card:focus-visible {
   outline: 2px solid var(--border-focus);
   outline-offset: 2px;
 }
 
-/* ---------- REDUCE MOTION (ACCESSIBILITY) ---------- */
+/* ---------- REDUCE MOTION ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .ride-card,
-  .book-btn,
-  .view-btn,
-  .arrow-icon {
-    animation: none;
-    transition: none;
-  }
-
-  .ride-card:hover,
-  .book-btn:hover,
-  .view-btn:hover,
-  .ride-card:hover .arrow-icon {
-    transform: none;
-  }
+  .ride-card, .book-btn, .view-btn { animation: none; transition: none; }
+  .ride-card:hover, .book-btn:hover, .view-btn:hover { transform: none; }
 }
 
-/* ---------- PRINT STYLES ---------- */
+/* ---------- PRINT ---------- */
 @media print {
-  .book-btn,
-  .view-btn {
-    display: none;
-  }
-
-  .ride-card {
-    box-shadow: none;
-    border: 1px solid #ddd;
-    page-break-inside: avoid;
-  }
-
-  .ride-card:hover {
-    transform: none;
-  }
+  .book-btn, .view-btn { display: none; }
+  .ride-card { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+  .ride-card:hover { transform: none; }
 }
 
 /* ---------- LOADING STATE ---------- */
-.ride-card.loading {
-  opacity: 0.6;
-  pointer-events: none;
-}
+.ride-card.loading { opacity: 0.6; pointer-events: none; }
 
 .book-btn.loading::after {
   content: "";
-  width: 14px;
-  height: 14px;
+  width: 14px; height: 14px;
   border: 2px solid white;
   border-top-color: transparent;
   border-radius: 50%;
@@ -630,25 +494,14 @@
   margin-left: 6px;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ---------- SKELETON LOADER ---------- */
-.ride-card.skeleton {
-  pointer-events: none;
-  animation: skeleton-loading 1.5s infinite;
-}
+.ride-card.skeleton { pointer-events: none; animation: skeleton-loading 1.5s infinite; }
 
 @keyframes skeleton-loading {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.8;
-  }
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 0.8; }
 }
 
 .ride-card.skeleton .location,
@@ -661,10 +514,6 @@
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
