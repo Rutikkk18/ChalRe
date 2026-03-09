@@ -132,10 +132,30 @@
   background: linear-gradient(to right, #28a745, #1e8e3a);
 }
 
-.route-arrow .arrow-head {
-  font-size: 20px;
-  color: var(--green-main);
+/* ---------- ROUTE TIMES ---------- */
+.route-time {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green-dark);
+  background: #e8f5ec;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.route-time--start {
+  margin-right: 6px;
+}
+
+.route-time--end {
   margin-left: 6px;
+}
+
+.route-time--none {
+  color: var(--text-muted);
+  background: #f3f4f6;
+  font-weight: 400;
 }
 
 /* ---------- DRIVER INFO ---------- */
@@ -445,6 +465,11 @@
     transform: rotate(90deg) translateY(4px);
   }
 
+  .route-arrow {
+    width: 100%;
+    margin: 0;
+  }
+
   .ride-info {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -642,26 +667,4 @@
   100% {
     background-position: 200% 0;
   }
-}
-
-
-/* ---------- LOCATION TIME ---------- */
-.location-time {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--green-dark);
-  margin-top: 5px;
-  background: #e8f5ec;
-  padding: 2px 8px;
-  border-radius: 20px;
-  width: fit-content;
-}
-
-.location-time--none {
-  color: var(--text-muted);
-  background: #f3f4f6;
-  font-weight: 400;
 }

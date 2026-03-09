@@ -8,6 +8,11 @@ import { Filter } from "lucide-react";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import CustomDatePicker from "../components/CustomDatePicker";
 
+const vehicleModels = {
+  car: ["SEDAN", "SUV", "HATCHBACK"],
+  bike: ["Bullet", "Splendor", "Shine"],
+};
+
 export default function SearchRides() {
   const location = useLocation();
   const hasAutoSearched = useRef(false);
@@ -20,6 +25,7 @@ export default function SearchRides() {
   const [showFilters, setShowFilters] = useState(false);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [vehicleCategory, setVehicleCategory] = useState(""); // "car" | "bike" | ""
   const [carType, setCarType] = useState("");
   const [genderPreference, setGenderPreference] = useState("");
 
@@ -208,6 +214,12 @@ export default function SearchRides() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seatsAvailable, rideType, driverRating, timePreference, minPrice, maxPrice]);
 
+  // Handle vehicle category change — reset sub-model
+  const handleVehicleCategoryChange = (category) => {
+    setVehicleCategory(category);
+    setCarType("");
+  };
+
   return (
     <div className="search-wrapper">
       {/* UNIFIED SEARCH BAR */}
@@ -276,6 +288,7 @@ export default function SearchRides() {
                 setSeats(1);
                 setMinPrice("");
                 setMaxPrice("");
+                setVehicleCategory("");
                 setCarType("");
                 setGenderPreference("");
                 setSeatsAvailable("");
@@ -322,18 +335,46 @@ export default function SearchRides() {
                 </div>
               </div>
 
-              {/* Vehicle Type */}
+              {/* Vehicle Type — two-level: category then sub-model */}
               <div className="filter-group">
-                <label>Vehicle Model</label>
-                <select value={carType} onChange={(e) => setCarType(e.target.value)}>
-                  <option value="">All Types</option>
-                  <option value="SEDAN">Sedan</option>
-                  <option value="SUV">SUV</option>
-                  <option value="HATCHBACK">Hatchback</option>
-                  <option value="Bullet">Bullet</option>
-                  <option value="Splendor">Splendor</option>
-                  <option value="Shine">Shine</option>
-                </select>
+                <label>Vehicle Type</label>
+
+                {/* Step 1: Car / Bike toggle */}
+                <div className="vehicle-category-toggle">
+                  {[
+                    { value: "car", label: "🚗 Car" },
+                    { value: "bike", label: "🏍️ Bike" },
+                  ].map(({ value, label }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={`vehicle-cat-btn ${vehicleCategory === value ? "active" : ""}`}
+                      onClick={() =>
+                        handleVehicleCategoryChange(
+                          vehicleCategory === value ? "" : value
+                        )
+                      }
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Step 2: Sub-model (only if category selected) */}
+                {vehicleCategory && (
+                  <select
+                    value={carType}
+                    onChange={(e) => setCarType(e.target.value)}
+                    className="vehicle-submodel-select"
+                  >
+                    <option value="">All {vehicleCategory === "car" ? "Cars" : "Bikes"}</option>
+                    {vehicleModels[vehicleCategory].map((model) => (
+                      <option key={model} value={model}>
+                        {model}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               {/* Seats Available */}

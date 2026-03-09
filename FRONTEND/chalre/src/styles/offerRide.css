@@ -20,16 +20,12 @@ html, body {
 
 /* ─────────────────────────────────────────
    PAGE SHELL
-   The image is applied HERE as background-image
-   so it is 100% contained within the page —
-   no fixed/absolute tricks that bleed over navbar.
 ───────────────────────────────────────── */
 .offer-page {
   position: relative;
   width: 100%;
   min-height: calc(100vh - clamp(60px, 8vw, 80px));
 
-  /* ✅ Contained background — never touches navbar */
   background-image: url('../assets/ride-sharing-scene.png');
   background-size: cover;
   background-position: right center;
@@ -46,7 +42,6 @@ html, body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Hide the old separate bg elements from previous version */
 .offer-bg,
 .offer-bg-img,
 .offer-bg-scrim {
@@ -319,6 +314,66 @@ html, body {
 }
 
 /* ─────────────────────────────────────────
+   VEHICLE TYPE — TWO-LEVEL
+───────────────────────────────────────── */
+.offer-vehicle-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.offer-vehicle-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.optional-tag {
+  font-weight: 400;
+  color: #9ca3af;
+  font-size: 0.7rem;
+}
+
+.offer-vehicle-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.offer-vehicle-btn {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  background: rgba(249, 250, 251, 0.9);
+  color: #374151;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.offer-vehicle-btn:hover {
+  border-color: #10b981;
+  background: #f0fdf4;
+  color: #059669;
+}
+
+.offer-vehicle-btn.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #10b981;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+}
+
+.offer-submodel-field {
+  margin-top: 2px;
+}
+
+/* ─────────────────────────────────────────
    SUBMIT BUTTON
 ───────────────────────────────────────── */
 .btn-submit1 {
@@ -474,15 +529,11 @@ html, body {
   .offer-page  { background-image: none; background-color: #fff; }
   .offer-card  { box-shadow: none; border: 1px solid #ddd; }
   .btn-submit1 { display: none; }
-} 
-
+}
 
 /* ─────────────────────────────────────────
-   ADD THESE STYLES to your offerRide.css
-   (paste at the bottom of the file)
+   TIME LABELS
 ───────────────────────────────────────── */
-
-/* Label below time inputs: "Departure" / "Arrival" */
 .time-label {
   display: flex;
   align-items: center;
@@ -495,7 +546,6 @@ html, body {
   padding-left: 4px;
 }
 
-/* "auto" tag shown when end time was auto-suggested */
 .time-auto-tag {
   display: inline-flex;
   align-items: center;

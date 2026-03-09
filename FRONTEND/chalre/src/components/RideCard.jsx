@@ -34,18 +34,20 @@ export default function RideCard({ ride }) {
             <span className="location-address">
               {ride.startLocation}
             </span>
-            {ride.time && (
-              <span className="location-time">
-                <Clock size={12} /> {ride.time}
-              </span>
-            )}
           </div>
         </div>
 
-        {/* LONG ARROW */}
+        {/* LONG ARROW WITH TIMES */}
         <div className="route-arrow">
+          {ride.time && (
+            <span className="route-time route-time--start">{ride.time}</span>
+          )}
           <div className="line"></div>
-          <div className="arrow-head">→</div>
+          {ride.endTime ? (
+            <span className="route-time route-time--end">{ride.endTime}</span>
+          ) : (
+            <span className="route-time route-time--end route-time--none">No arrival</span>
+          )}
         </div>
 
         {/* END LOCATION */}
@@ -58,15 +60,6 @@ export default function RideCard({ ride }) {
             <span className="location-address">
               {ride.endLocation}
             </span>
-            {ride.endTime ? (
-              <span className="location-time">
-                <Clock size={12} /> {ride.endTime}
-              </span>
-            ) : (
-              <span className="location-time location-time--none">
-                No arrival time
-              </span>
-            )}
           </div>
         </div>
 

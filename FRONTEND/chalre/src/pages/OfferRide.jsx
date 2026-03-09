@@ -15,6 +15,11 @@ function suggestEndTime(startTime) {
   return `${hh}:${mm}`;
 }
 
+const vehicleModels = {
+  car: ["SEDAN", "SUV", "HATCHBACK"],
+  bike: ["Bullet", "Splendor", "Shine"],
+};
+
 export default function OfferRide() {
   const [form, setForm] = useState({
     from: "",
@@ -30,6 +35,7 @@ export default function OfferRide() {
     note: "",
   });
 
+  const [vehicleCategory, setVehicleCategory] = useState(""); // "car" | "bike" | ""
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -43,6 +49,12 @@ export default function OfferRide() {
       }
       return updated;
     });
+  };
+
+  const handleVehicleCategoryChange = (category) => {
+    const next = vehicleCategory === category ? "" : category;
+    setVehicleCategory(next);
+    updateField("carType", ""); // reset sub-model
   };
 
   const handleSubmit = async (e) => {
@@ -114,6 +126,7 @@ export default function OfferRide() {
           genderPreference: "",
           note: "",
         });
+        setVehicleCategory("");
         setTimeout(() => {
           window.location.href = "/myrides";
         }, 2000);
@@ -307,6 +320,51 @@ export default function OfferRide() {
                     required
                   />
                 </div>
+              </div>
+
+              {/* Vehicle Type — two-level */}
+              <div className="offer-vehicle-section">
+                <p className="offer-vehicle-label">Vehicle Type <span className="optional-tag">(optional)</span></p>
+
+                {/* Step 1: Car / Bike toggle */}
+                <div className="offer-vehicle-toggle">
+                  {[
+                    { value: "car", label: "🚗 Car" },
+                    { value: "bike", label: "🏍️ Bike" },
+                  ].map(({ value, label }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={`offer-vehicle-btn ${vehicleCategory === value ? "active" : ""}`}
+                      onClick={() => handleVehicleCategoryChange(value)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Step 2: Sub-model dropdown */}
+                {vehicleCategory && (
+                  <div className="offer-icon-field offer-submodel-field">
+                    <span className="field-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 17H5v-5l2-5h10l2 5v5z"/>
+                        <circle cx="7.5"  cy="17.5" r="1.5"/>
+                        <circle cx="16.5" cy="17.5" r="1.5"/>
+                      </svg>
+                    </span>
+                    <select
+                      value={form.carType}
+                      onChange={(e) => updateField("carType", e.target.value)}
+                    >
+                      <option value="">Select {vehicleCategory === "car" ? "car" : "bike"} model</option>
+                      {vehicleModels[vehicleCategory].map((model) => (
+                        <option key={model} value={model}>{model}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
 
               <div className="offer-icon-field">
