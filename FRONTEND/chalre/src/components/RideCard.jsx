@@ -1,5 +1,5 @@
 // RideCard.jsx
-import { Users, Clock, IndianRupee, Star, CheckCircle, Car, Motorbike, MapPin } from "lucide-react";
+import { Users, Clock, IndianRupee, Star, CheckCircle, Car, Bike } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "../styles/ridecard.css";
 
@@ -18,133 +18,157 @@ export default function RideCard({ ride }) {
   };
 
   const driver = ride?.driver;
-
   const carType = ride?.carType?.toLowerCase() || "";
   const isBike = ["bullet", "splendor", "shine"].includes(carType);
   const hasVehicle = !!ride?.carType;
 
+  // Compute duration label from start + end time if available
+  const getDuration = () => {
+    if (!ride.time || !ride.endTime) return null;
+    try {
+      const [sh, sm] = ride.time.split(":").map(Number);
+      const [eh, em] = ride.endTime.split(":").map(Number);
+      let totalMins = (eh * 60 + em) - (sh * 60 + sm);
+      if (totalMins < 0) totalMins += 24 * 60;
+      const h = Math.floor(totalMins / 60);
+      const m = totalMins % 60;
+      return `${h}h ${String(m).padStart(2, "0")}m`;
+    } catch {
+      return null;
+    }
+  };
+
+  const duration = getDuration();
+
   return (
     <div className={`ride-card ${isFull ? "full" : ""}`}>
-      {/* HEADER - LOCATIONS */}
+
+      {/* ── ROW 1: ROUTE TIMELINE ── */}
       <div className="ride-card-header">
 
-        {/* START LOCATION */}
+        {/* From */}
         <div className="location">
-          <MapPin />
-          <div>
-            <span className="location-name">
-              {getLocationName(ride.startLocation)}
-            </span>
-            <span className="location-address">
-              {ride.startLocation}
-            </span>
-          </div>
+          <span className="location-name">{getLocationName(ride.startLocation)}</span>
+          <span className="location-address">{ride.startLocation}</span>
         </div>
 
-        {/* LINE WITH TIMES */}
+        {/* Centre: times + line */}
         <div className="route-arrow">
-          {ride.time && (
-            <span className="route-time route-time--start">{ride.time}</span>
-          )}
-          <div className="line"></div>
-          {ride.endTime ? (
-            <span className="route-time route-time--end">{ride.endTime}</span>
-          ) : (
-            <span className="route-time route-time--end route-time--none">No arrival</span>
-          )}
+          <div className="route-times">
+            <span className="route-time">{ride.time || "—"}</span>
+            {duration && <span className="route-duration">{duration}</span>}
+            {ride.endTime
+              ? <span className="route-time">{ride.endTime}</span>
+              : <span className="route-time route-time--none">No arrival</span>
+            }
+          </div>
+          <div className="route-line" />
         </div>
 
-        {/* END LOCATION */}
-        <div className="location">
-          <MapPin />
-          <div>
-            <span className="location-name">
-              {getLocationName(ride.endLocation)}
-            </span>
-            <span className="location-address">
-              {ride.endLocation}
-            </span>
-          </div>
+        {/* To */}
+        <div className="location end">
+          <span className="location-name">{getLocationName(ride.endLocation)}</span>
+          <span className="location-address">{ride.endLocation}</span>
         </div>
 
       </div>
 
-      {/* DRIVER INFO — compact inline row */}
-      {driver && (
-        <div className="driver-info">
+      {/* ── ROW 2: DRIVER · META · PRICE · BUTTON ── */}
+      <div className="ride-card-bottom">
 
-          {/* Vehicle icon */}
-          {hasVehicle && (
-            <div className="vehicle-icon-wrap">
-              {isBike
-                ? <Motorbike size={20} strokeWidth={1.8} className="vehicle-type-icon" />
-                : <Car size={20} strokeWidth={1.8} className="vehicle-type-icon" />
-              }
-            </div>
-          )}
+        {/* Driver */}
+        {driver && (
+          <div className="driver-info">
 
-          {/* Avatar with optional verified badge */}
-          <div className="driver-avatar-wrap">
-            {driver.profileImage ? (
-              <img
-                src={driver.profileImage}
-                alt={driver.name}
-                className="driver-avatar"
-              />
-            ) : (
-              <div className="driver-avatar-placeholder">
-                {(driver.name || "D").charAt(0).toUpperCase()}
+            {/* Vehicle icon */}
+            {hasVehicle && (
+              <div className="vehicle-icon-wrap">
+                {isBike
+                  ? <Bike size={18} strokeWidth={1.8} className="vehicle-type-icon" />
+                  : <Car size={18} strokeWidth={1.8} className="vehicle-type-icon" />
+                }
               </div>
             )}
-            {driver.isDriverVerified && (
-              <CheckCircle size={13} className="driver-verified-badge" />
-            )}
-          </div>
 
-          {/* Name */}
-          <span className="driver-name">{driver.name || "Driver"}</span>
-
-          {/* Rating — single star + number */}
-          {driver.avgRating > 0 ? (
-            <div className="driver-rating">
-              <Star size={13} fill="#f59e0b" color="#f59e0b" />
-              <span className="driver-rating-score">{driver.avgRating.toFixed(1)}</span>
-              {driver.ratingCount > 0 && (
-                <span className="driver-rating-count">({driver.ratingCount})</span>
+            {/* Avatar */}
+            <div className="driver-avatar-wrap">
+              {driver.profileImage ? (
+                <img src={driver.profileImage} alt={driver.name} className="driver-avatar" />
+              ) : (
+                <div className="driver-avatar-placeholder">
+                  {(driver.name || "D").charAt(0).toUpperCase()}
+                </div>
+              )}
+              {driver.isDriverVerified && (
+                <CheckCircle size={14} className="driver-verified-badge" />
               )}
             </div>
-          ) : (
-            <span className="driver-new-badge">New Driver</span>
+
+            {/* Name + rating */}
+            <div className="driver-text">
+              <span className="driver-name">{driver.name || "Driver"}</span>
+              <div className="driver-sub">
+                {driver.avgRating > 0 ? (
+                  <div className="driver-rating">
+                    <Star size={12} fill="#f59e0b" color="#f59e0b" />
+                    <span className="driver-rating-score">{driver.avgRating.toFixed(1)}</span>
+                    {driver.ratingCount > 0 && (
+                      <span className="driver-rating-count">({driver.ratingCount})</span>
+                    )}
+                  </div>
+                ) : (
+                  <span className="driver-new-badge">New Driver</span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="bottom-divider" />
+
+        {/* Meta: date + seats + vehicle type */}
+        <div className="ride-meta">
+
+          <div className="meta-item">
+            <Clock size={15} />
+            {ride.date}
+          </div>
+
+          <div className="meta-item">
+            <Users size={15} />
+            {ride.availableSeats} seat{Number(ride.availableSeats) !== 1 ? "s" : ""} left
+          </div>
+
+          {hasVehicle && (
+            <div className="meta-item">
+              {isBike
+                ? <Bike size={15} />
+                : <Car size={15} />
+              }
+              {ride.carType}
+            </div>
           )}
 
         </div>
-      )}
 
-      {/* ROW 1 - DATE + SEATS */}
-      <div className="ride-row">
-        <div className="info-item">
-          <Clock />
-          <span><strong>Date:</strong> {ride.date}</span>
+        {/* Price */}
+        <div className="ride-price-wrap">
+          <div className="ride-price">
+            <IndianRupee size={20} />
+            {ride.price}
+          </div>
+          <span className="ride-price-label">per seat</span>
         </div>
-        <div className="info-item">
-          <Users />
-          <span><strong>Seats Left:</strong> {ride.availableSeats}</span>
-        </div>
-      </div>
 
-      {/* ROW 2 - PRICE + BUTTON */}
-      <div className="ride-row">
-        <div className="info-item price">
-          <IndianRupee />
-          <span>{ride.price}</span>
-        </div>
-        <button
-          className="book-btn"
-          onClick={goToBooking}
-          disabled={isFull}
-        >
-          {isFull ? "Ride Full" : "Book Ride"}
-        </button>
+        {/* CTA */}
+        {isFull ? (
+          <div className="full-badge">FULL</div>
+        ) : (
+          <button className="book-btn" onClick={goToBooking}>
+            Book Ride
+          </button>
+        )}
+
       </div>
     </div>
   );
