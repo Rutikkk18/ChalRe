@@ -126,28 +126,18 @@ export default function RideCard({ ride }) {
 
         <div className="bottom-divider" />
 
-        {/* Meta: date + seats + vehicle type */}
+        {/* Meta: date stacked above seats — like reference image */}
         <div className="ride-meta">
 
           <div className="meta-item">
-            <Clock size={15} />
+            <Clock size={13} />
             {ride.date}
           </div>
 
           <div className="meta-item">
-            <Users size={15} />
+            <Users size={13} />
             {ride.availableSeats} seat{Number(ride.availableSeats) !== 1 ? "s" : ""} left
           </div>
-
-          {hasVehicle && (
-            <div className="meta-item">
-              {isBike
-                ? <Bike size={15} />
-                : <Car size={15} />
-              }
-              {ride.carType}
-            </div>
-          )}
 
         </div>
 
