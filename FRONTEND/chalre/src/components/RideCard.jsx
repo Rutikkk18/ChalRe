@@ -22,7 +22,6 @@ export default function RideCard({ ride }) {
   const isBike = ["bullet", "splendor", "shine"].includes(carType);
   const hasVehicle = !!ride?.carType;
 
-  // Compute duration label from start + end time if available
   const getDuration = () => {
     if (!ride.time || !ride.endTime) return null;
     try {
@@ -46,13 +45,11 @@ export default function RideCard({ ride }) {
       {/* ── ROW 1: ROUTE TIMELINE ── */}
       <div className="ride-card-header">
 
-        {/* From */}
         <div className="location">
           <span className="location-name">{getLocationName(ride.startLocation)}</span>
           <span className="location-address">{ride.startLocation}</span>
         </div>
 
-        {/* Centre: times + line */}
         <div className="route-arrow">
           <div className="route-times">
             <span className="route-time">{ride.time || "—"}</span>
@@ -65,7 +62,6 @@ export default function RideCard({ ride }) {
           <div className="route-line" />
         </div>
 
-        {/* To */}
         <div className="location end">
           <span className="location-name">{getLocationName(ride.endLocation)}</span>
           <span className="location-address">{ride.endLocation}</span>
@@ -73,24 +69,20 @@ export default function RideCard({ ride }) {
 
       </div>
 
-      {/* ── ROW 2: DRIVER · META · PRICE · BUTTON ── */}
+      {/* ── ROW 2: 3-ZONE BOTTOM ── */}
       <div className="ride-card-bottom">
 
-        {/* Driver */}
+        {/* ZONE 1 — Driver */}
         {driver && (
           <div className="driver-info">
-
-            {/* Vehicle icon */}
             {hasVehicle && (
               <div className="vehicle-icon-wrap">
                 {isBike
-                  ? <Bike size={18} strokeWidth={1.8} className="vehicle-type-icon" />
-                  : <Car size={18} strokeWidth={1.8} className="vehicle-type-icon" />
+                  ? <Bike size={16} strokeWidth={1.8} className="vehicle-type-icon" />
+                  : <Car size={16} strokeWidth={1.8} className="vehicle-type-icon" />
                 }
               </div>
             )}
-
-            {/* Avatar */}
             <div className="driver-avatar-wrap">
               {driver.profileImage ? (
                 <img src={driver.profileImage} alt={driver.name} className="driver-avatar" />
@@ -100,11 +92,9 @@ export default function RideCard({ ride }) {
                 </div>
               )}
               {driver.isDriverVerified && (
-                <CheckCircle size={14} className="driver-verified-badge" />
+                <CheckCircle size={13} className="driver-verified-badge" />
               )}
             </div>
-
-            {/* Name + rating */}
             <div className="driver-text">
               <span className="driver-name">{driver.name || "Driver"}</span>
               <div className="driver-sub">
@@ -124,40 +114,36 @@ export default function RideCard({ ride }) {
           </div>
         )}
 
-        <div className="bottom-divider" />
-
-        {/* Meta: date stacked above seats — like reference image */}
+        {/* ZONE 2 — Meta (centred, with dividers) */}
         <div className="ride-meta">
-
           <div className="meta-item">
             <Clock size={13} />
             {ride.date}
           </div>
-
           <div className="meta-item">
             <Users size={13} />
             {ride.availableSeats} seat{Number(ride.availableSeats) !== 1 ? "s" : ""} left
           </div>
-
         </div>
 
-        {/* Price */}
-        <div className="ride-price-wrap">
-          <div className="ride-price">
-            <IndianRupee size={20} />
-            {ride.price}
+        {/* ZONE 3 — Price + CTA */}
+        <div className="ride-price-action">
+          <div className="ride-price-wrap">
+            <div className="ride-price">
+              <IndianRupee size={16} />
+              {ride.price}
+            </div>
+            <span className="ride-price-label">per seat</span>
           </div>
-          <span className="ride-price-label">per seat</span>
-        </div>
 
-        {/* CTA */}
-        {isFull ? (
-          <div className="full-badge">FULL</div>
-        ) : (
-          <button className="book-btn" onClick={goToBooking}>
-            Book Ride
-          </button>
-        )}
+          {isFull ? (
+            <div className="full-badge">FULL</div>
+          ) : (
+            <button className="book-btn" onClick={goToBooking}>
+              Book Ride
+            </button>
+          )}
+        </div>
 
       </div>
     </div>
