@@ -29,7 +29,6 @@ export default function OfferRide() {
     endTime: "",
     seats: 1,
     price: "",
-    carModel: "",
     carType: "",
     genderPreference: "",
     note: "",
@@ -105,8 +104,8 @@ export default function OfferRide() {
         endTime: form.endTime || null,
         availableSeats: form.seats,
         price: form.price,
-        carModel: form.carModel || null,
-        carType: form.carType || null,
+        vehicleType: vehicleCategory || null,   // ← "car" | "bike" | null
+        carType: form.carType || null,           // ← sub-model e.g. "SEDAN"
         genderPreference: form.genderPreference || null,
         note: form.note || null,
       });
@@ -121,7 +120,6 @@ export default function OfferRide() {
           endTime: "",
           seats: 1,
           price: "",
-          carModel: "",
           carType: "",
           genderPreference: "",
           note: "",
@@ -367,22 +365,7 @@ export default function OfferRide() {
                 )}
               </div>
 
-              <div className="offer-icon-field">
-                <span className="field-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M19 17H5v-5l2-5h10l2 5v5z"/>
-                    <circle cx="7.5"  cy="17.5" r="1.5"/>
-                    <circle cx="16.5" cy="17.5" r="1.5"/>
-                  </svg>
-                </span>
-                <input
-                  type="text"
-                  placeholder="Vehicle model (optional)"
-                  value={form.carModel}
-                  onChange={(e) => updateField("carModel", e.target.value)}
-                />
-              </div>
+              {/* ── Vehicle Model text input REMOVED ── */}
 
               <div className="offer-icon-field offer-textarea-field">
                 <span className="field-icon field-icon-top">

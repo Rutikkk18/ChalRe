@@ -12,6 +12,10 @@ const vehicleModels = {
   bike: ["Bullet", "Splendor", "Shine"],
 };
 
+// Sub-models that belong to each category (lowercase for comparison)
+const carSubModels  = vehicleModels.car.map((m) => m.toLowerCase());
+const bikeSubModels = vehicleModels.bike.map((m) => m.toLowerCase());
+
 export default function SearchRides() {
   const location = useLocation();
   const hasAutoSearched = useRef(false);
@@ -122,6 +126,20 @@ export default function SearchRides() {
     performSearch(startLocation, endLocation, date, seats);
   };
 
+  /**
+   * Determines vehicle category for a ride.
+   * Priority 1: ride.vehicleType set explicitly ("car" | "bike") — new rides after fix.
+   * Priority 2: fall back to carType sub-model to infer category — old rides.
+   */
+  const getRideVehicleCategory = (ride) => {
+    if (ride.vehicleType) return ride.vehicleType.toLowerCase();
+    // Infer from sub-model for rides created before the fix
+    const subModel = (ride.carType || "").toLowerCase();
+    if (carSubModels.includes(subModel)) return "car";
+    if (bikeSubModels.includes(subModel)) return "bike";
+    return "";
+  };
+
   const applyClientFilters = (rides) => {
     let filtered = [...rides];
 
@@ -134,18 +152,17 @@ export default function SearchRides() {
       if (!isNaN(max)) filtered = filtered.filter((ride) => Number(ride.price) <= max);
     }
 
-    // Filter by vehicle category (car / bike)
+    // Filter by vehicle category (car / bike) — uses both vehicleType and carType fallback
     if (vehicleCategory) {
-      filtered = filtered.filter((ride) => {
-        const type = (ride.vehicleType || ride.vehicle?.type || ride.vehicle?.category || "").toLowerCase();
-        return type === vehicleCategory.toLowerCase();
-      });
+      filtered = filtered.filter(
+        (ride) => getRideVehicleCategory(ride) === vehicleCategory.toLowerCase()
+      );
     }
 
     // Filter by vehicle sub-model
     if (carType) {
       filtered = filtered.filter((ride) => {
-        const model = (ride.carType || ride.vehicleModel || ride.vehicle?.model || ride.vehicle?.subType || "").toLowerCase();
+        const model = (ride.carType || "").toLowerCase();
         return model === carType.toLowerCase();
       });
     }
