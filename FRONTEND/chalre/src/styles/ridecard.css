@@ -39,7 +39,7 @@
   animation: cardIn 0.35s ease both;
   width: 100%;
   font-family: var(--font-sans);
-  border-radius: 40px;
+  border-radius: 25px;
 
 }
 
