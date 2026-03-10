@@ -39,6 +39,8 @@
   animation: cardIn 0.35s ease both;
   width: 100%;
   font-family: var(--font-sans);
+  border-radius: 40px;
+
 }
 
 @keyframes cardIn {
@@ -204,7 +206,8 @@
 .driver-avatar-wrap {
   position: relative;
   flex-shrink: 0;
-  /* Fix: ensure avatar stays vertically centred with the text block */
+  display: flex;
+  align-items: center;
   align-self: center;
 }
 
@@ -242,15 +245,16 @@
   height: 13px;
 }
 
-/* Driver text: name + rating all in one horizontal row */
+/* Driver text: name + badge strictly inline, single row */
 .driver-text {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   align-items: center;
   gap: 8px;
   min-width: 0;
   overflow: hidden;
   flex-wrap: nowrap;
+  line-height: 1;
 }
 
 .driver-name {
@@ -263,14 +267,16 @@
   text-overflow: ellipsis;
   line-height: 1;
   flex-shrink: 0;
+  vertical-align: middle;
 }
 
 .driver-sub {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
   line-height: 1;
   flex-shrink: 0;
+  vertical-align: middle;
 }
 
 .driver-rating { display: flex; align-items: center; gap: 3px; }

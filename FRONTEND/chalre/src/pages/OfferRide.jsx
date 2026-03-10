@@ -4,7 +4,6 @@ import api from "../api/axios";
 import "../styles/offerRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 
-// Auto-suggest end time: adds 2 hours to start time as a default
 function suggestEndTime(startTime) {
   if (!startTime) return "";
   const [h, m] = startTime.split(":").map(Number);
@@ -34,7 +33,7 @@ export default function OfferRide() {
     note: "",
   });
 
-  const [vehicleCategory, setVehicleCategory] = useState(""); // "car" | "bike" | ""
+  const [vehicleCategory, setVehicleCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -42,7 +41,6 @@ export default function OfferRide() {
   const updateField = (field, value) => {
     setForm((prev) => {
       const updated = { ...prev, [field]: value };
-      // When start time changes, auto-suggest end time if not manually set
       if (field === "time" && value) {
         updated.endTime = suggestEndTime(value);
       }
@@ -53,7 +51,7 @@ export default function OfferRide() {
   const handleVehicleCategoryChange = (category) => {
     const next = vehicleCategory === category ? "" : category;
     setVehicleCategory(next);
-    updateField("carType", ""); // reset sub-model
+    updateField("carType", "");
   };
 
   const handleSubmit = async (e) => {
@@ -104,8 +102,8 @@ export default function OfferRide() {
         endTime: form.endTime || null,
         availableSeats: form.seats,
         price: form.price,
-        vehicleType: vehicleCategory || null,   // ← "car" | "bike" | null
-        carType: form.carType || null,           // ← sub-model e.g. "SEDAN"
+        vehicleType: vehicleCategory || null,
+        carType: form.carType || null,
         genderPreference: form.genderPreference || null,
         note: form.note || null,
       });
@@ -113,21 +111,11 @@ export default function OfferRide() {
       if (response.status === 200) {
         setSuccess("Ride offered successfully!");
         setForm({
-          from: "",
-          to: "",
-          date: "",
-          time: "",
-          endTime: "",
-          seats: 1,
-          price: "",
-          carType: "",
-          genderPreference: "",
-          note: "",
+          from: "", to: "", date: "", time: "", endTime: "",
+          seats: 1, price: "", carType: "", genderPreference: "", note: "",
         });
         setVehicleCategory("");
-        setTimeout(() => {
-          window.location.href = "/myrides";
-        }, 2000);
+        setTimeout(() => { window.location.href = "/myrides"; }, 2000);
       }
     } catch (err) {
       console.error(err);
@@ -140,10 +128,11 @@ export default function OfferRide() {
   return (
     <div className="offer-page">
       <div className="offer-content">
-        <div className="offer-card">
 
-          {/* Header */}
-          <div className="offer-header">
+        {/* ── Left Panel: Form ── */}
+        <div className="offer-panel-form">
+
+          <div className="offer-panel-header">
             <div className="offer-icon-ring">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                 strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -152,28 +141,25 @@ export default function OfferRide() {
                 <circle cx="18" cy="5"  r="3"/>
               </svg>
             </div>
-            <div className="offer-header-text">
-              <h2>Offer a Ride</h2>
+            <div>
+              <h1 className="offer-title">Offer a Ride</h1>
               <p className="offer-subtitle">Share your journey &amp; earn on the go</p>
             </div>
           </div>
 
-          <div className="offer-divider" />
-
-          {success && <div className="success-msg">{success}</div>}
-          {error   && <div className="error-msg">{error}</div>}
+          {success && <div className="banner banner-success">{success}</div>}
+          {error   && <div className="banner banner-error">{error}</div>}
 
           <form className={`offer-form${loading ? " loading" : ""}`} onSubmit={handleSubmit}>
 
-            {/* Route */}
-            <div className="offer-section">
-              <p className="offer-section-label">Route</p>
-              <div className="offer-route-stack">
+            {/* ── Route ── */}
+            <fieldset className="form-section">
+              <legend className="section-legend">Route</legend>
 
-                <div className="offer-icon-field">
-                  <span className="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <div className="route-stack">
+                <div className="icon-field">
+                  <span className="fi">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
                       <circle cx="12" cy="10" r="3"/>
                     </svg>
@@ -185,14 +171,13 @@ export default function OfferRide() {
                   />
                 </div>
 
-                <div className="route-connector">
-                  <div className="route-connector-line" />
+                <div className="route-dots">
+                  <span /><span /><span />
                 </div>
 
-                <div className="offer-icon-field">
-                  <span className="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <div className="icon-field">
+                  <span className="fi">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
                       <line x1="4" x2="4" y1="22" y2="15"/>
                     </svg>
@@ -203,19 +188,16 @@ export default function OfferRide() {
                     placeholder="Drop location"
                   />
                 </div>
-
               </div>
-            </div>
+            </fieldset>
 
-            {/* Schedule */}
-            <div className="offer-section">
-              <p className="offer-section-label">Schedule</p>
+            {/* ── Schedule ── */}
+            <fieldset className="form-section">
+              <legend className="section-legend">Schedule</legend>
 
-              {/* Date — full width */}
-              <div className="offer-icon-field">
-                <span className="field-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <div className="icon-field">
+                <span className="fi">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
                     <line x1="16" x2="16" y1="2" y2="6"/>
                     <line x1="8"  x2="8"  y1="2" y2="6"/>
@@ -231,131 +213,98 @@ export default function OfferRide() {
                 />
               </div>
 
-              {/* Start + End time side by side */}
-              <div className="row-half">
-
-                <div className="offer-icon-field">
-                  <span className="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <div className="row-2">
+                <div className="icon-field">
+                  <span className="fi">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="10"/>
                       <polyline points="12 6 12 12 16 14"/>
                     </svg>
                   </span>
-                  <input
-                    type="time"
-                    value={form.time}
-                    onChange={(e) => updateField("time", e.target.value)}
-                    required
-                    title="Start time"
-                  />
-                  <span className="time-label">Departure</span>
+                  <input type="time" value={form.time}
+                    onChange={(e) => updateField("time", e.target.value)} required title="Departure time"/>
+                  <span className="input-label">Departure</span>
                 </div>
 
-                <div className="offer-icon-field">
-                  <span className="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <div className="icon-field">
+                  <span className="fi">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="10"/>
                       <polyline points="12 6 12 12 16 14"/>
                     </svg>
                   </span>
-                  <input
-                    type="time"
-                    value={form.endTime}
-                    onChange={(e) => updateField("endTime", e.target.value)}
-                    title="End time"
-                  />
-                  <span className="time-label">
+                  <input type="time" value={form.endTime}
+                    onChange={(e) => updateField("endTime", e.target.value)} title="Arrival time"/>
+                  <span className="input-label">
                     Arrival
                     {form.endTime && form.time && form.endTime > form.time && (
-                      <span className="time-auto-tag">auto</span>
+                      <em className="auto-tag">auto</em>
                     )}
                   </span>
                 </div>
-
               </div>
-            </div>
+            </fieldset>
 
-            {/* Ride Details */}
-            <div className="offer-section">
-              <p className="offer-section-label">Ride Details</p>
+            {/* ── Ride Details ── */}
+            <fieldset className="form-section">
+              <legend className="section-legend">Ride Details</legend>
 
-              <div className="row-half">
-                <div className="offer-icon-field">
-                  <span className="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <div className="row-2">
+                <div className="icon-field">
+                  <span className="fi">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                       <circle cx="9" cy="7" r="4"/>
                       <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
                       <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
                   </span>
-                  <input
-                    type="number" min="1" max="10"
-                    placeholder="Seats available"
+                  <input type="number" min="1" max="10"
+                    placeholder="Available seats"
                     value={form.seats}
                     onChange={(e) => updateField("seats", Number(e.target.value))}
-                    required
-                  />
+                    required/>
                 </div>
 
-                <div className="offer-icon-field">
-                  <span className="field-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <div className="icon-field">
+                  <span className="fi">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M6 3h12"/><path d="M6 8h12"/>
                       <path d="m6 13 8.5 8"/><path d="M6 13h3"/>
                       <path d="M9 13c6.667 0 6.667-10 0-10"/>
                     </svg>
                   </span>
-                  <input
-                    type="number" min="1" step="0.01"
+                  <input type="number" min="1" step="0.01"
                     placeholder="Price per seat (₹)"
                     value={form.price}
                     onChange={(e) => updateField("price", e.target.value)}
-                    required
-                  />
+                    required/>
                 </div>
               </div>
 
-              {/* Vehicle Type — two-level */}
-              <div className="offer-vehicle-section">
-                <p className="offer-vehicle-label">Vehicle Type <span className="optional-tag">(optional)</span></p>
-
-                {/* Step 1: Car / Bike toggle */}
-                <div className="offer-vehicle-toggle">
-                  {[
-                    { value: "car", label: "🚗 Car" },
-                    { value: "bike", label: "🏍️ Bike" },
-                  ].map(({ value, label }) => (
-                    <button
-                      key={value}
-                      type="button"
-                      className={`offer-vehicle-btn ${vehicleCategory === value ? "active" : ""}`}
-                      onClick={() => handleVehicleCategoryChange(value)}
-                    >
+              {/* Vehicle */}
+              <div className="vehicle-block">
+                <span className="vehicle-label">Vehicle Type <em className="opt">(optional)</em></span>
+                <div className="vehicle-toggle">
+                  {[{ value: "car", label: "🚗 Car" }, { value: "bike", label: "🏍️ Bike" }].map(({ value, label }) => (
+                    <button key={value} type="button"
+                      className={`vtoggle-btn${vehicleCategory === value ? " active" : ""}`}
+                      onClick={() => handleVehicleCategoryChange(value)}>
                       {label}
                     </button>
                   ))}
                 </div>
 
-                {/* Step 2: Sub-model dropdown */}
                 {vehicleCategory && (
-                  <div className="offer-icon-field offer-submodel-field">
-                    <span className="field-icon">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="icon-field">
+                    <span className="fi">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M19 17H5v-5l2-5h10l2 5v5z"/>
                         <circle cx="7.5"  cy="17.5" r="1.5"/>
                         <circle cx="16.5" cy="17.5" r="1.5"/>
                       </svg>
                     </span>
-                    <select
-                      value={form.carType}
-                      onChange={(e) => updateField("carType", e.target.value)}
-                    >
+                    <select value={form.carType} onChange={(e) => updateField("carType", e.target.value)}>
                       <option value="">Select {vehicleCategory === "car" ? "car" : "bike"} model</option>
                       {vehicleModels[vehicleCategory].map((model) => (
                         <option key={model} value={model}>{model}</option>
@@ -365,12 +314,9 @@ export default function OfferRide() {
                 )}
               </div>
 
-              {/* ── Vehicle Model text input REMOVED ── */}
-
-              <div className="offer-icon-field offer-textarea-field">
-                <span className="field-icon field-icon-top">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <div className="icon-field icon-field-textarea">
+                <span className="fi fi-top">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14 2 14 8 20 8"/>
                     <line x1="16" x2="8" y1="13" y2="13"/>
@@ -383,18 +329,15 @@ export default function OfferRide() {
                   onChange={(e) => updateField("note", e.target.value)}
                 />
               </div>
+            </fieldset>
 
-            </div>
-
-            {/* Submit */}
-            <button className="btn-submit1" disabled={loading}>
+            <button className="btn-submit" disabled={loading}>
               {loading ? (
-                <><span className="btn-spinner" /><span>Posting Ride…</span></>
+                <><span className="btn-spinner" /> Posting Ride…</>
               ) : (
                 <>
-                  <span>Offer Ride</span>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  Offer Ride
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="5" x2="19" y1="12" y2="12"/>
                     <polyline points="12 5 19 12 12 19"/>
                   </svg>
@@ -404,6 +347,18 @@ export default function OfferRide() {
 
           </form>
         </div>
+
+        {/* ── Right Panel: Hero Image ── */}
+        <div className="offer-panel-image">
+          <div className="image-overlay" />
+          <div className="image-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            Safe & Verified Rides
+          </div>
+        </div>
+
       </div>
     </div>
   );
