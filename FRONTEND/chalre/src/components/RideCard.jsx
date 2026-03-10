@@ -2,6 +2,7 @@
 import { Users, Clock, IndianRupee, Star, CheckCircle, Car, Bike } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "../styles/ridecard.css";
+import { CalendarRange } from "lucide-react";
 
 export default function RideCard({ ride }) {
   const navigate = useNavigate();
@@ -117,7 +118,7 @@ export default function RideCard({ ride }) {
         {/* ZONE 2 — Meta (centred, with dividers) */}
         <div className="ride-meta">
           <div className="meta-item">
-            <Clock size={13} />
+            <CalendarRange size={13} />
             {ride.date}
           </div>
           <div className="meta-item">
