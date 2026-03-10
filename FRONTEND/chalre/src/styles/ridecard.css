@@ -20,7 +20,7 @@
   --shadow-hover: inset 0 -3em 3em rgba(0,0,0,0.06),
                   0 0 0 2px rgb(180, 210, 190),
                   0.4em 0.4em 1.4em rgba(0,0,0,0.22);
-  --radius-card:  16px;
+  --radius-card:  22px;
   --radius-sm:    10px;
   --font-serif:   'Times New Roman', Times, serif;
   --font-sans:    'DM Sans', sans-serif;
@@ -242,15 +242,15 @@
   height: 13px;
 }
 
-/* Fix: text block stacks name on top, rating/badge below — both left-aligned */
+/* Driver text: name + rating all in one horizontal row */
 .driver-text {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 3px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
   overflow: hidden;
+  flex-wrap: nowrap;
 }
 
 .driver-name {
@@ -261,7 +261,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.2;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 .driver-sub {
@@ -269,6 +270,7 @@
   align-items: center;
   gap: 4px;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .driver-rating { display: flex; align-items: center; gap: 3px; }

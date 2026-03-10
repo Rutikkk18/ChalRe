@@ -6,7 +6,7 @@ import api from "../api/axios";
 import "../styles/booking.css";
 
 export default function BookingPage() {
-  const { id } = useParams(); // rideId
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [ride, setRide] = useState(null);
@@ -57,23 +57,15 @@ export default function BookingPage() {
     setError("");
 
     try {
-      /* ================= CASH ================= */
       if (paymentMethod === "CASH") {
         const res = await api.post("/bookings/create", {
           rideId: Number(ride.id),
           seats: Number(seats),
           paymentMethod: "CASH"
         });
-
         navigate(`/booking/success/${res.data.id}`);
-      }
-
-      /* ================= ONLINE (DIRECT UPI) ================= */
-      else {
-        // Total amount in rupees
+      } else {
         const totalAmount = Math.round(ride.price * seats);
-
-        // 1️⃣ Ask backend for UPI details
         const upiRes = await api.post("/payments/initiate-upi", {
           rideId: Number(ride.id),
           amount: totalAmount
@@ -87,70 +79,137 @@ export default function BookingPage() {
           return;
         }
 
-        // 2️⃣ Open UPI intent (same flow as Razorpay button click)
         const upiUrl = `upi://pay?pa=${upiId}&pn=Ride%20Driver&am=${amount}&cu=INR`;
         window.location.href = upiUrl;
 
-        // 3️⃣ Create booking (Phase-1 assumption: user paid)
         const bookingRes = await api.post("/bookings/create", {
           rideId: Number(ride.id),
           seats: Number(seats),
           paymentMethod: "ONLINE"
         });
-
         navigate(`/booking/success/${bookingRes.data.id}`);
       }
     } catch (err) {
       console.error(err);
-
       let errorMessage =
-        paymentMethod === "CASH"
-          ? "Booking failed."
-          : "Failed to initiate payment.";
-
+        paymentMethod === "CASH" ? "Booking failed." : "Failed to initiate payment.";
       if (err.response?.data) {
         errorMessage =
           err.response.data.message ||
           err.response.data.error ||
           err.response.data;
       }
-
       setError(errorMessage);
       setLoading(false);
     }
   };
 
-  if (!ride) return <div className="booking-wrapper">Loading ride...</div>;
+  const getCity = (fullLocation) => {
+    if (!fullLocation) return "";
+    return fullLocation.split(",")[0].trim();
+  };
+
+  if (!ride) {
+    return (
+      <div className="booking-wrapper">
+        <div className="booking-card" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300 }}>
+          <span style={{ fontFamily: "'Sora', sans-serif", color: "#6b7280", fontSize: "0.9rem" }}>Loading ride details…</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="booking-wrapper">
       <div className="booking-card">
-        <h2>Confirm Your Booking</h2>
 
-        <div className="ride-summary">
-          <h3>{ride.startLocation} → {ride.endLocation}</h3>
-          <p>{ride.date} • {ride.time}</p>
+        {/* ── LEFT PANEL — Ride Summary ── */}
+        <div className="booking-left">
+          <div>
+            <div className="booking-left-label">Your Journey</div>
+            <h2>Confirm Your Booking</h2>
+          </div>
+
+          {/* Route */}
+          <div className="booking-route">
+            <div>
+              <div className="booking-route-city">{getCity(ride.startLocation)}</div>
+              <div className="booking-route-addr">{ride.startLocation}</div>
+            </div>
+
+            <div className="booking-route-line">
+              <div className="booking-route-dot" />
+              <div className="booking-route-track" />
+              <div className="booking-route-dot" />
+            </div>
+
+            <div>
+              <div className="booking-route-city">{getCity(ride.endLocation)}</div>
+              <div className="booking-route-addr">{ride.endLocation}</div>
+            </div>
+          </div>
+
+          {/* Meta pills */}
+          <div className="booking-meta-grid">
+            <div className="booking-meta-pill">
+              <div className="booking-meta-pill-label">Date</div>
+              <div className="booking-meta-pill-val">{ride.date}</div>
+            </div>
+            <div className="booking-meta-pill">
+              <div className="booking-meta-pill-label">Departure</div>
+              <div className="booking-meta-pill-val">{ride.time}</div>
+            </div>
+            <div className="booking-meta-pill">
+              <div className="booking-meta-pill-label">Seats Left</div>
+              <div className="booking-meta-pill-val">{ride.availableSeats}</div>
+            </div>
+            <div className="booking-meta-pill">
+              <div className="booking-meta-pill-label">Vehicle</div>
+              <div className="booking-meta-pill-val">{ride.carType || "Car"}</div>
+            </div>
+          </div>
+
+          {/* Price per seat */}
+          <div className="booking-price-highlight">
+            <div>
+              <div className="booking-price-highlight-label">Price per seat</div>
+              <div className="booking-price-highlight-per">× {seats} seat{seats !== 1 ? "s" : ""}</div>
+            </div>
+            <div>
+              <div className="booking-price-highlight-val">₹{(ride.price * seats).toFixed(0)}</div>
+            </div>
+          </div>
         </div>
 
-        <div className="form-row">
-          <label>Seats</label>
-          <input
-            type="number"
-            min="1"
-            max={ride.availableSeats}
-            value={seats}
-            onChange={(e) => setSeats(Number(e.target.value))}
-            disabled={noSeatsLeft}
-          />
-        </div>
+        {/* ── RIGHT PANEL — Form ── */}
+        <div className="booking-right">
+          <div>
+            <div className="booking-right-title">Book Your Seat</div>
+            <div className="booking-right-sub">Select seats and payment — it only takes a moment.</div>
+          </div>
 
-        <div className="price-box">
-          <p>Price per seat: ₹{ride.price}</p>
-          <h3>Total: ₹{(ride.price * seats).toFixed(2)}</h3>
-        </div>
+          {/* Seats */}
+          <div className="form-section">
+            <label htmlFor="seat-input">Number of Seats</label>
+            <input
+              id="seat-input"
+              type="number"
+              min="1"
+              max={ride.availableSeats}
+              value={seats}
+              onChange={(e) => setSeats(Number(e.target.value))}
+              disabled={noSeatsLeft}
+            />
+          </div>
 
-        <div className="form-row">
-          <label>Payment Method</label>
+          {/* Total */}
+          <div className="booking-total-row">
+            <span className="booking-total-label">Total Amount</span>
+            <span className="booking-total-val">₹{(ride.price * seats).toFixed(2)}</span>
+          </div>
+
+          {/* Payment method */}
+          <div className="payment-section-label">Payment Method</div>
           <div className="payment-options">
             <label className={`payment-option ${paymentMethod === "CASH" ? "selected" : ""}`}>
               <input
@@ -159,7 +218,9 @@ export default function BookingPage() {
                 checked={paymentMethod === "CASH"}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               />
-              <IndianRupee size={18} /> Pay with Cash
+              <span className="payment-option-text">
+                <IndianRupee size={17} /> Pay with Cash
+              </span>
             </label>
 
             <label className={`payment-option ${paymentMethod === "ONLINE" ? "selected" : ""}`}>
@@ -169,20 +230,27 @@ export default function BookingPage() {
                 checked={paymentMethod === "ONLINE"}
                 onChange={(e) => setPaymentMethod(e.target.value)}
               />
-              <CreditCard size={18} /> Online Payment
+              <span className="payment-option-text">
+                <CreditCard size={17} /> Online Payment
+              </span>
             </label>
           </div>
+
+          {error && <div className="error">{error}</div>}
+
+          <button
+            className="btn-primary"
+            onClick={handleBookRide}
+            disabled={loading || noSeatsLeft}
+          >
+            {loading
+              ? "Processing…"
+              : paymentMethod === "CASH"
+              ? "Confirm Booking"
+              : "Proceed to Pay"}
+          </button>
         </div>
 
-        {error && <div className="error">{error}</div>}
-
-        <button
-          className="btn-primary"
-          onClick={handleBookRide}
-          disabled={loading || noSeatsLeft}
-        >
-          {loading ? "Processing..." : paymentMethod === "CASH" ? "Book Ride" : "Proceed to Pay"}
-        </button>
       </div>
     </div>
   );
