@@ -26,15 +26,7 @@ html, body { overflow-x: hidden; }
   animation: pageIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* soft dark scrim over image so card pops */
-.offer-page::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 20, 10, 0.38);
-  pointer-events: none;
-  z-index: 0;
-}
+/* no full-page scrim — left half is already light */
 
 @keyframes pageIn {
   from { opacity: 0; transform: translateY(16px); }
@@ -42,7 +34,7 @@ html, body { overflow-x: hidden; }
 }
 
 /* ─────────────────────────────────────────
-   WRAPPER — centers the card
+   WRAPPER — card on the LEFT white half
 ───────────────────────────────────────── */
 .offer-wrapper {
   position: relative;
@@ -51,17 +43,17 @@ html, body { overflow-x: hidden; }
   min-height: calc(100vh - clamp(64px, 8vw, 84px));
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 48px);
+  justify-content: flex-start;          /* push card to the left */
+  padding: clamp(24px, 3vw, 40px) clamp(16px, 4vw, 48px);
 }
 
 /* ─────────────────────────────────────────
-   CARD — wide, short, glassy
+   CARD — fills left ~55% of viewport
 ───────────────────────────────────────── */
 .offer-card {
-  width: 100%;
-  max-width: 960px;          /* wide enough for 2-col */
-  background: rgba(255, 255, 255, 0.96);
+  width: min(55vw, 860px);             /* left half of the page */
+  max-width: 860px;
+  background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-radius: 22px;
@@ -386,18 +378,26 @@ select.field-input {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ─────────────────────────────────────────
-   RESPONSIVE — ≤ 860px: 2-col → 1-col
+   RESPONSIVE — ≤ 860px: full width, centered
 ───────────────────────────────────────── */
 @media (max-width: 860px) {
-  .offer-page { background-attachment: scroll; }
-  .offer-wrapper { padding: 20px 14px 36px; align-items: flex-start; }
+  .offer-page { background-attachment: scroll; background-position: top center; }
+  .offer-wrapper {
+    padding: 20px 14px 36px;
+    align-items: flex-start;
+    justify-content: center;           /* center on small screens */
+  }
 
-  .offer-card { max-width: 600px; margin: 0 auto; }
+  .offer-card {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
   .offer-card:hover { transform: none; }
 
   .form-row,
   .form-row-3 {
-    grid-template-columns: 1fr 1fr; /* stay 2-col on tablet */
+    grid-template-columns: 1fr 1fr;
   }
 
   .form-footer { justify-content: stretch; }
