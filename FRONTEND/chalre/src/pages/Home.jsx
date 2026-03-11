@@ -41,67 +41,65 @@ export default function Home() {
         </p>
 
         <div className={`home-search-bar ${scrolled ? "search-sticky" : ""}`}>
-  <div className="search-item location-from">
-    <LocationAutocomplete
-      value={search.from}
-      onChange={(val) => updateSearch("from", val)}
-      placeholder="Leaving From"
-    />
-  </div>
+          <div className="search-item location-from">
+            <LocationAutocomplete
+              value={search.from}
+              onChange={(val) => updateSearch("from", val)}
+              placeholder="Leaving From"
+            />
+          </div>
 
-  <div className="divider" />
+          <div className="divider" />
 
-  <div className="search-item location-to">
-    <LocationAutocomplete
-      value={search.to}
-      onChange={(val) => updateSearch("to", val)}
-      placeholder="Going to"
-    />
-  </div>
+          <div className="search-item location-to">
+            <LocationAutocomplete
+              value={search.to}
+              onChange={(val) => updateSearch("to", val)}
+              placeholder="Going to"
+            />
+          </div>
 
-  <div className="divider" />
+          <div className="divider" />
 
-<div className="search-item small cdp-search-item">
-  <CustomDatePicker
-    value={search.date}
-    onChange={(val) => updateSearch("date", val)}
-    placeholder="Date"
-  />
-</div>
+          <div className="search-item small cdp-search-item">
+            <CustomDatePicker
+              value={search.date}
+              onChange={(val) => updateSearch("date", val)}
+              placeholder="Date"
+            />
+          </div>
 
-  <div className="divider" />
+          <div className="divider" />
 
-  <div className="search-item small seats-input">
-    <div className="seat-input">
-      <span className="seat-label">Seats </span>
-      <input
-        type="number"
-        min="1"
-        max="10"
-        value={search.passengers}
-        onChange={(e) =>
-          updateSearch("passengers", e.target.value)
-        }
-      />
-    </div>
-  </div>
+          <div className="search-item seats-input">
+            <div className="seat-input">
+              <span className="seat-label">Seats</span>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={search.passengers}
+                onChange={(e) =>
+                  updateSearch("passengers", e.target.value)
+                }
+              />
+            </div>
+          </div>
 
-  <button
-    className="search-action"
-    onClick={() => {
-      // Validate from and to
-      if (!search.from.trim() || !search.to.trim()) {
-        alert("Please enter both 'Leaving From' and 'Going to' locations.");
-        return;
-      }
-      // Navigate to /search with state
-      navigate("/search", { state: { from: search.from, to: search.to, date: search.date, passengers: search.passengers } });
-    }}
-  >
-    Search
-  </button>
-</div>
-</header>
+          <button
+            className="search-action"
+            onClick={() => {
+              if (!search.from.trim() || !search.to.trim()) {
+                alert("Please enter both 'Leaving From' and 'Going to' locations.");
+                return;
+              }
+              navigate("/search", { state: { from: search.from, to: search.to, date: search.date, passengers: search.passengers } });
+            }}
+          >
+            Search
+          </button>
+        </div>
+      </header>
 
 
      {/* FEATURES SECTION */}
@@ -210,7 +208,7 @@ export default function Home() {
                 You can find and book a ChalRe ride using our mobile app or website.
                 Just enter your route, select your travel date, and choose the ride
                 that fits you best. Some rides confirm instantly, while others may
-                need the driver’s approval. Either way, booking is quick and simple.
+                need the driver's approval. Either way, booking is quick and simple.
               </p>
             </div>
 
@@ -218,7 +216,7 @@ export default function Home() {
               <h4>Can I cancel a booked ride?</h4>
               <p>
                 Plans changed? No worries. You can cancel your ride anytime from the
-                “Your rides” section in the app. Cancelling early helps drivers find
+                "Your rides" section in the app. Cancelling early helps drivers find
                 other passengers. Refunds depend on how early you cancel — cancelling
                 well before departure may get you most of your money back.
               </p>
@@ -235,7 +233,7 @@ export default function Home() {
                 Posting a ride is easy. Use the app or website to enter your start and
                 end points, travel date and time, available seats, and price per seat.
                 You can choose whether bookings are automatic or need approval, then
-                publish your ride and you’re good to go.
+                publish your ride and you're good to go.
               </p>
             </div>
 
@@ -269,6 +267,3 @@ export default function Home() {
     </div>
   );
 }
-
-
-

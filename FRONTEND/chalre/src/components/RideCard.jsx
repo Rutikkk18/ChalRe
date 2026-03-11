@@ -134,7 +134,7 @@ export default function RideCard({ ride }) {
               <IndianRupee size={16} />
               {ride.price}
             </div>
-            <span className="ride-price-label">per seat</span>
+            <span className="ride-price-label"></span>
           </div>
 
           {isFull ? (
