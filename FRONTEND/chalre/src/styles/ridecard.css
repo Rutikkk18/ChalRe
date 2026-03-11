@@ -248,16 +248,16 @@
 /* ── Driver text: name + badge strictly on ONE horizontal row ── */
 .driver-text {
   display: flex;
-  flex-direction: row;
   align-items: center;
   gap: 8px;
-  min-width: 0;
-  flex-wrap: nowrap;
-  white-space: nowrap;
-  line-height: 1;
+  min-height: 36px;   /* match avatar height */
 }
 
 .driver-name {
+  display: flex;
+  align-items: center;
+  line-height: 1.2;
+
   font-family: var(--font-serif);
   font-size: 0.9rem;
   font-weight: 700;
@@ -265,7 +265,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1;
+  
   flex-shrink: 0;
  
 }
