@@ -1,75 +1,78 @@
 /* =====================================================
-   OFFER RIDE — Wide card · 2-column internal grid
-   Background image fills page · Card centered on top
+   OFFER RIDE — Card in LEFT white zone of background
+   2-column form grid · Classic · Professional
 ===================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; }
-
-html, body { overflow-x: hidden; }
+html, body { overflow-x: hidden; margin: 0; padding: 0; }
 #root { background: transparent !important; }
 
 /* ─────────────────────────────────────────
-   PAGE — full bleed background image
+   PAGE — image as background, image starts
+   white on left and has photo on the right
 ───────────────────────────────────────── */
 .offer-page {
   width: 100%;
   min-height: 100vh;
-  padding-top: clamp(64px, 8vw, 84px); /* navbar clearance */
   background-image: url('../assets/ride-sharing-scene.png');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-attachment: scroll;
   font-family: 'DM Sans', sans-serif;
-  animation: pageIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: pageIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* no full-page scrim — left half is already light */
-
 @keyframes pageIn {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ─────────────────────────────────────────
-   WRAPPER — card on the LEFT white half
+   WRAPPER — full height below navbar,
+   card sits LEFT-aligned inside the 
+   white portion of the image (~40% wide)
 ───────────────────────────────────────── */
 .offer-wrapper {
-  position: relative;
-  z-index: 1;
   width: 100%;
-  min-height: calc(100vh - clamp(64px, 8vw, 84px));
+  min-height: 100vh;
+  /* Push down past navbar */
+  padding-top: clamp(64px, 8vw, 80px);
+  /* Card confined to LEFT ~42% of the page */
   display: flex;
-  align-items: center;
-  justify-content: flex-start;          /* push card to the left */
-  padding: clamp(24px, 3vw, 40px) clamp(16px, 4vw, 48px);
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-left: clamp(16px, 3vw, 40px);
+  padding-right: 0;
+  padding-bottom: clamp(32px, 4vw, 56px);
 }
 
 /* ─────────────────────────────────────────
-   CARD — fills left ~55% of viewport
+   CARD — width limited to left white zone
+   Tall, narrow-ish, classic vertical feel
 ───────────────────────────────────────── */
 .offer-card {
-  width: min(55vw, 860px);             /* left half of the page */
-  max-width: 860px;
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  overflow: hidden;
+  /* Stay within the white left portion ~40% */
+  width: clamp(320px, 40vw, 560px);
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e8f5ee;
+  overflow: visible;
   box-shadow:
-    0 0 0 1px rgba(16, 185, 129, 0.10),
-    0 8px 32px -4px rgba(0, 0, 0, 0.22),
-    0 32px 72px -12px rgba(0, 0, 0, 0.28);
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 12px 36px rgba(0, 0, 0, 0.10),
+    0 0 0 1px rgba(16, 185, 129, 0.08);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
+  margin-top: 16px;
 }
+
 .offer-card:hover {
   box-shadow:
-    0 0 0 1px rgba(16, 185, 129, 0.16),
-    0 12px 40px -4px rgba(0, 0, 0, 0.26),
-    0 40px 80px -12px rgba(0, 0, 0, 0.30);
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 20px 48px rgba(0, 0, 0, 0.13),
+    0 0 0 1px rgba(16, 185, 129, 0.12);
   transform: translateY(-2px);
 }
 
@@ -80,44 +83,45 @@ html, body { overflow-x: hidden; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 32px 20px;
+  padding: 20px 24px 18px;
   background: linear-gradient(135deg, #f0fdf7 0%, #ecfdf5 100%);
   border-bottom: 1px solid #d1fae5;
+  border-radius: 20px 20px 0 0;
 }
 
 .card-header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 13px;
 }
 
 .offer-icon-ring {
   flex-shrink: 0;
-  width: 46px;
-  height: 46px;
-  border-radius: 13px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
   background: linear-gradient(145deg, #10b981, #059669);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.40);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.38);
 }
-.offer-icon-ring svg { width: 20px; height: 20px; }
+.offer-icon-ring svg { width: 18px; height: 18px; }
 
 .card-title {
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  font-size: clamp(1.1rem, 1.8vw, 1.35rem);
   font-weight: 700;
   color: #0d1f14;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
   line-height: 1.2;
   margin: 0;
 }
 
 .card-subtitle {
-  margin-top: 3px;
-  font-size: 0.78rem;
+  margin-top: 2px;
+  font-size: 0.75rem;
   color: #6b7280;
   font-style: italic;
 }
@@ -125,14 +129,14 @@ html, body { overflow-x: hidden; }
 .header-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: #d1fae5;
   color: #059669;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 6px 14px;
+  padding: 5px 11px;
   border-radius: 50px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   white-space: nowrap;
 }
 
@@ -140,10 +144,10 @@ html, body { overflow-x: hidden; }
    BANNERS
 ───────────────────────────────────────── */
 .banner {
-  margin: 14px 32px 0;
-  padding: 10px 14px;
-  border-radius: 9px;
-  font-size: 0.8125rem;
+  margin: 12px 24px 0;
+  padding: 9px 13px;
+  border-radius: 8px;
+  font-size: 0.8rem;
   font-weight: 600;
   line-height: 1.5;
   animation: slideIn 0.3s ease;
@@ -152,43 +156,44 @@ html, body { overflow-x: hidden; }
 .banner-error   { background: #fef2f2; color: #b91c1c; border-left: 4px solid #ef4444; }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(-10px); }
+  from { opacity: 0; transform: translateX(-8px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 /* ─────────────────────────────────────────
-   FORM SHELL
+   FORM — single column, each row is a
+   2-col grid making card tall & compact
 ───────────────────────────────────────── */
 .offer-form {
-  padding: 24px 32px 30px;
+  padding: 20px 24px 24px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
 }
 .offer-form.loading { opacity: 0.55; pointer-events: none; }
 
 /* ─────────────────────────────────────────
-   FORM ROWS — 2 columns by default
+   ROWS — always 2 columns inside card
 ───────────────────────────────────────── */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
   align-items: start;
 }
 
-/* 3-col variant */
+/* 3-col for date/time row */
 .form-row-3 {
   grid-template-columns: 1fr 1fr 1fr;
 }
 
 /* ─────────────────────────────────────────
-   FORM COLUMNS
+   FIELD COLUMNS
 ───────────────────────────────────────── */
 .form-col {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
 }
 
@@ -199,32 +204,32 @@ html, body { overflow-x: hidden; }
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: #059669;
 }
-.field-label svg { flex-shrink: 0; opacity: 0.8; }
+.field-label svg { flex-shrink: 0; opacity: 0.75; }
 
 .opt-tag {
   font-weight: 400;
   color: #9ca3af;
   text-transform: none;
   letter-spacing: 0;
-  font-size: 0.7rem;
+  font-size: 0.66rem;
 }
 
 .auto-tag {
   display: inline-flex;
   align-items: center;
-  padding: 1px 7px;
+  padding: 1px 6px;
   background: #d1fae5;
   color: #059669;
   border-radius: 20px;
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   font-style: normal;
   margin-left: 4px;
@@ -235,48 +240,36 @@ html, body { overflow-x: hidden; }
 ───────────────────────────────────────── */
 .field-input {
   width: 100%;
-  padding: 10px 13px;
+  padding: 9px 11px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.825rem;
   color: #111827;
   background: #f9fafb;
   border: 1.5px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 9px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   -webkit-appearance: none;
   appearance: none;
 }
-
-.field-input::placeholder { color: #b3bac5; font-size: 0.825rem; }
-
+.field-input::placeholder { color: #b3bac5; font-size: 0.8rem; }
 .field-input:focus {
   border-color: #10b981;
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.11);
 }
 
-/* select arrow */
-select.field-input {
-  cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2310b981' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 34px;
-}
-
-/* LocationAutocomplete inherits field-input style via class prop;
-   fallback if it renders its own input */
+/* LocationAutocomplete inner input fallback */
 .form-col input[type="text"],
 .form-col input:not([type="date"]):not([type="time"]):not([type="number"]) {
   width: 100%;
-  padding: 10px 13px;
+  padding: 9px 11px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.825rem;
   color: #111827;
   background: #f9fafb;
   border: 1.5px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 9px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   -webkit-appearance: none;
@@ -285,13 +278,22 @@ select.field-input {
 .form-col input[type="text"]:focus {
   border-color: #10b981;
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.11);
+}
+
+/* select arrow */
+select.field-input {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 12 12'%3E%3Cpath fill='%2310b981' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
 }
 
 .field-textarea {
-  min-height: 80px;
+  min-height: 72px;
   resize: vertical;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
 /* ─────────────────────────────────────────
@@ -299,18 +301,18 @@ select.field-input {
 ───────────────────────────────────────── */
 .vehicle-toggle {
   display: flex;
-  gap: 8px;
+  gap: 7px;
 }
 
 .vtoggle-btn {
   flex: 1;
-  padding: 9px 10px;
+  padding: 8px 8px;
   border: 1.5px solid #e5e7eb;
-  border-radius: 10px;
+  border-radius: 9px;
   background: #f9fafb;
   color: #374151;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.825rem;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.18s ease;
@@ -326,50 +328,59 @@ select.field-input {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border-color: #10b981;
   color: #fff;
-  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.28);
+  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.28);
 }
 
 /* ─────────────────────────────────────────
-   FORM FOOTER + SUBMIT
+   DIVIDER above submit
+───────────────────────────────────────── */
+.form-divider {
+  height: 1px;
+  background: #f0f1f3;
+  margin: 2px 0 0;
+}
+
+/* ─────────────────────────────────────────
+   SUBMIT BUTTON — full width, prominent
 ───────────────────────────────────────── */
 .form-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 4px;
+  padding-top: 2px;
 }
 
 .btn-submit {
-  padding: 12px 36px;
+  width: 100%;
+  padding: 12px 24px;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #fff;
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.9375rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.03em;
   border: none;
-  border-radius: 12px;
+  border-radius: 11px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 9px;
+  justify-content: center;
+  gap: 8px;
   transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.38);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.36);
   -webkit-appearance: none;
   appearance: none;
 }
 .btn-submit:hover:not(:disabled) {
   background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 26px rgba(16, 185, 129, 0.42);
+  box-shadow: 0 7px 22px rgba(16, 185, 129, 0.40);
 }
 .btn-submit:active:not(:disabled) { transform: translateY(0); }
 .btn-submit:disabled { opacity: 0.55; cursor: not-allowed; background: #9ca3af; box-shadow: none; }
 
 .btn-spinner {
   display: inline-block;
-  width: 15px;
-  height: 15px;
-  border: 2.5px solid rgba(255,255,255,0.3);
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.65s linear infinite;
@@ -378,44 +389,52 @@ select.field-input {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ─────────────────────────────────────────
-   RESPONSIVE — ≤ 860px: full width, centered
+   TABLET ≤ 900px — card goes full-width
+   centered, background shifts
 ───────────────────────────────────────── */
-@media (max-width: 860px) {
-  .offer-page { background-attachment: scroll; background-position: top center; }
+@media (max-width: 900px) {
+  .offer-page {
+    background-position: 70% center;
+  }
+
   .offer-wrapper {
-    padding: 20px 14px 36px;
+    justify-content: center;
+    padding-left: clamp(14px, 4vw, 32px);
+    padding-right: clamp(14px, 4vw, 32px);
     align-items: flex-start;
-    justify-content: center;           /* center on small screens */
   }
 
   .offer-card {
     width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
+    max-width: 580px;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
   .offer-card:hover { transform: none; }
 
-  .form-row,
-  .form-row-3 {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .form-footer { justify-content: stretch; }
-  .btn-submit  { width: 100%; justify-content: center; }
+  /* Keep 2 cols on tablet */
+  .form-row   { grid-template-columns: 1fr 1fr; }
+  .form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
 }
 
 /* ─────────────────────────────────────────
-   ≤ 560px — full single column
+   MOBILE ≤ 540px — single column
 ───────────────────────────────────────── */
-@media (max-width: 560px) {
-  .card-header  { padding: 18px 20px 16px; flex-wrap: wrap; gap: 10px; }
-  .offer-form   { padding: 18px 20px 24px; gap: 14px; }
-  .banner       { margin-left: 20px; margin-right: 20px; }
+@media (max-width: 540px) {
+  .offer-page { background-position: center center; background-image: none; background-color: #f0fdf4; }
+
+  .offer-wrapper {
+    padding: 16px 12px 36px;
+    align-items: flex-start;
+  }
+
+  .card-header { padding: 16px 18px 14px; flex-wrap: wrap; gap: 8px; }
+  .offer-form  { padding: 16px 18px 20px; gap: 12px; }
+  .banner      { margin-left: 18px; margin-right: 18px; }
 
   .form-row,
-  .form-row-3 {
-    grid-template-columns: 1fr; /* single col on phones */
-  }
+  .form-row-3 { grid-template-columns: 1fr; }
 
   .btn-submit:hover:not(:disabled) { transform: none; }
 }
@@ -433,8 +452,7 @@ select.field-input {
    PRINT
 ───────────────────────────────────────── */
 @media print {
-  .offer-page  { background-image: none; background-color: #f0fdf4; }
-  .offer-page::before { display: none; }
-  .offer-card  { box-shadow: none; border: 1px solid #ddd; }
-  .btn-submit  { display: none; }
+  .offer-page { background-image: none; background-color: #fff; }
+  .offer-card { box-shadow: none; border: 1px solid #ddd; }
+  .btn-submit { display: none; }
 }

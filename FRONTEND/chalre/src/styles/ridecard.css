@@ -245,15 +245,15 @@
   height: 13px;
 }
 
-/* Driver text: name + badge strictly inline, single row */
+/* ── Driver text: name + badge strictly on ONE horizontal row ── */
 .driver-text {
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   align-items: center;
   gap: 8px;
   min-width: 0;
-  overflow: hidden;
   flex-wrap: nowrap;
+  white-space: nowrap;
   line-height: 1;
 }
 
@@ -267,16 +267,14 @@
   text-overflow: ellipsis;
   line-height: 1;
   flex-shrink: 0;
-  vertical-align: middle;
 }
 
 .driver-sub {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 4px;
   line-height: 1;
   flex-shrink: 0;
-  vertical-align: middle;
 }
 
 .driver-rating { display: flex; align-items: center; gap: 3px; }
@@ -300,6 +298,8 @@
   background: #fff7e6;
   padding: 1px 7px;
   border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 
