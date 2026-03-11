@@ -7,6 +7,35 @@
 html, body { overflow-x: hidden; margin: 0; padding: 0; }
 #root { background: transparent !important; }
 
+/* ── Kill any global blue focus rings inside offer page ── */
+.offer-page input:focus,
+.offer-page input:focus-visible,
+.offer-page select:focus,
+.offer-page select:focus-visible,
+.offer-page textarea:focus,
+.offer-page textarea:focus-visible,
+.offer-page button:focus,
+.offer-page button:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+}
+/* Kill browser default blue border on date/time inputs */
+.offer-page input[type="date"],
+.offer-page input[type="time"],
+.offer-page input[type="number"] {
+  border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+}
+.offer-page input[type="date"]:focus,
+.offer-page input[type="time"]:focus,
+.offer-page input[type="number"]:focus {
+  border: 1.5px solid #059669 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
+}
+
 /* ─────────────────────────────────────────
    PAGE — full bleed background image
 ───────────────────────────────────────── */
@@ -205,9 +234,10 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   font-size: 0.875rem;
   color: #0d1f14;
   background: rgba(255, 255, 255, 0.78);
-  border: 1.5px solid rgba(16, 185, 129, 0.35);
+  border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
   border-radius: 8px;
-  outline: none;
+  outline: none !important;
+  box-shadow: none !important;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   -webkit-appearance: none;
   appearance: none;
@@ -221,9 +251,16 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
 }
 
 .field-input:focus {
-  border-color: #059669;
+  border-color: #059669 !important;
+  border: 1.5px solid #059669 !important;
+  outline: none !important;
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.10);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
+}
+
+.field-input:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
 }
 
 /* LocationAutocomplete inner input fallback */
@@ -235,17 +272,25 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   font-size: 0.875rem;
   color: #0d1f14;
   background: rgba(255, 255, 255, 0.78);
-  border: 1.5px solid rgba(16, 185, 129, 0.35);
+  border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
   border-radius: 8px;
-  outline: none;
+  outline: none !important;
+  box-shadow: none !important;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   -webkit-appearance: none;
   appearance: none;
 }
-.form-col input[type="text"]:focus {
-  border-color: #059669;
+.form-col input[type="text"]:focus,
+.form-col input:not([type="date"]):not([type="time"]):not([type="number"]):focus {
+  border: 1.5px solid #059669 !important;
+  outline: none !important;
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.10);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
+}
+.form-col input[type="text"]:focus-visible,
+.form-col input:not([type="date"]):not([type="time"]):not([type="number"]):focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
 }
 
 /* select arrow */
@@ -316,13 +361,13 @@ select.field-input {
 
 .btn-submit {
   padding: 10px 28px;
-  background: #024110;
-  color: #fff;
+  background: #024110 !important;
+  color: #fff !important;
   font-family: 'Times New Roman', Times, serif;
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  border: none;
+  border: none !important;
   border-radius: 8px;
   cursor: pointer;
   display: inline-flex;
@@ -332,11 +377,18 @@ select.field-input {
   box-shadow: 0 3px 14px rgba(2, 65, 16, 0.30);
   -webkit-appearance: none;
   appearance: none;
+  text-decoration: none !important;
+  outline: none !important;
 }
 .btn-submit:hover:not(:disabled) {
-  background: #149349;
+  background: #149349 !important;
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(20, 147, 73, 0.35);
+}
+.btn-submit:focus,
+.btn-submit:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(20, 147, 73, 0.30) !important;
 }
 .btn-submit:active:not(:disabled) { transform: translateY(0); }
 .btn-submit:disabled {

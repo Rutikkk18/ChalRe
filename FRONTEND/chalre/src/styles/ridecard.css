@@ -258,16 +258,6 @@
   align-items: center;
   line-height: 1.2;
 
-  font-family: var(--font-serif);
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--text-dark);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  
-  flex-shrink: 0;
- 
 }
 
 .driver-sub {
