@@ -1,17 +1,14 @@
 /* =====================================================
-   OFFER RIDE — Card in LEFT white zone of background
-   2-column form grid · Classic · Professional
+   OFFER RIDE — No card · UI directly on image
+   Left white zone · Times New Roman · Classic
 ===================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; }
 html, body { overflow-x: hidden; margin: 0; padding: 0; }
 #root { background: transparent !important; }
 
 /* ─────────────────────────────────────────
-   PAGE — image as background, image starts
-   white on left and has photo on the right
+   PAGE — full bleed background image
 ───────────────────────────────────────── */
 .offer-page {
   width: 100%;
@@ -21,139 +18,100 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: scroll;
-  font-family: 'DM Sans', sans-serif;
-  animation: pageIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  font-family: 'Times New Roman', Times, serif;
+  animation: pageIn 0.5s ease both;
 }
 
 @keyframes pageIn {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ─────────────────────────────────────────
-   WRAPPER — full height below navbar,
-   card sits LEFT-aligned inside the 
-   white portion of the image (~40% wide)
+   ZONE — the left white area of the image
+   Positioned to match the white fade zone
+   (~38% of the image width from the left)
 ───────────────────────────────────────── */
-.offer-wrapper {
-  width: 100%;
+.offer-zone {
+  /* sit below the navbar */
+  padding-top: clamp(72px, 9vw, 92px);
+  /* constrain to the white left portion */
+  width: clamp(300px, 38vw, 520px);
+  padding-left: clamp(28px, 4vw, 56px);
+  padding-right: clamp(16px, 2vw, 32px);
+  padding-bottom: 60px;
   min-height: 100vh;
-  /* Push down past navbar */
-  padding-top: clamp(64px, 8vw, 80px);
-  /* Card confined to LEFT ~42% of the page */
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding-left: clamp(16px, 3vw, 40px);
-  padding-right: 0;
-  padding-bottom: clamp(32px, 4vw, 56px);
+  flex-direction: column;
 }
 
 /* ─────────────────────────────────────────
-   CARD — width limited to left white zone
-   Tall, narrow-ish, classic vertical feel
+   PAGE HEADING — no card, just typography
 ───────────────────────────────────────── */
-.offer-card {
-  /* Stay within the white left portion ~40% */
-  width: clamp(320px, 40vw, 560px);
-  background: #ffffff;
-  border-radius: 20px;
-  border: 1px solid #e8f5ee;
-  overflow: visible;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.06),
-    0 12px 36px rgba(0, 0, 0, 0.10),
-    0 0 0 1px rgba(16, 185, 129, 0.08);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-  margin-top: 16px;
-}
-
-.offer-card:hover {
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    0 20px 48px rgba(0, 0, 0, 0.13),
-    0 0 0 1px rgba(16, 185, 129, 0.12);
-  transform: translateY(-2px);
-}
-
-/* ─────────────────────────────────────────
-   CARD HEADER
-───────────────────────────────────────── */
-.card-header {
+.offer-heading {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 20px 24px 18px;
-  background: linear-gradient(135deg, #f0fdf7 0%, #ecfdf5 100%);
-  border-bottom: 1px solid #d1fae5;
-  border-radius: 20px 20px 0 0;
+  gap: 14px;
+  margin-bottom: 6px;
 }
 
-.card-header-left {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-}
-
-.offer-icon-ring {
+.offer-heading-icon {
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
   background: linear-gradient(145deg, #10b981, #059669);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.38);
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35);
 }
-.offer-icon-ring svg { width: 18px; height: 18px; }
+.offer-heading-icon svg { width: 17px; height: 17px; }
 
-.card-title {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+.offer-title {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
   font-weight: 700;
   color: #0d1f14;
-  letter-spacing: -0.2px;
-  line-height: 1.2;
+  letter-spacing: 0.01em;
   margin: 0;
+  line-height: 1.15;
 }
 
-.card-subtitle {
-  margin-top: 2px;
-  font-size: 0.75rem;
-  color: #6b7280;
+.offer-subtitle {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.78rem;
+  color: #5a6672;
   font-style: italic;
+  margin-top: 3px;
 }
 
-.header-badge {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: #d1fae5;
-  color: #059669;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 5px 11px;
-  border-radius: 50px;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
+/* ─────────────────────────────────────────
+   THIN RULE
+───────────────────────────────────────── */
+.offer-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, #10b98140, transparent);
+  margin: 14px 0 18px;
 }
 
 /* ─────────────────────────────────────────
    BANNERS
 ───────────────────────────────────────── */
 .banner {
-  margin: 12px 24px 0;
+  margin-bottom: 14px;
   padding: 9px 13px;
   border-radius: 8px;
-  font-size: 0.8rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.82rem;
   font-weight: 600;
   line-height: 1.5;
   animation: slideIn 0.3s ease;
 }
-.banner-success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
-.banner-error   { background: #fef2f2; color: #b91c1c; border-left: 4px solid #ef4444; }
+.banner-success { background: #d1fae5; color: #065f46; border-left: 3px solid #10b981; }
+.banner-error   { background: #fef2f2; color: #b91c1c; border-left: 3px solid #ef4444; }
 
 @keyframes slideIn {
   from { opacity: 0; transform: translateX(-8px); }
@@ -161,19 +119,17 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
 }
 
 /* ─────────────────────────────────────────
-   FORM — single column, each row is a
-   2-col grid making card tall & compact
+   FORM
 ───────────────────────────────────────── */
 .offer-form {
-  padding: 20px 24px 24px;
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
-.offer-form.loading { opacity: 0.55; pointer-events: none; }
+.offer-form.loading { opacity: 0.5; pointer-events: none; }
 
 /* ─────────────────────────────────────────
-   ROWS — always 2 columns inside card
+   ROWS — 2 columns
 ───────────────────────────────────────── */
 .form-row {
   display: grid;
@@ -182,9 +138,8 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   align-items: start;
 }
 
-/* 3-col for date/time row */
-.form-row-3 {
-  grid-template-columns: 1fr 1fr 1fr;
+.form-row-full {
+  grid-template-columns: 1fr;
 }
 
 /* ─────────────────────────────────────────
@@ -198,26 +153,28 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
 }
 
 /* ─────────────────────────────────────────
-   LABELS
+   LABELS — small caps, green, TNR
 ───────────────────────────────────────── */
 .field-label {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.66rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: #059669;
 }
-.field-label svg { flex-shrink: 0; opacity: 0.75; }
+.field-label svg { flex-shrink: 0; opacity: 0.7; }
 
 .opt-tag {
   font-weight: 400;
   color: #9ca3af;
   text-transform: none;
   letter-spacing: 0;
-  font-size: 0.66rem;
+  font-style: italic;
+  font-size: 0.65rem;
 }
 
 .auto-tag {
@@ -227,7 +184,7 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   background: #d1fae5;
   color: #059669;
   border-radius: 20px;
-  font-size: 0.58rem;
+  font-size: 0.57rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -236,63 +193,73 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
 }
 
 /* ─────────────────────────────────────────
-   INPUTS / SELECT / TEXTAREA
+   INPUTS — clean, minimal, no card feel
+   Slight white tint so readable on image
 ───────────────────────────────────────── */
 .field-input {
   width: 100%;
-  padding: 9px 11px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.825rem;
-  color: #111827;
-  background: #f9fafb;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 9px;
+  padding: 8px 11px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.875rem;
+  color: #0d1f14;
+  /* very subtle white tint to sit on image */
+  background: rgba(255, 255, 255, 0.72);
+  border: none;
+  border-bottom: 1.5px solid rgba(16, 185, 129, 0.45);
+  border-radius: 0;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   -webkit-appearance: none;
   appearance: none;
 }
-.field-input::placeholder { color: #b3bac5; font-size: 0.8rem; }
+
+.field-input::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+  font-size: 0.82rem;
+}
+
 .field-input:focus {
-  border-color: #10b981;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.11);
+  border-bottom-color: #059669;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 2px 0 rgba(16, 185, 129, 0.18);
 }
 
 /* LocationAutocomplete inner input fallback */
 .form-col input[type="text"],
 .form-col input:not([type="date"]):not([type="time"]):not([type="number"]) {
   width: 100%;
-  padding: 9px 11px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.825rem;
-  color: #111827;
-  background: #f9fafb;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 9px;
+  padding: 8px 11px;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.875rem;
+  color: #0d1f14;
+  background: rgba(255, 255, 255, 0.72);
+  border: none;
+  border-bottom: 1.5px solid rgba(16, 185, 129, 0.45);
+  border-radius: 0;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  transition: border-color 0.2s, background 0.2s;
   -webkit-appearance: none;
   appearance: none;
 }
 .form-col input[type="text"]:focus {
-  border-color: #10b981;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.11);
+  border-bottom-color: #059669;
+  background: rgba(255, 255, 255, 0.88);
 }
 
 /* select arrow */
 select.field-input {
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 12 12'%3E%3Cpath fill='%2310b981' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23059669' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 10px center;
-  padding-right: 30px;
+  background-position: right 8px center;
+  background-color: rgba(255, 255, 255, 0.72);
+  padding-right: 26px;
 }
 
 .field-textarea {
-  min-height: 72px;
-  resize: vertical;
+  min-height: 64px;
+  resize: none;
   line-height: 1.55;
 }
 
@@ -301,85 +268,87 @@ select.field-input {
 ───────────────────────────────────────── */
 .vehicle-toggle {
   display: flex;
+  align-items: center;
   gap: 7px;
 }
 
 .vtoggle-btn {
-  flex: 1;
-  padding: 8px 8px;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 9px;
-  background: #f9fafb;
+  padding: 6px 12px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.65);
   color: #374151;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.78rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.18s ease;
-  text-align: center;
+  transition: all 0.15s ease;
   white-space: nowrap;
 }
 .vtoggle-btn:hover {
   border-color: #10b981;
-  background: #f0fdf4;
+  background: rgba(240, 253, 244, 0.85);
   color: #059669;
 }
 .vtoggle-btn.active {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border-color: #10b981;
   color: #fff;
-  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.28);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.vehicle-model-select {
+  flex: 1;
+  padding: 6px 24px 6px 8px;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-bottom: 1.5px solid rgba(16, 185, 129, 0.45);
 }
 
 /* ─────────────────────────────────────────
-   DIVIDER above submit
-───────────────────────────────────────── */
-.form-divider {
-  height: 1px;
-  background: #f0f1f3;
-  margin: 2px 0 0;
-}
-
-/* ─────────────────────────────────────────
-   SUBMIT BUTTON — full width, prominent
+   SUBMIT — compact, not full-width
 ───────────────────────────────────────── */
 .form-footer {
-  padding-top: 2px;
+  margin-top: 4px;
 }
 
 .btn-submit {
-  width: 100%;
-  padding: 12px 24px;
+  padding: 10px 28px;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #fff;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Times New Roman', Times, serif;
   font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   border: none;
-  border-radius: 11px;
+  border-radius: 8px;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
   transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.36);
+  box-shadow: 0 3px 14px rgba(16, 185, 129, 0.34);
   -webkit-appearance: none;
   appearance: none;
 }
 .btn-submit:hover:not(:disabled) {
   background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 7px 22px rgba(16, 185, 129, 0.40);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.38);
 }
 .btn-submit:active:not(:disabled) { transform: translateY(0); }
-.btn-submit:disabled { opacity: 0.55; cursor: not-allowed; background: #9ca3af; box-shadow: none; }
+.btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #9ca3af;
+  box-shadow: none;
+}
 
 .btn-spinner {
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   border: 2px solid rgba(255,255,255,0.3);
   border-top-color: #fff;
   border-radius: 50%;
@@ -389,53 +358,34 @@ select.field-input {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ─────────────────────────────────────────
-   TABLET ≤ 900px — card goes full-width
-   centered, background shifts
+   TABLET ≤ 900px
 ───────────────────────────────────────── */
 @media (max-width: 900px) {
-  .offer-page {
-    background-position: 70% center;
-  }
-
-  .offer-wrapper {
-    justify-content: center;
-    padding-left: clamp(14px, 4vw, 32px);
-    padding-right: clamp(14px, 4vw, 32px);
-    align-items: flex-start;
-  }
-
-  .offer-card {
+  .offer-page { background-position: 70% center; }
+  .offer-zone {
     width: 100%;
-    max-width: 580px;
-    background: rgba(255, 255, 255, 0.97);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    max-width: 560px;
+    padding-left: clamp(20px, 5vw, 40px);
+    padding-right: clamp(20px, 5vw, 40px);
+    padding-top: clamp(72px, 9vw, 90px);
   }
-  .offer-card:hover { transform: none; }
-
-  /* Keep 2 cols on tablet */
-  .form-row   { grid-template-columns: 1fr 1fr; }
-  .form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr 1fr; }
 }
 
 /* ─────────────────────────────────────────
-   MOBILE ≤ 540px — single column
+   MOBILE ≤ 540px
 ───────────────────────────────────────── */
 @media (max-width: 540px) {
-  .offer-page { background-position: center center; background-image: none; background-color: #f0fdf4; }
-
-  .offer-wrapper {
-    padding: 16px 12px 36px;
-    align-items: flex-start;
+  .offer-page {
+    background-image: none;
+    background-color: #f0fdf4;
   }
-
-  .card-header { padding: 16px 18px 14px; flex-wrap: wrap; gap: 8px; }
-  .offer-form  { padding: 16px 18px 20px; gap: 12px; }
-  .banner      { margin-left: 18px; margin-right: 18px; }
-
-  .form-row,
-  .form-row-3 { grid-template-columns: 1fr; }
-
+  .offer-zone {
+    width: 100%;
+    padding: clamp(72px, 9vw, 88px) 18px 48px;
+  }
+  .form-row { grid-template-columns: 1fr; }
+  .btn-submit { width: 100%; justify-content: center; }
   .btn-submit:hover:not(:disabled) { transform: none; }
 }
 
@@ -444,7 +394,7 @@ select.field-input {
 ───────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .offer-page, .banner { animation: none; }
-  .btn-submit, .offer-card { transition: none; transform: none !important; }
+  .btn-submit { transition: none; transform: none !important; }
   .btn-spinner { animation: none; }
 }
 
@@ -453,6 +403,5 @@ select.field-input {
 ───────────────────────────────────────── */
 @media print {
   .offer-page { background-image: none; background-color: #fff; }
-  .offer-card { box-shadow: none; border: 1px solid #ddd; }
   .btn-submit { display: none; }
 }
