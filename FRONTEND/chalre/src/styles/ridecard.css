@@ -202,11 +202,16 @@
 }
 .vehicle-type-icon { width: 16px; height: 16px; }
 
+/* Avatar wrapper — fixed size matching the image so siblings align to its centre */
 .driver-avatar-wrap {
   position: relative;
   flex-shrink: 0;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  align-self: center;   /* centre inside driver-info row */
 }
 
 .driver-avatar {
@@ -241,9 +246,10 @@
   border-radius: 50%;
   width: 13px;
   height: 13px;
+  /* does not affect flow — stays inside the fixed-size wrapper */
 }
 
-/* Name — direct sibling after avatar, inline */
+/* Name — perfectly centred in the row */
 .driver-name {
   font-family: var(--font-sans);
   font-size: 0.88rem;
@@ -254,38 +260,48 @@
   overflow: hidden;
   text-overflow: ellipsis;
   flex-shrink: 1;
+  align-self: center;
+  margin: 0;
+  padding: 0;
 }
 
-/* Rating — direct sibling after name, inline */
+/* Rating — perfectly centred in the row */
 .driver-rating {
   display: flex;
   align-items: center;
   gap: 3px;
   flex-shrink: 0;
+  align-self: center;
 }
 .driver-rating-score {
   font-family: var(--font-sans);
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-dark);
+  line-height: 1;
 }
 .driver-rating-count {
   font-family: var(--font-sans);
   font-size: 0.7rem;
   color: var(--text-muted);
+  line-height: 1;
 }
 
-/* New Driver badge — direct sibling after name, inline */
+/* New Driver badge — perfectly centred in the row */
 .driver-new-badge {
   font-family: var(--font-sans);
   font-size: 0.66rem;
   font-weight: 600;
   color: #d97706;
   background: #fff7e6;
-  padding: 1px 7px;
+  padding: 2px 7px;
   border-radius: 20px;
   white-space: nowrap;
   flex-shrink: 0;
+  align-self: center;
+  line-height: 1.4;
+  display: inline-flex;
+  align-items: center;
 }
 
 
