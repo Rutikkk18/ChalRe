@@ -245,19 +245,24 @@
   height: 13px;
 }
 
-/* ── Driver text: name + badge strictly on ONE horizontal row ── */
+/* ── Driver text: name on top, badge/rating below — both centred on avatar ── */
 .driver-text {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 36px;   /* match avatar height */
+  flex-direction: column;   /* ← name stacks above badge row */
+  justify-content: center;  /* ← whole block centred on avatar height */
+  gap: 3px;
+  min-height: 36px;         /* match avatar height */
 }
 
 .driver-name {
-  display: flex;
-  align-items: center;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-dark);
   line-height: 1.2;
-
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .driver-sub {
