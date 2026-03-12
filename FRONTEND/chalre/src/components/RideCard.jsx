@@ -73,9 +73,10 @@ export default function RideCard({ ride }) {
       {/* ── ROW 2: 3-ZONE BOTTOM ── */}
       <div className="ride-card-bottom">
 
-        {/* ZONE 1 — Driver */}
+        {/* ZONE 1 — Driver: [vehicle] [avatar] [name] [rating/badge] all horizontal */}
         {driver && (
           <div className="driver-info">
+
             {hasVehicle && (
               <div className="vehicle-icon-wrap">
                 {isBike
@@ -84,6 +85,8 @@ export default function RideCard({ ride }) {
                 }
               </div>
             )}
+
+            {/* Avatar */}
             <div className="driver-avatar-wrap">
               {driver.profileImage ? (
                 <img src={driver.profileImage} alt={driver.name} className="driver-avatar" />
@@ -96,22 +99,23 @@ export default function RideCard({ ride }) {
                 <CheckCircle size={13} className="driver-verified-badge" />
               )}
             </div>
-            <div className="driver-text">
-              <span className="driver-name">{driver.name || "Driver"}</span>
-              <div className="driver-sub">
-                {driver.avgRating > 0 ? (
-                  <div className="driver-rating">
-                    <Star size={12} fill="#f59e0b" color="#f59e0b" />
-                    <span className="driver-rating-score">{driver.avgRating.toFixed(1)}</span>
-                    {driver.ratingCount > 0 && (
-                      <span className="driver-rating-count">({driver.ratingCount})</span>
-                    )}
-                  </div>
-                ) : (
-                  <span className="driver-new-badge">New Driver</span>
+
+            {/* Name — standalone, right of avatar */}
+            <span className="driver-name">{driver.name || "Driver"}</span>
+
+            {/* Rating or New Driver badge — right of name */}
+            {driver.avgRating > 0 ? (
+              <div className="driver-rating">
+                <Star size={12} fill="#f59e0b" color="#f59e0b" />
+                <span className="driver-rating-score">{driver.avgRating.toFixed(1)}</span>
+                {driver.ratingCount > 0 && (
+                  <span className="driver-rating-count">({driver.ratingCount})</span>
                 )}
               </div>
-            </div>
+            ) : (
+              <span className="driver-new-badge">New Driver</span>
+            )}
+
           </div>
         )}
 

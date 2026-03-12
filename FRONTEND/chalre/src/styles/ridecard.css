@@ -40,7 +40,6 @@
   width: 100%;
   font-family: var(--font-sans);
   border-radius: 25px;
-
 }
 
 @keyframes cardIn {
@@ -170,7 +169,6 @@
 
 /* ══════════════════════════════════
    ROW 2 — 3-ZONE BOTTOM BAR
-   [driver] | [meta centred] | [price + btn]
 ══════════════════════════════════ */
 .ride-card-bottom {
   display: grid;
@@ -181,9 +179,10 @@
 }
 
 
-/* ── ZONE 1: Driver (left-aligned) ── */
+/* ── ZONE 1: Driver — single horizontal row ── */
 .driver-info {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 10px;
   min-width: 0;
@@ -208,7 +207,6 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  align-self: center;
 }
 
 .driver-avatar {
@@ -245,35 +243,26 @@
   height: 13px;
 }
 
-/* ── Driver text: name on top, badge/rating below — both centred on avatar ── */
-.driver-text {
-  display: flex;
-  flex-direction: column;   /* ← name stacks above badge row */
-  justify-content: center;  /* ← whole block centred on avatar height */
-  gap: 3px;
-  min-height: 36px;         /* match avatar height */
-}
-
+/* Name — direct sibling after avatar, inline */
 .driver-name {
   font-family: var(--font-sans);
   font-size: 0.88rem;
   font-weight: 700;
   color: var(--text-dark);
-  line-height: 1.2;
+  line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: 1;
 }
 
-.driver-sub {
+/* Rating — direct sibling after name, inline */
+.driver-rating {
   display: flex;
   align-items: center;
-  gap: 4px;
-  line-height: 1;
+  gap: 3px;
   flex-shrink: 0;
 }
-
-.driver-rating { display: flex; align-items: center; gap: 3px; }
 .driver-rating-score {
   font-family: var(--font-sans);
   font-size: 0.75rem;
@@ -286,6 +275,7 @@
   color: var(--text-muted);
 }
 
+/* New Driver badge — direct sibling after name, inline */
 .driver-new-badge {
   font-family: var(--font-sans);
   font-size: 0.66rem;
