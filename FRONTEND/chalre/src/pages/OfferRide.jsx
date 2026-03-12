@@ -19,6 +19,42 @@ const vehicleModels = {
   bike: ["Bullet", "Splendor", "Shine"],
 };
 
+/* ── Inline style object — beats every external stylesheet,
+      Tailwind utility class, CSS reset, or global override.  ── */
+const btnStyle = {
+  all: "unset",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "8px",
+  padding: "10px 28px",
+  background: "#024110",
+  backgroundColor: "#024110",
+  color: "#ffffff",
+  fontFamily: "'Times New Roman', Times, serif",
+  fontSize: "0.9rem",
+  fontWeight: "700",
+  letterSpacing: "0.04em",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+  boxShadow: "0 3px 14px rgba(2, 65, 16, 0.30)",
+  textDecoration: "none",
+  outline: "none",
+  WebkitAppearance: "none",
+  appearance: "none",
+  lineHeight: "1",
+  whiteSpace: "nowrap",
+};
+
+const btnDisabledStyle = {
+  ...btnStyle,
+  opacity: "0.5",
+  cursor: "not-allowed",
+  background: "#9ca3af",
+  backgroundColor: "#9ca3af",
+  boxShadow: "none",
+};
+
 export default function OfferRide() {
   const [form, setForm] = useState({
     from: "", to: "", date: "", time: "", endTime: "",
@@ -28,6 +64,7 @@ export default function OfferRide() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [btnHovered, setBtnHovered] = useState(false);
 
   const updateField = (field, value) => {
     setForm((prev) => {
@@ -80,6 +117,13 @@ export default function OfferRide() {
       setLoading(false);
     }
   };
+
+  /* Compute final button style at render time */
+  const computedBtnStyle = loading
+    ? btnDisabledStyle
+    : btnHovered
+      ? { ...btnStyle, background: "#149349", backgroundColor: "#149349", transform: "translateY(-1px)", boxShadow: "0 6px 20px rgba(20, 147, 73, 0.35)" }
+      : btnStyle;
 
   return (
     <div className="offer-page">
@@ -278,7 +322,13 @@ export default function OfferRide() {
 
           {/* Submit */}
           <div className="form-footer">
-            <button className="btn-submit" disabled={loading}>
+            <button
+              className="btn-submit"
+              disabled={loading}
+              style={computedBtnStyle}
+              onMouseEnter={() => setBtnHovered(true)}
+              onMouseLeave={() => setBtnHovered(false)}
+            >
               {loading ? (
                 <><span className="btn-spinner" /> Posting…</>
               ) : (
