@@ -1,9 +1,18 @@
 /* ================================
+   FORCE WHITE BACKGROUND
+================================ */
+html, body {
+  background: #ffffff !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ================================
    GLOBAL WRAPPER
 ================================ */
 .home-wrapper {
   font-family: 'Times New Roman', Times, serif;
-  background: #ffffff;
+  background: #ffffff !important;
   min-height: 200vh;
   color: #1f3b1f;
 }
@@ -925,3 +934,4 @@
   scrollbar-width: auto;
   scrollbar-color: #7d7a7a #1a1a1a;
 }
+

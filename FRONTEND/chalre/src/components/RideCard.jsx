@@ -8,9 +8,14 @@ export default function RideCard({ ride }) {
   const navigate = useNavigate();
   const isFull = Number(ride?.availableSeats) <= 0;
 
-  const goToBooking = () => {
+  const goToBooking = (e) => {
+    e.stopPropagation(); // prevent card click from firing
     if (isFull) return;
     navigate(`/book-ride/${ride.id}`);
+  };
+
+  const goToRideDetails = () => {
+    navigate(`/ridedetails/${ride.id}`);
   };
 
   const getLocationName = (fullLocation) => {
@@ -41,7 +46,7 @@ export default function RideCard({ ride }) {
   const duration = getDuration();
 
   return (
-    <div className={`ride-card ${isFull ? "full" : ""}`}>
+    <div className={`ride-card ${isFull ? "full" : ""}`} onClick={goToRideDetails} style={{ cursor: "pointer" }}>
 
       {/* ── ROW 1: ROUTE TIMELINE ── */}
       <div className="ride-card-header">

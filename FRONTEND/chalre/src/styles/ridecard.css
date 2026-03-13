@@ -207,19 +207,19 @@
 .driver-avatar-wrap {
   position: relative;
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .driver-avatar {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--green-main);
+  border: 1.5px solid var(--green-main);
   display: block;
 }
 
@@ -262,6 +262,8 @@
   /* removed align-self: center — inherits from parent align-items: center */
   margin: 0;
   padding: 0;
+
+  margin-top: 20px;
 }
 
 /* ── FIX: rating sits inline, no self-override ── */
