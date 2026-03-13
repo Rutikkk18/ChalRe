@@ -183,9 +183,10 @@
 .driver-info {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: center;          /* all children centred on the same baseline */
   gap: 10px;
   min-width: 0;
+  flex-wrap: nowrap;            /* force everything onto one line */
 }
 
 .vehicle-icon-wrap {
@@ -202,7 +203,7 @@
 }
 .vehicle-type-icon { width: 16px; height: 16px; }
 
-/* Avatar wrapper — fixed size matching the image so siblings align to its centre */
+/* Avatar wrapper */
 .driver-avatar-wrap {
   position: relative;
   flex-shrink: 0;
@@ -211,7 +212,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  align-self: center;   /* centre inside driver-info row */
 }
 
 .driver-avatar {
@@ -246,10 +246,9 @@
   border-radius: 50%;
   width: 13px;
   height: 13px;
-  /* does not affect flow — stays inside the fixed-size wrapper */
 }
 
-/* Name — perfectly centred in the row */
+/* ── FIX: name sits inline, no self-override ── */
 .driver-name {
   font-family: var(--font-sans);
   font-size: 0.88rem;
@@ -260,18 +259,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
   flex-shrink: 1;
-  align-self: center;
+  /* removed align-self: center — inherits from parent align-items: center */
   margin: 0;
   padding: 0;
 }
 
-/* Rating — perfectly centred in the row */
+/* ── FIX: rating sits inline, no self-override ── */
 .driver-rating {
   display: flex;
   align-items: center;
   gap: 3px;
   flex-shrink: 0;
-  align-self: center;
+  /* removed align-self: center */
 }
 .driver-rating-score {
   font-family: var(--font-sans);
@@ -287,7 +286,7 @@
   line-height: 1;
 }
 
-/* New Driver badge — perfectly centred in the row */
+/* ── FIX: new-driver badge sits inline, no self-override ── */
 .driver-new-badge {
   font-family: var(--font-sans);
   font-size: 0.66rem;
@@ -298,7 +297,7 @@
   border-radius: 20px;
   white-space: nowrap;
   flex-shrink: 0;
-  align-self: center;
+  /* removed align-self: center */
   line-height: 1.4;
   display: inline-flex;
   align-items: center;

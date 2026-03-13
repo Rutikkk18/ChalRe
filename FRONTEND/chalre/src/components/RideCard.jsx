@@ -100,10 +100,10 @@ export default function RideCard({ ride }) {
               )}
             </div>
 
-            {/* Name — standalone, right of avatar */}
+            {/* Name — inline with avatar and rating */}
             <span className="driver-name">{driver.name || "Driver"}</span>
 
-            {/* Rating or New Driver badge — right of name */}
+            {/* Rating or New Driver badge — inline with name */}
             {driver.avgRating > 0 ? (
               <div className="driver-rating">
                 <Star size={12} fill="#f59e0b" color="#f59e0b" />
