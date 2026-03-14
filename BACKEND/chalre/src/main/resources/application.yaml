@@ -9,3 +9,5 @@ razorpay:
   key: ${RAZORPAY_KEY:rzp_test_RuyNYmxgIyvcvI}
   secret: ${RAZORPAY_SECRET:rDGzjV8Iynyni0UrP24eZ4EZ}
   account-number: ${RAZORPAY_ACCOUNT_NUMBER:}
+server:
+  port: ${PORT:8080}
