@@ -505,8 +505,22 @@
   .search-item { flex: 1 1 calc(50% - 5px); min-width: 140px; }
   .search-item.small { flex: 1 1 calc(50% - 5px); max-width: none; }
   .sr-divider { display: none; }
-  .sr-actions { width: 100%; justify-content: flex-start; }
-  .btn-search, .btn-reset { flex: 1; }
+  .sr-actions { width: 100%; justify-content: center; gap: 10px; }
+  /* FIX: Search & Reset buttons — pill shape, auto width, not full-width */
+  .btn-search {
+    width: auto !important;
+    min-width: 110px !important;
+    max-width: 160px !important;
+    padding: 0 24px !important;
+    border-radius: 25px !important;
+    height: 44px !important;
+    flex: 0 0 auto !important;
+  }
+  .btn-reset {
+    width: auto !important;
+    min-width: 80px !important;
+    flex: 0 0 auto !important;
+  }
   .search-content-layout { grid-template-columns: 1fr; gap: 20px; }
   .filters-sidebar { width: 100%; position: static; max-height: none; order: -1; background: #ffffff; border-radius: var(--radius-lg); padding: 16px; border: 1px solid #dee2e6; }
   .filters-sidebar.hidden-mobile { display: none; }
@@ -518,8 +532,22 @@
   .search-form { flex-direction: column; padding: 16px; gap: 0; }
   .search-item, .search-item.small { width: 100%; flex: 1 1 100%; max-width: 100%; border-bottom: 1px solid var(--border-soft); }
   .sr-divider { display: none; }
-  .sr-actions { width: 100%; flex-direction: column; gap: 8px; padding: 12px 0 0; }
-  .btn-search, .btn-reset { width: 100%; text-align: center; }
+  .sr-actions { width: 100%; flex-direction: row; justify-content: center; gap: 10px; padding: 12px 0 0; }
+  /* FIX: Keep pill shape on smallest screens */
+  .btn-search {
+    width: auto !important;
+    min-width: 110px !important;
+    max-width: 150px !important;
+    padding: 0 24px !important;
+    border-radius: 25px !important;
+    height: 44px !important;
+    flex: 0 0 auto !important;
+  }
+  .btn-reset {
+    width: auto !important;
+    min-width: 70px !important;
+    flex: 0 0 auto !important;
+  }
   .search-body { padding: 16px 12px; }
   .results-container { padding: 16px; }
   .filters-sidebar { padding: 16px; }

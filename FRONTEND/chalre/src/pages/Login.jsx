@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import { handleError } from "../utils/errorHandler";
-import { auth, googleProvider } from "../../Firebfase"; // ✅ ADDED: googleProvider
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth"; // ✅ ADDED: signInWithPopup
+import { auth, googleProvider } from "../../Firebfase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { Eye, EyeOff } from "lucide-react";
 import "../styles/auth.css";
 import { sendPasswordResetEmail } from "firebase/auth";
@@ -101,7 +101,6 @@ export default function Login() {
     }
   };
 
-  // ✅ ADDED: Google login handler
   const handleGoogleLogin = async () => {
     setError("");
     setLoading(true);
@@ -230,7 +229,6 @@ export default function Login() {
         </div>
 
         <div className="auth-flex-row">
-          {/* ✅ ADDED: onClick wired to handleGoogleLogin */}
           <button className="auth-btn google" type="button" onClick={handleGoogleLogin} disabled={loading}>
             <svg
               version="1.1"
@@ -251,7 +249,8 @@ export default function Login() {
             </svg>
             Google
           </button>
-          <button className="auth-btn apple" type="button">
+          {/* ✅ UPDATED: Apple button replaced with Coming Soon */}
+          <button className="auth-btn apple" type="button" disabled style={{ opacity: 0.5, cursor: 'not-allowed', position: 'relative' }}>
             <svg
               version="1.1"
               height="20"
@@ -272,7 +271,7 @@ export default function Login() {
                 </g>
               </g>
             </svg>
-            Apple
+            Apple &nbsp;<span style={{ fontSize: '10px', color: '#888' }}>Coming Soon</span>
           </button>
         </div>
       </form>
