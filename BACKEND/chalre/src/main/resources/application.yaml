@@ -1,4 +1,5 @@
 razorpay:
+  # this rzorpay is not used in our project it just here for demo
   # Configuration Priority:
   # 1. Environment variables (RAZORPAY_KEY, RAZORPAY_SECRET, RAZORPAY_ACCOUNT_NUMBER) - Highest priority
   # 2. Values below - Fallback for development only

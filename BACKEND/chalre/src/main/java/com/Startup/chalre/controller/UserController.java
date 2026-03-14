@@ -63,6 +63,21 @@ public class UserController {
         }
     }
 
+    // ✅ ADDED: Google login endpoint — reuses exact same Firebase token flow
+    @PostMapping("/google-login")
+    public ResponseEntity<?> googleLogin(@RequestBody FirebaseLoginRequest request) {
+        try {
+            String token = userService.loginWithFirebaseToken(request);
+            return ResponseEntity.ok(Collections.singletonMap("token", token));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(Authentication authentication) {
 
@@ -73,7 +88,6 @@ public class UserController {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(user);
     }
-
 
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(
@@ -88,7 +102,6 @@ public class UserController {
         return ResponseEntity.ok(updated);
     }
 
-    // ✅ FIXED: Add / Update UPI ID (NO save() call)
     @PostMapping("/upi")
     public ResponseEntity<?> updateUpiId(
             @RequestBody Map<String, String> body,
@@ -114,5 +127,4 @@ public class UserController {
                 "upiId", updated.getUpiId()
         ));
     }
-
 }

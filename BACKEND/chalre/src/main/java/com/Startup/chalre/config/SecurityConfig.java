@@ -33,10 +33,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // ✅ Disable CSRF (JWT based)
+                // ✅ Disable CSRF (JWT based) — UNCHANGED
                 .csrf(csrf -> csrf.disable())
 
-                // ✅ Enable CORS
+                // ✅ Enable CORS — UNCHANGED
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // ✅ Authorization
@@ -45,7 +45,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/auth/register",
-                                "/api/auth/firebase-login"
+                                "/api/auth/firebase-login",
+                                "/api/auth/google-login"   // ✅ ADDED: permit Google login
                         ).permitAll()
 
                         .requestMatchers("/api/locations/**").permitAll()
@@ -59,48 +60,47 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // ✅ Stateless JWT
+                // ✅ Stateless JWT — UNCHANGED
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // ✅ JWT Filter
+                // ✅ JWT Filter — UNCHANGED
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // ✅ GLOBAL CORS CONFIG
+    // ✅ GLOBAL CORS CONFIG — UNCHANGED
     @Bean
-public CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
 
-    CorsConfiguration config = new CorsConfiguration();
+        CorsConfiguration config = new CorsConfiguration();
 
-    config.setAllowedOriginPatterns(List.of(
-            "https://chalre.vercel.app",
-            "http://localhost:*"
-    ));
+        config.setAllowedOriginPatterns(List.of(
+                "https://chalre.vercel.app",
+                "http://localhost:*"
+        ));
 
-    config.setAllowedMethods(List.of(
-            "GET", "POST", "PUT", "DELETE", "OPTIONS"
-    ));
+        config.setAllowedMethods(List.of(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS"
+        ));
 
-    config.setAllowedHeaders(List.of(
-            "Authorization",
-            "Content-Type",
-            "Accept"
-    ));
+        config.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type",
+                "Accept"
+        ));
 
-    config.setAllowCredentials(true);
-    config.setMaxAge(3600L);
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
 
-    UrlBasedCorsConfigurationSource source =
-            new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", config);
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
 
-    return source;
-}
-
+        return source;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

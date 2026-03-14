@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, GoogleAuthProvider } from "firebase/auth"; // ✅ ADDED: GoogleAuthProvider
 import { getMessaging } from "firebase/messaging";
 
 const firebaseConfig = {
@@ -11,6 +11,8 @@ const firebaseConfig = {
   appId: "1:176731769940:web:4fdcd92bdc6005580bb1c1",
   measurementId: "G-B4353LW6QT"
 };
+
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const messaging = getMessaging(app);
+export const googleProvider = new GoogleAuthProvider(); // ✅ ADDED

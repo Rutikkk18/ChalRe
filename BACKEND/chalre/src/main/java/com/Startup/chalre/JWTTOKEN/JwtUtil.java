@@ -20,11 +20,22 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // Generate token with role
+    // Generate token with role — UNCHANGED
     public String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
-                .claim("role", user.getRole())   // ⭐ add role
+                .claim("role", user.getRole())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    // ✅ ADDED: Generate token directly from email + role (used after Google login)
+    public String generateTokenFromEmailAndRole(String email, String role) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -41,7 +52,7 @@ public class JwtUtil {
                 .getSubject();
     }
 
-    // ⭐ Extract role claim
+    // Extract role claim — UNCHANGED
     public String extractRole(String token) {
         return Jwts
                 .parserBuilder()
