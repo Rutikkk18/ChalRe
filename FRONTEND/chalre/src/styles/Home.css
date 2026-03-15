@@ -149,64 +149,78 @@ html, body {
 @media (max-width: 768px) {
   .navbar {
     height: auto;
-    min-height: 4.5rem;
-    padding: 14px 16px;
+    min-height: unset;
+    padding: 10px 14px;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    gap: 6px;
   }
   .logo {
     width: 100%;
     text-align: center;
-    font-size: 24px;
-    margin-bottom: 8px;
+    font-size: 20px;
+    margin-bottom: 2px;
   }
   .nav-links {
     width: 100%;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: center;
   }
   .nav-links a {
-    font-size: 14px;
+    font-size: 12px;
+    white-space: nowrap;
+    padding: 4px 6px;
   }
-  /* FIX: Register & Logout buttons — auto width, pill shape, not full-width */
   .register-btn,
   .logout-btn {
     width: auto !important;
-    max-width: 180px;
-    min-width: 110px;
-    padding: 10px 24px;
-    font-size: 14px;
-    border-radius: 25px;
+    min-width: unset !important;
+    max-width: unset !important;
+    padding: 7px 14px !important;
+    font-size: 12px !important;
+    border-radius: 20px !important;
     align-self: center;
+    box-shadow: none;
   }
 }
 
 @media (max-width: 480px) {
   .navbar {
-    padding: 12px;
+    padding: 8px 10px;
     border-radius: 10px;
+    gap: 4px;
   }
   .logo {
-    font-size: 20px;
+    font-size: 18px;
+    margin-bottom: 2px;
   }
   .nav-links {
-    gap: 8px;
+    gap: 4px;
+    flex-wrap: nowrap;
   }
   .nav-links a {
-    font-size: 13px;
-    padding: 6px 8px;
+    font-size: 11px;
+    padding: 4px 5px;
   }
-  /* FIX: Keep pill shape on small screens too */
   .register-btn,
   .logout-btn {
-    width: auto !important;
-    max-width: 180px;
-    min-width: 110px;
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 25px;
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+    border-radius: 16px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .nav-links a {
+    font-size: 10px;
+    padding: 3px 4px;
+  }
+  .register-btn,
+  .logout-btn {
+    padding: 5px 10px !important;
+    font-size: 10px !important;
   }
 }
 
