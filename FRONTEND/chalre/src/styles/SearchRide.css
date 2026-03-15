@@ -500,7 +500,7 @@
 }
 
 @media (max-width: 900px) {
-  .search-hero { padding: clamp(80px, 11vw, 100px) 16px 20px; }
+  .search-hero { padding: 160px 16px 20px; }
   .search-form { flex-wrap: wrap; border-radius: 12px; padding: 12px 16px; gap: 10px; }
   .search-item { flex: 1 1 calc(50% - 5px); min-width: 140px; }
   .search-item.small { flex: 1 1 calc(50% - 5px); max-width: none; }
@@ -528,7 +528,7 @@
 }
 
 @media (max-width: 600px) {
-  .search-hero { padding: 12px; }
+  .search-hero { padding: 170px 12px 20px; }
   .search-form { flex-direction: column; padding: 16px; gap: 0; }
   .search-item, .search-item.small { width: 100%; flex: 1 1 100%; max-width: 100%; border-bottom: 1px solid var(--border-soft); }
   .sr-divider { display: none; }

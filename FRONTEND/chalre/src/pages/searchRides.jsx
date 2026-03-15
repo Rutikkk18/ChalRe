@@ -42,6 +42,114 @@ export default function SearchRides() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  /**
+   * Determines vehicle category for a ride.
+   * Priority 1: ride.vehicleType set explicitly ("car" | "bike") — covers drivers who
+   *             selected only Car/Bike without picking a sub-model.
+   * Priority 2: fall back to carType sub-model to infer category — old rides.
+   */
+  const getRideVehicleCategory = (ride) => {
+    // vehicleType is set from OfferRide as "car" or "bike" directly
+    if (ride.vehicleType && ride.vehicleType.trim() !== "") {
+      return ride.vehicleType.toLowerCase().trim();
+    }
+    // Infer from sub-model for rides created before vehicleType was saved
+    const subModel = (ride.carType || "").toLowerCase().trim();
+    if (carSubModels.includes(subModel)) return "car";
+    if (bikeSubModels.includes(subModel)) return "bike";
+    return "";
+  };
+
+  /**
+   * applyClientFilters — accepts both the rides array AND current filter values
+   * explicitly, so it never reads stale closure values when called from async
+   * functions like performSearch / fetchAllRides.
+   */
+  const applyClientFilters = (
+    rides,
+    filters = {}
+  ) => {
+    const {
+      minPrice:        fMinPrice        = minPrice,
+      maxPrice:        fMaxPrice        = maxPrice,
+      vehicleCategory: fVehicleCategory = vehicleCategory,
+      carType:         fCarType         = carType,
+      seatsAvailable:  fSeatsAvailable  = seatsAvailable,
+      rideType:        fRideType        = rideType,
+      driverRating:    fDriverRating    = driverRating,
+      timePreference:  fTimePreference  = timePreference,
+    } = filters;
+
+    let filtered = [...rides];
+
+    if (fMinPrice) {
+      const min = parseFloat(fMinPrice);
+      if (!isNaN(min)) filtered = filtered.filter((ride) => Number(ride.price) >= min);
+    }
+    if (fMaxPrice) {
+      const max = parseFloat(fMaxPrice);
+      if (!isNaN(max)) filtered = filtered.filter((ride) => Number(ride.price) <= max);
+    }
+
+    // Filter by vehicle category (car / bike)
+    // Works whether driver picked only "Car"/"Bike" OR also chose a sub-model
+    if (fVehicleCategory) {
+      filtered = filtered.filter(
+        (ride) => getRideVehicleCategory(ride) === fVehicleCategory.toLowerCase()
+      );
+    }
+
+    // Filter by vehicle sub-model (only applied when a sub-model is explicitly chosen)
+    if (fCarType) {
+      filtered = filtered.filter((ride) => {
+        const model = (ride.carType || "").toLowerCase().trim();
+        return model === fCarType.toLowerCase().trim();
+      });
+    }
+
+    if (fSeatsAvailable) {
+      if (fSeatsAvailable === "1") filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 1);
+      else if (fSeatsAvailable === "2") filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 2);
+      else if (fSeatsAvailable === "3+") filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 3);
+    }
+
+    if (fRideType.length > 0) {
+      filtered = filtered.filter((ride) => {
+        if (ride.bookingType) {
+          if (fRideType.includes("instant") && ride.bookingType === "INSTANT") return true;
+          if (fRideType.includes("request") && ride.bookingType === "REQUEST") return true;
+          return false;
+        }
+        return true;
+      });
+    }
+
+    if (fDriverRating.length > 0) {
+      filtered = filtered.filter((ride) => {
+        if (ride.driver?.rating || ride.driver?.averageRating) {
+          const rating = Number(ride.driver.rating || ride.driver.averageRating);
+          if (fDriverRating.includes("4") && rating >= 4) return true;
+          if (fDriverRating.includes("3") && rating >= 3 && rating < 4) return true;
+          return false;
+        }
+        return true;
+      });
+    }
+
+    if (fTimePreference.length > 0) {
+      filtered = filtered.filter((ride) => {
+        if (!ride.time) return false;
+        const [hours] = ride.time.split(":").map(Number);
+        if (fTimePreference.includes("morning") && hours >= 6 && hours < 12) return true;
+        if (fTimePreference.includes("afternoon") && hours >= 12 && hours < 18) return true;
+        if (fTimePreference.includes("evening") && hours >= 18) return true;
+        return false;
+      });
+    }
+
+    setResults(filtered);
+  };
+
   const performSearch = async (fromVal, toVal, dateVal, seatsVal) => {
     setLoading(true);
     setError("");
@@ -70,7 +178,11 @@ export default function SearchRides() {
       );
       
       setAllRides(fetchedRides);
-      applyClientFilters(fetchedRides);
+      // Pass current filter state explicitly to avoid stale closure
+      applyClientFilters(fetchedRides, {
+        minPrice, maxPrice, vehicleCategory, carType,
+        seatsAvailable, rideType, driverRating, timePreference,
+      });
     } catch (err) {
       console.error(err);
       setError("Error while searching rides. Try again.");
@@ -89,7 +201,11 @@ export default function SearchRides() {
       );
       
       setAllRides(fetchedRides);
-      applyClientFilters(fetchedRides);
+      // Pass current filter state explicitly to avoid stale closure
+      applyClientFilters(fetchedRides, {
+        minPrice, maxPrice, vehicleCategory, carType,
+        seatsAvailable, rideType, driverRating, timePreference,
+      });
     } catch (err) {
       console.error(err);
       setError("Failed to fetch rides.");
@@ -126,93 +242,13 @@ export default function SearchRides() {
     performSearch(startLocation, endLocation, date, seats);
   };
 
-  /**
-   * Determines vehicle category for a ride.
-   * Priority 1: ride.vehicleType set explicitly ("car" | "bike") — new rides after fix.
-   * Priority 2: fall back to carType sub-model to infer category — old rides.
-   */
-  const getRideVehicleCategory = (ride) => {
-    if (ride.vehicleType) return ride.vehicleType.toLowerCase();
-    // Infer from sub-model for rides created before the fix
-    const subModel = (ride.carType || "").toLowerCase();
-    if (carSubModels.includes(subModel)) return "car";
-    if (bikeSubModels.includes(subModel)) return "bike";
-    return "";
-  };
-
-  const applyClientFilters = (rides) => {
-    let filtered = [...rides];
-
-    if (minPrice) {
-      const min = parseFloat(minPrice);
-      if (!isNaN(min)) filtered = filtered.filter((ride) => Number(ride.price) >= min);
-    }
-    if (maxPrice) {
-      const max = parseFloat(maxPrice);
-      if (!isNaN(max)) filtered = filtered.filter((ride) => Number(ride.price) <= max);
-    }
-
-    // Filter by vehicle category (car / bike) — uses both vehicleType and carType fallback
-    if (vehicleCategory) {
-      filtered = filtered.filter(
-        (ride) => getRideVehicleCategory(ride) === vehicleCategory.toLowerCase()
-      );
-    }
-
-    // Filter by vehicle sub-model
-    if (carType) {
-      filtered = filtered.filter((ride) => {
-        const model = (ride.carType || "").toLowerCase();
-        return model === carType.toLowerCase();
-      });
-    }
-
-    if (seatsAvailable) {
-      if (seatsAvailable === "1") filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 1);
-      else if (seatsAvailable === "2") filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 2);
-      else if (seatsAvailable === "3+") filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 3);
-    }
-
-    if (rideType.length > 0) {
-      filtered = filtered.filter((ride) => {
-        if (ride.bookingType) {
-          if (rideType.includes("instant") && ride.bookingType === "INSTANT") return true;
-          if (rideType.includes("request") && ride.bookingType === "REQUEST") return true;
-          return false;
-        }
-        return true;
-      });
-    }
-
-    if (driverRating.length > 0) {
-      filtered = filtered.filter((ride) => {
-        if (ride.driver?.rating || ride.driver?.averageRating) {
-          const rating = Number(ride.driver.rating || ride.driver.averageRating);
-          if (driverRating.includes("4") && rating >= 4) return true;
-          if (driverRating.includes("3") && rating >= 3 && rating < 4) return true;
-          return false;
-        }
-        return true;
-      });
-    }
-
-    if (timePreference.length > 0) {
-      filtered = filtered.filter((ride) => {
-        if (!ride.time) return false;
-        const [hours] = ride.time.split(":").map(Number);
-        if (timePreference.includes("morning") && hours >= 6 && hours < 12) return true;
-        if (timePreference.includes("afternoon") && hours >= 12 && hours < 18) return true;
-        if (timePreference.includes("evening") && hours >= 18) return true;
-        return false;
-      });
-    }
-
-    setResults(filtered);
-  };
-
+  // Re-apply filters whenever any filter state changes
   useEffect(() => {
     if (allRides.length > 0) {
-      applyClientFilters(allRides);
+      applyClientFilters(allRides, {
+        minPrice, maxPrice, vehicleCategory, carType,
+        seatsAvailable, rideType, driverRating, timePreference,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seatsAvailable, rideType, driverRating, timePreference, minPrice, maxPrice, vehicleCategory, carType]);
