@@ -273,7 +273,7 @@ select.field-input {
   font-weight: 700 !important;
   letter-spacing: 0.04em !important;
   border: none !important;
-  border-radius: 8px !important;
+  border-radius: 12px !important;
   cursor: pointer !important;
   box-shadow: 0 3px 14px rgba(2, 65, 16, 0.30) !important;
   transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s !important;
@@ -382,10 +382,12 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   .btn-submit,
   .offer-page .offer-zone .form-footer .btn-submit {
     width: auto !important;
-    min-width: 160px !important;
-    max-width: 220px !important;
-    border-radius: 25px !important;
+    min-width: 130px !important;
+    max-width: 180px !important;
+    border-radius: 12px !important;
     justify-content: center !important;
+    display: block !important;
+    margin: 0 auto !important;
   }
   .btn-submit:hover:not(:disabled),
   .offer-page .offer-zone .form-footer .btn-submit:hover:not(:disabled) {
