@@ -10,7 +10,8 @@
 /* ---------- WRAPPER ---------- */
 .profile-wrapper {
   max-width: min(600px, 100%);
-  margin: clamp(80px, 12vw, 100px) auto clamp(20px, 4vw, 30px);
+  /* FIX: was clamp(80px, 12vw, 100px) — MainLayout handles navbar clearance */
+  margin: 16px auto clamp(20px, 4vw, 30px);
   padding: clamp(16px, 3vw, 20px);
   animation: fadeIn 0.5s ease;
 }
@@ -431,7 +432,8 @@
 /* ---------- TABLET RESPONSIVE ---------- */
 @media (max-width: 768px) {
   .profile-wrapper {
-    margin-top: 80px;
+    /* FIX: was margin-top: 80px */
+    margin-top: 16px;
     padding: 16px;
   }
 
@@ -453,7 +455,8 @@
 /* ---------- MOBILE RESPONSIVE ---------- */
 @media (max-width: 640px) {
   .profile-wrapper {
-    margin: 70px 20px 20px;
+    /* FIX: was margin: 70px 20px 20px */
+    margin: 16px 20px 20px;
     padding: 10px;
   }
 
@@ -485,7 +488,8 @@
 /* ---------- SMALL MOBILE ---------- */
 @media (max-width: 400px) {
   .profile-wrapper {
-    margin: 60px 16px 16px;
+    /* FIX: was margin: 60px 16px 16px */
+    margin: 16px 16px 16px;
   }
 
   .profile-card {
@@ -509,7 +513,8 @@
 /* ---------- LANDSCAPE MODE ---------- */
 @media (max-height: 600px) and (orientation: landscape) {
   .profile-wrapper {
-    margin-top: 60px;
+    /* FIX: was margin-top: 60px */
+    margin-top: 16px;
   }
 
   .profile-card {

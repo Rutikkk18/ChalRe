@@ -7,7 +7,6 @@
 html, body { overflow-x: hidden; margin: 0; padding: 0; }
 #root { background: transparent !important; }
 
-/* ── Kill any global blue focus rings inside offer page ── */
 .offer-page input:focus,
 .offer-page input:focus-visible,
 .offer-page select:focus,
@@ -19,7 +18,6 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   outline: none !important;
   outline-offset: 0 !important;
 }
-/* Kill browser default blue border on date/time inputs */
 .offer-page input[type="date"],
 .offer-page input[type="time"],
 .offer-page input[type="number"] {
@@ -36,19 +34,19 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
 }
 
-/* ─────────────────────────────────────────
-   PAGE — full bleed background image
-───────────────────────────────────────── */
 .offer-page {
   width: 100%;
   min-height: 100vh;
   background-image: url('../assets/ride-sharing-scene.png');
   background-size: cover;
-  background-position: center center;
+  background-position: center top;
   background-repeat: no-repeat;
   background-attachment: scroll;
   font-family: 'Times New Roman', Times, serif;
   animation: pageIn 0.5s ease both;
+  /* FIX: pull page up so bg image fills the navbar strip — no white gap */
+  margin-top: -82px;
+  padding-top: 82px;
 }
 
 @keyframes pageIn {
@@ -56,10 +54,8 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─────────────────────────────────────────
-   ZONE — the left white area of the image
-───────────────────────────────────────── */
 .offer-zone {
+  /* FIX: was clamp(72px, 9vw, 92px) — MainLayout now handles navbar clearance */
   padding-top: 16px;
   width: clamp(420px, 52vw, 720px);
   padding-left: clamp(32px, 4.5vw, 64px);
@@ -70,9 +66,6 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   flex-direction: column;
 }
 
-/* ─────────────────────────────────────────
-   PAGE HEADING
-───────────────────────────────────────── */
 .offer-heading {
   display: flex;
   align-items: center;
@@ -114,9 +107,6 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   margin-top: 3px;
 }
 
-/* ─────────────────────────────────────────
-   THIN RULE
-───────────────────────────────────────── */
 .offer-divider {
   width: 100%;
   height: 1px;
@@ -124,9 +114,6 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   margin: 14px 0 18px;
 }
 
-/* ─────────────────────────────────────────
-   BANNERS
-───────────────────────────────────────── */
 .banner {
   margin-bottom: 14px;
   padding: 9px 13px;
@@ -145,43 +132,14 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   to   { opacity: 1; transform: translateX(0); }
 }
 
-/* ─────────────────────────────────────────
-   FORM
-───────────────────────────────────────── */
-.offer-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+.offer-form { display: flex; flex-direction: column; gap: 20px; }
 .offer-form.loading { opacity: 0.5; pointer-events: none; }
 
-/* ─────────────────────────────────────────
-   ROWS — 2 columns
-───────────────────────────────────────── */
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: start;
-}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.form-row-full { grid-template-columns: 1fr; }
 
-.form-row-full {
-  grid-template-columns: 1fr;
-}
+.form-col { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
 
-/* ─────────────────────────────────────────
-   FIELD COLUMNS
-───────────────────────────────────────── */
-.form-col {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-}
-
-/* ─────────────────────────────────────────
-   LABELS
-───────────────────────────────────────── */
 .field-label {
   display: flex;
   align-items: center;
@@ -195,14 +153,7 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
 }
 .field-label svg { flex-shrink: 0; opacity: 0.7; }
 
-.opt-tag {
-  font-weight: 400;
-  color: #9ca3af;
-  text-transform: none;
-  letter-spacing: 0;
-  font-style: italic;
-  font-size: 0.65rem;
-}
+.opt-tag { font-weight: 400; color: #9ca3af; text-transform: none; letter-spacing: 0; font-style: italic; font-size: 0.65rem; }
 
 .auto-tag {
   display: inline-flex;
@@ -219,9 +170,6 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   margin-left: 4px;
 }
 
-/* ─────────────────────────────────────────
-   INPUTS
-───────────────────────────────────────── */
 .field-input {
   width: 100%;
   padding: 9px 12px;
@@ -239,11 +187,7 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   accent-color: #059669;
 }
 
-.field-input::placeholder {
-  color: #9ca3af;
-  font-style: italic;
-  font-size: 0.82rem;
-}
+.field-input::placeholder { color: #9ca3af; font-style: italic; font-size: 0.82rem; }
 
 .field-input:focus {
   border-color: #059669 !important;
@@ -253,12 +197,8 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
 }
 
-.field-input:focus-visible {
-  outline: none !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
-}
+.field-input:focus-visible { outline: none !important; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important; }
 
-/* LocationAutocomplete inner input fallback */
 .form-col input[type="text"],
 .form-col input:not([type="date"]):not([type="time"]):not([type="number"]) {
   width: 100%;
@@ -288,7 +228,6 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12) !important;
 }
 
-/* select arrow */
 select.field-input {
   cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23059669' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
@@ -298,20 +237,9 @@ select.field-input {
   padding-right: 26px;
 }
 
-.field-textarea {
-  min-height: 64px;
-  resize: none;
-  line-height: 1.55;
-}
+.field-textarea { min-height: 64px; resize: none; line-height: 1.55; }
 
-/* ─────────────────────────────────────────
-   VEHICLE TOGGLE
-───────────────────────────────────────── */
-.vehicle-toggle {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
+.vehicle-toggle { display: flex; align-items: center; gap: 7px; }
 
 .vtoggle-btn {
   padding: 6px 12px;
@@ -326,35 +254,11 @@ select.field-input {
   transition: all 0.15s ease;
   white-space: nowrap;
 }
-.vtoggle-btn:hover {
-  border-color: #10b981;
-  background: rgba(240, 253, 244, 0.85);
-  color: #059669;
-}
-.vtoggle-btn.active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border-color: #10b981;
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
-}
+.vtoggle-btn:hover { border-color: #10b981; background: rgba(240, 253, 244, 0.85); color: #059669; }
+.vtoggle-btn.active { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-color: #10b981; color: #fff; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25); }
 
-.vehicle-model-select {
-  flex: 1;
-  padding: 7px 24px 7px 10px;
-  font-size: 0.82rem;
-  border-radius: 8px;
-  border: 1.5px solid rgba(16, 185, 129, 0.35);
-  background: rgba(255, 255, 255, 0.78);
-}
+.vehicle-model-select { flex: 1; padding: 7px 24px 7px 10px; font-size: 0.82rem; border-radius: 8px; border: 1.5px solid rgba(16, 185, 129, 0.35); background: rgba(255, 255, 255, 0.78); }
 
-/* ─────────────────────────────────────────
-   SUBMIT BUTTON — maximum specificity lock
-   Uses every technique to prevent any global
-   CSS (Tailwind, Bootstrap, resets, etc.)
-   from overriding these styles.
-───────────────────────────────────────── */
-
-/* Layer 1 — base class */
 .btn-submit {
   all: unset !important;
   display: inline-flex !important;
@@ -381,7 +285,6 @@ select.field-input {
   white-space: nowrap !important;
 }
 
-/* Layer 2 — scoped to offer-page for extra specificity */
 .offer-page .offer-zone .form-footer .btn-submit,
 .offer-page .offer-zone .offer-form .form-footer .btn-submit,
 div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit {
@@ -396,7 +299,6 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit 
   appearance: none !important;
 }
 
-/* Layer 3 — hover */
 .btn-submit:hover:not(:disabled),
 .offer-page .offer-zone .form-footer .btn-submit:hover:not(:disabled),
 div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:hover:not(:disabled) {
@@ -407,7 +309,6 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   box-shadow: 0 6px 20px rgba(20, 147, 73, 0.35) !important;
 }
 
-/* Layer 4 — focus / focus-visible */
 .btn-submit:focus,
 .btn-submit:focus-visible,
 .offer-page .offer-zone .form-footer .btn-submit:focus,
@@ -422,7 +323,6 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   border: none !important;
 }
 
-/* Layer 5 — active */
 .btn-submit:active:not(:disabled),
 .offer-page .offer-zone .form-footer .btn-submit:active:not(:disabled),
 div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:active:not(:disabled) {
@@ -432,7 +332,6 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   color: #ffffff !important;
 }
 
-/* Layer 6 — disabled */
 .btn-submit:disabled,
 .offer-page .offer-zone .form-footer .btn-submit:disabled,
 div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:disabled {
@@ -445,12 +344,7 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   transform: none !important;
 }
 
-/* ─────────────────────────────────────────
-   SUBMIT FOOTER WRAPPER
-───────────────────────────────────────── */
-.form-footer {
-  margin-top: 4px;
-}
+.form-footer { margin-top: 4px; }
 
 .btn-spinner {
   display: inline-block !important;
@@ -464,9 +358,6 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ─────────────────────────────────────────
-   TABLET ≤ 900px
-───────────────────────────────────────── */
 @media (max-width: 900px) {
   .offer-page { background-position: 70% center; }
   .offer-zone {
@@ -474,21 +365,17 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
     max-width: 640px;
     padding-left: clamp(20px, 5vw, 40px);
     padding-right: clamp(20px, 5vw, 40px);
+    /* FIX: was clamp(72px, 9vw, 90px) */
     padding-top: 16px;
   }
   .form-row { grid-template-columns: 1fr 1fr; gap: 16px; }
 }
 
-/* ─────────────────────────────────────────
-   MOBILE ≤ 540px
-───────────────────────────────────────── */
 @media (max-width: 540px) {
-  .offer-page {
-    background-image: none;
-    background-color: #f0fdf4;
-  }
+  .offer-page { background-image: none; background-color: #f0fdf4; margin-top: 0; padding-top: 0; }
   .offer-zone {
     width: 100%;
+    /* FIX: was clamp(72px, 9vw, 88px) 18px 48px */
     padding: 16px 18px 48px;
   }
   .form-row { grid-template-columns: 1fr; }
@@ -503,9 +390,6 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   }
 }
 
-/* ─────────────────────────────────────────
-   REDUCE MOTION
-───────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .offer-page, .banner { animation: none; }
   .btn-submit,
@@ -516,9 +400,6 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   .btn-spinner { animation: none !important; }
 }
 
-/* ─────────────────────────────────────────
-   PRINT
-───────────────────────────────────────── */
 @media print {
   .offer-page { background-image: none; background-color: #fff; }
   .btn-submit { display: none !important; }
