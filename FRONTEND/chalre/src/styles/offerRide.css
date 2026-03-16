@@ -381,7 +381,10 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   .form-row { grid-template-columns: 1fr; }
   .btn-submit,
   .offer-page .offer-zone .form-footer .btn-submit {
-    width: 100% !important;
+    width: auto !important;
+    min-width: 160px !important;
+    max-width: 220px !important;
+    border-radius: 25px !important;
     justify-content: center !important;
   }
   .btn-submit:hover:not(:disabled),

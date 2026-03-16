@@ -250,7 +250,8 @@ html, body {
 .hero {
   margin-top: 0;
   text-align: center;
-  padding: clamp(40px, 8vw, 90px) 20px clamp(280px, 38vw, 380px);
+  /* clamp: 16px on small mobile → scales up to 60px on desktop — keeps content clear of navbar on all sizes */
+  padding: clamp(16px, 5vw, 60px) 20px clamp(280px, 38vw, 380px);
   color: #145611;
   background-image: url("/hero-banner.png");
   background-size: cover;
@@ -918,7 +919,7 @@ html, body {
 
 @media (max-width: 480px) {
   .hero {
-    padding: 30px 15px 0;
+    padding: 16px 15px 0;
     min-height: clamp(360px, 100vw, 500px);
   }
   .features {

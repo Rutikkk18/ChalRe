@@ -36,54 +36,44 @@ export default function ProfilePage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ LOCAL FILE UPLOAD
- const handleImageUpload = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  setError("");
-  setSuccess("");
+    setError("");
+    setSuccess("");
 
-  if (!file.type.startsWith("image/")) {
-    setError("Please select a valid image file");
-    return;
-  }
+    if (!file.type.startsWith("image/")) {
+      setError("Please select a valid image file");
+      return;
+    }
 
-  if (file.size > 5 * 1024 * 1024) {
-    setError("Image size must be less than 5MB");
-    return;
-  }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image size must be less than 5MB");
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const formData = new FormData();
-    formData.append("image", file);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
 
-    const res = await api.post(
-      "/upload/profile-image",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" }
-      }
-    );
+      const res = await api.post(
+        "/upload/profile-image",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
-    console.log("Uploaded image URL:", res.data.imageUrl);
-
-    setForm((prev) => ({
-      ...prev,
-      profileImage: res.data.imageUrl
-    }));
-
-    setSuccess("Profile image uploaded successfully");
-  } catch (err) {
-    console.error(err);
-    setError("Failed to upload image");
-  } finally {
-    setLoading(false);
-  }
-};
-
+      setForm((prev) => ({ ...prev, profileImage: res.data.imageUrl }));
+      setSuccess("Profile image uploaded successfully");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to upload image");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -100,7 +90,6 @@ export default function ProfilePage() {
 
       setUser(res.data);
       setSuccess("Profile updated successfully!");
-
       setTimeout(() => navigate("/dashboard"), 1500);
     } catch (err) {
       console.error(err);
@@ -117,87 +106,128 @@ export default function ProfilePage() {
   return (
     <div className="profile-wrapper">
       <div className="profile-card">
-        <div className="profile-header">
-          <h2>My Profile</h2>
-          <button className="btn-close" onClick={() => navigate("/dashboard")}>
-            <X size={20} />
-          </button>
+
+        {/* ── LEFT IDENTITY PANEL ── */}
+        <div className="profile-left">
+
+          {/* Avatar */}
+          <div className="profile-image-section">
+            <div className="image-container">
+              <img
+                src={form.profileImage || "/profileimage.png"}
+                alt="Profile"
+                className="profile-avatar"
+              />
+              <label className="image-upload-label">
+                <Camera size={16} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  hidden
+                  disabled={loading}
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* Name + email */}
+          <div className="profile-identity">
+            <p className="profile-identity-name">{form.name || "Your Name"}</p>
+            <p className="profile-identity-email">{form.email}</p>
+
+            <div className="profile-left-divider" />
+
+            {/* Info pills */}
+            <div className="profile-left-info">
+              <div className="profile-left-pill">
+                <Mail size={15} />
+                {form.email}
+              </div>
+              {form.phone && (
+                <div className="profile-left-pill">
+                  <Phone size={15} />
+                  {form.phone}
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
 
-        {/* Profile Image */}
-        <div className="profile-image-section">
-          <div className="image-container">
-                      <img
-                  src={form.profileImage || "/profileimage.png"}
-                  alt="Profile"
-                  className="profile-avatar"
-                />
+        {/* ── RIGHT FORM PANEL ── */}
+        <div className="profile-right">
 
-            <label className="image-upload-label">
-              <Camera size={20} />
+          {/* Header */}
+          <div className="profile-header">
+            <div>
+              <h2>My Profile</h2>
+              <p className="profile-header-sub">Update your personal information</p>
+            </div>
+            <button className="btn-close" onClick={() => navigate("/dashboard")}>
+              <X size={16} />
+            </button>
+          </div>
+
+          {error   && <div className="error-message"><span>{error}</span></div>}
+          {success && <div className="success-message"><span>{success}</span></div>}
+
+          <form onSubmit={handleSubmit} className={`profile-form${loading ? " loading" : ""}`}>
+
+            <div className="form-group">
+              <label><User size={15} /> Name</label>
               <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                hidden
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Your full name"
+                disabled={loading}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label><Mail size={15} /> Email</label>
+              <input
+                type="email"
+                value={form.email}
+                disabled
+                className="readonly-input"
+              />
+              <span className="readonly-note">Email cannot be changed</span>
+            </div>
+
+            <div className="form-group">
+              <label><Phone size={15} /> Phone</label>
+              <input
+                type="tel"
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="Your phone number"
                 disabled={loading}
               />
-            </label>
-          </div>
+            </div>
+
+            <div className="form-actions">
+              <button type="submit" className="btn-save" disabled={loading}>
+                <Save size={17} />
+                {loading ? "Saving..." : "Save Changes"}
+              </button>
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={() => navigate("/dashboard")}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+            </div>
+
+          </form>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
-
-        <form onSubmit={handleSubmit} className="profile-form">
-          <div className="form-group">
-            <label><User size={18} /> Name</label>
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              disabled={loading}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label><Mail size={18} /> Email</label>
-            <input
-              type="email"
-              value={form.email}
-              disabled
-              className="readonly-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label><Phone size={18} /> Phone</label>
-            <input
-              type="tel"
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              disabled={loading}
-            />
-          </div>
-
-          <div className="form-actions">
-            <button type="submit" className="btn-save" disabled={loading}>
-              <Save size={18} />
-              {loading ? "Saving..." : "Save Changes"}
-            </button>
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={() => navigate("/dashboard")}
-              disabled={loading}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
       </div>
     </div>
   );
