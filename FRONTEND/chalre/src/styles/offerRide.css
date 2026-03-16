@@ -60,7 +60,7 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
    ZONE — the left white area of the image
 ───────────────────────────────────────── */
 .offer-zone {
-  padding-top: clamp(72px, 9vw, 92px);
+  padding-top: 16px;
   width: clamp(420px, 52vw, 720px);
   padding-left: clamp(32px, 4.5vw, 64px);
   padding-right: clamp(32px, 4vw, 64px);
@@ -474,7 +474,7 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
     max-width: 640px;
     padding-left: clamp(20px, 5vw, 40px);
     padding-right: clamp(20px, 5vw, 40px);
-    padding-top: clamp(72px, 9vw, 90px);
+    padding-top: 16px;
   }
   .form-row { grid-template-columns: 1fr 1fr; gap: 16px; }
 }
@@ -489,7 +489,7 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   }
   .offer-zone {
     width: 100%;
-    padding: clamp(72px, 9vw, 88px) 18px 48px;
+    padding: 16px 18px 48px;
   }
   .form-row { grid-template-columns: 1fr; }
   .btn-submit,

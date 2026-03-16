@@ -29,7 +29,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: clamp(80px, 10vw, 100px) clamp(18px, 5vw, 64px) clamp(40px, 5vw, 60px);
+  padding: 16px clamp(18px, 5vw, 64px) clamp(40px, 5vw, 60px);
 
   font-family: 'DM Sans', sans-serif;
   overflow: hidden;
@@ -422,7 +422,7 @@ html, body {
   .dash-page {
     align-items: center;
     background-position: 75% center;
-    padding: clamp(80px, 10vw, 100px) clamp(14px, 4vw, 28px) 48px;
+    padding: 16px clamp(14px, 4vw, 28px) 48px;
   }
 
   .dash-card:hover { transform: none; }
@@ -435,7 +435,7 @@ html, body {
   .dash-page {
     background-color: #f0f4f8;
     align-items: center;
-    padding: 88px 12px 40px;
+    padding: 16px 12px 40px;
   }
 
   /* Hide the image layer entirely on small screens */

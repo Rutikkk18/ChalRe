@@ -65,8 +65,10 @@
   border-radius: 15px;
   padding: 10px;
   width: min(1100px, 95%);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
-  border: 1.5px solid rgba(2, 65, 16, 0.2);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  border-style: groove;
+  border-color: #024110;
+  border-width: 1.5px;
   gap: 8px;
   transition: box-shadow 0.3s ease;
   min-height: 68px;

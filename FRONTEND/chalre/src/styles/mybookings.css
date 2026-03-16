@@ -42,7 +42,7 @@
 .mb-wrapper {
   max-width: 720px;
   width: 100%;
-  margin: clamp(80px, 12vw, 100px) auto 40px;
+  margin: 16px auto 40px;
   padding: 0 clamp(16px, 4vw, 24px);
   animation: mb-fade 0.4s ease;
 }
@@ -547,7 +547,7 @@
 ============================================================ */
 @media (max-width: 768px) {
   .mb-wrapper {
-    margin-top: 80px;
+    margin-top: 16px;
     padding: 0 16px;
   }
 
