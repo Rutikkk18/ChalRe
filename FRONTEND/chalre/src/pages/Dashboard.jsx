@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/dashboard.css";
 
-import { CheckCircle, CreditCard, Search, Plus, Car, Calendar, User, Bell } from "lucide-react";
+import { CheckCircle, CreditCard, Search, Plus, Car, Calendar, User, Bell, AlertCircle } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 
 export default function Dashboard() {
@@ -38,6 +38,13 @@ export default function Dashboard() {
     }
   };
 
+  // Check which profile fields are missing
+  const missingFields = [];
+  if (!user.name || user.name.trim() === "") missingFields.push("name");
+  if (!user.phone || user.phone.trim() === "") missingFields.push("phone number");
+  if (!user.profileImage || user.profileImage.trim() === "") missingFields.push("profile photo");
+  const isProfileIncomplete = missingFields.length > 0;
+
   return (
     <div className="dash-page">
 
@@ -57,7 +64,7 @@ export default function Dashboard() {
               />
             </div>
             <div className="dash-profile-info">
-              <span className="dash-name">{user.name}</span>
+              <span className="dash-name">{user.name || "Complete your profile"}</span>
               <span className="dash-email">{user.email}</span>
             </div>
 
@@ -165,6 +172,30 @@ export default function Dashboard() {
               <span>Notifications</span>
             </button>
           </div>
+
+          {/* ── PROFILE COMPLETION BANNER — only shown when fields are missing ── */}
+          {isProfileIncomplete && (
+            <>
+              <div className="dash-sep" />
+              <div className="dash-profile-incomplete">
+                <div className="dash-incomplete-left">
+                  <AlertCircle size={15} className="dash-incomplete-icon" />
+                  <div className="dash-incomplete-text">
+                    <span className="dash-incomplete-title">Complete your profile</span>
+                    <span className="dash-incomplete-sub">
+                      Missing: {missingFields.join(", ")}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  className="dash-incomplete-btn"
+                  onClick={() => navigate("/profile")}
+                >
+                  Update
+                </button>
+              </div>
+            </>
+          )}
 
         </div>
       </div>

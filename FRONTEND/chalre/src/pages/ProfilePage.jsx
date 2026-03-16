@@ -142,12 +142,12 @@ export default function ProfilePage() {
             <div className="profile-left-info">
               <div className="profile-left-pill">
                 <Mail size={15} />
-                {form.email}
+                <span>{form.email}</span>
               </div>
               {form.phone && (
                 <div className="profile-left-pill">
                   <Phone size={15} />
-                  {form.phone}
+                  <span>{form.phone}</span>
                 </div>
               )}
             </div>

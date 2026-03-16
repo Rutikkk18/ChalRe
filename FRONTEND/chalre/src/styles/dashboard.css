@@ -22,15 +22,12 @@ html, body {
   position: relative;
   width: 100%;
   min-height: calc(100vh - clamp(60px, 8vw, 80px));
-
-  /* No background here — image lives in ::before so mask doesn't clip content */
   background: transparent;
-
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  /* FIX: was clamp(80px, 10vw, 100px) top — MainLayout now handles navbar clearance */
   padding: 16px clamp(18px, 5vw, 64px) clamp(40px, 5vw, 60px);
-
   font-family: 'DM Sans', sans-serif;
   overflow: hidden;
   animation: dashIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -43,13 +40,10 @@ html, body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-
   background-image: url('../assets/dashboard-city.png');
   background-size: cover;
   background-position: right center;
   background-repeat: no-repeat;
-
-  /* Fade all four edges into the page bg — tweak % values to adjust fade width */
   -webkit-mask-image:
     linear-gradient(to right,  transparent 0%, black 15%, black 85%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, black 12%, black 80%, transparent 100%);
@@ -60,7 +54,6 @@ html, body {
           mask-composite: intersect;
 }
 
-/* Ensure all direct children of dash-page sit above the ::before image layer */
 .dash-page > * {
   position: relative;
   z-index: 1;
@@ -76,12 +69,10 @@ html, body {
   position: relative;
   width: 100%;
   max-width: 480px;
-  margin-top: 0; /* controlled by dash-page padding */
-
+  margin-top: 0;
   background: rgba(228, 228, 228, 0.88);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
   border-radius: 32px;
   border: 1px solid rgba(255, 255, 255, 0.7);
   padding: 8px;
@@ -100,7 +91,6 @@ html, body {
   transform: translateY(-2px);
 }
 
-/* Noise / texture overlay */
 .dash-card-noise {
   position: absolute;
   inset: 0;
@@ -165,7 +155,7 @@ html, body {
   flex-direction: column;
   gap: 3px;
   min-width: 0;
-  flex: 1; /* takes remaining space, pushes bell to the right */
+  flex: 1;
 }
 
 .dash-name {
@@ -186,7 +176,6 @@ html, body {
   text-overflow: ellipsis;
 }
 
-/* ── NOTIFICATION BELL (inside card, top-right of profile row) ── */
 .dash-bell-wrap {
   flex-shrink: 0;
   display: flex;
@@ -252,7 +241,6 @@ html, body {
 }
 
 .dash-inline-btn:hover { background: #149349; }
-
 .dash-inline-btn--red { background: #b91c1c; }
 .dash-inline-btn--red:hover { background: #dc2626; }
 
@@ -422,9 +410,9 @@ html, body {
   .dash-page {
     align-items: center;
     background-position: 75% center;
+    /* FIX: was clamp(80px, 10vw, 100px) top */
     padding: 16px clamp(14px, 4vw, 28px) 48px;
   }
-
   .dash-card:hover { transform: none; }
 }
 
@@ -435,20 +423,15 @@ html, body {
   .dash-page {
     background-color: #f0f4f8;
     align-items: center;
+    /* FIX: was padding: 88px 12px 40px */
     padding: 16px 12px 40px;
   }
-
-  /* Hide the image layer entirely on small screens */
-  .dash-page::before {
-    display: none;
-  }
-
+  .dash-page::before { display: none; }
   .dash-card {
     background: #e4e4e4;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
-
   .dash-card-inner {
     background: #f5f5f5;
     backdrop-filter: none;
@@ -460,16 +443,8 @@ html, body {
    ≤ 520px
 ───────────────────────────────────────── */
 @media (max-width: 520px) {
-  .dash-card {
-    border-radius: 26px;
-    padding: 7px;
-  }
-
-  .dash-card-inner {
-    border-radius: 21px;
-    padding: 18px 16px;
-  }
-
+  .dash-card { border-radius: 26px; padding: 7px; }
+  .dash-card-inner { border-radius: 21px; padding: 18px 16px; }
   .dash-card-noise { border-radius: 26px; }
 }
 
@@ -537,6 +512,82 @@ html, body {
 @media print {
   .dash-page { background-image: none; background-color: #fff; }
   .dash-card { box-shadow: none; border: 1px solid #ccc; }
-  .dash-primary,
-  .dash-secondary { display: none; }
+  .dash-primary, .dash-secondary { display: none; }
+}
+
+/* ── PROFILE COMPLETION BANNER ── */
+.dash-profile-incomplete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+
+.dash-incomplete-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-incomplete-icon {
+  color: #d97706;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.dash-incomplete-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.dash-incomplete-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #92400e;
+  line-height: 1.3;
+}
+
+.dash-incomplete-sub {
+  font-size: 11px;
+  color: #b45309;
+  font-weight: 400;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-incomplete-btn {
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: 1px solid #f59e0b;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  background: #f59e0b;
+  color: #fff;
+  transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dash-incomplete-btn:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 400px) {
+  .dash-incomplete-btn { width: 100%; text-align: center; }
+  .dash-profile-incomplete { flex-direction: column; align-items: flex-start; }
 }
