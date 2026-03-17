@@ -1,11 +1,20 @@
 // src/components/RideLoader.jsx
 
 import "../styles/Rideloader.css";
-export default function RideLoader({ visible }) {
-  if (!visible) return null;
+
+/**
+ * RideLoader — two modes:
+ *  - inline (default): sits inside the results container, small & contained
+ *  - overlay: full-page frosted glass (pass overlay={true} to use)
+ */
+export default function RideLoader({ visible, overlay = false }) {
+  // When used as overlay (legacy usage), respect the visible prop
+  if (overlay && !visible) return null;
+
+  const wrapperClass = overlay ? "ride-loader-overlay" : "ride-loader-inline";
 
   return (
-    <div className="ride-loader-overlay">
+    <div className={wrapperClass}>
       <div className="ride-loader-box">
         <div className="road-track">
           {/* Dashed road lines */}

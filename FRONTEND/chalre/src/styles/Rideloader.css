@@ -1,8 +1,9 @@
 /* ================================
    RIDE LOADER — Car Animation
+   Supports both inline & overlay modes
 ================================ */
 
-/* Full-page overlay */
+/* ── OVERLAY MODE (full-page) ── */
 .ride-loader-overlay {
   position: fixed;
   inset: 0;
@@ -15,32 +16,44 @@
   animation: loaderFadeIn 0.25s ease;
 }
 
+/* ── INLINE MODE (inside results container) ── */
+.ride-loader-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 48px 20px;
+  animation: loaderFadeIn 0.25s ease;
+}
+
+/* Shared fade-in */
 @keyframes loaderFadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-/* White card in the center */
+/* ── CARD (shared between both modes) ── */
 .ride-loader-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  padding: 40px 48px;
+  gap: 16px;
+  padding: 28px 36px;
   background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(2, 65, 16, 0.14);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(2, 65, 16, 0.10);
   border: 1.5px solid rgba(28, 124, 49, 0.12);
-  min-width: clamp(280px, 70vw, 480px);
+  /* Inline: compact width; overlay: wider */
+  width: clamp(260px, 55vw, 420px);
 }
 
 /* ── Road track ── */
 .road-track {
   position: relative;
   width: 100%;
-  height: 70px;
+  height: 60px;
   background: #f1f5f1;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   border: 1px solid #d1e7d1;
 }
@@ -82,7 +95,7 @@
 }
 
 .car-svg {
-  width: 110px;
+  width: 90px;
   height: auto;
   filter: drop-shadow(0 4px 8px rgba(2, 65, 16, 0.2));
 }
@@ -95,7 +108,7 @@
 /* ── Speed lines (motion blur effect) ── */
 .speed-lines {
   position: absolute;
-  bottom: 22px;
+  bottom: 18px;
   left: 0;
   width: 100%;
   display: flex;
@@ -125,7 +138,7 @@
 /* ── Loading text ── */
 .ride-loader-text {
   font-family: 'Times New Roman', Times, serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: #024110;
   margin: 0;
@@ -141,10 +154,13 @@
 /* ── Mobile ── */
 @media (max-width: 480px) {
   .ride-loader-box {
-    padding: 28px 20px;
-    min-width: 85vw;
+    padding: 20px 16px;
+    width: 90%;
   }
   .car-svg {
-    width: 85px;
+    width: 72px;
+  }
+  .road-track {
+    height: 52px;
   }
 }

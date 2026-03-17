@@ -6,7 +6,7 @@ import RideCard from "../components/RideCard";
 import "../styles/SearchRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import CustomDatePicker from "../components/CustomDatePicker";
-import RideLoader from "../components/RideLoader";   // ✅ fixed: import name matches usage
+import RideLoader from "../components/RideLoader";   // ✅ matches filename RideLoader.jsx
 
 const vehicleModels = {
   car: ["SEDAN", "SUV", "HATCHBACK"],
@@ -237,10 +237,8 @@ export default function SearchRides() {
   return (
     <div className="search-page">
 
-      {/* ── RIDE LOADER OVERLAY ── */}
-      <RideLoader visible={loading} />
-
       {/* ── TOP: SEARCH BAR SECTION ── */}
+      {/* ✅ Removed full-page overlay <RideLoader visible={loading} /> from here */}
       <div className="search-hero">
         <form className="search-form" onSubmit={handleSearch}>
 
@@ -472,6 +470,9 @@ export default function SearchRides() {
           <div className="results-container">
             {error && <div className="error">{error}</div>}
 
+            {/* ✅ INLINE LOADER — appears inside results area, small & contained */}
+            {loading && <RideLoader />}
+
             {!loading && results.length === 0 && (
               <div className="empty">
                 No rides found. Try changing the route or date. You can also{" "}
@@ -479,11 +480,13 @@ export default function SearchRides() {
               </div>
             )}
 
-            <div className="cards-grid">
-              {results.map((ride) => (
-                <RideCard key={ride.id} ride={ride} />
-              ))}
-            </div>
+            {!loading && (
+              <div className="cards-grid">
+                {results.map((ride) => (
+                  <RideCard key={ride.id} ride={ride} />
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
