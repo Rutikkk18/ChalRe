@@ -6,7 +6,7 @@ import RideCard from "../components/RideCard";
 import "../styles/SearchRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import CustomDatePicker from "../components/CustomDatePicker";
-import RideLoader from "../components/Rideloader";   // ✅ fixed: import name matches usage
+import RideLoader from "../components/RideLoader";   // ✅ fixed: import name matches usage
 
 const vehicleModels = {
   car: ["SEDAN", "SUV", "HATCHBACK"],
