@@ -1,6 +1,6 @@
 // src/components/RideLoader.jsx
 
-import "../styles/RideLoader.css";
+import "../styles/Rideloader.css";
 export default function RideLoader({ visible }) {
   if (!visible) return null;
 
