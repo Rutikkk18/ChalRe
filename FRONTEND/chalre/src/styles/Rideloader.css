@@ -1,0 +1,150 @@
+/* ================================
+   RIDE LOADER — Car Animation
+================================ */
+
+/* Full-page overlay */
+.ride-loader-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: loaderFadeIn 0.25s ease;
+}
+
+@keyframes loaderFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* White card in the center */
+.ride-loader-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 48px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(2, 65, 16, 0.14);
+  border: 1.5px solid rgba(28, 124, 49, 0.12);
+  min-width: clamp(280px, 70vw, 480px);
+}
+
+/* ── Road track ── */
+.road-track {
+  position: relative;
+  width: 100%;
+  height: 70px;
+  background: #f1f5f1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #d1e7d1;
+}
+
+/* Dashed centre line */
+.road-lines {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%) translateY(10px);
+  display: flex;
+  gap: 14px;
+  padding: 0 12px;
+  animation: roadScroll 0.6s linear infinite;
+}
+
+.road-lines span {
+  display: block;
+  width: 28px;
+  height: 4px;
+  background: #9ca3af;
+  border-radius: 2px;
+  flex-shrink: 0;
+  opacity: 0.55;
+}
+
+@keyframes roadScroll {
+  from { transform: translateY(10px) translateX(0); }
+  to   { transform: translateY(10px) translateX(-42px); }
+}
+
+/* ── Car ── */
+.car-mover {
+  position: absolute;
+  bottom: 4px;
+  left: -130px;
+  animation: carDrive 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.car-svg {
+  width: 110px;
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(2, 65, 16, 0.2));
+}
+
+@keyframes carDrive {
+  0%   { left: -130px; }
+  100% { left: calc(100% + 20px); }
+}
+
+/* ── Speed lines (motion blur effect) ── */
+.speed-lines {
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: 8px;
+  pointer-events: none;
+}
+
+.speed-lines span {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #d1e7d1, transparent);
+  animation: speedScroll 0.45s linear infinite;
+}
+
+.speed-lines span:nth-child(1) { width: 55%; opacity: 0.5; }
+.speed-lines span:nth-child(2) { width: 38%; opacity: 0.35; margin-left: 10%; }
+.speed-lines span:nth-child(3) { width: 25%; opacity: 0.25; margin-left: 5%; }
+
+@keyframes speedScroll {
+  from { transform: translateX(0); opacity: 0.5; }
+  to   { transform: translateX(-20px); opacity: 0; }
+}
+
+/* ── Loading text ── */
+.ride-loader-text {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #024110;
+  margin: 0;
+  letter-spacing: 0.3px;
+  animation: textPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes textPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .ride-loader-box {
+    padding: 28px 20px;
+    min-width: 85vw;
+  }
+  .car-svg {
+    width: 85px;
+  }
+}

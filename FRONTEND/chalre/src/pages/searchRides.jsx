@@ -6,13 +6,13 @@ import RideCard from "../components/RideCard";
 import "../styles/SearchRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import CustomDatePicker from "../components/CustomDatePicker";
+import RideLoader from "../components/Rideloader";   // ✅ fixed: import name matches usage
 
 const vehicleModels = {
   car: ["SEDAN", "SUV", "HATCHBACK"],
   bike: ["Bullet", "Splendor", "Shine"],
 };
 
-// Sub-models that belong to each category (lowercase for comparison)
 const carSubModels  = vehicleModels.car.map((m) => m.toLowerCase());
 const bikeSubModels = vehicleModels.bike.map((m) => m.toLowerCase());
 
@@ -21,54 +21,36 @@ export default function SearchRides() {
   const hasAutoSearched = useRef(false);
   const [startLocation, setStartLocation] = useState("");
   const [endLocation, setEndLocation] = useState("");
-  const [date, setDate] = useState(""); // yyyy-mm-dd
+  const [date, setDate] = useState("");
   const [seats, setSeats] = useState(1);
-  
-  // Filter states
+
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [vehicleCategory, setVehicleCategory] = useState(""); // "car" | "bike" | ""
+  const [vehicleCategory, setVehicleCategory] = useState("");
   const [carType, setCarType] = useState("");
   const [genderPreference, setGenderPreference] = useState("");
 
-  // New filter states
-  const [seatsAvailable, setSeatsAvailable] = useState(""); // "1", "2", "3+"
-  const [rideType, setRideType] = useState([]); // ["instant", "request"]
-  const [driverRating, setDriverRating] = useState([]); // ["4", "3"]
-  const [timePreference, setTimePreference] = useState([]); // ["morning", "afternoon", "evening"]
+  const [seatsAvailable, setSeatsAvailable] = useState("");
+  const [rideType, setRideType] = useState([]);
+  const [driverRating, setDriverRating] = useState([]);
+  const [timePreference, setTimePreference] = useState([]);
 
   const [results, setResults] = useState([]);
   const [allRides, setAllRides] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  /**
-   * Determines vehicle category for a ride.
-   * Priority 1: ride.vehicleType set explicitly ("car" | "bike") — covers drivers who
-   *             selected only Car/Bike without picking a sub-model.
-   * Priority 2: fall back to carType sub-model to infer category — old rides.
-   */
   const getRideVehicleCategory = (ride) => {
-    // vehicleType is set from OfferRide as "car" or "bike" directly
     if (ride.vehicleType && ride.vehicleType.trim() !== "") {
       return ride.vehicleType.toLowerCase().trim();
     }
-    // Infer from sub-model for rides created before vehicleType was saved
     const subModel = (ride.carType || "").toLowerCase().trim();
     if (carSubModels.includes(subModel)) return "car";
     if (bikeSubModels.includes(subModel)) return "bike";
     return "";
   };
 
-  /**
-   * applyClientFilters — accepts both the rides array AND current filter values
-   * explicitly, so it never reads stale closure values when called from async
-   * functions like performSearch / fetchAllRides.
-   */
-  const applyClientFilters = (
-    rides,
-    filters = {}
-  ) => {
+  const applyClientFilters = (rides, filters = {}) => {
     const {
       minPrice:        fMinPrice        = minPrice,
       maxPrice:        fMaxPrice        = maxPrice,
@@ -91,15 +73,12 @@ export default function SearchRides() {
       if (!isNaN(max)) filtered = filtered.filter((ride) => Number(ride.price) <= max);
     }
 
-    // Filter by vehicle category (car / bike)
-    // Works whether driver picked only "Car"/"Bike" OR also chose a sub-model
     if (fVehicleCategory) {
       filtered = filtered.filter(
         (ride) => getRideVehicleCategory(ride) === fVehicleCategory.toLowerCase()
       );
     }
 
-    // Filter by vehicle sub-model (only applied when a sub-model is explicitly chosen)
     if (fCarType) {
       filtered = filtered.filter((ride) => {
         const model = (ride.carType || "").toLowerCase().trim();
@@ -108,8 +87,8 @@ export default function SearchRides() {
     }
 
     if (fSeatsAvailable) {
-      if (fSeatsAvailable === "1") filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 1);
-      else if (fSeatsAvailable === "2") filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 2);
+      if (fSeatsAvailable === "1")       filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 1);
+      else if (fSeatsAvailable === "2")  filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 2);
       else if (fSeatsAvailable === "3+") filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 3);
     }
 
@@ -140,9 +119,9 @@ export default function SearchRides() {
       filtered = filtered.filter((ride) => {
         if (!ride.time) return false;
         const [hours] = ride.time.split(":").map(Number);
-        if (fTimePreference.includes("morning") && hours >= 6 && hours < 12) return true;
+        if (fTimePreference.includes("morning")   && hours >= 6  && hours < 12) return true;
         if (fTimePreference.includes("afternoon") && hours >= 12 && hours < 18) return true;
-        if (fTimePreference.includes("evening") && hours >= 18) return true;
+        if (fTimePreference.includes("evening")   && hours >= 18)               return true;
         return false;
       });
     }
@@ -162,13 +141,13 @@ export default function SearchRides() {
       }
 
       const params = {};
-      if (fromVal) params.from = fromVal;
-      if (toVal) params.to = toVal;
-      if (dateVal) params.date = dateVal;
-      if (seatsVal) params.seats = seatsVal;
-      if (minPrice) params.minPrice = parseFloat(minPrice);
-      if (maxPrice) params.maxPrice = parseFloat(maxPrice);
-      if (carType) params.carType = carType;
+      if (fromVal)          params.from             = fromVal;
+      if (toVal)            params.to               = toVal;
+      if (dateVal)          params.date             = dateVal;
+      if (seatsVal)         params.seats            = seatsVal;
+      if (minPrice)         params.minPrice         = parseFloat(minPrice);
+      if (maxPrice)         params.maxPrice         = parseFloat(maxPrice);
+      if (carType)          params.carType          = carType;
       if (genderPreference) params.genderPreference = genderPreference;
 
       const res = await api.get("/rides/search", { params });
@@ -176,9 +155,8 @@ export default function SearchRides() {
       const fetchedRides = (res.data || []).filter(
         (ride) => Number(ride.availableSeats) > 0
       );
-      
+
       setAllRides(fetchedRides);
-      // Pass current filter state explicitly to avoid stale closure
       applyClientFilters(fetchedRides, {
         minPrice, maxPrice, vehicleCategory, carType,
         seatsAvailable, rideType, driverRating, timePreference,
@@ -199,9 +177,8 @@ export default function SearchRides() {
       const fetchedRides = (res.data || []).filter(
         (ride) => Number(ride.availableSeats) > 0
       );
-      
+
       setAllRides(fetchedRides);
-      // Pass current filter state explicitly to avoid stale closure
       applyClientFilters(fetchedRides, {
         minPrice, maxPrice, vehicleCategory, carType,
         seatsAvailable, rideType, driverRating, timePreference,
@@ -223,10 +200,10 @@ export default function SearchRides() {
   useEffect(() => {
     if (location.state && !hasAutoSearched.current) {
       const { from, to, date: stateDate, passengers } = location.state;
-      
-      if (from) setStartLocation(from);
-      if (to) setEndLocation(to);
-      if (stateDate) setDate(stateDate);
+
+      if (from)       setStartLocation(from);
+      if (to)         setEndLocation(to);
+      if (stateDate)  setDate(stateDate);
       if (passengers) setSeats(Number(passengers));
 
       if (from && to) {
@@ -242,7 +219,6 @@ export default function SearchRides() {
     performSearch(startLocation, endLocation, date, seats);
   };
 
-  // Re-apply filters whenever any filter state changes
   useEffect(() => {
     if (allRides.length > 0) {
       applyClientFilters(allRides, {
@@ -260,6 +236,9 @@ export default function SearchRides() {
 
   return (
     <div className="search-page">
+
+      {/* ── RIDE LOADER OVERLAY ── */}
+      <RideLoader visible={loading} />
 
       {/* ── TOP: SEARCH BAR SECTION ── */}
       <div className="search-hero">
@@ -382,7 +361,7 @@ export default function SearchRides() {
                   <label>Vehicle Type</label>
                   <div className="vehicle-category-toggle">
                     {[
-                      { value: "car", label: "🚗 Car" },
+                      { value: "car",  label: "🚗 Car"  },
                       { value: "bike", label: "🏍️ Bike" },
                     ].map(({ value, label }) => (
                       <button
@@ -406,7 +385,9 @@ export default function SearchRides() {
                       onChange={(e) => setCarType(e.target.value)}
                       className="vehicle-submodel-select"
                     >
-                      <option value="">All {vehicleCategory === "car" ? "Cars" : "Bikes"}</option>
+                      <option value="">
+                        All {vehicleCategory === "car" ? "Cars" : "Bikes"}
+                      </option>
                       {vehicleModels[vehicleCategory].map((model) => (
                         <option key={model} value={model}>
                           {model}
@@ -429,7 +410,11 @@ export default function SearchRides() {
                           checked={seatsAvailable === val}
                           onChange={() => setSeatsAvailable(val)}
                         />
-                        <span>{val === "" ? "All" : val === "3+" ? "3+ seats" : `${val} seat${val !== "1" ? "s" : ""}`}</span>
+                        <span>
+                          {val === ""    ? "All"
+                          : val === "3+" ? "3+ seats"
+                          : `${val} seat${val !== "1" ? "s" : ""}`}
+                        </span>
                       </label>
                     ))}
                   </div>
@@ -459,7 +444,11 @@ export default function SearchRides() {
                 <div className="filter-group">
                   <label>Time Preference</label>
                   <div className="checkbox-group">
-                    {[["morning", "Morning (6-12)"], ["afternoon", "Afternoon (12-18)"], ["evening", "Evening (after 18)"]].map(([val, label]) => (
+                    {[
+                      ["morning",   "Morning (6–12)"],
+                      ["afternoon", "Afternoon (12–18)"],
+                      ["evening",   "Evening (after 18)"],
+                    ].map(([val, label]) => (
                       <label className="checkbox-label" key={val}>
                         <input
                           type="checkbox"
@@ -481,7 +470,6 @@ export default function SearchRides() {
 
           {/* RIGHT - RESULTS */}
           <div className="results-container">
-            {loading && <div className="muted">Loading rides…</div>}
             {error && <div className="error">{error}</div>}
 
             {!loading && results.length === 0 && (
