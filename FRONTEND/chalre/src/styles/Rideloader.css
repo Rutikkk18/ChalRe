@@ -1,182 +1,223 @@
 /* ================================
-   RIDE LOADER — Car Animation
-   Supports both inline & overlay modes
+   RIDE LOADER — Refined & Compact
+   Supports inline & overlay modes
 ================================ */
 
-/* ── OVERLAY MODE (full-page) ── */
+/* ── Fade-in ── */
+@keyframes loaderFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── OVERLAY MODE ── */
 .ride-loader-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: loaderFadeIn 0.25s ease;
+  animation: loaderFadeIn 0.3s ease;
 }
 
-/* ── INLINE MODE (inside results container) ── */
-/* No background, no card — sits flush at the top of results */
+/* ── INLINE MODE ── */
 .ride-loader-inline {
   display: flex;
   align-items: flex-start;
   justify-content: center;
   width: 100%;
-  padding: 12px 0 0 0;
-  animation: loaderFadeIn 0.25s ease;
+  padding: 16px 0 4px;
+  animation: loaderFadeIn 0.3s ease;
 }
 
-/* Shared fade-in */
-@keyframes loaderFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-/* ── CARD ──
-   Inline: transparent, no shadow, no border
-   Overlay: white card with shadow (applied via .ride-loader-overlay .ride-loader-box)
-================================ */
+/* ── BOX ── */
 .ride-loader-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 0;
+  gap: 12px;
   background: transparent;
-  border-radius: 0;
-  box-shadow: none;
-  border: none;
-  width: clamp(200px, 40vw, 320px);
+  width: clamp(180px, 36vw, 260px);
 }
 
-/* Overlay mode gets the white card back */
 .ride-loader-overlay .ride-loader-box {
-  padding: 28px 36px;
+  width: clamp(240px, 50vw, 340px);
   background: #ffffff;
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(2, 65, 16, 0.10);
-  border: 1.5px solid rgba(28, 124, 49, 0.12);
-  width: clamp(260px, 55vw, 420px);
+  padding: 28px 32px 24px;
+  box-shadow:
+    0 4px 6px rgba(2, 65, 16, 0.04),
+    0 12px 28px rgba(2, 65, 16, 0.10),
+    0 0 0 1px rgba(28, 124, 49, 0.08);
 }
 
-/* ── Road track ── */
-.road-track {
+/* ── SCENE ── */
+.rl-scene {
   position: relative;
   width: 100%;
-  height: 46px;
-  background: #edf2ed;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #d1e7d1;
+  height: 52px;
 }
 
-/* Dashed centre line */
-.road-lines {
+/* ── ROAD ── */
+.rl-road {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rl-road-surface {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #e8f0e8 0%, #dce8dc 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(2, 65, 16, 0.10);
+}
+
+/* Lane dashes */
+.rl-lane-line {
   position: absolute;
   top: 50%;
   left: 0;
-  width: 100%;
-  transform: translateY(-50%) translateY(8px);
+  right: 0;
+  transform: translateY(-50%);
   display: flex;
-  gap: 12px;
-  padding: 0 10px;
-  animation: roadScroll 0.6s linear infinite;
+  gap: 10px;
+  padding: 0 6px;
+  animation: dashScroll 0.55s linear infinite;
 }
 
-.road-lines span {
+.rl-dash {
   display: block;
-  width: 22px;
-  height: 3px;
-  background: #9ca3af;
+  width: 18px;
+  height: 2.5px;
+  background: #9eb89e;
   border-radius: 2px;
   flex-shrink: 0;
-  opacity: 0.55;
+  opacity: 0.6;
 }
 
-@keyframes roadScroll {
-  from { transform: translateY(8px) translateX(0); }
-  to   { transform: translateY(8px) translateX(-34px); }
+@keyframes dashScroll {
+  from { transform: translateY(-50%) translateX(0); }
+  to   { transform: translateY(-50%) translateX(-28px); }
 }
 
-/* ── Car ── */
-.car-mover {
+/* ── CAR ── */
+.rl-car-wrap {
   position: absolute;
-  bottom: 2px;
-  left: -100px;
-  animation: carDrive 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  bottom: 6px;
+  animation: carSlide 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-.car-svg {
-  width: 68px;
+.rl-car {
+  width: 72px;
   height: auto;
-  filter: drop-shadow(0 3px 6px rgba(2, 65, 16, 0.2));
+  filter: drop-shadow(0 2px 5px rgba(2, 65, 16, 0.22));
 }
 
-@keyframes carDrive {
-  0%   { left: -100px; }
-  100% { left: calc(100% + 20px); }
+@keyframes carSlide {
+  0%   { left: -90px; opacity: 0; }
+  8%   { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { left: calc(100% + 10px); opacity: 0; }
 }
 
-/* ── Speed lines (motion blur effect) ── */
-.speed-lines {
+/* ── EXHAUST PUFFS ── */
+.rl-exhaust {
   position: absolute;
   bottom: 12px;
   left: 0;
-  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-left: 6px;
+  gap: 3px;
   pointer-events: none;
 }
 
-.speed-lines span {
+.rl-puff {
   display: block;
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(to right, #d1e7d1, transparent);
-  animation: speedScroll 0.45s linear infinite;
+  background: linear-gradient(to right, rgba(2, 65, 16, 0.12), transparent);
+  animation: puffFade 0.55s linear infinite;
 }
 
-.speed-lines span:nth-child(1) { width: 55%; opacity: 0.5; }
-.speed-lines span:nth-child(2) { width: 38%; opacity: 0.35; margin-left: 10%; }
-.speed-lines span:nth-child(3) { width: 25%; opacity: 0.25; margin-left: 5%; }
+.rl-puff-1 { width: 32px; animation-delay: 0s; }
+.rl-puff-2 { width: 22px; animation-delay: 0.12s; margin-left: 6px; }
+.rl-puff-3 { width: 14px; animation-delay: 0.24s; margin-left: 3px; }
 
-@keyframes speedScroll {
-  from { transform: translateX(0); opacity: 0.5; }
-  to   { transform: translateX(-20px); opacity: 0; }
+@keyframes puffFade {
+  0%   { opacity: 0.7; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-14px); }
 }
 
-/* ── Loading text ── */
-.ride-loader-text {
+/* ── FOOTER TEXT ── */
+.rl-footer {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.rl-label {
   font-family: 'Times New Roman', Times, serif;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   color: #024110;
-  margin: 0;
-  letter-spacing: 0.3px;
-  animation: textPulse 1.4s ease-in-out infinite;
+  letter-spacing: 0.25px;
+  opacity: 0.85;
 }
 
-@keyframes textPulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.55; }
+/* Animated dots */
+.rl-dots {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding-bottom: 1px;
 }
 
-/* ── Mobile ── */
+.rl-dot {
+  display: block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #024110;
+  opacity: 0;
+  animation: dotBounce 1.2s ease-in-out infinite;
+}
+
+.rl-dot:nth-child(1) { animation-delay: 0s; }
+.rl-dot:nth-child(2) { animation-delay: 0.2s; }
+.rl-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 60%, 100% { opacity: 0; transform: translateY(0); }
+  30%            { opacity: 1; transform: translateY(-3px); }
+}
+
+/* ── MOBILE ── */
 @media (max-width: 480px) {
   .ride-loader-box {
-    width: 80%;
+    width: 75%;
   }
-  .car-svg {
-    width: 56px;
+  .rl-car {
+    width: 58px;
   }
-  .road-track {
-    height: 38px;
+  .rl-scene {
+    height: 46px;
+  }
+  .rl-road {
+    height: 18px;
   }
   .ride-loader-overlay .ride-loader-box {
-    padding: 20px 16px;
-    width: 90%;
+    width: 88%;
+    padding: 22px 20px 18px;
+  }
+  .rl-label {
+    font-size: 12px;
   }
 }
