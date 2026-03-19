@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/rideDetails.css";
-import { Users, IndianRupee, Phone, CheckCircle, Star, CreditCard } from "lucide-react";
+import { Users, IndianRupee, Phone, CheckCircle, Star, CreditCard, Car, Bike } from "lucide-react";
 import loadRazorpay from "../utils/loadRazorpay";
 import { BACKEND_URL } from "../config";
 
@@ -66,6 +66,14 @@ export default function RideDetails() {
     if (!ride) return 0;
     const price = Number(ride.price || 0);
     return (price * seats).toFixed(0);
+  };
+
+  // Same logic as RideCard.jsx
+  const getVehicleIcon = () => {
+    const carType = ride?.carType?.toLowerCase() || "";
+    const isBike = ["bullet", "splendor", "shine"].includes(carType);
+    if (isBike) return <Bike size={18} className="rd__info-icon-svg" />;
+    return <Car size={18} className="rd__info-icon-svg" />;
   };
 
   const handleBookRide = async () => {
@@ -285,12 +293,20 @@ export default function RideDetails() {
                 <div className="rd__divider" />
                 <div className="rd__info-row">
                   <Users size={18} className="rd__info-icon-svg" />
-                  <span className="rd__info-text">Max. {ride.availableSeats} seat{ride.availableSeats !== 1 ? "s" : ""} available</span>
+                  <span className="rd__info-text">{ride.availableSeats} seat{ride.availableSeats !== 1 ? "s" : ""} available</span>
                 </div>
                 <div className="rd__divider" />
                 <div className="rd__info-row">
-                  <span className="rd__info-icon">🚗</span>
-                  <span className="rd__info-text">{ride.vehicle?.model || ride.carModel || "—"}</span>
+                  {getVehicleIcon()}
+                  <span className="rd__info-text">
+                    {(() => {
+                      const carType = ride?.carType?.toLowerCase() || "";
+                      const isBike = ["bullet", "splendor", "shine"].includes(carType);
+                      const vehicleName = ride.vehicle?.model || ride.carModel || ride.carType || null;
+                      if (isBike) return vehicleName ? `${vehicleName} · 1 seat per ride` : "Bike · 1 seat per ride";
+                      return vehicleName || "Car";
+                    })()}
+                  </span>
                 </div>
                 {ride.luggageAllowed !== undefined && (
                   <>
@@ -372,6 +388,9 @@ export default function RideDetails() {
                       <span className="rd__booking-place-name">{ride.startLocation || ride.from}</span>
                     </div>
                     <div className="rd__booking-place">
+                      {ride.endTime && (
+                        <span className="rd__booking-time">{ride.endTime}</span>
+                      )}
                       <span className="rd__booking-place-name">{ride.endLocation || ride.to}</span>
                     </div>
                   </div>
