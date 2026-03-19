@@ -359,8 +359,8 @@ export default function SearchRides() {
                   <label>Vehicle Type</label>
                   <div className="vehicle-category-toggle">
                     {[
-                      { value: "car",  label: "🚗 Car"  },
-                      { value: "bike", label: "🏍️ Bike" },
+                      { value: "car",  label: "Car"  },
+                      { value: "bike", label: "Bike" },
                     ].map(({ value, label }) => (
                       <button
                         key={value}

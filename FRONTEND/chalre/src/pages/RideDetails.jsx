@@ -238,7 +238,10 @@ export default function RideDetails() {
                   <div className="rd__timeline-row">
                     <div className="rd__timeline-time">
                       <span className="rd__time">{ride.time}</span>
-                      {ride.endTime && <span className="rd__time rd__time--end">{ride.endTime}</span>}
+                      {ride.endTime
+                        ? <span className="rd__time">{ride.endTime}</span>
+                        : <span className="rd__time rd__time--none"> </span>
+                      }
                     </div>
                     <div className="rd__timeline-track">
                       <div className="rd__dot rd__dot--filled" />
