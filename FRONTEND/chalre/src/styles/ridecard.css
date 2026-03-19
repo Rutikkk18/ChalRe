@@ -248,7 +248,15 @@
   height: 13px;
 }
 
-/* ✅ FIX: removed margin-top: 20px — name now stays on the same horizontal line */
+.driver-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
 .driver-name {
   font-family: var(--font-sans);
   font-size: 0.88rem;
@@ -258,7 +266,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-shrink: 1;
   margin: 0;
   padding: 0;
 }
@@ -267,7 +274,6 @@
   display: flex;
   align-items: center;
   gap: 3px;
-  flex-shrink: 0;
 }
 .driver-rating-score {
   font-family: var(--font-sans);
