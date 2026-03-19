@@ -447,6 +447,13 @@
   font-weight: 600;
 }
 
+.rd__time--end {
+  font-size: 0.82rem;
+  color: var(--text-muted, #6b7c70);
+  font-weight: 500;
+  margin-top: 18px; /* pushes it down to align with the bottom dot */
+}
+
 .rd__booking-place-name {
   font-weight: 700;
   font-size: 14px;

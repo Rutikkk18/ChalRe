@@ -238,7 +238,7 @@ export default function RideDetails() {
                   <div className="rd__timeline-row">
                     <div className="rd__timeline-time">
                       <span className="rd__time">{ride.time}</span>
-                      {ride.duration && <span className="rd__duration">{ride.duration}</span>}
+                      {ride.endTime && <span className="rd__time rd__time--end">{ride.endTime}</span>}
                     </div>
                     <div className="rd__timeline-track">
                       <div className="rd__dot rd__dot--filled" />
@@ -291,7 +291,10 @@ export default function RideDetails() {
                   <span className="rd__info-text">Your booking will be confirmed instantly</span>
                 </div>
                 <div className="rd__divider" />
-               
+                <div className="rd__info-row">
+                  <Users size={18} className="rd__info-icon-svg" />
+                  <span className="rd__info-text">{ride.availableSeats} seat{ride.availableSeats !== 1 ? "s" : ""} available</span>
+                </div>
                 <div className="rd__divider" />
                 <div className="rd__info-row">
                   {getVehicleIcon()}
@@ -300,7 +303,9 @@ export default function RideDetails() {
                       const carType = ride?.carType?.toLowerCase() || "";
                       const isBike = ["bullet", "splendor", "shine"].includes(carType);
                       const vehicleName = ride.vehicle?.model || ride.carModel || ride.carType || null;
-                      if (isBike) return vehicleName ? `${vehicleName} · 1 seat available` : "Bike · 1 seat available";
+                      const seats = ride.availableSeats;
+                      const seatLabel = `${seats} seat${seats !== 1 ? "s" : ""} available`;
+                      if (isBike) return vehicleName ? `${vehicleName} · ${seatLabel}` : `Bike · ${seatLabel}`;
                       return vehicleName || "Car";
                     })()}
                   </span>

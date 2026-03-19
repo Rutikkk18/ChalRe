@@ -9,7 +9,7 @@ export default function RideCard({ ride }) {
   const isFull = Number(ride?.availableSeats) <= 0;
 
   const goToBooking = (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); // prevent card click from firing
     if (isFull) return;
     navigate(`/book-ride/${ride.id}`);
   };
@@ -78,7 +78,7 @@ export default function RideCard({ ride }) {
       {/* ── ROW 2: 3-ZONE BOTTOM ── */}
       <div className="ride-card-bottom">
 
-        {/* ZONE 1 — Driver */}
+        {/* ZONE 1 — Driver: [vehicle] [avatar] [name] [rating/badge] all horizontal */}
         {driver && (
           <div className="driver-info">
 
@@ -105,26 +105,26 @@ export default function RideCard({ ride }) {
               )}
             </div>
 
-            {/* ✅ FIX: name + badge wrapped in a column so they sit beside avatar cleanly */}
-            <div className="driver-meta">
-              <span className="driver-name">{driver.name || "Driver"}</span>
-              {driver.avgRating > 0 ? (
-                <div className="driver-rating">
-                  <Star size={12} fill="#f59e0b" color="#f59e0b" />
-                  <span className="driver-rating-score">{driver.avgRating.toFixed(1)}</span>
-                  {driver.ratingCount > 0 && (
-                    <span className="driver-rating-count">({driver.ratingCount})</span>
-                  )}
-                </div>
-              ) : (
-                <span className="driver-new-badge">New Driver</span>
-              )}
-            </div>
+            {/* Name — inline with avatar and rating */}
+            <span className="driver-name">{driver.name || "Driver"}</span>
+
+            {/* Rating or New Driver badge — inline with name */}
+            {driver.avgRating > 0 ? (
+              <div className="driver-rating">
+                <Star size={12} fill="#f59e0b" color="#f59e0b" />
+                <span className="driver-rating-score">{driver.avgRating.toFixed(1)}</span>
+                {driver.ratingCount > 0 && (
+                  <span className="driver-rating-count">({driver.ratingCount})</span>
+                )}
+              </div>
+            ) : (
+              <span className="driver-new-badge">New Driver</span>
+            )}
 
           </div>
         )}
 
-        {/* ZONE 2 — Meta */}
+        {/* ZONE 2 — Meta (centred, with dividers) */}
         <div className="ride-meta">
           <div className="meta-item">
             <CalendarRange size={13} />
