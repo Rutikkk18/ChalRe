@@ -2,10 +2,45 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>chalre</title>
+
+    <!-- Canonical URL (Prevents duplicate indexing) -->
+    <link rel="canonical" href="https://chalre.in/" />
+
+    <!-- Primary SEO -->
+    <title>ChalRe – Carpool & Bikepool Rides Near You</title>
+
+    <!-- Meta Description for Google SEO -->
+    <meta
+      name="description"
+      content="ChalRe is a local-first carpooling and bikepooling platform for daily commutes and long routes. Share rides, save costs, and travel smarter together."
+    />
+
+    <!-- Open Graph (WhatsApp, LinkedIn, Facebook Preview) -->
+    <meta property="og:title" content="ChalRe – Ride Sharing Platform" />
+    <meta property="og:description" content="Find rides, share journeys, and travel smarter with ChalRe." />
+    <meta property="og:url" content="https://chalre.in" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://chalre.in/preview.png" />
+
+    <!-- Twitter Preview -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ChalRe – Ride Sharing Platform" />
+    <meta name="twitter:description" content="Find rides, share journeys, and travel smarter with ChalRe." />
+    <meta name="twitter:image" content="https://chalre.in/preview.png" />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PZVMVQYL68"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-PZVMVQYL68');
+    </script>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
