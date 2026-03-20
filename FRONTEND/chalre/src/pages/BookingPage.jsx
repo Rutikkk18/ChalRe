@@ -113,7 +113,7 @@ export default function BookingPage() {
     return (
       <div className="booking-wrapper">
         <div className="booking-card" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300 }}>
-          <span style={{ fontFamily: "'Sora', sans-serif", color: "#6b7280", fontSize: "0.9rem" }}>Loading ride details…</span>
+          <span style={{ fontFamily: "'Times New Roman', serif", color: "#6b7280", fontSize: "0.9rem" }}>Loading ride details…</span>
         </div>
       </div>
     );
@@ -125,7 +125,7 @@ export default function BookingPage() {
 
         {/* ── LEFT PANEL — Ride Summary ── */}
         <div className="booking-left">
-          <div>
+          <div className="booking-left-header">
             <div className="booking-left-label">Your Journey</div>
             <h2>Confirm Your Booking</h2>
           </div>

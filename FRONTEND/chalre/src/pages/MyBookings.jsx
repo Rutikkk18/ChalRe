@@ -37,10 +37,10 @@ export default function MyBookings() {
 
   const loadBookings = async () => {
     try {
-      const res          = await api.get("/bookings/my?filter=separated");
-      const data         = res.data || {};
-      const upcoming     = data.upcoming || [];
-      const past         = data.past     || [];
+      const res      = await api.get("/bookings/my?filter=separated");
+      const data     = res.data || {};
+      const upcoming = (data.upcoming || []).filter(b => b.ride != null);
+      const past     = (data.past     || []).filter(b => b.ride != null);
       setUpcomingBookings(upcoming);
       setPastBookings(past);
       setBookings(activeTab === "upcoming" ? upcoming : past);
@@ -72,7 +72,6 @@ export default function MyBookings() {
     }
   };
 
-  /* helpers */
   const getLocationName = (full) => full ? full.split(",")[0].trim() : "";
   const getLocationSub  = (full) => {
     if (!full) return "";
