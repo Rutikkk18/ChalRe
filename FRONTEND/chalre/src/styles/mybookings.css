@@ -43,7 +43,7 @@
   max-width: 720px;
   width: 100%;
   margin: 16px auto 40px;
-  padding: clamp(80px, 10vw, 100px) clamp(16px, 4vw, 24px) 0;
+  padding: clamp(20px, 3vw, 32px) clamp(16px, 4vw, 24px) 0;
   animation: mb-fade 0.4s ease;
   font-family: "Times New Roman", Times, serif;
 }
@@ -499,7 +499,7 @@
 @media (max-width: 768px) {
   .mb-wrapper {
     margin-top: 16px;
-    padding: 72px 16px 0;
+    padding: 20px 16px 0;
   }
 
   .mb-card {
@@ -533,7 +533,7 @@
 ============================================================ */
 @media (max-width: 580px) {
   .mb-wrapper {
-    padding: 68px 14px 0;
+    padding: 18px 14px 0;
   }
 
   .mb-card {
@@ -583,7 +583,7 @@
 ============================================================ */
 @media (max-width: 400px) {
   .mb-wrapper {
-    padding: 64px 12px 0;
+    padding: 16px 12px 0;
   }
 
   .mb-card {
@@ -634,7 +634,7 @@
 ============================================================ */
 @media (max-width: 360px) {
   .mb-wrapper {
-    padding: 62px 10px 0;
+    padding: 14px 10px 0;
   }
 
   .mb-card {
@@ -715,7 +715,7 @@
 ============================================================ */
 @media (max-width: 320px) {
   .mb-wrapper {
-    padding: 60px 10px 0;
+    padding: 12px 10px 0;
   }
 
   .mb-card {
@@ -750,8 +750,8 @@
 ============================================================ */
 @media (max-height: 600px) and (orientation: landscape) {
   .mb-wrapper {
-    margin-top: 60px;
-    padding-top: 60px;
+    margin-top: 16px;
+    padding-top: 16px;
   }
 
   .mb-card {
