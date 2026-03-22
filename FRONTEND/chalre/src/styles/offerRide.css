@@ -44,7 +44,6 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   background-attachment: scroll;
   font-family: 'Times New Roman', Times, serif;
   animation: pageIn 0.5s ease both;
-  /* FIX: pull page up so bg image fills the navbar strip — no white gap */
   margin-top: -82px;
   padding-top: 82px;
 }
@@ -55,9 +54,10 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
 }
 
 .offer-zone {
-  /* FIX: was clamp(72px, 9vw, 92px) — MainLayout now handles navbar clearance */
   padding-top: 16px;
-  width: clamp(420px, 52vw, 720px);
+  /* FIX: removed 420px hardcoded min — use 100% with max-width instead */
+  width: 100%;
+  max-width: clamp(320px, 52vw, 720px);
   padding-left: clamp(32px, 4.5vw, 64px);
   padding-right: clamp(32px, 4vw, 64px);
   padding-bottom: 60px;
@@ -358,24 +358,88 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ================================
+   RESPONSIVE
+================================ */
+
+/* Large Tablet / Small Laptop (max 1024px) */
+@media (max-width: 1024px) {
+  .offer-zone {
+    max-width: clamp(320px, 65vw, 620px);
+    padding-left: clamp(24px, 4vw, 48px);
+    padding-right: clamp(24px, 4vw, 48px);
+  }
+
+  .offer-title {
+    font-size: clamp(1.3rem, 2.5vw, 1.6rem);
+  }
+
+  .offer-form {
+    gap: 18px;
+  }
+}
+
+/* Tablet (max 900px) */
 @media (max-width: 900px) {
   .offer-page { background-position: 70% center; }
   .offer-zone {
-    width: 100%;
     max-width: 640px;
     padding-left: clamp(20px, 5vw, 40px);
     padding-right: clamp(20px, 5vw, 40px);
-    /* FIX: was clamp(72px, 9vw, 90px) */
     padding-top: 16px;
   }
   .form-row { grid-template-columns: 1fr 1fr; gap: 16px; }
 }
 
+/* Tablet (max 768px) */
+@media (max-width: 768px) {
+  .offer-zone {
+    max-width: 100%;
+    padding-left: clamp(18px, 4vw, 32px);
+    padding-right: clamp(18px, 4vw, 32px);
+    padding-bottom: 48px;
+  }
+
+  .offer-title {
+    font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+  }
+
+  .offer-subtitle {
+    font-size: 0.78rem;
+  }
+
+  .offer-heading-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+  }
+
+  .offer-heading-icon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .offer-form {
+    gap: 16px;
+  }
+
+  .field-input {
+    padding: 8px 11px;
+    font-size: 0.85rem;
+  }
+
+  .vtoggle-btn {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+}
+
+/* Mobile (max 540px) */
 @media (max-width: 540px) {
   .offer-page { background-image: none; background-color: #f0fdf4; margin-top: 0; padding-top: 0; }
   .offer-zone {
     width: 100%;
-    /* FIX: was clamp(72px, 9vw, 88px) 18px 48px */
+    max-width: 100%;
     padding: 16px 18px 48px;
   }
   .form-row { grid-template-columns: 1fr; }
@@ -392,6 +456,144 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   .btn-submit:hover:not(:disabled),
   .offer-page .offer-zone .form-footer .btn-submit:hover:not(:disabled) {
     transform: none !important;
+  }
+}
+
+/* Small Phone (max 480px) */
+@media (max-width: 480px) {
+  .offer-zone {
+    padding: 14px 14px 40px;
+  }
+
+  .offer-heading {
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .offer-heading-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+
+  .offer-heading-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .offer-title {
+    font-size: 1.1rem;
+  }
+
+  .offer-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .offer-divider {
+    margin: 10px 0 14px;
+  }
+
+  .offer-form {
+    gap: 14px;
+  }
+
+  .field-label {
+    font-size: 0.6rem;
+  }
+
+  .field-input {
+    padding: 8px 10px;
+    font-size: 0.84rem;
+    border-radius: 7px !important;
+  }
+
+  .field-textarea {
+    min-height: 56px;
+  }
+
+  .vtoggle-btn {
+    padding: 5px 9px;
+    font-size: 0.75rem;
+    border-radius: 5px;
+  }
+
+  .banner {
+    padding: 8px 11px;
+    font-size: 0.78rem;
+  }
+
+  .btn-submit,
+  .offer-page .offer-zone .form-footer .btn-submit {
+    padding: 9px 22px !important;
+    font-size: 0.85rem !important;
+    border-radius: 10px !important;
+  }
+}
+
+/* Very Small Phone (max 360px) */
+@media (max-width: 360px) {
+  .offer-zone {
+    padding: 12px 12px 36px;
+  }
+
+  .offer-heading {
+    gap: 8px;
+  }
+
+  .offer-heading-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+  }
+
+  .offer-heading-icon svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .offer-title {
+    font-size: 1rem;
+  }
+
+  .offer-subtitle {
+    font-size: 0.72rem;
+  }
+
+  .offer-divider {
+    margin: 8px 0 12px;
+  }
+
+  .offer-form {
+    gap: 12px;
+  }
+
+  .field-input {
+    padding: 7px 9px;
+    font-size: 0.82rem;
+  }
+
+  .field-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.07em;
+  }
+
+  .vtoggle-btn {
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
+
+  .banner {
+    padding: 7px 10px;
+    font-size: 0.75rem;
+    border-radius: 7px;
+  }
+
+  .btn-submit,
+  .offer-page .offer-zone .form-footer .btn-submit {
+    padding: 8px 18px !important;
+    font-size: 0.82rem !important;
+    border-radius: 9px !important;
+    min-width: 110px !important;
   }
 }
 

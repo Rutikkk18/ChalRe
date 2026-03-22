@@ -10,8 +10,9 @@
   max-width: 900px;
   width: 100%;
   margin: 16px auto 40px;
-  padding: 0 clamp(16px, 4vw, 24px);
+  padding: clamp(80px, 10vw, 100px) clamp(16px, 4vw, 24px) 0;
   animation: mr-fade 0.4s ease;
+  font-family: "Times New Roman", Times, serif;
 }
 
 @keyframes mr-fade {
@@ -24,6 +25,7 @@
   padding: 60px 20px;
   color: #6b7280;
   font-size: 15px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ── HEADER ── */
@@ -42,6 +44,7 @@
   color: #0a2614;
   margin: 0;
   letter-spacing: -0.3px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mr-new-btn {
@@ -56,7 +59,7 @@
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
   transition: background 0.2s, transform 0.15s;
   white-space: nowrap;
 }
@@ -92,7 +95,7 @@
   font-weight: 600;
   color: #9ca3af;
   cursor: pointer;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
   transition: color 0.2s, border-color 0.2s;
   white-space: nowrap;
 }
@@ -115,6 +118,7 @@
   border-radius: 20px;
   line-height: 1.4;
   transition: background 0.2s, color 0.2s;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mr-tab--active .mr-tab-count {
@@ -132,6 +136,7 @@
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 20px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ── EMPTY STATE ── */
@@ -153,6 +158,7 @@
   font-size: 16px;
   color: #6b7280;
   margin: 0;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ── GRID: 2 columns ── */
@@ -242,6 +248,7 @@
   color: #9ca3af;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mr-route-place {
@@ -250,6 +257,7 @@
   color: #0a2614;
   line-height: 1.4;
   word-break: break-word;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ── META INFO ── */
@@ -265,6 +273,7 @@
   gap: 8px;
   font-size: 13px;
   color: #4b5563;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mr-meta-icon {
@@ -316,7 +325,7 @@
   font-weight: 600;
   color: #374151;
   cursor: pointer;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
   transition: background 0.2s;
 }
 
@@ -366,11 +375,13 @@
 .mr-booking-passenger strong {
   font-size: 13px;
   color: #0a2614;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mr-booking-passenger span {
   font-size: 11px;
   color: #6b7280;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mr-booking-actions {
@@ -389,7 +400,7 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
   border: none;
   text-decoration: none;
   transition: background 0.2s;
@@ -431,7 +442,7 @@
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
   transition: all 0.2s;
 }
 
@@ -462,7 +473,27 @@
   transform: translateY(-1px);
 }
 
-/* ── RESPONSIVE ── */
+/* ================================
+   RESPONSIVE
+================================ */
+
+/* Large Tablet / Small Laptop (max 1024px) */
+@media (max-width: 1024px) {
+  .mr-wrapper {
+    max-width: 780px;
+    padding-top: clamp(72px, 9vw, 90px);
+  }
+
+  .mr-grid {
+    gap: clamp(12px, 2.5vw, 16px);
+  }
+
+  .mr-tab {
+    padding: 12px 24px;
+  }
+}
+
+/* Tablet (max 700px) — single column */
 @media (max-width: 700px) {
   .mr-grid {
     grid-template-columns: 1fr;
@@ -484,9 +515,93 @@
   }
 }
 
+/* Medium Phone (max 600px) */
+@media (max-width: 600px) {
+  .mr-wrapper {
+    padding-top: 70px;
+    padding-left: 14px;
+    padding-right: 14px;
+    margin-top: 12px;
+  }
+
+  .mr-header {
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+
+  .mr-title {
+    font-size: clamp(20px, 4vw, 24px);
+  }
+
+  .mr-tabs-bar {
+    margin-bottom: 20px;
+  }
+
+  .mr-tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    gap: 5px;
+  }
+
+  .mr-tab-count {
+    padding: 2px 6px;
+    font-size: 11px;
+  }
+
+  .mr-card {
+    gap: 12px;
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  .mr-card-route {
+    padding-bottom: 12px;
+  }
+
+  .mr-meta-item {
+    font-size: 12px;
+  }
+
+  .mr-meta-item--price {
+    font-size: 13px;
+  }
+
+  .mr-bookings-toggle {
+    font-size: 12px;
+    padding: 7px;
+  }
+
+  .mr-booking-item {
+    padding: 9px 10px;
+    gap: 8px;
+  }
+
+  .mr-booking-passenger strong {
+    font-size: 12px;
+  }
+
+  .mr-booking-passenger span {
+    font-size: 10px;
+  }
+
+  .mr-btn {
+    font-size: 12px;
+    padding: 7px 8px;
+  }
+
+  .mr-empty {
+    padding: 40px 16px;
+  }
+
+  .mr-empty-text {
+    font-size: 14px;
+  }
+}
+
+/* Small Phone (max 480px) */
 @media (max-width: 480px) {
   .mr-wrapper {
-    padding: 0 12px;
+    padding: 68px 12px 0;
   }
 
   .mr-header {
@@ -526,6 +641,94 @@
   .mr-btn-chat {
     flex: 1;
     justify-content: center;
+  }
+}
+
+/* Very Small Phone (max 360px) */
+@media (max-width: 360px) {
+  .mr-wrapper {
+    padding: 64px 10px 0;
+  }
+
+  .mr-title {
+    font-size: 19px;
+  }
+
+  .mr-new-btn {
+    font-size: 13px;
+    padding: 9px 16px;
+    border-radius: 9px;
+  }
+
+  .mr-tab {
+    padding: 9px 12px;
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  .mr-tab-count {
+    padding: 1px 5px;
+    font-size: 10px;
+  }
+
+  .mr-card {
+    padding: 12px 11px;
+    gap: 10px;
+    border-radius: 10px;
+  }
+
+  .mr-route-place {
+    font-size: 12px;
+  }
+
+  .mr-route-label {
+    font-size: 9px;
+  }
+
+  .mr-meta-item {
+    font-size: 11px;
+  }
+
+  .mr-meta-item--price {
+    font-size: 12px;
+  }
+
+  .mr-bookings-toggle {
+    font-size: 11px;
+    padding: 6px;
+    border-radius: 7px;
+  }
+
+  .mr-booking-passenger strong {
+    font-size: 11px;
+  }
+
+  .mr-booking-passenger span {
+    font-size: 10px;
+  }
+
+  .mr-btn {
+    font-size: 11px;
+    padding: 7px 8px;
+    border-radius: 7px;
+  }
+
+  .mr-btn-call,
+  .mr-btn-chat {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+
+  .mr-empty {
+    padding: 32px 12px;
+  }
+
+  .mr-empty-icon {
+    font-size: 36px;
+  }
+
+  .mr-empty-text {
+    font-size: 13px;
   }
 }
 

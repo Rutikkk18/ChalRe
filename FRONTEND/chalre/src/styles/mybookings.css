@@ -43,8 +43,9 @@
   max-width: 720px;
   width: 100%;
   margin: 16px auto 40px;
-  padding: 0 clamp(16px, 4vw, 24px);
+  padding: clamp(80px, 10vw, 100px) clamp(16px, 4vw, 24px) 0;
   animation: mb-fade 0.4s ease;
+  font-family: "Times New Roman", Times, serif;
 }
 
 @keyframes mb-fade {
@@ -57,6 +58,7 @@
   padding: 60px 20px;
   color: var(--mb-text-muted);
   font-size: 15px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ============================================================
@@ -76,6 +78,7 @@
   margin: 0;
   letter-spacing: -0.3px;
   text-align: center;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ============================================================
@@ -106,7 +109,7 @@
   font-weight: 600;
   color: var(--mb-text-sub);
   cursor: pointer;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
   transition: color var(--mb-transition), border-color var(--mb-transition);
   white-space: nowrap;
   appearance: none;
@@ -131,6 +134,7 @@
   border-radius: 20px;
   line-height: 1.4;
   transition: background var(--mb-transition), color var(--mb-transition);
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mb-tab--active .mb-tab-count {
@@ -157,6 +161,7 @@
   font-weight: 600;
   margin-bottom: clamp(16px, 3vw, 20px);
   line-height: 1.5;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ============================================================
@@ -181,6 +186,7 @@
   color: var(--mb-text-muted);
   margin: 0;
   line-height: 1.6;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mb-cta-btn {
@@ -195,7 +201,7 @@
   font-size: clamp(13px, 2vw, 15px);
   font-weight: 700;
   cursor: pointer;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
   transition: background var(--mb-transition), transform var(--mb-transition);
   box-shadow: 0 3px 10px rgba(2, 65, 16, 0.25);
 }
@@ -300,6 +306,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   line-height: 1;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mb-place-name {
@@ -310,6 +317,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mb-place-sub {
@@ -319,6 +327,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ============================================================
@@ -349,6 +358,7 @@
   font-weight: 500;
   line-height: 1.4;
   min-width: 0;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mb-meta-icon {
@@ -387,6 +397,7 @@
   font-weight: 700;
   white-space: nowrap;
   line-height: 1.4;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .mb-badge svg {
@@ -395,35 +406,11 @@
   flex-shrink: 0;
 }
 
-.mb-badge--green {
-  background: #dcfce7;
-  color: #166534;
-  border: 1px solid #bbf7d0;
-}
-
-.mb-badge--red {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
-}
-
-.mb-badge--yellow {
-  background: #fef9c3;
-  color: #854d0e;
-  border: 1px solid #fde68a;
-}
-
-.mb-badge--blue {
-  background: #dbeafe;
-  color: #1e40af;
-  border: 1px solid #bfdbfe;
-}
-
-.mb-badge--grey {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #e5e7eb;
-}
+.mb-badge--green  { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.mb-badge--red    { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+.mb-badge--yellow { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+.mb-badge--blue   { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+.mb-badge--grey   { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
 
 /* ============================================================
    ACTION BUTTONS
@@ -445,7 +432,7 @@
   font-size: clamp(12px, 1.8vw, 14px);
   font-weight: 700;
   cursor: pointer;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
   white-space: nowrap;
   flex-shrink: 0;
   transition:
@@ -468,55 +455,18 @@
   transform: none !important;
 }
 
-/* View */
-.mb-btn--view {
-  background: #eef2ff;
-  color: #4338ca;
-  border: 1px solid #e0e7ff;
-}
-.mb-btn--view:hover:not(:disabled) {
-  background: #e0e7ff;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(79, 70, 229, 0.15);
-}
+.mb-btn--view   { background: #eef2ff; color: #4338ca; border: 1px solid #e0e7ff; }
+.mb-btn--view:hover:not(:disabled)   { background: #e0e7ff; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(79,70,229,0.15); }
 
-/* Chat */
-.mb-btn--chat {
-  background: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-.mb-btn--chat:hover:not(:disabled) {
-  background: #d1fae5;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.15);
-}
+.mb-btn--chat   { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.mb-btn--chat:hover:not(:disabled)   { background: #d1fae5; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(16,185,129,0.15); }
 
-/* Cancel */
-.mb-btn--cancel {
-  background: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
-}
-.mb-btn--cancel:hover:not(:disabled) {
-  background: #fee2e2;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(220, 38, 38, 0.15);
-}
+.mb-btn--cancel { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.mb-btn--cancel:hover:not(:disabled) { background: #fee2e2; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(220,38,38,0.15); }
 
-/* Rate */
-.mb-btn--rate {
-  background: #fffbeb;
-  color: #92400e;
-  border: 1px solid #fde68a;
-}
-.mb-btn--rate:hover:not(:disabled) {
-  background: #fef3c7;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.15);
-}
+.mb-btn--rate   { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+.mb-btn--rate:hover:not(:disabled)   { background: #fef3c7; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(245,158,11,0.15); }
 
-/* Rated text */
 .mb-rated {
   display: inline-flex;
   align-items: center;
@@ -527,10 +477,11 @@
   background: #ecfdf5;
   border: 1px solid #a7f3d0;
   border-radius: var(--mb-radius-btn);
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ============================================================
-   RESPONSIVE – TABLET (769px – 1024px)
+   RESPONSIVE – TABLET (≤ 1024px)
 ============================================================ */
 @media (max-width: 1024px) {
   .mb-card {
@@ -548,7 +499,7 @@
 @media (max-width: 768px) {
   .mb-wrapper {
     margin-top: 16px;
-    padding: 0 16px;
+    padding: 72px 16px 0;
   }
 
   .mb-card {
@@ -582,7 +533,7 @@
 ============================================================ */
 @media (max-width: 580px) {
   .mb-wrapper {
-    padding: 0 14px;
+    padding: 68px 14px 0;
   }
 
   .mb-card {
@@ -632,7 +583,7 @@
 ============================================================ */
 @media (max-width: 400px) {
   .mb-wrapper {
-    padding: 0 12px;
+    padding: 64px 12px 0;
   }
 
   .mb-card {
@@ -679,11 +630,92 @@
 }
 
 /* ============================================================
+   RESPONSIVE – VERY SMALL PHONE (≤ 360px)
+============================================================ */
+@media (max-width: 360px) {
+  .mb-wrapper {
+    padding: 62px 10px 0;
+  }
+
+  .mb-card {
+    padding: 11px 10px;
+    border-radius: 9px;
+    gap: 9px;
+  }
+
+  .mb-title {
+    font-size: 18px;
+    letter-spacing: -0.2px;
+  }
+
+  .mb-tab {
+    padding: 8px 11px;
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  .mb-tab-count {
+    padding: 1px 5px;
+    font-size: 10px;
+  }
+
+  .mb-place-name {
+    font-size: 12px;
+  }
+
+  .mb-place-label {
+    font-size: 9px;
+  }
+
+  .mb-place-sub {
+    font-size: 10px;
+  }
+
+  .mb-meta-item {
+    font-size: 11px;
+  }
+
+  .mb-meta-item--price {
+    font-size: 12px;
+  }
+
+  .mb-badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 16px;
+  }
+
+  .mb-btn {
+    font-size: 11px;
+    padding: 8px 10px;
+    border-radius: 7px;
+  }
+
+  .mb-rated {
+    font-size: 11px;
+    padding: 8px 10px;
+    border-radius: 7px;
+  }
+
+  .mb-empty {
+    padding: 32px 12px;
+  }
+
+  .mb-empty-icon {
+    font-size: 36px;
+  }
+
+  .mb-empty-text {
+    font-size: 13px;
+  }
+}
+
+/* ============================================================
    RESPONSIVE – EXTRA EXTRA SMALL (≤ 320px)
 ============================================================ */
 @media (max-width: 320px) {
   .mb-wrapper {
-    padding: 0 10px;
+    padding: 60px 10px 0;
   }
 
   .mb-card {
@@ -719,6 +751,7 @@
 @media (max-height: 600px) and (orientation: landscape) {
   .mb-wrapper {
     margin-top: 60px;
+    padding-top: 60px;
   }
 
   .mb-card {

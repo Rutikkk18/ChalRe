@@ -7,6 +7,7 @@
   font-size: clamp(13px, 1.5vw, 14px);
   color: #222;
   margin-top: auto;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .footer-container {
@@ -22,6 +23,7 @@
   font-weight: 600;
   margin-bottom: 16px;
   color: #0f5132;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .footer-col ul {
@@ -34,6 +36,7 @@
   cursor: pointer;
   color: #333;
   font-size: clamp(13px, 1.5vw, 14px);
+  font-family: "Times New Roman", Times, serif;
 }
 
 .footer-col ul li:hover {
@@ -65,6 +68,7 @@
   justify-content: space-between;
   align-items: center;
   transition: all 0.3s ease;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .language-btn:hover {
@@ -102,6 +106,7 @@
   font-size: clamp(12px, 1.5vw, 13px);
   transition: background 0.2s ease;
   border-bottom: 1px solid #f0f0f0;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .language-option:last-child {
@@ -119,12 +124,13 @@
 }
 
 /* ================================
-   ANIMATED SOCIAL CARD - INCREASED HEIGHT
+   ANIMATED SOCIAL CARD
 ================================ */
 .card {
   display: flex;
   height: 80px;
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
   margin-top: 20px;
   gap: 10px;
 }
@@ -137,8 +143,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20%;
-  height: 70%;
+  flex: 1;
+  height: 100%;
   color: #333;
   background: #fff;
   border: 2px solid #ddd;
@@ -146,11 +152,12 @@
   text-decoration: none;
   transition: all 0.3s ease;
   border-radius: 14px;
+  min-width: 0;
 }
 
 .card svg {
-  width: 32px;
-  height: 32px;
+  width: clamp(24px, 5vw, 32px);
+  height: clamp(24px, 5vw, 32px);
   transition: transform 0.3s ease;
 }
 
@@ -210,4 +217,192 @@
   cursor: pointer;
   flex-wrap: wrap;
   gap: 10px;
+  font-family: "Times New Roman", Times, serif;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+/* Large Tablet / Small Laptop (max 1024px) */
+@media (max-width: 1024px) {
+  .footer-container {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(18px, 3vw, 28px);
+  }
+
+  .card {
+    max-width: 280px;
+  }
+}
+
+/* Tablet (max 768px) */
+@media (max-width: 768px) {
+  .footer {
+    padding: 40px 20px 20px;
+  }
+
+  .footer-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .card {
+    max-width: 260px;
+    height: 70px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+  }
+}
+
+/* Medium Phone (max 600px) */
+@media (max-width: 600px) {
+  .footer {
+    padding: 32px 16px 16px;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .footer-col h4 {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .footer-col ul li {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .language-btn {
+    padding: 9px 16px;
+    font-size: 13px;
+  }
+
+  .language-option {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .card {
+    max-width: 100%;
+    height: 64px;
+    gap: 8px;
+  }
+
+  .card svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .footer-bottom {
+    margin-top: 20px;
+    padding-top: 12px;
+    font-size: 12px;
+  }
+}
+
+/* Small Phone (max 480px) */
+@media (max-width: 480px) {
+  .footer {
+    padding: 28px 14px 14px;
+  }
+
+  .footer-col h4 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .footer-col ul li {
+    font-size: 12px;
+    margin-bottom: 7px;
+  }
+
+  .language-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+    border-radius: 24px;
+  }
+
+  .language-option {
+    padding: 9px 14px;
+    font-size: 12px;
+  }
+
+  .card {
+    height: 58px;
+    gap: 7px;
+    margin-top: 16px;
+  }
+
+  .card .social-link1,
+  .card .social-link2,
+  .card .social-link3,
+  .card .social-link4 {
+    border-radius: 10px;
+  }
+
+  .card svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Very Small Phone (max 360px) */
+@media (max-width: 360px) {
+  .footer {
+    padding: 24px 12px 12px;
+  }
+
+  .footer-col h4 {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .footer-col ul li {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .card {
+    height: 52px;
+    gap: 6px;
+  }
+
+  .card svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .language-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .footer-bottom {
+    font-size: 11px;
+    gap: 6px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .card .social-link1:hover,
+  .card .social-link2:hover,
+  .card .social-link3:hover,
+  .card .social-link4:hover {
+    animation: none;
+  }
+
+  .language-btn,
+  .dropdown-arrow {
+    transition: none;
+  }
 }

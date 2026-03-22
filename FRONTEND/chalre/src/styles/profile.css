@@ -3,7 +3,7 @@
    Left identity panel · Right form panel
 ================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+/* Google Fonts import removed — Times New Roman used throughout */
 
 * { box-sizing: border-box; }
 
@@ -14,7 +14,7 @@
   margin: 16px auto clamp(20px, 4vw, 40px);
   padding: clamp(16px, 3vw, 32px) clamp(16px, 4vw, 40px);
   animation: prof-fade 0.45s ease both;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
 }
 
 @keyframes prof-fade {
@@ -59,7 +59,6 @@
   overflow: hidden;
 }
 
-/* Subtle texture overlay */
 .profile-left::before {
   content: '';
   position: absolute;
@@ -70,7 +69,6 @@
   pointer-events: none;
 }
 
-/* Decorative ring — sized to wrap avatar (130px + border offset) */
 .profile-left::after {
   content: '';
   position: absolute;
@@ -156,7 +154,7 @@
 }
 
 .profile-identity-name {
-  font-family: 'Lora', Georgia, serif;
+  font-family: "Times New Roman", Times, serif;
   font-size: clamp(18px, 2.5vw, 22px);
   font-weight: 700;
   color: #ffffff;
@@ -171,6 +169,7 @@
   font-weight: 400;
   margin: 0 0 24px 0;
   word-break: break-all;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ---------- LEFT PANEL DIVIDER ---------- */
@@ -204,12 +203,12 @@
   color: rgba(255,255,255,0.75);
   font-weight: 500;
   transition: background 0.2s ease;
-  /* FIX: prevent word breaking mid-word, use ellipsis */
   word-break: normal;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   min-width: 0;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .profile-left-pill:hover {
@@ -224,7 +223,6 @@
   min-width: 15px;
 }
 
-/* Truncate pill text */
 .profile-left-pill span,
 .profile-left-pill > *:not(svg) {
   overflow: hidden;
@@ -253,7 +251,7 @@
 }
 
 .profile-header h2 {
-  font-family: 'Lora', Georgia, serif;
+  font-family: "Times New Roman", Times, serif;
   font-size: clamp(22px, 3vw, 28px);
   color: #0a2614;
   margin: 0;
@@ -266,6 +264,7 @@
   color: #9ca3af;
   font-weight: 400;
   margin-top: 4px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ---------- CLOSE BUTTON ---------- */
@@ -310,7 +309,7 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .success-message {
@@ -326,7 +325,7 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
 }
 
 @keyframes slideIn {
@@ -371,7 +370,7 @@
   font-size: 13px;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .form-group label svg {
@@ -388,7 +387,7 @@
   border-radius: 10px;
   font-size: 15px;
   transition: all 0.2s ease;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
   width: 100%;
   background: #fafafa;
   color: #0a2614;
@@ -398,6 +397,7 @@
 .form-group input::placeholder {
   color: #9ca3af;
   font-size: 14px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .form-group input:focus {
@@ -430,7 +430,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .readonly-note svg { width: 12px; height: 12px; flex-shrink: 0; }
@@ -462,7 +462,7 @@
   justify-content: center;
   gap: 7px;
   transition: all 0.2s ease;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
   appearance: none;
   -webkit-appearance: none;
   letter-spacing: 0.01em;
@@ -495,7 +495,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
   appearance: none;
   -webkit-appearance: none;
   white-space: nowrap;
@@ -531,14 +531,14 @@
   color: #024110;
   display: block;
   margin-bottom: 3px;
-  font-family: 'Lora', Georgia, serif;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .stat-label {
   font-size: 12px;
   color: #6b7280;
   font-weight: 500;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ---------- LOADING ---------- */
@@ -578,13 +578,39 @@
   align-items: center;
   gap: 4px;
   font-weight: 500;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
 }
 .field-error svg { width: 13px; height: 13px; flex-shrink: 0; }
 
 /* ══════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════ */
+
+/* Large Tablet / Small Laptop (max 1024px) */
+@media (max-width: 1024px) {
+  .profile-card {
+    max-width: 820px;
+    grid-template-columns: 240px 1fr;
+  }
+
+  .profile-left {
+    padding: clamp(28px, 4vw, 40px) clamp(20px, 3vw, 28px);
+  }
+
+  .profile-right {
+    padding: clamp(24px, 4vw, 40px) clamp(20px, 4vw, 36px);
+  }
+
+  .profile-header h2 {
+    font-size: clamp(20px, 2.5vw, 26px);
+  }
+
+  .profile-stats {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 10px;
+    padding: 12px;
+  }
+}
 
 /* Tablet ≤ 860px — stack vertically */
 @media (max-width: 860px) {
@@ -610,7 +636,12 @@
   .profile-right { padding: 24px; }
 }
 
-/* Mobile ≤ 640px */
+/* Medium Phone (max 768px) */
+@media (max-width: 768px) {
+  .profile-wrapper { margin-top: 16px; }
+}
+
+/* Medium-Small Phone (max 640px) */
 @media (max-width: 640px) {
   .profile-wrapper {
     margin-top: 16px;
@@ -624,7 +655,6 @@
     gap: 16px;
   }
   .image-container { width: 68px; height: 68px; }
-  /* FIX: smaller camera button on mobile so it doesn't overlap avatar */
   .image-upload-label {
     width: 26px !important;
     height: 26px !important;
@@ -639,6 +669,78 @@
   .form-actions { flex-direction: column; gap: 10px; }
   .btn-save, .btn-cancel { width: 100%; }
   .btn-save:hover, .btn-cancel:hover, .btn-close:hover { transform: none; }
+}
+
+/* Medium-Small Phone (max 560px) */
+@media (max-width: 560px) {
+  .profile-wrapper {
+    padding: 10px;
+  }
+
+  .profile-card {
+    border-radius: 14px;
+    max-width: 100%;
+  }
+
+  .profile-left {
+    padding: 18px 14px;
+    gap: 14px;
+  }
+
+  .image-container { width: 62px; height: 62px; }
+
+  .profile-identity-name { font-size: 15px; }
+  .profile-identity-email { font-size: 11px; }
+
+  .profile-right {
+    padding: 18px 14px;
+  }
+
+  .profile-header {
+    margin-bottom: 18px;
+  }
+
+  .profile-header h2 {
+    font-size: 18px;
+  }
+
+  .profile-header-sub {
+    font-size: 12px;
+  }
+
+  .profile-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+
+  .form-group input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+  }
+
+  .profile-form {
+    gap: 16px;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    padding: 11px 16px;
+    font-size: 13px;
+  }
 }
 
 /* Small mobile ≤ 400px */
@@ -657,9 +759,92 @@
   .form-group input { font-size: 14px; }
 }
 
-/* Tablet ≤ 768px margin fix */
-@media (max-width: 768px) {
-  .profile-wrapper { margin-top: 16px; }
+/* Very Small Phone (max 360px) */
+@media (max-width: 360px) {
+  .profile-wrapper {
+    padding: 8px;
+  }
+
+  .profile-card {
+    border-radius: 12px;
+  }
+
+  .profile-left {
+    padding: 14px 11px;
+    gap: 11px;
+  }
+
+  .image-container { width: 54px; height: 54px; }
+
+  .image-upload-label {
+    width: 22px !important;
+    height: 22px !important;
+    bottom: -1px !important;
+    right: -1px !important;
+  }
+
+  .image-upload-label svg { width: 10px !important; height: 10px !important; }
+
+  .profile-identity-name {
+    font-size: 14px;
+  }
+
+  .profile-identity-email {
+    font-size: 10px;
+  }
+
+  .profile-right {
+    padding: 14px 11px;
+  }
+
+  .profile-header h2 {
+    font-size: 16px;
+  }
+
+  .profile-header-sub {
+    font-size: 11px;
+  }
+
+  .profile-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .stat-value {
+    font-size: 16px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .form-group input {
+    padding: 9px 11px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .profile-form {
+    gap: 14px;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 9px;
+  }
+
+  .error-message,
+  .success-message {
+    font-size: 12px;
+    padding: 10px 11px;
+  }
 }
 
 /* Landscape */

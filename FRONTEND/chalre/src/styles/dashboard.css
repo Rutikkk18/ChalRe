@@ -4,7 +4,7 @@
    Clean · Classic · Responsive
 ================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+/* Google Fonts import removed — Times New Roman used throughout */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -26,9 +26,8 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* FIX: was clamp(80px, 10vw, 100px) top — MainLayout now handles navbar clearance */
   padding: 16px clamp(18px, 5vw, 64px) clamp(40px, 5vw, 60px);
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
   overflow: hidden;
   animation: dashIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -159,7 +158,7 @@ html, body {
 }
 
 .dash-name {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: "Times New Roman", Times, serif;
   font-size: clamp(15px, 3.5vw, 17px);
   font-weight: 700;
   color: #0a2614;
@@ -174,6 +173,7 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .dash-bell-wrap {
@@ -217,12 +217,14 @@ html, body {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.4px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .dash-status-text strong {
   font-size: 14px;
   color: #0a2614;
   font-weight: 700;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .dash-inline-btn {
@@ -232,7 +234,7 @@ html, body {
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
   background: #024110;
   color: #fff;
   transition: background 0.2s;
@@ -253,6 +255,7 @@ html, body {
   font-weight: 700;
   color: #0a2614;
   margin-bottom: 4px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .dash-upi-title svg { color: #024110; }
@@ -262,6 +265,7 @@ html, body {
   color: #9ca3af;
   margin-bottom: 12px;
   line-height: 1.5;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .dash-upi-row {
@@ -277,13 +281,16 @@ html, body {
   border-radius: 9px;
   border: 1.5px solid #d1d5db;
   font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
   background: #fff;
   color: #0a2614;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.dash-upi-input::placeholder { color: #b0b8c0; }
+.dash-upi-input::placeholder {
+  color: #b0b8c0;
+  font-family: "Times New Roman", Times, serif;
+}
 
 .dash-upi-input:focus {
   outline: none;
@@ -298,7 +305,7 @@ html, body {
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
   background: #024110;
   color: #fff;
   transition: background 0.2s;
@@ -314,6 +321,7 @@ html, body {
   color: #b91c1c;
   margin-top: 6px;
   font-weight: 500;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ── PRIMARY ACTIONS ── */
@@ -335,7 +343,7 @@ html, body {
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
 }
 
@@ -386,7 +394,7 @@ html, body {
   font-size: 12px;
   font-weight: 600;
   color: #1a3d25;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
   transition: background 0.2s, border-color 0.2s, transform 0.15s;
   line-height: 1.2;
   text-align: center;
@@ -410,10 +418,42 @@ html, body {
   .dash-page {
     align-items: center;
     background-position: 75% center;
-    /* FIX: was clamp(80px, 10vw, 100px) top */
     padding: 16px clamp(14px, 4vw, 28px) 48px;
   }
   .dash-card:hover { transform: none; }
+}
+
+/* ─────────────────────────────────────────
+   ≤ 768px — medium tablet
+───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .dash-page {
+    padding: 16px clamp(12px, 3vw, 20px) 40px;
+  }
+
+  .dash-card {
+    max-width: 440px;
+    border-radius: 28px;
+  }
+
+  .dash-card-inner {
+    padding: clamp(16px, 4vw, 22px);
+  }
+
+  .dash-primary-btn {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+
+  .dash-sec-btn {
+    padding: 12px 8px;
+    font-size: 11px;
+  }
+
+  .dash-status {
+    padding: 11px 12px;
+    gap: 10px;
+  }
 }
 
 /* ─────────────────────────────────────────
@@ -423,7 +463,6 @@ html, body {
   .dash-page {
     background-color: #f0f4f8;
     align-items: center;
-    /* FIX: was padding: 88px 12px 40px */
     padding: 16px 12px 40px;
   }
   .dash-page::before { display: none; }
@@ -449,6 +488,87 @@ html, body {
 }
 
 /* ─────────────────────────────────────────
+   ≤ 480px — small phone
+───────────────────────────────────────── */
+@media (max-width: 480px) {
+  .dash-page {
+    padding: 14px 10px 36px;
+  }
+
+  .dash-card {
+    border-radius: 22px;
+    padding: 6px;
+  }
+
+  .dash-card-inner {
+    border-radius: 18px;
+    padding: 16px 14px;
+  }
+
+  .dash-card-noise {
+    border-radius: 22px;
+  }
+
+  .dash-avatar {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+  }
+
+  .dash-name {
+    font-size: 15px;
+  }
+
+  .dash-email {
+    font-size: 11px;
+  }
+
+  .dash-status {
+    padding: 10px 11px;
+    gap: 8px;
+    border-radius: 10px;
+  }
+
+  .dash-status-text strong {
+    font-size: 13px;
+  }
+
+  .dash-upi-title {
+    font-size: 13px;
+  }
+
+  .dash-upi-input,
+  .dash-upi-btn {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .dash-primary-btn {
+    font-size: 13px;
+    padding: 11px 12px;
+    border-radius: 10px;
+  }
+
+  .dash-sec-btn {
+    padding: 11px 8px;
+    font-size: 11px;
+    border-radius: 10px;
+  }
+
+  .dash-sep {
+    margin: 12px 0;
+  }
+}
+
+/* ─────────────────────────────────────────
+   ≤ 400px — wrap status card
+───────────────────────────────────────── */
+@media (max-width: 400px) {
+  .dash-status { flex-wrap: wrap; }
+  .dash-inline-btn { width: 100%; text-align: center; }
+}
+
+/* ─────────────────────────────────────────
    ≤ 380px
 ───────────────────────────────────────── */
 @media (max-width: 380px) {
@@ -463,14 +583,6 @@ html, body {
 @media (max-width: 340px) {
   .dash-upi-row { flex-direction: column; }
   .dash-upi-btn { width: 100%; }
-}
-
-/* ─────────────────────────────────────────
-   ≤ 400px — wrap status card
-───────────────────────────────────────── */
-@media (max-width: 400px) {
-  .dash-status { flex-wrap: wrap; }
-  .dash-inline-btn { width: 100%; text-align: center; }
 }
 
 /* ─────────────────────────────────────────
@@ -555,6 +667,7 @@ html, body {
   font-weight: 700;
   color: #92400e;
   line-height: 1.3;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .dash-incomplete-sub {
@@ -565,6 +678,7 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .dash-incomplete-btn {
@@ -574,7 +688,7 @@ html, body {
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "Times New Roman", Times, serif;
   background: #f59e0b;
   color: #fff;
   transition: background 0.2s, transform 0.15s;

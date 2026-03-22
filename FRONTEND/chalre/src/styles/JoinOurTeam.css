@@ -273,7 +273,11 @@
     transform: translateY(0);
 }
 
-/* ---------- RESPONSIVE - TABLET ---------- */
+/* ================================
+   RESPONSIVE
+================================ */
+
+/* Large Tablet / Small Laptop (max 1024px) */
 @media (max-width: 1024px) {
     .jot-hero {
         padding-top: clamp(90px, 12vw, 120px);
@@ -285,7 +289,7 @@
     }
 }
 
-/* ---------- RESPONSIVE - MOBILE ---------- */
+/* Tablet (max 768px) */
 @media (max-width: 768px) {
     .jot-hero {
         padding-top: 100px;
@@ -317,7 +321,111 @@
     }
 }
 
-/* ---------- RESPONSIVE - SMALL MOBILE ---------- */
+/* Medium Phone (max 600px) */
+@media (max-width: 600px) {
+    .jot-hero {
+        padding-top: 90px;
+        padding-bottom: 40px;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .jot-hero h1 {
+        font-size: clamp(24px, 5vw, 30px);
+        letter-spacing: 0;
+    }
+
+    .jot-hero p {
+        font-size: 15px;
+    }
+
+    .jot-container {
+        padding: 0 14px;
+    }
+
+    .jot-section {
+        padding: clamp(24px, 5vw, 32px) 0;
+    }
+
+    .jot-section.bg-light {
+        margin: 0 -14px;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .jot-section h2 {
+        font-size: clamp(20px, 4vw, 26px);
+        margin-bottom: 16px;
+    }
+
+    .jot-section p {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .jot-card {
+        padding: 18px 16px;
+        border-radius: 10px;
+    }
+
+    .jot-card h3 {
+        font-size: 17px;
+        margin-bottom: 8px;
+    }
+
+    .jot-card p {
+        font-size: 14px;
+    }
+
+    .jot-tech-list li {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    .culture-item {
+        padding: 14px;
+        border-radius: 8px;
+    }
+
+    .culture-item h4 {
+        font-size: 16px;
+    }
+
+    .culture-item p {
+        font-size: 13px;
+    }
+
+    .jot-hiring-box {
+        padding: 20px 16px;
+        border-radius: 12px;
+    }
+
+    .jot-lead {
+        font-size: 15px;
+    }
+
+    .jot-cta {
+        padding: 40px 14px;
+    }
+
+    .jot-cta h3 {
+        font-size: clamp(20px, 4vw, 26px);
+    }
+
+    .jot-cta p {
+        font-size: 14px;
+    }
+
+    .jot-btn {
+        width: 100%;
+        max-width: 280px;
+        text-align: center;
+        padding: 12px 24px;
+        font-size: 15px;
+    }
+}
+
+/* Small Mobile (max 480px) */
 @media (max-width: 480px) {
     .jot-hero {
         padding-top: 90px;
@@ -325,15 +433,15 @@
     }
 
     .jot-hero h1 {
-        font-size: 26px;
+        font-size: 24px;
     }
 
     .jot-hero p {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .jot-section h2 {
-        font-size: 22px;
+        font-size: 21px;
     }
 
     .jot-card {
@@ -342,16 +450,113 @@
 
     .jot-tech-list li {
         padding: 10px 14px;
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .jot-hiring-box {
-        padding: 20px;
+        padding: 18px 14px;
     }
 
     .jot-btn {
         width: 100%;
         max-width: 280px;
+    }
+}
+
+/* Very Small Phone (max 360px) */
+@media (max-width: 360px) {
+    .jot-hero {
+        padding-top: 80px;
+        padding-bottom: 32px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .jot-hero h1 {
+        font-size: 22px;
+        letter-spacing: 0;
+    }
+
+    .jot-hero p {
+        font-size: 14px;
+    }
+
+    .jot-container {
+        padding: 0 12px;
+    }
+
+    .jot-section.bg-light {
+        margin: 0 -12px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .jot-section h2 {
+        font-size: 19px;
+        margin-bottom: 12px;
+    }
+
+    .jot-section p {
+        font-size: 13px;
+    }
+
+    .jot-card {
+        padding: 14px 12px;
+        border-radius: 9px;
+    }
+
+    .jot-card h3 {
+        font-size: 15px;
+    }
+
+    .jot-card p {
+        font-size: 13px;
+    }
+
+    .jot-tech-list li {
+        font-size: 13px;
+        padding: 9px 12px;
+        border-radius: 6px;
+    }
+
+    .culture-item {
+        padding: 12px;
+    }
+
+    .culture-item h4 {
+        font-size: 15px;
+    }
+
+    .culture-item p {
+        font-size: 13px;
+    }
+
+    .jot-hiring-box {
+        padding: 16px 12px;
+        border-radius: 10px;
+    }
+
+    .jot-lead {
+        font-size: 13px;
+    }
+
+    .jot-cta {
+        padding: 32px 12px;
+    }
+
+    .jot-cta h3 {
+        font-size: 19px;
+    }
+
+    .jot-cta p {
+        font-size: 13px;
+    }
+
+    .jot-btn {
+        padding: 11px 20px;
+        font-size: 14px;
+        border-radius: 18px;
+        max-width: 100%;
     }
 }
 

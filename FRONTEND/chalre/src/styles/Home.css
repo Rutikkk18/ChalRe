@@ -81,7 +81,7 @@ html, body {
 }
 
 .register-btn {
-  background: #024110!important;
+  background: #024110 !important;
   color: white !important;
   padding: 11px 22px;
   border-radius: 18px;
@@ -99,7 +99,7 @@ html, body {
 }
 
 .register-btn:hover {
-  background: #149349  !important;
+  background: #149349 !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(28, 124, 49, 0.3);
 }
@@ -115,7 +115,7 @@ html, body {
   font-weight: 600;
   font-size: clamp(14px, 1.6vw, 15px);
   transition: all 0.3s ease;
-  font-family: inherit;
+  font-family: 'Times New Roman', Times, serif;
   appearance: none;
   -webkit-appearance: none;
   display: inline-flex;
@@ -137,113 +137,6 @@ html, body {
   transform: translateY(0);
 }
 
-@media (max-width: 1024px) {
-  .navbar {
-    padding: 0 clamp(16px, 2.5vw, 24px);
-  }
-  .nav-links {
-    gap: clamp(12px, 2vw, 24px);
-  }
-}
-
-@media (max-width: 768px) {
-  .navbar {
-    height: auto;
-    min-height: unset;
-    padding: 10px 14px;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
-  }
-  .logo {
-    width: 100%;
-    text-align: center;
-    font-size: 20px;
-    margin-bottom: 2px;
-  }
-  .nav-links {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: nowrap;
-    gap: 6px;
-    align-items: center;
-  }
-  .nav-links a {
-    font-size: 12px;
-    white-space: nowrap;
-    padding: 4px 6px;
-  }
-  .register-btn,
-  .logout-btn {
-    width: auto !important;
-    min-width: unset !important;
-    max-width: unset !important;
-    padding: 7px 14px !important;
-    font-size: 12px !important;
-    border-radius: 20px !important;
-    align-self: center;
-    box-shadow: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar {
-    padding: 8px 10px;
-    border-radius: 10px;
-    gap: 4px;
-  }
-  .logo {
-    font-size: 18px;
-    margin-bottom: 2px;
-  }
-  .nav-links {
-    gap: 4px;
-    flex-wrap: nowrap;
-  }
-  .nav-links a {
-    font-size: 11px;
-    padding: 4px 5px;
-  }
-  .register-btn,
-  .logout-btn {
-    padding: 6px 12px !important;
-    font-size: 11px !important;
-    border-radius: 16px !important;
-  }
-}
-
-@media (max-width: 360px) {
-  .nav-links a {
-    font-size: 10px;
-    padding: 3px 4px;
-  }
-  .register-btn,
-  .logout-btn {
-    padding: 5px 10px !important;
-    font-size: 10px !important;
-  }
-}
-
-.nav-links a:focus-visible,
-.register-btn:focus-visible,
-.logout-btn:focus-visible {
-  outline: 3px solid rgba(28, 124, 49, 0.4);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .navbar,
-  .nav-links a,
-  .register-btn,
-  .logout-btn {
-    transition: none;
-  }
-  .register-btn:hover,
-  .logout-btn:hover {
-    transform: none;
-  }
-}
-
 /* ================================
    HERO SECTION
 ================================ */
@@ -251,7 +144,7 @@ html, body {
   margin-top: 0;
   text-align: center;
   padding: clamp(70px, 7vw, 90px) 20px clamp(280px, 38vw, 380px);
-  color: #ffffff;
+  color: #060606;
   background-image: url("/hero-banner.png");
   background-size: cover;
   background-position: center center;
@@ -456,7 +349,7 @@ html, body {
 }
 
 .search-action:hover {
-  background: #149349!important;
+  background: #149349 !important;
 }
 
 /* ================================
@@ -479,7 +372,7 @@ html, body {
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 4px 20px rgba(0, 100, 0, 0.08);
-  font-family: 'Times New Roman';
+  font-family: 'Times New Roman', Times, serif;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 1px solid rgba(28, 124, 49, 0.08);
   position: relative;
@@ -523,7 +416,7 @@ html, body {
   color: #0e511c;
   font-size: clamp(22px, 2.5vw, 26px);
   margin-bottom: 14px;
-  font-family: 'Times New Roman';
+  font-family: 'Times New Roman', Times, serif;
   font-weight: 700;
   line-height: 1.0;
 }
@@ -541,19 +434,6 @@ html, body {
   width: 100%;
   background: linear-gradient(to right, transparent, #28a745, transparent);
   margin: 10px 0;
-}
-
-@media (max-width: 480px) {
-  .features {
-    padding: 30px 15px;
-  }
-  .feature-card {
-    padding: 28px 20px;
-  }
-  .feature-icon {
-    font-size: 40px;
-    margin-bottom: 16px;
-  }
 }
 
 /* ================================
@@ -589,6 +469,7 @@ html, body {
   text-align: center;
   font-size: clamp(15px, 2vw, 17px);
   padding: 0 10px;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .ride-sharehome button.btn-hssr {
@@ -635,7 +516,7 @@ html, body {
   width: 100%;
   max-width: 420px;
   height: auto;
-  border:#0c5129;
+  border: #0c5129;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
   border-radius: 30px;
   border-style: groove;
@@ -653,6 +534,7 @@ html, body {
   color: #0f3d2e;
   margin-bottom: 16px;
   margin-left: 0;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .fraud-content p {
@@ -662,6 +544,7 @@ html, body {
   margin-bottom: 24px;
   width: 100%;
   max-width: 550px;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .fraud-div .fraud-btn {
@@ -682,6 +565,7 @@ html, body {
   box-shadow: 0 8px 24px rgba(28, 124, 49, 0.25);
   position: relative;
   overflow: hidden;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .fraud-btn .btn-icon {
@@ -708,7 +592,7 @@ html, body {
 .fraud-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(28, 124, 49, 0.35);
-  background-color: #149349!important;
+  background-color: #149349 !important;
 }
 
 .fraud-btn:hover .btn-icon {
@@ -739,11 +623,13 @@ html, body {
   font-weight: 700;
   color: #0f5132;
   margin-bottom: 10px;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .why-header p {
   font-size: clamp(15px, 2vw, 17px);
   color: #6c757d;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .why-grid {
@@ -779,12 +665,14 @@ html, body {
   font-weight: 600;
   color: #0f5132;
   margin-bottom: 12px;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .why-card p {
   font-size: clamp(14px, 1.8vw, 15.5px);
   line-height: 1.6;
   color: #444;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 /* ================================
@@ -802,6 +690,7 @@ html, body {
   font-weight: 700;
   color: #003b44;
   margin-bottom: clamp(30px, 6vw, 50px);
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .help-grid {
@@ -826,12 +715,14 @@ html, body {
   font-weight: 700;
   color: #003b44;
   margin-bottom: 10px;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .help-item p {
   font-size: clamp(13.5px, 1.8vw, 14.5px);
   line-height: 1.6;
   color: #555;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .help-btn-wrap {
@@ -858,9 +749,106 @@ html, body {
 }
 
 /* ================================
-   MOBILE SPECIFIC FIXES
+   AUTOCOMPLETE
 ================================ */
+.autocomplete-wrapper input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: clamp(14px, 2vw, 16px);
+  width: 100%;
+  line-height: 1.4;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* ================================
+   CUSTOM SCROLLBAR
+================================ */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #605f5f;
+  border-radius: 6px;
+  border: 2px solid #1a1a1a;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b9b4b4;
+}
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #7d7a7a #1a1a1a;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+/* Large Tablet / Small Laptop (max 1024px) */
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 0 clamp(16px, 2.5vw, 24px);
+  }
+  .nav-links {
+    gap: clamp(12px, 2vw, 24px);
+  }
+  .why-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .help-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: clamp(24px, 4vw, 40px);
+  }
+  .fraud-div {
+    gap: clamp(20px, 4vw, 40px);
+  }
+  .features {
+    gap: clamp(20px, 3vw, 32px);
+  }
+}
+
+/* Tablet (max 768px) */
 @media (max-width: 768px) {
+  .navbar {
+    height: auto;
+    min-height: unset;
+    padding: 10px 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+  .logo {
+    width: 100%;
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+  .nav-links {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .nav-links a {
+    font-size: 12px;
+    white-space: nowrap;
+    padding: 4px 6px;
+  }
+  .register-btn,
+  .logout-btn {
+    width: auto !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    padding: 7px 14px !important;
+    font-size: 12px !important;
+    border-radius: 20px !important;
+    align-self: center;
+    box-shadow: none;
+  }
   .home-search-bar {
     flex-direction: column;
     padding: 16px;
@@ -913,54 +901,264 @@ html, body {
     min-height: clamp(400px, 80vw, 600px);
     padding-top: clamp(70px, 10vw, 90px);
   }
-}
-
-@media (max-width: 480px) {
-  .hero {
-    padding-top: 75px;
-    padding-left: 15px;
-    padding-right: 15px;
-    min-height: clamp(360px, 100vw, 500px);
+  .why-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
-  .features {
-    padding: 30px 15px;
+  .help-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
   .feature-card {
-    padding: 20px;
+    max-width: 100%;
+  }
+}
+
+/* Medium Phone (max 600px) */
+@media (max-width: 600px) {
+  .hero {
+    padding: 70px 14px clamp(220px, 30vw, 300px);
+    min-height: clamp(360px, 75vw, 520px);
+  }
+  .hero h1 {
+    font-size: clamp(24px, 5vw, 32px);
+  }
+  .hero p {
+    font-size: 15px;
+    margin-bottom: 28px;
+  }
+  .features {
+    padding: 40px 14px;
+    gap: 18px;
+  }
+  .feature-card {
+    padding: 24px 18px;
+    border-radius: 16px;
+  }
+  .feature-icon {
+    font-size: 36px;
+    margin-bottom: 14px;
   }
   .ride-sharehome {
+    border-radius: 22px;
+    padding: 22px 16px;
+    width: 94%;
+  }
+  .h2hr {
+    font-size: clamp(20px, 4vw, 26px);
+  }
+  .phr {
+    font-size: 14px;
+  }
+  .ride-sharehome button.btn-hssr {
+    width: 140px;
+    padding: 11px 16px;
+    font-size: 14px;
+  }
+  .fraud-div {
+    padding: 16px 14px;
+    margin: 30px auto;
+    gap: 20px;
+  }
+  .fraud-image img {
+    max-width: 320px;
     border-radius: 20px;
-    padding: 20px;
+  }
+  .fraud-content h2 {
+    font-size: clamp(20px, 4vw, 26px);
+    margin-bottom: 12px;
+  }
+  .fraud-content p {
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+  .fraud-div .fraud-btn {
+    padding: 13px 24px;
+    font-size: 14px;
+    border-radius: 40px;
+  }
+  .why-chalre {
+    padding: 36px 14px;
+  }
+  .why-header h2 {
+    font-size: clamp(22px, 4vw, 28px);
+  }
+  .why-header p {
+    font-size: 14px;
+  }
+  .why-card {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+  .help-centre {
+    padding: 0 14px;
+    margin: 30px auto;
+  }
+  .help-title {
+    font-size: clamp(22px, 4vw, 26px);
+    margin-bottom: 24px;
+  }
+  .help-item {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+  }
+  .help-btn-wrap {
+    margin-top: 28px;
+  }
+  .help-btn {
+    padding: 12px 22px;
+    font-size: 13px;
   }
 }
 
-.autocomplete-wrapper input {
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: clamp(14px, 2vw, 16px);
-  width: 100%;
-  line-height: 1.4;
+/* Small Phone (max 480px) */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 8px 10px;
+    border-radius: 10px;
+    gap: 4px;
+  }
+  .logo {
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+  .nav-links {
+    gap: 4px;
+    flex-wrap: nowrap;
+  }
+  .nav-links a {
+    font-size: 11px;
+    padding: 4px 5px;
+  }
+  .register-btn,
+  .logout-btn {
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+    border-radius: 16px !important;
+  }
+  .hero {
+    padding-top: 75px;
+    padding-left: 12px;
+    padding-right: 12px;
+    min-height: clamp(340px, 100vw, 480px);
+  }
+  .features {
+    padding: 28px 12px;
+  }
+  .feature-card {
+    padding: 20px 16px;
+  }
+  .ride-sharehome {
+    border-radius: 18px;
+    padding: 18px 14px;
+  }
+  .fraud-image img {
+    max-width: 280px;
+    border-radius: 16px;
+  }
+  .fraud-div .fraud-btn {
+    padding: 11px 20px;
+    font-size: 13px;
+  }
+  .why-card {
+    padding: 18px 14px;
+  }
+  .help-item h4 {
+    font-size: 14px;
+  }
+  .help-item p {
+    font-size: 13px;
+  }
 }
 
-/* ================================
-   CUSTOM SCROLLBAR
-================================ */
-::-webkit-scrollbar {
-  width: 12px;
+/* Very Small Phone (max 360px) */
+@media (max-width: 360px) {
+  .nav-links a {
+    font-size: 10px;
+    padding: 3px 4px;
+  }
+  .register-btn,
+  .logout-btn {
+    padding: 5px 10px !important;
+    font-size: 10px !important;
+  }
+  .hero h1 {
+    font-size: 22px;
+  }
+  .hero p {
+    font-size: 13px;
+  }
+  .feature-card {
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+  .feature-icon {
+    font-size: 32px;
+  }
+  .ride-sharehome {
+    padding: 16px 12px;
+    border-radius: 16px;
+  }
+  .h2hr {
+    font-size: 20px;
+  }
+  .fraud-div {
+    padding: 12px;
+  }
+  .fraud-image img {
+    max-width: 240px;
+    border-radius: 14px;
+  }
+  .fraud-content h2 {
+    font-size: 18px;
+  }
+  .why-header h2 {
+    font-size: 20px;
+  }
+  .why-card {
+    padding: 16px 12px;
+  }
+  .help-title {
+    font-size: 20px;
+  }
+  .help-btn {
+    padding: 11px 18px;
+    font-size: 12px;
+  }
 }
-::-webkit-scrollbar-track {
-  background: #1a1a1a;
+
+/* Focus Visible */
+.nav-links a:focus-visible,
+.register-btn:focus-visible,
+.logout-btn:focus-visible {
+  outline: 3px solid rgba(28, 124, 49, 0.4);
+  outline-offset: 2px;
 }
-::-webkit-scrollbar-thumb {
-  background: #605f5f;
-  border-radius: 6px;
-  border: 2px solid #1a1a1a;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #b9b4b4;
-}
-* {
-  scrollbar-width: auto;
-  scrollbar-color: #7d7a7a #1a1a1a;
+
+/* Reduce Motion */
+@media (prefers-reduced-motion: reduce) {
+  .navbar,
+  .nav-links a,
+  .register-btn,
+  .logout-btn,
+  .feature-card,
+  .why-card,
+  .ride-sharehome,
+  .fraud-btn {
+    transition: none;
+  }
+  .register-btn:hover,
+  .logout-btn:hover,
+  .feature-card:hover,
+  .why-card:hover,
+  .ride-sharehome:hover,
+  .fraud-btn:hover {
+    transform: none;
+  }
+  .feature-card:hover .feature-icon {
+    transform: none;
+  }
+  .fraud-btn:hover .btn-icon {
+    transform: none;
+  }
 }

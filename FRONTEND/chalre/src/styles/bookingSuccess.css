@@ -347,21 +347,300 @@
   outline-offset: 2px;
 }
 
-/* ── RESPONSIVE ── */
+/* ================================
+   RESPONSIVE
+================================ */
+
+/* Large Tablet / Small Laptop (max 1024px) */
+@media (max-width: 1024px) {
+  .success-card {
+    max-width: 860px;
+    grid-template-columns: 300px 1fr;
+  }
+
+  .success-left {
+    padding: 38px 28px;
+    gap: 16px;
+  }
+
+  .success-left h2 {
+    font-size: 1.5rem;
+  }
+
+  .success-right {
+    padding: 38px 32px;
+  }
+
+  .success-right-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Tablet (max 820px) — stack to single column */
 @media (max-width: 820px) {
-  .success-card { grid-template-columns: 1fr; max-width: 520px; }
-  .success-left { padding: 32px 28px; gap: 16px; }
-  .success-id-pill { margin-top: 8px; }
-  .success-right { padding: 32px 28px; }
+  .success-card {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+
+  .success-left {
+    padding: 32px 28px;
+    gap: 16px;
+  }
+
+  .success-id-pill {
+    margin-top: 8px;
+  }
+
+  .success-right {
+    padding: 32px 28px;
+  }
 }
 
+/* Medium Tablet (max 768px) */
+@media (max-width: 768px) {
+  .success-wrapper {
+    padding: 60px 16px 48px;
+  }
+
+  .success-card {
+    border-radius: 18px;
+  }
+
+  .success-left h2 {
+    font-size: 1.45rem;
+  }
+
+  .success-right-title {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
+
+  .detail-item {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .value {
+    font-size: 0.88rem;
+  }
+
+  .action-buttons {
+    margin-top: 20px;
+    padding-top: 16px;
+    gap: 8px;
+  }
+}
+
+/* Medium Phone (max 600px) */
+@media (max-width: 600px) {
+  .success-wrapper {
+    padding: 40px 14px 40px;
+  }
+
+  .success-card {
+    border-radius: 14px;
+    max-width: 100%;
+  }
+
+  .success-left {
+    padding: 28px 20px;
+    gap: 14px;
+  }
+
+  .success-right {
+    padding: 28px 20px;
+  }
+
+  .success-left h2 {
+    font-size: 1.35rem;
+  }
+
+  .success-left-sub {
+    max-width: 100%;
+    font-size: 0.8rem;
+  }
+
+  .success-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .success-id-pill {
+    padding: 12px 16px;
+  }
+
+  .success-id-pill-val {
+    font-size: 1rem;
+  }
+
+  .detail-item {
+    padding: 11px 13px;
+    gap: 10px;
+  }
+
+  .detail-item svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline {
+    padding: 11px;
+    font-size: 0.88rem;
+  }
+}
+
+/* Small Phone (max 560px) */
 @media (max-width: 560px) {
-  .success-wrapper { padding: 20px 12px 40px; }
-  .success-left, .success-right { padding: 24px 20px; }
-  .status-badges { flex-direction: column; }
-  .status-badge { width: max-content; }
+  .success-wrapper {
+    padding: 20px 12px 40px;
+  }
+
+  .success-left,
+  .success-right {
+    padding: 24px 20px;
+  }
+
+  .status-badges {
+    flex-direction: column;
+  }
+
+  .status-badge {
+    width: max-content;
+  }
 }
 
+/* Small Phone (max 480px) */
+@media (max-width: 480px) {
+  .success-wrapper {
+    padding: 16px 10px 32px;
+  }
+
+  .success-left {
+    padding: 20px 16px;
+    gap: 12px;
+  }
+
+  .success-right {
+    padding: 20px 16px;
+  }
+
+  .success-left h2 {
+    font-size: 1.2rem;
+  }
+
+  .success-left-tag {
+    font-size: 0.6rem;
+  }
+
+  .success-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .success-id-pill {
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+
+  .success-id-pill-val {
+    font-size: 0.95rem;
+  }
+
+  .success-right-title {
+    font-size: 1rem;
+    margin-bottom: 14px;
+  }
+
+  .detail-section {
+    gap: 8px;
+  }
+
+  .detail-item {
+    padding: 10px 12px;
+    gap: 8px;
+    border-radius: 8px;
+  }
+
+  .value {
+    font-size: 0.85rem;
+  }
+
+  .label {
+    font-size: 0.62rem;
+  }
+
+  .status-badge {
+    font-size: 0.72rem;
+    padding: 4px 10px;
+  }
+
+  .action-buttons {
+    margin-top: 16px;
+    padding-top: 14px;
+    gap: 8px;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline {
+    padding: 10px;
+    font-size: 0.86rem;
+  }
+}
+
+/* Very Small Phone (max 360px) */
+@media (max-width: 360px) {
+  .success-wrapper {
+    padding: 12px 8px 28px;
+  }
+
+  .success-left,
+  .success-right {
+    padding: 18px 14px;
+    gap: 12px;
+  }
+
+  .success-card {
+    border-radius: 12px;
+  }
+
+  .success-left h2 {
+    font-size: 1.1rem;
+  }
+
+  .success-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .success-id-pill-val {
+    font-size: 0.9rem;
+  }
+
+  .success-right-title {
+    font-size: 0.95rem;
+  }
+
+  .detail-item {
+    padding: 9px 11px;
+  }
+
+  .value {
+    font-size: 0.82rem;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline {
+    padding: 10px;
+    font-size: 0.84rem;
+  }
+}
+
+/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .success-wrapper { animation: none; }
   .success-icon { animation: none; }

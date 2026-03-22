@@ -10,6 +10,7 @@
   padding: clamp(20px, 4vw, 32px) clamp(16px, 4vw, 24px);
   margin-top: 0;
   animation: rd-fadeIn 0.4s ease;
+  font-family: "Times New Roman", Times, serif;
 }
 
 @keyframes rd-fadeIn {
@@ -31,7 +32,7 @@
   cursor: pointer;
   padding: 6px 0;
   margin-bottom: 8px;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -44,6 +45,7 @@
   font-weight: 800;
   color: #0d1b2a;
   margin: 0 0 clamp(16px, 3vw, 24px) 0;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .rd__layout {
@@ -86,7 +88,6 @@
   align-items: stretch;
 }
 
-/* Times column — space-between pushes start time to top, end time to bottom */
 .rd__timeline-time {
   display: flex;
   flex-direction: column;
@@ -96,23 +97,21 @@
   gap: 0;
 }
 
-/* Both start and end time use same style — no margin hacks needed */
 .rd__time {
   font-weight: 800;
   font-size: clamp(14px, 2.5vw, 15px);
   color: #0d1b2a;
   line-height: 1;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
 }
 
-.rd__time--none {
-  visibility: hidden; /* keeps spacing when no end time */
-}
+.rd__time--none { visibility: hidden; }
 
 .rd__duration {
   font-size: 12px;
   color: #9ca3af;
   text-align: right;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* Track column */
@@ -130,11 +129,8 @@
   flex-shrink: 0;
 }
 
-.rd__dot--filled { background: #0d1b2a; }
-.rd__dot--outline {
-  border: 2px solid #0d1b2a;
-  background: transparent;
-}
+.rd__dot--filled  { background: #0d1b2a; }
+.rd__dot--outline { border: 2px solid #0d1b2a; background: transparent; }
 
 .rd__line {
   flex: 1;
@@ -163,6 +159,7 @@
   font-size: clamp(14px, 2.5vw, 15px);
   color: #0d1b2a;
   line-height: 1.3;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* ── DRIVER CARD ── */
@@ -198,6 +195,7 @@
   font-size: 22px;
   font-weight: 700;
   color: #1c7c31;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .rd__avatar-placeholder--sm { font-size: 14px; }
@@ -211,6 +209,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .rd__verified { color: #198754; width: 16px; height: 16px; }
@@ -223,6 +222,7 @@
   font-size: 13px;
   color: #f59e0b;
   font-weight: 600;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .rd__rating-count { color: #9ca3af; font-weight: 400; font-size: 12px; }
@@ -238,12 +238,13 @@
   padding: 12px 0;
   font-size: clamp(14px, 2vw, 15px);
   color: #374151;
+  font-family: "Times New Roman", Times, serif;
 }
 
-.rd__info-icon { font-size: 18px; width: 22px; text-align: center; flex-shrink: 0; }
+.rd__info-icon     { font-size: 18px; width: 22px; text-align: center; flex-shrink: 0; }
 .rd__info-icon-svg { width: 18px; height: 18px; color: #374151; flex-shrink: 0; }
-.rd__info-text { flex: 1; line-height: 1.4; }
-.rd__divider { height: 1px; background: #f3f4f6; margin: 0; }
+.rd__info-text     { flex: 1; line-height: 1.4; }
+.rd__divider       { height: 1px; background: #f3f4f6; margin: 0; }
 
 /* ── CONTACT CARD ── */
 .rd__contact-card { padding: 14px 22px; }
@@ -260,6 +261,7 @@
   padding: 10px 18px;
   border-radius: 8px;
   transition: all 0.2s;
+  font-family: "Times New Roman", Times, serif;
 }
 .rd__contact-btn:hover {
   background: rgba(28,124,49,0.06);
@@ -267,7 +269,13 @@
 }
 
 /* ── REVIEWS CARD ── */
-.rd__reviews-title { font-size: 17px; font-weight: 700; color: #0d1b2a; margin: 0 0 14px 0; }
+.rd__reviews-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin: 0 0 14px 0;
+  font-family: "Times New Roman", Times, serif;
+}
 .rd__reviews-list { display: flex; flex-direction: column; gap: 12px; }
 
 .rd__review-item {
@@ -284,10 +292,10 @@
   margin-bottom: 6px;
 }
 
-.rd__review-stars { display: flex; gap: 2px; }
-.rd__review-date { font-size: 12px; color: #9ca3af; }
-.rd__review-comment { margin: 6px 0 4px; font-size: 14px; color: #374151; line-height: 1.5; }
-.rd__review-author { margin: 0; font-size: 12px; color: #9ca3af; font-style: italic; }
+.rd__review-stars  { display: flex; gap: 2px; }
+.rd__review-date   { font-size: 12px; color: #9ca3af; font-family: "Times New Roman", Times, serif; }
+.rd__review-comment { margin: 6px 0 4px; font-size: 14px; color: #374151; line-height: 1.5; font-family: "Times New Roman", Times, serif; }
+.rd__review-author  { margin: 0; font-size: 12px; color: #9ca3af; font-style: italic; font-family: "Times New Roman", Times, serif; }
 
 /* ──────────────────────────────
    RIGHT COLUMN — BOOKING CARD
@@ -308,6 +316,7 @@
   font-size: clamp(16px, 2.5vw, 18px);
   color: #0d1b2a;
   margin-bottom: 16px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .rd__booking-route {
@@ -325,7 +334,7 @@
 }
 
 .rd__booking-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.rd__booking-dot--filled { background: #0d1b2a; }
+.rd__booking-dot--filled  { background: #0d1b2a; }
 .rd__booking-dot--outline { border: 2px solid #0d1b2a; background: transparent; }
 
 .rd__booking-line {
@@ -350,6 +359,7 @@
   font-size: 12px;
   color: #9ca3af;
   font-weight: 600;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .rd__booking-place-name {
@@ -357,6 +367,7 @@
   font-size: 14px;
   color: #0d1b2a;
   line-height: 1.3;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .rd__booking-divider { height: 1px; background: #f3f4f6; margin: 14px 0; }
@@ -376,7 +387,12 @@
   border: 1.5px solid rgba(28,124,49,0.15);
 }
 
-.rd__booking-driver-name { font-weight: 600; font-size: 14px; color: #374151; }
+.rd__booking-driver-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+  font-family: "Times New Roman", Times, serif;
+}
 
 .rd__booking-price-row {
   display: flex;
@@ -405,7 +421,7 @@
   color: #1c7c31;
   line-height: 1;
   transition: background 0.2s;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
 }
 .rd__seats-btn:hover:not(:disabled) { background: #f0f9f4; }
 .rd__seats-btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -419,6 +435,7 @@
   border-left: 1px solid #e5e7eb;
   border-right: 1px solid #e5e7eb;
   background: #fafafa;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .rd__booking-total {
@@ -428,6 +445,7 @@
   font-size: clamp(18px, 3vw, 20px);
   font-weight: 900;
   color: #0d1b2a;
+  font-family: "Times New Roman", Times, serif;
 }
 .rd__booking-total svg { color: #0d1b2a; }
 
@@ -448,6 +466,7 @@
   font-weight: 600;
   color: #374151;
   transition: all 0.2s;
+  font-family: "Times New Roman", Times, serif;
 }
 .rd__payment-option input[type="radio"] { display: none; }
 .rd__payment-option:hover { border-color: rgba(28,124,49,0.3); background: #f9fafb; }
@@ -464,7 +483,7 @@
   font-size: clamp(15px, 2.5vw, 16px);
   font-weight: 800;
   cursor: pointer;
-  font-family: inherit;
+  font-family: "Times New Roman", Times, serif;
   transition: all 0.2s;
   display: flex;
   align-items: center;
@@ -486,6 +505,7 @@
   padding: 10px 12px;
   border-radius: 8px;
   border-left: 3px solid #dc2626;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .rd__loading, .rd__error {
@@ -493,21 +513,315 @@
   text-align: center;
   color: #374151;
   font-size: 16px;
+  font-family: "Times New Roman", Times, serif;
 }
 
-/* ── RESPONSIVE ── */
+/* ================================
+   RESPONSIVE
+================================ */
+
+/* Large Tablet / Small Laptop (max 1024px) */
+@media (max-width: 1024px) {
+  .rd__layout {
+    grid-template-columns: 1fr 300px;
+    gap: clamp(14px, 2.5vw, 20px);
+  }
+
+  .rd__card {
+    padding: clamp(14px, 2.5vw, 18px);
+  }
+
+  .rd__booking-card {
+    padding: clamp(16px, 2.5vw, 20px);
+  }
+
+  .rd__driver-avatar {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* Tablet (max 860px) — stack to single column */
 @media (max-width: 860px) {
   .rd__layout { grid-template-columns: 1fr; }
   .rd__right { position: static; order: -1; }
   .rd__booking-card { border-radius: 12px; }
 }
 
+/* Medium Tablet (max 768px) */
+@media (max-width: 768px) {
+  .rd__wrapper {
+    padding: clamp(16px, 3vw, 24px) clamp(14px, 3vw, 20px);
+  }
+
+  .rd__page-title {
+    font-size: clamp(20px, 4vw, 24px);
+    margin-bottom: clamp(12px, 2.5vw, 18px);
+  }
+
+  .rd__card {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .rd__booking-card {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .rd__info-row {
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  .rd__contact-card {
+    padding: 12px 16px;
+  }
+
+  .rd__contact-btn {
+    font-size: 14px;
+    padding: 9px 14px;
+  }
+
+  .rd__review-comment {
+    font-size: 13px;
+  }
+
+  .rd__payment-options {
+    gap: 8px;
+  }
+
+  .rd__payment-option {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}
+
+/* Medium Phone (max 600px) */
+@media (max-width: 600px) {
+  .rd__wrapper {
+    padding: 14px 12px;
+  }
+
+  .rd__back-btn {
+    font-size: 13px;
+  }
+
+  .rd__page-title {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .rd__card {
+    padding: 14px;
+    border-radius: 9px;
+  }
+
+  .rd__booking-card {
+    padding: 14px;
+    border-radius: 9px;
+  }
+
+  .rd__timeline-row {
+    grid-template-columns: 44px 20px 1fr;
+    gap: 0 10px;
+  }
+
+  .rd__time {
+    font-size: 13px;
+  }
+
+  .rd__place-name {
+    font-size: 13px;
+  }
+
+  .rd__driver-avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .rd__driver-name {
+    font-size: 14px;
+  }
+
+  .rd__booking-date {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .rd__booking-place-name {
+    font-size: 13px;
+  }
+
+  .rd__booking-total {
+    font-size: 17px;
+  }
+
+  .rd__book-btn {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 24px;
+  }
+
+  .rd__reviews-title {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .rd__review-item {
+    padding: 10px;
+  }
+
+  .rd__review-comment {
+    font-size: 13px;
+  }
+
+  .rd__info-row {
+    padding: 9px 0;
+    font-size: 13px;
+    gap: 10px;
+  }
+
+  .rd__contact-card {
+    padding: 10px 14px;
+  }
+
+  .rd__contact-btn {
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 7px;
+  }
+}
+
+/* Small Phone (max 480px) */
 @media (max-width: 480px) {
-  .rd__wrapper { padding: 16px 12px; }
+  .rd__wrapper { padding: 14px 12px; }
   .rd__booking-price-row { flex-direction: column; align-items: flex-start; }
   .rd__booking-seats-control { width: 100%; justify-content: space-between; }
 }
 
+/* Very Small Phone (max 360px) */
+@media (max-width: 360px) {
+  .rd__wrapper {
+    padding: 12px 10px;
+  }
+
+  .rd__page-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .rd__card {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .rd__booking-card {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .rd__timeline-row {
+    grid-template-columns: 38px 18px 1fr;
+    gap: 0 8px;
+  }
+
+  .rd__time {
+    font-size: 12px;
+  }
+
+  .rd__place-name {
+    font-size: 12px;
+  }
+
+  .rd__driver-avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .rd__driver-name {
+    font-size: 13px;
+  }
+
+  .rd__rating-row {
+    font-size: 12px;
+  }
+
+  .rd__info-row {
+    padding: 8px 0;
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .rd__info-icon { font-size: 16px; width: 18px; }
+  .rd__info-icon-svg { width: 15px; height: 15px; }
+
+  .rd__booking-date {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .rd__booking-place-name {
+    font-size: 12px;
+  }
+
+  .rd__booking-driver-name {
+    font-size: 12px;
+  }
+
+  .rd__booking-total {
+    font-size: 16px;
+  }
+
+  .rd__seats-btn {
+    padding: 7px 10px;
+    font-size: 16px;
+  }
+
+  .rd__seats-count {
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+
+  .rd__payment-option {
+    padding: 7px 8px;
+    font-size: 11px;
+    border-radius: 7px;
+  }
+
+  .rd__book-btn {
+    padding: 11px;
+    font-size: 13px;
+    border-radius: 20px;
+    gap: 6px;
+  }
+
+  .rd__reviews-title {
+    font-size: 14px;
+  }
+
+  .rd__review-item {
+    padding: 9px;
+    border-radius: 7px;
+  }
+
+  .rd__review-comment {
+    font-size: 12px;
+  }
+
+  .rd__error-msg {
+    font-size: 12px;
+    padding: 9px 10px;
+    border-radius: 7px;
+  }
+
+  .rd__contact-btn {
+    font-size: 12px;
+    padding: 7px 11px;
+  }
+}
+
+/* Focus */
 .rd__back-btn:focus-visible,
 .rd__book-btn:focus-visible,
 .rd__contact-btn:focus-visible {
@@ -515,10 +829,12 @@
   outline-offset: 2px;
 }
 
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
   .rd__wrapper, .rd__card, .rd__book-btn { animation: none; transition: none; }
 }
 
+/* Print */
 @media print {
   .rd__back-btn, .rd__booking-card, .rd__contact-card { display: none; }
   .rd__layout { grid-template-columns: 1fr; }
