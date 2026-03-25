@@ -30,6 +30,8 @@ export default function MyBookings() {
   const [ratingModal, setRatingModal]           = useState(null);
   const [chatModal, setChatModal]               = useState(null);
   const [ratedRides, setRatedRides]             = useState(new Set());
+  const [confirmingId, setConfirmingId]         = useState(null);
+  const [confirmedRides, setConfirmedRides]     = useState(new Set());
 
   const navigate = useNavigate();
 
@@ -69,6 +71,43 @@ export default function MyBookings() {
     } catch (err) {
       const d = err.response?.data;
       alert(typeof d === "object" ? d.error : d || "Failed to cancel booking.");
+    }
+  };
+
+  // ── CONFIRM RIDE COMPLETED (only for online paid bookings) ──
+  const handleConfirmRide = async (b) => {
+    if (!window.confirm("Confirm that the ride is completed? This will release payment to the driver.")) return;
+    setConfirmingId(b.id);
+    try {
+      await api.post(`/payments/confirm-ride/${b.ride.id}`);
+      setConfirmedRides(prev => new Set([...prev, b.id]));
+      alert("Ride confirmed! Payment will be released to driver.");
+    } catch (err) {
+      const d = err.response?.data;
+      alert(typeof d === "string" ? d : "Failed to confirm ride. Please try again.");
+    } finally {
+      setConfirmingId(null);
+    }
+  };
+
+  // Show confirm button only when:
+  // 1. Payment method is ONLINE
+  // 2. Payment status is PAID
+  // 3. Booking is BOOKED (not cancelled)
+  // 4. Ride date has passed (ride is done)
+  // 5. Not already confirmed
+  const shouldShowConfirmButton = (b) => {
+    if (b.paymentMethod !== "ONLINE") return false;
+    if (b.paymentStatus !== "PAID") return false;
+    if (b.status !== "BOOKED") return false;
+    if (confirmedRides.has(b.id)) return false;
+    try {
+      const rideDate = new Date(b.ride.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return rideDate < today;
+    } catch {
+      return false;
     }
   };
 
@@ -199,6 +238,62 @@ export default function MyBookings() {
                   {paymentLabel(b.paymentStatus)}
                 </span>
               </div>
+
+              {/* ── CONFIRM RIDE BANNER (shows only for eligible online bookings) ── */}
+              {shouldShowConfirmButton(b) && (
+                <div style={{
+                  margin: "0.75rem 0 0",
+                  padding: "0.75rem",
+                  background: "#f0fdf4",
+                  border: "1px solid #86efac",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "0.75rem",
+                  flexWrap: "wrap"
+                }}>
+                  <span style={{ fontSize: "0.8rem", color: "#166534" }}>
+                    🎯 Ride completed? Confirm to release payment to driver.
+                  </span>
+                  <button
+                    onClick={() => handleConfirmRide(b)}
+                    disabled={confirmingId === b.id}
+                    style={{
+                      background: "#16a34a",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "6px",
+                      padding: "0.4rem 0.9rem",
+                      fontSize: "0.82rem",
+                      fontWeight: "500",
+                      cursor: confirmingId === b.id ? "not-allowed" : "pointer",
+                      opacity: confirmingId === b.id ? 0.7 : 1,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px"
+                    }}
+                  >
+                    <CheckCircle size={13} />
+                    {confirmingId === b.id ? "Confirming…" : "Confirm Ride"}
+                  </button>
+                </div>
+              )}
+
+              {/* ── ALREADY CONFIRMED MESSAGE ── */}
+              {confirmedRides.has(b.id) && (
+                <div style={{
+                  margin: "0.75rem 0 0",
+                  padding: "0.6rem 0.75rem",
+                  background: "#f0fdf4",
+                  border: "1px solid #86efac",
+                  borderRadius: "8px",
+                  fontSize: "0.8rem",
+                  color: "#166534"
+                }}>
+                  ✓ Ride confirmed. Payment released to driver.
+                </div>
+              )}
 
               <div className="mb-divider" />
 
