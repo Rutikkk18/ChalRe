@@ -74,7 +74,6 @@ export default function MyBookings() {
     }
   };
 
-  // ── CONFIRM RIDE COMPLETED (only for online paid bookings) ──
   const handleConfirmRide = async (b) => {
     if (!window.confirm("Confirm that the ride is completed? This will release payment to the driver.")) return;
     setConfirmingId(b.id);
@@ -90,22 +89,22 @@ export default function MyBookings() {
     }
   };
 
-  // Show confirm button only when:
-  // 1. Payment method is ONLINE
-  // 2. Payment status is PAID
-  // 3. Booking is BOOKED (not cancelled)
-  // 4. Ride date has passed (ride is done)
-  // 5. Not already confirmed
+  // Show confirm button ONLY when:
+  // 1. Payment is ONLINE + PAID
+  // 2. Booking is BOOKED
+  // 3. Ride date+time has already passed
+  // 4. Not already confirmed this session
   const shouldShowConfirmButton = (b) => {
     if (b.paymentMethod !== "ONLINE") return false;
     if (b.paymentStatus !== "PAID") return false;
     if (b.status !== "BOOKED") return false;
     if (confirmedRides.has(b.id)) return false;
     try {
-      const rideDate = new Date(b.ride.date);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return rideDate < today;
+      const rideDateStr = b.ride.date; // "2026-03-26"
+      const rideTimeStr = b.ride.time; // "15:48"
+      const rideDateTime = new Date(`${rideDateStr}T${rideTimeStr}:00`);
+      const now = new Date();
+      return now > rideDateTime; // only after ride time has passed
     } catch {
       return false;
     }
@@ -130,12 +129,10 @@ export default function MyBookings() {
   return (
     <div className="mb-wrapper">
 
-      {/* ── HEADER ── */}
       <div className="mb-header">
         <h1 className="mb-title">My Bookings</h1>
       </div>
 
-      {/* ── TABS ── */}
       <div className="mb-tabs-bar">
         <div className="mb-tabs">
           <button
@@ -159,7 +156,6 @@ export default function MyBookings() {
 
       {error && <p className="mb-error">{error}</p>}
 
-      {/* ── EMPTY ── */}
       {bookings.length === 0 ? (
         <div className="mb-empty">
           <div className="mb-empty-icon">🎫</div>
@@ -179,7 +175,6 @@ export default function MyBookings() {
           {bookings.map((b) => (
             <div className="mb-card shadow" key={b.id}>
 
-              {/* ── ROUTE ── */}
               <div className="mb-route">
                 <div className="mb-route-point">
                   <span className="mb-dot mb-dot--from" />
@@ -202,7 +197,6 @@ export default function MyBookings() {
 
               <div className="mb-divider" />
 
-              {/* ── META INFO ── */}
               <div className="mb-meta">
                 <div className="mb-meta-item">
                   <Calendar size={14} className="mb-meta-icon" />
@@ -222,7 +216,6 @@ export default function MyBookings() {
                 </div>
               </div>
 
-              {/* ── STATUS BADGES ── */}
               <div className="mb-badges">
                 <span className={`mb-badge mb-badge--booking ${b.status === "BOOKED" ? "mb-badge--green" : "mb-badge--red"}`}>
                   {b.status === "BOOKED"
@@ -239,7 +232,7 @@ export default function MyBookings() {
                 </span>
               </div>
 
-              {/* ── CONFIRM RIDE BANNER (shows only for eligible online bookings) ── */}
+              {/* Confirm banner — appears only after ride time passes */}
               {shouldShowConfirmButton(b) && (
                 <div style={{
                   margin: "0.75rem 0 0",
@@ -280,7 +273,7 @@ export default function MyBookings() {
                 </div>
               )}
 
-              {/* ── ALREADY CONFIRMED MESSAGE ── */}
+              {/* Already confirmed message */}
               {confirmedRides.has(b.id) && (
                 <div style={{
                   margin: "0.75rem 0 0",
@@ -297,7 +290,6 @@ export default function MyBookings() {
 
               <div className="mb-divider" />
 
-              {/* ── ACTIONS ── */}
               <div className="mb-actions">
                 <button className="mb-btn mb-btn--view" onClick={() => navigate(`/ridedetails/${b.ride.id}`)}>
                   <Eye size={14} /> View Ride
