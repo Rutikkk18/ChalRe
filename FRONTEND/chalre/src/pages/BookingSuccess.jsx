@@ -10,16 +10,21 @@ export default function BookingSuccess() {
   const { id } = useParams();
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [confirmMsg, setConfirmMsg] = useState("");
 
   useEffect(() => {
-    if (id) {
-      fetchBookingDetails();
+    // "online" is a placeholder when coming from Razorpay — fetch latest booking
+    if (id && id !== "online") {
+      fetchBookingById();
+    } else if (id === "online") {
+      fetchLatestOnlineBooking();
     } else {
       setLoading(false);
     }
   }, [id]);
 
-  const fetchBookingDetails = async () => {
+  const fetchBookingById = async () => {
     try {
       const res = await api.get("/bookings/my");
       const found = res.data.find(b => b.id.toString() === id);
@@ -31,36 +36,67 @@ export default function BookingSuccess() {
     }
   };
 
+  const fetchLatestOnlineBooking = async () => {
+    try {
+      const res = await api.get("/bookings/my");
+      // Get most recent online booking
+      const onlineBookings = res.data.filter(
+        b => b.paymentMethod === "ONLINE" && b.status === "BOOKED"
+      );
+      if (onlineBookings.length > 0) {
+        // Sort by id descending, take latest
+        const latest = onlineBookings.sort((a, b) => b.id - a.id)[0];
+        setBooking(latest);
+      }
+    } catch (err) {
+      console.error("Failed to fetch booking:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConfirmRide = async () => {
+    if (!booking?.ride?.id) return;
+    setConfirmLoading(true);
+    try {
+      const res = await api.post(`/payments/confirm-ride/${booking.ride.id}`);
+      setConfirmMsg(res.data.message || "Ride confirmed! Payment released to driver.");
+    } catch (err) {
+      setConfirmMsg("Failed to confirm ride. Please try again.");
+    } finally {
+      setConfirmLoading(false);
+    }
+  };
+
+  const isOnlinePayment = booking?.paymentMethod === "ONLINE";
+  const alreadyConfirmed = confirmMsg.includes("already") || confirmMsg.includes("released");
+
   return (
     <div className="success-wrapper">
       <div className="success-card">
 
-        {/* ── LEFT PANEL — Celebration ── */}
+        {/* LEFT PANEL */}
         <div className="success-left">
           <CheckCircle className="success-icon" />
-
           <div className="success-left-tag">Booking Confirmed</div>
-
           <h2>You're all set for your ride!</h2>
-
           <p className="success-left-sub">
-            Your seat has been reserved. Safe travels — we hope you enjoy the journey.
+            Your seat has been reserved. Safe travels!
           </p>
-
-          {id && (
+          {booking?.id && (
             <div className="success-id-pill">
               <div className="success-id-pill-label">Booking Reference</div>
-              <div className="success-id-pill-val">#{id}</div>
+              <div className="success-id-pill-val">#{booking.id}</div>
             </div>
           )}
         </div>
 
-        {/* ── RIGHT PANEL — Details + Actions ── */}
+        {/* RIGHT PANEL */}
         <div className="success-right">
           <div className="success-right-title">Booking Details</div>
 
           {loading ? (
-            <p style={{ color: "#6b7280", fontSize: "0.88rem" }}>Loading details…</p>
+            <p style={{ color:"#6b7280", fontSize:"0.88rem" }}>Loading details…</p>
           ) : booking ? (
             <div className="booking-details">
               <div className="detail-section">
@@ -95,7 +131,9 @@ export default function BookingSuccess() {
                   <IndianRupee size={18} />
                   <div>
                     <span className="label">Total Amount</span>
-                    <span className="value">₹{(booking.ride.price * booking.seatsBooked).toFixed(2)}</span>
+                    <span className="value">
+                      ₹{(booking.ride.price * booking.seatsBooked).toFixed(2)}
+                    </span>
                   </div>
                 </div>
 
@@ -119,24 +157,57 @@ export default function BookingSuccess() {
                     <CheckCircle size={13} />
                     <span>Booking: {booking.status}</span>
                   </div>
-                  <div className={`status-badge ${booking.paymentStatus.toLowerCase()}`}>
+                  <div className={`status-badge ${booking.paymentStatus?.toLowerCase()}`}>
                     <span>
                       Payment:{" "}
-                      {booking.paymentStatus === "PAID"
-                        ? "✓ Paid"
-                        : booking.paymentStatus === "PENDING"
-                        ? "Pending (Cash)"
-                        : booking.paymentStatus === "REFUNDED"
-                        ? "✓ Refunded"
+                      {booking.paymentStatus === "PAID" ? "✓ Paid"
+                        : booking.paymentStatus === "PENDING" ? "Pending (Cash)"
+                        : booking.paymentStatus === "REFUNDED" ? "✓ Refunded"
                         : booking.paymentStatus}
                     </span>
                   </div>
                 </div>
 
+                {/* Confirm ride button — only for online payments */}
+                {isOnlinePayment && (
+                  <div style={{ marginTop: "1rem" }}>
+                    {confirmMsg ? (
+                      <div style={{
+                        padding: "0.75rem",
+                        background: "#f0fdf4",
+                        border: "1px solid #86efac",
+                        borderRadius: "8px",
+                        color: "#166534",
+                        fontSize: "0.85rem"
+                      }}>
+                        ✓ {confirmMsg}
+                      </div>
+                    ) : (
+                      <>
+                        <p style={{
+                          fontSize: "0.8rem",
+                          color: "#6b7280",
+                          marginBottom: "0.5rem"
+                        }}>
+                          After the ride is completed, confirm to release payment to driver.
+                        </p>
+                        <button
+                          className="btn-primary"
+                          onClick={handleConfirmRide}
+                          disabled={confirmLoading}
+                          style={{ width: "100%" }}
+                        >
+                          {confirmLoading ? "Confirming…" : "✓ Confirm Ride Completed"}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+
               </div>
             </div>
           ) : (
-            <p style={{ color: "#6b7280", fontSize: "0.88rem" }}>
+            <p style={{ color:"#6b7280", fontSize:"0.88rem" }}>
               Booking details not found.
             </p>
           )}

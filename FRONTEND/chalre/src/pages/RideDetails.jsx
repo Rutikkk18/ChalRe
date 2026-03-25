@@ -5,12 +5,9 @@ import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/rideDetails.css";
 import { Users, IndianRupee, Phone, CheckCircle, Star, CreditCard, Car, Bike } from "lucide-react";
-import loadRazorpay from "../utils/loadRazorpay";
-import { BACKEND_URL } from "../config";
 
 export default function RideDetails() {
   const { id: rideId } = useParams();
-
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
@@ -68,7 +65,6 @@ export default function RideDetails() {
     return (price * seats).toFixed(0);
   };
 
-  // Same logic as RideCard.jsx
   const getVehicleIcon = () => {
     const carType = ride?.carType?.toLowerCase() || "";
     const isBike = ["bullet", "splendor", "shine"].includes(carType);
@@ -76,12 +72,23 @@ export default function RideDetails() {
     return <Car size={18} className="rd__info-icon-svg" />;
   };
 
+  // Load Razorpay script dynamically
+  function loadRazorpayScript() {
+    return new Promise((resolve) => {
+      if (window.Razorpay) { resolve(true); return; }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  }
+
   const handleBookRide = async () => {
     if (!user) {
       navigate("/login");
       return;
     }
-
     if (!ride) return;
     if (noSeatsLeft) {
       setErr("No seats available for this ride.");
@@ -98,7 +105,9 @@ export default function RideDetails() {
 
     setBookingLoading(true);
     setErr("");
+
     try {
+      // ── CASH flow (unchanged) ──
       if (paymentMethod === "CASH") {
         await api.post("/bookings/create", {
           rideId: Number(ride.id),
@@ -106,92 +115,91 @@ export default function RideDetails() {
           paymentMethod: "CASH"
         });
         navigate("/mybookings");
-      } else {
-        const totalCostPaise = Math.round(ride.price * seats * 100);
-
-        const orderRes = await api.post("/payments/order", {
-          rideId: Number(ride.id),
-          amountPaise: totalCostPaise
-        });
-
-        if (!orderRes.data || !orderRes.data.orderId || !orderRes.data.key) {
-          setErr("Invalid response from payment server. Please try again.");
-          setBookingLoading(false);
-          return;
-        }
-
-        const { orderId, amount, key, currency } = orderRes.data;
-
-        if (!key.startsWith("rzp_")) {
-          setErr("Invalid Razorpay key format. Please contact support.");
-          setBookingLoading(false);
-          return;
-        }
-
-        const razorpayLoaded = await loadRazorpay();
-        if (!razorpayLoaded) {
-          setErr("Failed to load Razorpay. Please check your internet connection.");
-          setBookingLoading(false);
-          return;
-        }
-
-        if (!window.Razorpay) {
-          setErr("Razorpay SDK not loaded. Please refresh the page.");
-          setBookingLoading(false);
-          return;
-        }
-
-        const options = {
-          key,
-          amount,
-          currency: currency || "INR",
-          name: "Ride Booking",
-          description: `Ride from ${ride.startLocation} to ${ride.endLocation}`,
-          order_id: orderId,
-          handler: async function (response) {
-            try {
-              const verifyRes = await api.post("/payments/verify", {
-                rideId: Number(ride.id),
-                amountPaise: totalCostPaise,
-                razorpayOrderId: response.razorpay_order_id,
-                razorpayPaymentId: response.razorpay_payment_id,
-                razorpaySignature: response.razorpay_signature
-              });
-
-              const paymentId = verifyRes.data.id;
-
-              await api.post("/bookings/create", {
-                rideId: Number(ride.id),
-                seats: Number(seats),
-                paymentMethod: "ONLINE",
-                paymentId
-              });
-
-              navigate("/mybookings");
-            } catch (err) {
-              const errorMsg = err.response?.data || err.message || "Payment verification failed";
-              setErr(`Payment verification failed: ${errorMsg}. Please contact support if amount was deducted.`);
-              setBookingLoading(false);
-            }
-          },
-          prefill: { name: "", email: "", contact: "" },
-          notes: { rideId: ride.id.toString(), seats: seats.toString() },
-          theme: { color: "#1c7c31" },
-          modal: {
-            ondismiss: function () {
-              setBookingLoading(false);
-            }
-          }
-        };
-
-        try {
-          const razorpay = new window.Razorpay(options);
-          razorpay.open();
-        } catch (err) {
-          setErr("Failed to open payment gateway. Please try again.");
-          setBookingLoading(false);
-        }
+        return;
       }
+
+      // ── ONLINE flow — Razorpay escrow ──
+      const totalCostPaise = Math.round(ride.price * seats * 100);
+
+      // STEP 1: Get Razorpay public key from backend
+      const configRes = await api.get("/payments/config");
+      const razorpayKey = configRes.data.key;
+
+      if (!razorpayKey || !razorpayKey.startsWith("rzp_")) {
+        setErr("Invalid payment configuration. Please contact support.");
+        setBookingLoading(false);
+        return;
+      }
+
+      // STEP 2: Create order on backend
+      const orderRes = await api.post("/payments/create-order", {
+        rideId: Number(ride.id),
+        amount: totalCostPaise
+      });
+
+      if (!orderRes.data || !orderRes.data.orderId) {
+        setErr("Invalid response from payment server. Please try again.");
+        setBookingLoading(false);
+        return;
+      }
+
+      const { orderId, amount, currency } = orderRes.data;
+
+      // STEP 3: Load Razorpay script
+      const razorpayLoaded = await loadRazorpayScript();
+      if (!razorpayLoaded || !window.Razorpay) {
+        setErr("Failed to load Razorpay. Please check your internet connection.");
+        setBookingLoading(false);
+        return;
+      }
+
+      // STEP 4: Open Razorpay popup
+      const options = {
+        key: razorpayKey,
+        amount: amount,
+        currency: currency || "INR",
+        name: "Chalre",
+        description: `Ride from ${ride.startLocation} to ${ride.endLocation}`,
+        order_id: orderId,
+        handler: async function (response) {
+          try {
+            // STEP 5: Verify payment + auto-create booking in one backend call
+            await api.post("/payments/verify", {
+              rideId: Number(ride.id),
+              amount: totalCostPaise,
+              seats: Number(seats),
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature
+            });
+            navigate("/mybookings");
+          } catch (err) {
+            const msg = err.response?.data || "Payment verification failed. Contact support if amount was deducted.";
+            setErr(typeof msg === "string" ? msg : JSON.stringify(msg));
+            setBookingLoading(false);
+          }
+        },
+        prefill: { name: "", email: "", contact: "" },
+        notes: {
+          rideId: ride.id.toString(),
+          seats: seats.toString()
+        },
+        theme: { color: "#1c7c31" },
+        modal: {
+          ondismiss: function () {
+            setBookingLoading(false);
+          }
+        }
+      };
+
+      try {
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+      } catch (err) {
+        setErr("Failed to open payment gateway. Please try again.");
+        setBookingLoading(false);
+      }
+
     } catch (e) {
       let errorMessage = paymentMethod === "CASH"
         ? "Booking failed. Try again."
@@ -199,9 +207,9 @@ export default function RideDetails() {
 
       if (e.response?.data) {
         const errorData = e.response.data;
-        if (typeof errorData === 'object' && errorData.error) {
+        if (typeof errorData === "object" && errorData.error) {
           errorMessage = errorData.error;
-        } else if (typeof errorData === 'string') {
+        } else if (typeof errorData === "string") {
           errorMessage = errorData;
         } else if (errorData.message) {
           errorMessage = errorData.message;
@@ -375,12 +383,10 @@ export default function RideDetails() {
             {/* ── RIGHT COLUMN (sticky booking card) ── */}
             <div className="rd__right">
               <div className="rd__booking-card">
-                {/* Date */}
                 {ride.date && (
                   <div className="rd__booking-date">{ride.date}</div>
                 )}
 
-                {/* Mini route */}
                 <div className="rd__booking-route">
                   <div className="rd__booking-timeline">
                     <div className="rd__booking-dot rd__booking-dot--filled" />
@@ -403,7 +409,6 @@ export default function RideDetails() {
 
                 <div className="rd__booking-divider" />
 
-                {/* Driver mini */}
                 <div className="rd__booking-driver">
                   <div className="rd__booking-driver-avatar">
                     {ride.driver?.profileImage ? (
@@ -417,7 +422,6 @@ export default function RideDetails() {
 
                 <div className="rd__booking-divider" />
 
-                {/* Seats + price */}
                 <div className="rd__booking-price-row">
                   <div className="rd__booking-seats-control">
                     <button
@@ -440,7 +444,6 @@ export default function RideDetails() {
 
                 <div className="rd__booking-divider" />
 
-                {/* Payment method */}
                 <div className="rd__payment-options">
                   <label className={`rd__payment-option ${paymentMethod === "CASH" ? "rd__payment-option--active" : ""}`}>
                     <input
@@ -466,7 +469,6 @@ export default function RideDetails() {
                   </label>
                 </div>
 
-                {/* Book button */}
                 <button
                   className="rd__book-btn"
                   disabled={bookingLoading || noSeatsLeft}

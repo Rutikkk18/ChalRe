@@ -5,6 +5,18 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/booking.css";
 
+// Load Razorpay script dynamically
+function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    if (window.Razorpay) { resolve(true); return; }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
 export default function BookingPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,9 +29,7 @@ export default function BookingPage() {
 
   const noSeatsLeft = ride && Number(ride.availableSeats) <= 0;
 
-  useEffect(() => {
-    fetchRide();
-  }, []);
+  useEffect(() => { fetchRide(); }, []);
 
   const fetchRide = async () => {
     try {
@@ -37,26 +47,17 @@ export default function BookingPage() {
 
   const handleBookRide = async () => {
     if (!ride) return;
-
-    if (noSeatsLeft) {
-      setError("No seats available for this ride.");
-      return;
-    }
-
-    if (seats < 1) {
-      setError("Please select at least 1 seat.");
-      return;
-    }
-
+    if (noSeatsLeft) { setError("No seats available."); return; }
+    if (seats < 1) { setError("Please select at least 1 seat."); return; }
     if (seats > ride.availableSeats) {
-      setError(`Only ${ride.availableSeats} seat(s) left for this ride.`);
-      return;
+      setError(`Only ${ride.availableSeats} seat(s) left.`); return;
     }
 
     setLoading(true);
     setError("");
 
     try {
+      // ── CASH flow (unchanged) ──
       if (paymentMethod === "CASH") {
         const res = await api.post("/bookings/create", {
           rideId: Number(ride.id),
@@ -64,92 +65,124 @@ export default function BookingPage() {
           paymentMethod: "CASH"
         });
         navigate(`/booking/success/${res.data.id}`);
-      } else {
-        const totalAmount = Math.round(ride.price * seats);
-        const upiRes = await api.post("/payments/initiate-upi", {
-          rideId: Number(ride.id),
-          amount: totalAmount
-        });
-
-        const { upiId, amount } = upiRes.data;
-
-        if (!upiId) {
-          setError("Driver has not added UPI ID.");
-          setLoading(false);
-          return;
-        }
-
-        const upiUrl = `upi://pay?pa=${upiId}&pn=Ride%20Driver&am=${amount}&cu=INR`;
-        window.location.href = upiUrl;
-
-        const bookingRes = await api.post("/bookings/create", {
-          rideId: Number(ride.id),
-          seats: Number(seats),
-          paymentMethod: "ONLINE"
-        });
-        navigate(`/booking/success/${bookingRes.data.id}`);
+        return;
       }
+
+      // ── ONLINE flow — Razorpay escrow ──
+      const totalPaise = Math.round(ride.price * seats * 100);
+
+      // STEP 1: Get Razorpay key
+      const configRes = await api.get("/payments/config");
+      const razorpayKey = configRes.data.key;
+
+      // STEP 2: Create order on backend
+      const orderRes = await api.post("/payments/create-order", {
+        rideId: Number(ride.id),
+        amount: totalPaise
+      });
+
+      const { orderId, amount, currency } = orderRes.data;
+
+      // STEP 3: Load Razorpay script
+      const loaded = await loadRazorpayScript();
+      if (!loaded || !window.Razorpay) {
+        setError("Failed to load payment gateway. Check your connection.");
+        setLoading(false);
+        return;
+      }
+
+      // STEP 4: Open Razorpay popup
+      const options = {
+        key: razorpayKey,
+        amount: amount,
+        currency: currency || "INR",
+        name: "Chalre",
+        description: `Ride: ${ride.startLocation} → ${ride.endLocation}`,
+        order_id: orderId,
+        handler: async function (response) {
+          try {
+            // STEP 5: Verify payment + auto create booking
+            await api.post("/payments/verify", {
+              rideId: Number(ride.id),
+              amount: totalPaise,
+              seats: Number(seats),
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature
+            });
+            navigate(`/booking/success/online`);
+          } catch (err) {
+            const msg = err.response?.data || "Payment verification failed. Contact support if amount was deducted.";
+            setError(typeof msg === "string" ? msg : JSON.stringify(msg));
+            setLoading(false);
+          }
+        },
+        prefill: { name: "", email: "", contact: "" },
+        notes: {
+          rideId: ride.id.toString(),
+          seats: seats.toString()
+        },
+        theme: { color: "#1c7c31" },
+        modal: {
+          ondismiss: function () {
+            setError("Payment cancelled.");
+            setLoading(false);
+          }
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+
     } catch (err) {
       console.error(err);
-      let errorMessage =
-        paymentMethod === "CASH" ? "Booking failed." : "Failed to initiate payment.";
-      if (err.response?.data) {
-        errorMessage =
-          err.response.data.message ||
-          err.response.data.error ||
-          err.response.data;
-      }
-      setError(errorMessage);
+      const msg = err.response?.data;
+      setError(
+        typeof msg === "string" ? msg :
+        msg?.message || msg?.error ||
+        (paymentMethod === "CASH" ? "Booking failed." : "Payment initiation failed.")
+      );
       setLoading(false);
     }
   };
 
-  const getCity = (fullLocation) => {
-    if (!fullLocation) return "";
-    return fullLocation.split(",")[0].trim();
-  };
+  const getCity = (loc) => loc ? loc.split(",")[0].trim() : "";
 
-  if (!ride) {
-    return (
-      <div className="booking-wrapper">
-        <div className="booking-card" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300 }}>
-          <span style={{ fontFamily: "'Times New Roman', serif", color: "#6b7280", fontSize: "0.9rem" }}>Loading ride details…</span>
-        </div>
+  if (!ride) return (
+    <div className="booking-wrapper">
+      <div className="booking-card" style={{ display:"flex", alignItems:"center", justifyContent:"center", minHeight:300 }}>
+        <span style={{ color:"#6b7280", fontSize:"0.9rem" }}>Loading ride details…</span>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
     <div className="booking-wrapper">
       <div className="booking-card">
 
-        {/* ── LEFT PANEL — Ride Summary ── */}
+        {/* LEFT PANEL */}
         <div className="booking-left">
           <div className="booking-left-header">
             <div className="booking-left-label">Your Journey</div>
             <h2>Confirm Your Booking</h2>
           </div>
 
-          {/* Route */}
           <div className="booking-route">
             <div>
               <div className="booking-route-city">{getCity(ride.startLocation)}</div>
               <div className="booking-route-addr">{ride.startLocation}</div>
             </div>
-
             <div className="booking-route-line">
               <div className="booking-route-dot" />
               <div className="booking-route-track" />
               <div className="booking-route-dot" />
             </div>
-
             <div>
               <div className="booking-route-city">{getCity(ride.endLocation)}</div>
               <div className="booking-route-addr">{ride.endLocation}</div>
             </div>
           </div>
 
-          {/* Meta pills */}
           <div className="booking-meta-grid">
             <div className="booking-meta-pill">
               <div className="booking-meta-pill-label">Date</div>
@@ -169,7 +202,6 @@ export default function BookingPage() {
             </div>
           </div>
 
-          {/* Price per seat */}
           <div className="booking-price-highlight">
             <div>
               <div className="booking-price-highlight-label">Price per seat</div>
@@ -181,14 +213,13 @@ export default function BookingPage() {
           </div>
         </div>
 
-        {/* ── RIGHT PANEL — Form ── */}
+        {/* RIGHT PANEL */}
         <div className="booking-right">
           <div>
             <div className="booking-right-title">Book Your Seat</div>
             <div className="booking-right-sub">Select seats and payment — it only takes a moment.</div>
           </div>
 
-          {/* Seats */}
           <div className="form-section">
             <label htmlFor="seat-input">Number of Seats</label>
             <input
@@ -202,34 +233,25 @@ export default function BookingPage() {
             />
           </div>
 
-          {/* Total */}
           <div className="booking-total-row">
             <span className="booking-total-label">Total Amount</span>
             <span className="booking-total-val">₹{(ride.price * seats).toFixed(2)}</span>
           </div>
 
-          {/* Payment method */}
           <div className="payment-section-label">Payment Method</div>
           <div className="payment-options">
             <label className={`payment-option ${paymentMethod === "CASH" ? "selected" : ""}`}>
-              <input
-                type="radio"
-                value="CASH"
+              <input type="radio" value="CASH"
                 checked={paymentMethod === "CASH"}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
+                onChange={(e) => setPaymentMethod(e.target.value)} />
               <span className="payment-option-text">
                 <IndianRupee size={17} /> Pay with Cash
               </span>
             </label>
-
             <label className={`payment-option ${paymentMethod === "ONLINE" ? "selected" : ""}`}>
-              <input
-                type="radio"
-                value="ONLINE"
+              <input type="radio" value="ONLINE"
                 checked={paymentMethod === "ONLINE"}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
+                onChange={(e) => setPaymentMethod(e.target.value)} />
               <span className="payment-option-text">
                 <CreditCard size={17} /> Online Payment
               </span>
@@ -243,11 +265,7 @@ export default function BookingPage() {
             onClick={handleBookRide}
             disabled={loading || noSeatsLeft}
           >
-            {loading
-              ? "Processing…"
-              : paymentMethod === "CASH"
-              ? "Confirm Booking"
-              : "Proceed to Pay"}
+            {loading ? "Processing…" : paymentMethod === "CASH" ? "Confirm Booking" : "Proceed to Pay"}
           </button>
         </div>
 

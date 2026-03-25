@@ -280,7 +280,7 @@ export default function OfferRide() {
                 Vehicle <span className="opt-tag">(optional)</span>
               </label>
               <div className="vehicle-toggle">
-                {[{ value:"car", label:"🚗 Car" }, { value:"bike", label:"🏍️ Bike" }].map(({ value, label }) => (
+                {[{ value:"car", label:" Car" }, { value:"bike", label:" Bike" }].map(({ value, label }) => (
                   <button key={value} type="button"
                     className={`vtoggle-btn${vehicleCategory === value ? " active" : ""}`}
                     onClick={() => handleVehicleCategoryChange(value)}>
