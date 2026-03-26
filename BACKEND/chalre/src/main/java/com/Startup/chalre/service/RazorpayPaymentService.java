@@ -146,7 +146,8 @@ public class RazorpayPaymentService {
     // STEP 3: Passenger confirms ride done → release to driver
     @Transactional
     public String confirmRideAndRelease(Long rideId, User passenger) {
-        Payment payment = paymentRepository.findByRideId(rideId)
+        // Use latest successful payment — handles duplicate test payments gracefully
+        Payment payment = paymentRepository.findLatestSuccessfulPaymentByRideId(rideId)
                 .orElseThrow(() -> new RuntimeException("Payment not found for this ride"));
 
         if (payment.getReleasedAt() != null) {
