@@ -17,8 +17,8 @@ import MyRides from "./pages/MyRides";
 import ProfilePage from "./pages/ProfilePage";
 import MainLayout from "./layouts/MainLayout";
 import Scamm from "./pages/Scamm";
-import TermsAndConditions from "./pages/TermsAndConditions"
-import HelpCenter from "./pages/HelpCenter"
+import TermsAndConditions from "./pages/TermsAndConditions";
+import HelpCenter from "./pages/HelpCenter";
 import AboutChalRe from "./pages/AboutChalRe";
 import JoinOurTeam from "./pages/JoinOurTeam";
 import ScrollToTop from "./components/ScrollToTop";
@@ -29,116 +29,118 @@ import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import VerificationList from "./pages/admin/VerificationList";
 import VerificationDetail from "./pages/admin/VerificationDetail";
+import PayoutTracker from "./pages/admin/PayoutTracker";
 
 export default function App() {
   return (
     <>
-    <ScrollToTop />
-    <Routes>
-    
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/search" element={<SearchRides />} />
-        <Route
-          path="/offer"
-          element={
-            <ProtectedRoute>
-              <OfferRide />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/ridedetails/:id" element={<RideDetails />} />
-        <Route
-          path="/book-ride/:id"
-          element={
-            <ProtectedRoute>
-              <BookingPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/booking/success/:id"
-          element={
-            <ProtectedRoute>
-              <BookingSuccess />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/mybookings"
-          element={
-            <ProtectedRoute>
-              <MyBookings />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/notifications"
-          element={
-            <ProtectedRoute>
-              <NotificationPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/myrides"
-          element={
-            <ProtectedRoute>
-              <MyRides />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="scam" element={<Scamm />} />
-        <Route path="/terms" element={<TermsAndConditions />} />
-        <Route path="/help-center" element={<HelpCenter />} />
-        <Route path="/about" element={<AboutChalRe />} />
-        <Route path="/careers" element={<JoinOurTeam />} />
-      </Route>
+      <ScrollToTop />
+      <Routes>
 
-      {/* 🛡️ ADMIN PANEL ROUTES */}
-      <Route
-        path="/admin"
-        element={
-          <AdminRoute>
-            <AdminLayout />
-          </AdminRoute>
-        }
-      >
-        <Route index element={<Navigate to="/admin/dashboard" replace />} />
-        <Route path="dashboard" element={<AdminDashboard />} />
-        <Route path="verifications" element={<VerificationList />} />
-        <Route path="verifications/:userId" element={<VerificationDetail />} />
-      </Route>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/search" element={<SearchRides />} />
+          <Route
+            path="/offer"
+            element={
+              <ProtectedRoute>
+                <OfferRide />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/ridedetails/:id" element={<RideDetails />} />
+          <Route
+            path="/book-ride/:id"
+            element={
+              <ProtectedRoute>
+                <BookingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking/success/:id"
+            element={
+              <ProtectedRoute>
+                <BookingSuccess />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mybookings"
+            element={
+              <ProtectedRoute>
+                <MyBookings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <NotificationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/myrides"
+            element={
+              <ProtectedRoute>
+                <MyRides />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="scam" element={<Scamm />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/help-center" element={<HelpCenter />} />
+          <Route path="/about" element={<AboutChalRe />} />
+          <Route path="/careers" element={<JoinOurTeam />} />
+        </Route>
 
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route
-        path="/verification"
-        element={
-          <ProtectedRoute>
-            <VerificationPage />
-          </ProtectedRoute>
-        }
-      />
+        {/* ADMIN PANEL ROUTES */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="verifications" element={<VerificationList />} />
+          <Route path="verifications/:userId" element={<VerificationDetail />} />
+          <Route path="payouts" element={<PayoutTracker />} />
+        </Route>
 
-      <Route path="/verify-email" element={<VerifyEmail />} />
-    </Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/verification"
+          element={
+            <ProtectedRoute>
+              <VerificationPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+
+      </Routes>
     </>
   );
 }

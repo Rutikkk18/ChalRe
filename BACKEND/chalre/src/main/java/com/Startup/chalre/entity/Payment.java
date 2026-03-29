@@ -54,6 +54,15 @@ public class Payment {
 
     private LocalDateTime releasedAt;
 
+    // Track if admin has paid the driver manually
+    private Boolean driverPaid = false;
+
+    private LocalDateTime driverPaidAt;
+
+    // Admin note when marking paid (e.g. UPI ref number)
+    @Column(length = 200)
+    private String driverPayoutNote;
+
     public enum PaymentStatus {
         PENDING,
         SUCCESS,
