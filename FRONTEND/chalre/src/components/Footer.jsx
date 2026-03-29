@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Footer.css";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Footer() {
   const navigate = useNavigate();
-  const [selectedLanguage, setSelectedLanguage] = useState("English (India)");
+  const { selectedLanguage, setSelectedLanguage, t } = useLanguage();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const languages = [
@@ -28,53 +29,53 @@ export default function Footer() {
       <div className="footer-container">
         {/* Column 1 */}
         <div className="footer-col">
-          <h4>Ride Anywhere with ChalRe</h4>
+          <h4>{t("rideAnywhere")}</h4>
           <ul>
-            <li>Popular rides near you</li>
-            <li>Trending ride destinations</li>
+            <li>{t("popularRides")}</li>
+            <li>{t("trendingRides")}</li>
           </ul>
         </div>
 
         {/* Column 2 */}
         <div className="footer-col">
-          <h4>Shared Travel Routes</h4>
+          <h4>{t("sharedRoutes")}</h4>
           <ul>
             <li>Kolhapur → Gargoti</li>
-            <li>Sangli → Miraj </li>
-            <li>Rajarampuri,Kolhapur → Kalamba</li>
+            <li>Sangli → Miraj</li>
+            <li>Rajarampuri, Kolhapur → Kalamba</li>
             <li>Ichalkarangi → Pune</li>
-            <li>Your Villege → Your Desination</li>
+            <li>Your Village → Your Destination</li>
           </ul>
         </div>
 
         {/* Column 3 */}
         <div className="footer-col">
-          <h4>Learn More</h4>
+          <h4>{t("learnMore")}</h4>
           <ul>
-            <li onClick={() => navigate("/about")}>About ChalRe</li>
-            <li onClick={() => navigate("/about")}>How ChalRe Works</li>
-            <li onClick={() => navigate("/help-center")}>Help & Support</li>
+            <li onClick={() => navigate("/about")}>{t("aboutChalRe")}</li>
+            <li onClick={() => navigate("/about")}>{t("howItWorks")}</li>
+            <li onClick={() => navigate("/help-center")}>{t("helpSupport")}</li>
             <li className="footer-highlight" onClick={() => navigate("/careers")}>
-              Join Our Team
+              {t("joinTeam")}
             </li>
           </ul>
 
           {/* Language Dropdown */}
           <div className="language-selector">
-            <button 
-              className="language-btn" 
+            <button
+              className="language-btn"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             >
-              Language – {selectedLanguage}
-              <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>▼</span>
+              {t("languageLabel")} – {selectedLanguage}
+              <span className={`dropdown-arrow ${isDropdownOpen ? "open" : ""}`}>▼</span>
             </button>
-            
+
             {isDropdownOpen && (
               <div className="language-dropdown">
                 {languages.map((language) => (
                   <div
                     key={language}
-                    className={`language-option ${selectedLanguage === language ? 'active' : ''}`}
+                    className={`language-option ${selectedLanguage === language ? "active" : ""}`}
                     onClick={() => handleLanguageChange(language)}
                   >
                     {language}
@@ -110,8 +111,8 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <span onClick={() => navigate("/terms")}>Terms & Conditions</span>
-        <span>© ChalRe 2025</span>
+        <span onClick={() => navigate("/terms")}>{t("terms")}</span>
+        <span>{t("copyright")}</span>
       </div>
     </footer>
   );

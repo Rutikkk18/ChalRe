@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { X, Send, MessageCircle } from "lucide-react";
 import api from "../api/axios";
 import "../styles/chatModal.css";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function ChatModal({ rideId, otherUser, onClose }) {
   const [messages, setMessages] = useState([]);
@@ -11,6 +12,8 @@ export default function ChatModal({ rideId, otherUser, onClose }) {
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
+
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchMessages();

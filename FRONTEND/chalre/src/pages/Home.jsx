@@ -5,10 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import CustomDatePicker from "../components/CustomDatePicker";
+import { useLanguage } from "../context/LanguageContext";
+
 
 export default function Home() {
   const navigate = useNavigate(); 
 
+  const { t } = useLanguage();
   const [search, setSearch] = useState({
     from: "",
     to: "",
