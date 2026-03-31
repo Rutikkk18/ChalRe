@@ -1,58 +1,48 @@
+// src/pages/AboutChalRe.jsx
 import "../styles/AboutChalRe.css";
+import { useLanguage } from "../context/LanguageContext";
 
 const AboutChalRe = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="about-container">
-      {/* Hero Section */}
+
+      {/* Hero */}
       <section className="about-hero">
         <div className="hero-content">
-          <h1>About ChalRe</h1>
-          <p>
-            A community-based ride-sharing platform designed to make
-            everyday travel affordable, social, and sustainable.
-          </p>
+          <h1>{t("aboutHeroTitle")}</h1>
+          <p>{t("aboutHeroSubtitle")}</p>
         </div>
       </section>
 
-      {/* Mission Section */}
+      {/* Mission */}
       <section className="about-section">
         <div className="section-content">
-          <h2>Our Mission</h2>
-          <p>
-            We connect people traveling in the same direction to share rides,
-            reduce travel costs, and minimize environmental impact.
-            ChalRe is built for local and intercity travel across India.
-          </p>
+          <h2>{t("aboutMissionTitle")}</h2>
+          <p>{t("aboutMissionDesc")}</p>
         </div>
       </section>
 
       {/* How It Works */}
       <section className="about-section how-it-works">
         <div className="section-content">
-          <h2>How ChalRe Works</h2>
+          <h2>{t("aboutHowTitle")}</h2>
           <div className="about-steps">
             <div className="step-card">
               <div className="step-number">1</div>
-              <h3>Offer or Find a Ride</h3>
-              <p>
-                Users can offer rides if they are traveling or search for available
-                rides posted by others.
-              </p>
+              <h3>{t("aboutStep1Title")}</h3>
+              <p>{t("aboutStep1Desc")}</p>
             </div>
             <div className="step-card">
               <div className="step-number">2</div>
-              <h3>Search & Confirm</h3>
-              <p>
-                Select your ride, pay charges online or in cash, and confirm your booking instantly.
-              </p>
+              <h3>{t("aboutStep2Title")}</h3>
+              <p>{t("aboutStep2Desc")}</p>
             </div>
             <div className="step-card">
               <div className="step-number">3</div>
-              <h3>Travel Together</h3>
-              <p>
-                Meet at the agreed pickup point, travel together, and share the
-                journey.
-              </p>
+              <h3>{t("aboutStep3Title")}</h3>
+              <p>{t("aboutStep3Desc")}</p>
             </div>
           </div>
         </div>
@@ -61,28 +51,13 @@ const AboutChalRe = () => {
       {/* Why ChalRe */}
       <section className="about-section why-section">
         <div className="section-content">
-          <h2>Why Choose ChalRe?</h2>
+          <h2>{t("aboutWhyTitle")}</h2>
           <ul className="about-list">
-            <li>
-              <span className="check-icon">✓</span>
-              <span>Affordable shared travel</span>
-            </li>
-            <li>
-              <span className="check-icon">✓</span>
-              <span>Built for local Indian routes</span>
-            </li>
-            <li>
-              <span className="check-icon">✓</span>
-              <span>Simple booking & approvals</span>
-            </li>
-            <li>
-              <span className="check-icon">✓</span>
-              <span>Community-driven & transparent</span>
-            </li>
-            <li>
-              <span className="check-icon">✓</span>
-              <span>Reduces traffic and pollution</span>
-            </li>
+            <li><span className="check-icon">✓</span><span>{t("aboutWhy1")}</span></li>
+            <li><span className="check-icon">✓</span><span>{t("aboutWhy2")}</span></li>
+            <li><span className="check-icon">✓</span><span>{t("aboutWhy3")}</span></li>
+            <li><span className="check-icon">✓</span><span>{t("aboutWhy4")}</span></li>
+            <li><span className="check-icon">✓</span><span>{t("aboutWhy5")}</span></li>
           </ul>
         </div>
       </section>
@@ -90,16 +65,13 @@ const AboutChalRe = () => {
       {/* Vision */}
       <section className="about-section vision-section">
         <div className="section-content">
-          <h2>Our Vision</h2>
-          <p>
-            We believe that every empty seat is a missed opportunity. ChalRe
-            envisions a future where shared mobility becomes the first choice for
-            everyday travel.
-          </p>
+          <h2>{t("aboutVisionTitle")}</h2>
+          <p>{t("aboutVisionDesc")}</p>
         </div>
       </section>
+
     </div>
   );
 };
 
-export default AboutChalRe;
+export default AboutChalRe; 

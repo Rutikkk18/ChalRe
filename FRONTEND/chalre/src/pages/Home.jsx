@@ -7,11 +7,10 @@ import Footer from "../components/Footer";
 import CustomDatePicker from "../components/CustomDatePicker";
 import { useLanguage } from "../context/LanguageContext";
 
-
 export default function Home() {
-  const navigate = useNavigate(); 
-
+  const navigate = useNavigate();
   const { t } = useLanguage();
+
   const [search, setSearch] = useState({
     from: "",
     to: "",
@@ -26,29 +25,25 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 120);
-    };
-
+    const onScroll = () => setScrolled(window.scrollY > 120);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
     <div className="home-wrapper">
-      {/* HERO SECTION */}
+
+      {/* ── HERO ── */}
       <header className="hero">
-        <h1>Miles Better Together </h1>
-        <p>
-          A modern way to connect with nearby people. Safe, fast & affordable travel.
-        </p>
+        <h1>{t("heroTitle")}</h1>
+        <p>{t("heroSubtitle")}</p>
 
         <div className={`home-search-bar ${scrolled ? "search-sticky" : ""}`}>
           <div className="search-item location-from">
             <LocationAutocomplete
               value={search.from}
               onChange={(val) => updateSearch("from", val)}
-              placeholder="Leaving From"
+              placeholder={t("leavingFrom")}
             />
           </div>
 
@@ -58,7 +53,7 @@ export default function Home() {
             <LocationAutocomplete
               value={search.to}
               onChange={(val) => updateSearch("to", val)}
-              placeholder="Going to"
+              placeholder={t("goingTo")}
             />
           </div>
 
@@ -68,7 +63,7 @@ export default function Home() {
             <CustomDatePicker
               value={search.date}
               onChange={(val) => updateSearch("date", val)}
-              placeholder="Date"
+              placeholder={t("date")}
             />
           </div>
 
@@ -76,15 +71,13 @@ export default function Home() {
 
           <div className="search-item seats-input">
             <div className="seat-input">
-              <span className="seat-label">Seats</span>
+              <span className="seat-label">{t("seats")}</span>
               <input
                 type="number"
                 min="1"
                 max="10"
                 value={search.passengers}
-                onChange={(e) =>
-                  updateSearch("passengers", e.target.value)
-                }
+                onChange={(e) => updateSearch("passengers", e.target.value)}
               />
             </div>
           </div>
@@ -93,180 +86,141 @@ export default function Home() {
             className="search-action"
             onClick={() => {
               if (!search.from.trim() || !search.to.trim()) {
-                alert("Please enter both 'Leaving From' and 'Going to' locations.");
+                alert(t("searchAlert"));
                 return;
               }
-              navigate("/search", { state: { from: search.from, to: search.to, date: search.date, passengers: search.passengers } });
+              navigate("/search", {
+                state: {
+                  from: search.from,
+                  to: search.to,
+                  date: search.date,
+                  passengers: search.passengers,
+                },
+              });
             }}
           >
-            Search
+            {t("search")}
           </button>
         </div>
       </header>
 
+      {/* ── FEATURES ── */}
+      <section className="features">
+        <div className="feature-card">
+          <div className="feature-icon">✔</div>
+          <h3>{t("verifiedUsers")}</h3>
+          <p>{t("verifiedUsersDesc")}</p>
+        </div>
 
-     {/* FEATURES SECTION */}
-<section className="features">
-  <div className="feature-card">
-    <div className="feature-icon">✔</div>
-    <h3>Verified Users</h3>
-    <p>Every rider undergoes document verification for safety and trust.</p>
-  </div>
+        <div className="feature-card">
+          <div className="feature-icon">🤖</div>
+          <h3>{t("smartMatching")}</h3>
+          <p>{t("smartMatchingDesc")}</p>
+        </div>
 
-  <div className="feature-card">
-    <div className="feature-icon">🤖</div>
-    <h3>Smart Matching</h3>
-    <p>
-      Find rides going your way in seconds using our auto-matching engine.
-    </p>
-  </div>
-
-  <div className="feature-card">
-    <div className="feature-icon">🛡️</div>
-    <h3>Secure Payments</h3>
-    <p>
-      Pay securely with multiple payment options. Fast and reliable transactions.
-    </p>
-  </div>
-        <div class="divider gradient" />
+        <div className="feature-card">
+          <div className="feature-icon">🛡️</div>
+          <h3>{t("securePayments")}</h3>
+          <p>{t("securePaymentsDesc")}</p>
+        </div>
+        <div className="divider gradient" />
       </section>
 
+      {/* ── SHARE RIDE ── */}
       <div className="ride-sharehome">
-
-        <h2 className="h2hr">Share your ride. Save more.</h2>
-        <p className="phr">Post your trip, fill empty seats, and split fuel and toll costs effortlessly.</p>
-        <button className="btn-hssr" onClick={() => navigate("/offer")} >Share your ride</button>
-
-
+        <h2 className="h2hr">{t("shareRideTitle")}</h2>
+        <p className="phr">{t("shareRideDesc")}</p>
+        <button className="btn-hssr" onClick={() => navigate("/offer")}>
+          {t("shareYourRide")}
+        </button>
       </div>
-      <div class="divider gradient" />
+      <div className="divider gradient" />
 
+      {/* ── FRAUD ── */}
       <div className="fraud-div">
         <div className="fraud-image">
-          <img src="/fraud.png" alt="Stay safe from scams" />
+          <img src="/fraud.png" alt={t("fraudImgAlt")} />
         </div>
-
         <div className="fraud-content">
-          <h2>Your safety matters to us.</h2>
-          <p>
-            At ChalRe, we continuously work to keep our platform safe and secure.
-            If scams occur, we make sure you know how to identify, avoid, and report them.
-            Follow these tips to help protect yourself.
-          </p>
-
+          <h2>{t("fraudTitle")}</h2>
+          <p>{t("fraudDesc")}</p>
           <button className="fraud-btn" onClick={() => navigate("/scam")}>
-      Learn more
-      <span className="btn-icon">→</span>
-    </button>
+            {t("learnMoreBtn")}
+            <span className="btn-icon">→</span>
+          </button>
         </div>
       </div>
 
-      <div class="divider gradient" />
+      <div className="divider gradient" />
+
+      {/* ── WHY CHALRE ── */}
       <section className="why-chalre">
         <div className="why-header">
-          <h2>Why ChalRe?</h2>
-          <p>What we do differently for you</p>
+          <h2>{t("whyChalRe")}</h2>
+          <p>{t("whyChalReSubtitle")}</p>
         </div>
 
         <div className="why-grid">
           <div className="why-card">
             <span className="why-icon">🚗 🏍️</span>
-            <h3>Bike & Car Options</h3>
-            <p>
-              Choose between bike and car rides for faster, flexible, and
-              comfortable travel — perfect for short and local trips.
-            </p>
+            <h3>{t("bikeCarOptions")}</h3>
+            <p>{t("bikeCarOptionsDesc")}</p>
           </div>
 
           <div className="why-card">
             <span className="why-icon">📍</span>
-            <h3>Strong Local Focus</h3>
-            <p>
-              From small villages to narrow lanes and nearby towns, ChalRe makes
-              booking or offering local rides simple and accessible.
-            </p>
+            <h3>{t("localFocus")}</h3>
+            <p>{t("localFocusDesc")}</p>
           </div>
 
           <div className="why-card">
             <span className="why-icon">🛣️</span>
-            <h3>Long-Distance Sharing</h3>
-            <p>
-              We also support long-route ride sharing, helping you travel farther
-              together at a lower cost and with more convenience.
-            </p>
+            <h3>{t("longDistance")}</h3>
+            <p>{t("longDistanceDesc")}</p>
           </div>
         </div>
       </section>
 
-      <div class="divider gradient" />
+      <div className="divider gradient" />
+
+      {/* ── HELP CENTRE ── */}
       <div className="help-centre">
-        <h2 className="help-title">ChalRe Help Centre</h2>
+        <h2 className="help-title">{t("helpCentreTitle")}</h2>
 
         <div className="help-grid">
-          {/* LEFT COLUMN */}
           <div className="help-col">
             <div className="help-item">
-              <h4>How can I reserve a ChalRe seat?</h4>
-              <p>
-                You can find and book a ChalRe ride using our mobile app or website.
-                Just enter your route, select your travel date, and choose the ride
-                that fits you best. Some rides confirm instantly, while others may
-                need the driver's approval. Either way, booking is quick and simple.
-              </p>
+              <h4>{t("helpQ1")}</h4>
+              <p>{t("helpA1")}</p>
             </div>
-
             <div className="help-item">
-              <h4>Can I cancel a booked ride?</h4>
-              <p>
-                Plans changed? No worries. You can cancel your ride anytime from the
-                "Your rides" section in the app. Cancelling early helps drivers find
-                other passengers. Refunds depend on how early you cancel — cancelling
-                well before departure may get you most of your money back.
-              </p>
+              <h4>{t("helpQ2")}</h4>
+              <p>{t("helpA2")}</p>
             </div>
-
-          
           </div>
 
-          {/* RIGHT COLUMN */}
           <div className="help-col">
             <div className="help-item">
-              <h4>How do I offer a ChalRe ride?</h4>
-              <p>
-                Posting a ride is easy. Use the app or website to enter your start and
-                end points, travel date and time, available seats, and price per seat.
-                You can choose whether bookings are automatic or need approval, then
-                publish your ride and you're good to go.
-              </p>
+              <h4>{t("helpQ3")}</h4>
+              <p>{t("helpA3")}</p>
             </div>
-
             <div className="help-item">
-              <h4>Why choose ChalRe?</h4>
-              <p>
-                <p>
-                  Ride sharing saves money, reduces traffic, and lowers pollution. With Chalre,
-                  you can choose both car and bike rides, making local travel faster and more
-                  affordable. Fewer vehicles on the road also mean a safer and smoother
-                  experience. Bike rides are especially useful for short, local travel,
-                  offering faster movement through traffic.
-                </p>
-
-              </p>
+              <h4>{t("helpQ4")}</h4>
+              <p>{t("helpA4")}</p>
             </div>
-
-          
           </div>
         </div>
 
         <div className="help-btn-wrap">
-          <button className="help-btn" onClick={() => navigate("/help-center")} >Read our Help Centre</button>
+          <button className="help-btn" onClick={() => navigate("/help-center")}>
+            {t("readHelpCentre")}
+          </button>
         </div>
 
-        <div class="divider gradient" />
+        <div className="divider gradient" />
       </div>
 
       <Footer />
-
     </div>
   );
 }

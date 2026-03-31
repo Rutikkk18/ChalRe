@@ -2,19 +2,17 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
+  const { t } = useLanguage();
   const location = useLocation();
 
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 120);
-    };
-
+    const onScroll = () => setScrolled(window.scrollY > 120);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -25,41 +23,36 @@ export default function Navbar() {
     <nav className={`navbar ${scrolled ? "navbar-expanded" : ""}`}>
       <div className="logo">ChalRe</div>
 
-      {/* MAIN LINKS */}
       <div className="nav-links">
-        {currentPath !== "/" && <Link to="/">Home</Link>}
-        {currentPath !== "/search" && <Link to="/search">Search Rides</Link>}
-        {currentPath !== "/offer" && <Link to="/offer">Offer Ride</Link>}
+        {currentPath !== "/" && <Link to="/">{t("navHome")}</Link>}
+        {currentPath !== "/search" && <Link to="/search">{t("navSearchRides")}</Link>}
+        {currentPath !== "/offer" && <Link to="/offer">{t("navOfferRide")}</Link>}
 
         {!user && currentPath !== "/login" && (
-          <Link to="/login">Login</Link>
+          <Link to="/login">{t("navLogin")}</Link>
         )}
 
         {user && currentPath !== "/dashboard" && (
-          <Link to="/dashboard">Dashboard</Link>
+          <Link to="/dashboard">{t("navDashboard")}</Link>
         )}
 
-        
-            {user?.role === "ADMIN" && (
-      <Link to="/admin/dashboard" className="nav-admin-btn">
-        Admin Dashboard
-      </Link>
-    )}
+        {user?.role === "ADMIN" && (
+          <Link to="/admin/dashboard" className="nav-admin-btn">
+            {t("navAdminDashboard")}
+          </Link>
+        )}
 
-
-        {/* RIGHT SIDE BUTTONS */}
         {!user ? (
           currentPath !== "/register" && (
             <Link to="/register" className="register-btn">
-              Register
+              {t("navRegister")}
             </Link>
           )
         ) : (
           <button onClick={logout} className="logout-btn">
-            Logout
+            {t("navLogout")}
           </button>
         )}
-
       </div>
     </nav>
   );

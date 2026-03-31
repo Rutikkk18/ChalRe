@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# Allow Google to crawl your logo/favicon explicitly
+Allow: /favicon.png
+Allow: /favicon.ico
+Allow: /preview.png
+
 Sitemap: https://chalre.in/sitemap.xml

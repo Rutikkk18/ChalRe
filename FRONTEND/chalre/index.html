@@ -3,18 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-<link rel="shortcut icon" href="/favicon.png" />
-<link rel="apple-touch-icon" href="/favicon.png" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="1080x1080" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Canonical URL (Prevents duplicate indexing) -->
+    <!-- Canonical URL -->
     <link rel="canonical" href="https://chalre.in/" />
 
     <!-- Primary SEO -->
     <title>ChalRe – Carpool & Bikepool Rides Near You</title>
-
-    <!-- Meta Description for Google SEO -->
     <meta
       name="description"
       content="ChalRe is a local-first carpooling and bikepooling platform for daily commutes and long routes. Share rides, save costs, and travel smarter together."
@@ -32,6 +34,22 @@
     <meta name="twitter:title" content="ChalRe – Ride Sharing Platform" />
     <meta name="twitter:description" content="Find rides, share journeys, and travel smarter with ChalRe." />
     <meta name="twitter:image" content="https://chalre.in/preview.png" />
+
+    <!-- ✅ JSON-LD: Tells Google exactly which image is your logo -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "ChalRe",
+      "url": "https://chalre.in",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://chalre.in/favicon.png",
+        "width": 1080,
+        "height": 1080
+      }
+    }
+    </script>
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PZVMVQYL68"></script>
