@@ -17,6 +17,8 @@ const translations = {
     heroTitle: "Miles Better Together",
     heroSubtitle: "A modern way to connect with nearby people. Safe, fast & affordable travel.",
     leavingFrom: "Leaving From", goingTo: "Going to", date: "Date", seats: "Seats", search: "Search",
+    launchBannerTitle: "Zero Platform Fee - Launch Phase  —",
+    launchBannerDesc: "During our launch phase, ChalRe charges no platform fee - making rides more affordable for passengers while drivers keep full earnings.",
     searchAlert: "Please enter both 'Leaving From' and 'Going to' locations.",
     verifiedUsers: "Verified Users", verifiedUsersDesc: "Every rider undergoes document verification for safety and trust.",
     smartMatching: "Smart Matching", smartMatchingDesc: "Find rides going your way in seconds using our auto-matching engine.",
@@ -67,6 +69,8 @@ const translations = {
     // ── HOME ────────────────────────────────────────────────
     heroTitle: "साथ मिलकर सफर करें", heroSubtitle: "पास के लोगों से जुड़ने का आधुनिक तरीका। सुरक्षित, तेज़ और किफायती यात्रा।",
     leavingFrom: "कहाँ से जा रहे हैं", goingTo: "कहाँ जाना है", date: "तारीख", seats: "सीटें", search: "खोजें",
+    launchBannerTitle: "शून्य प्लेटफॉर्म शुल्क — लॉन्च चरण",
+    launchBannerDesc: "हमारे लॉन्च चरण के दौरान, ChalRe कोई प्लेटफॉर्म शुल्क नहीं लेता — यात्रियों के लिए सस्ती यात्रा और ड्राइवरों की पूरी कमाई।",
     searchAlert: "कृपया 'कहाँ से' और 'कहाँ जाना है' दोनों भरें।",
     verifiedUsers: "सत्यापित उपयोगकर्ता", verifiedUsersDesc: "सुरक्षा और विश्वास के लिए हर राइडर का दस्तावेज़ सत्यापन होता है।",
     smartMatching: "स्मार्ट मैचिंग", smartMatchingDesc: "हमारे ऑटो-मैचिंग इंजन से सेकंडों में अपने रास्ते की राइड खोजें।",
@@ -117,6 +121,8 @@ const translations = {
     // ── HOME ────────────────────────────────────────────────
     heroTitle: "एकत्र प्रवास, अधिक आनंद", heroSubtitle: "जवळच्या लोकांशी जोडण्याचा आधुनिक मार्ग. सुरक्षित, जलद आणि परवडणारा प्रवास.",
     leavingFrom: "कुठून निघताय", goingTo: "कुठे जायचे आहे", date: "तारीख", seats: "जागा", search: "शोधा",
+    launchBannerTitle: "शून्य प्लॅटफॉर्म शुल्क — लॉन्च टप्पा",
+  launchBannerDesc: "आमच्या लॉन्च टप्प्यात ChalRe कोणतेही प्लॅटफॉर्म शुल्क आकारत नाही — प्रवाशांसाठी स्वस्त प्रवास आणि चालकांना पूर्ण कमाई.",
     searchAlert: "कृपया 'कुठून' आणि 'कुठे जायचे' दोन्ही भरा.",
     verifiedUsers: "सत्यापित वापरकर्ते", verifiedUsersDesc: "सुरक्षितता आणि विश्वासासाठी प्रत्येक राइडरची कागदपत्रे तपासली जातात.",
     smartMatching: "स्मार्ट मॅचिंग", smartMatchingDesc: "काही सेकंदात तुमच्या मार्गाची राइड शोधा.",
@@ -160,6 +166,8 @@ const translations = {
   "தமிழ் (Tamil)": {
     rideAnywhere: "ChalRe உடன் எங்கும் பயணிக்கலாம்", popularRides: "உங்கள் அருகில் பிரபலமான சவாரிகள்",
     trendingRides: "டிரெண்டிங் சவாரி இடங்கள்", sharedRoutes: "பகிரப்பட்ட பயண வழிகள்",
+    launchBannerTitle: "பூஜ்ஜிய தள கட்டணம் — அறிமுக கட்டம்",
+launchBannerDesc: "எங்கள் அறிமுக கட்டத்தில் ChalRe எந்த தள கட்டணமும் வசூலிக்கவில்லை — பயணிகளுக்கு மலிவான பயணம், ஓட்டுநர்களுக்கு முழு வருமானம்.",
     learnMore: "மேலும் அறிக", aboutChalRe: "ChalRe பற்றி", howItWorks: "ChalRe எப்படி வேலை செய்கிறது",
     helpSupport: "உதவி & ஆதரவு", joinTeam: "எங்கள் குழுவில் சேருங்கள்",
     terms: "விதிமுறைகள் & நிபந்தனைகள்", copyright: "© ChalRe 2025", languageLabel: "மொழி",
@@ -203,6 +211,8 @@ const translations = {
     rideAnywhere: "ChalRe తో ఎక్కడైనా ప్రయాణించండి", popularRides: "మీ దగ్గర జనప్రియ రైడ్‌లు",
     trendingRides: "ట్రెండింగ్ రైడ్ గమ్యాలు", sharedRoutes: "భాగస్వామ్య ప్రయాణ మార్గాలు",
     learnMore: "మరింత తెలుసుకోండి", aboutChalRe: "ChalRe గురించి", howItWorks: "ChalRe ఎలా పనిచేస్తుంది",
+    launchBannerTitle: "ಶೂನ್ಯ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಶುಲ್ಕ — ಲಾಂಚ್ ಹಂತ",
+launchBannerDesc: "ನಮ್ಮ ಲಾಂಚ್ ಹಂತದಲ್ಲಿ ChalRe ಯಾವುದೇ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಶುಲ್ಕ ವಿಧಿಸುವುದಿಲ್ಲ — ಪ್ರಯಾಣಿಕರಿಗೆ ಅಗ್ಗದ ಪ್ರಯಾಣ, ಚಾಲಕರಿಗೆ ಪೂರ್ಣ ಗಳಿಕೆ.",
     helpSupport: "సహాయం & మద్దతు", joinTeam: "మా జట్టులో చేరండి",
     terms: "నిబంధనలు & షరతులు", copyright: "© ChalRe 2025", languageLabel: "భాష",
     heroTitle: "కలిసి ప్రయాణిద్దాం", heroSubtitle: "సమీపంలోని వ్యక్తులతో అనుసంధానించే ఆధునిక మార్గం. సురక్షితమైన & చౌకైన ప్రయాణం.",
@@ -244,6 +254,8 @@ const translations = {
   "ಕನ್ನಡ (Kannada)": {
     rideAnywhere: "ChalRe ಜೊತೆ ಎಲ್ಲಿಯಾದರೂ ಪ್ರಯಾಣಿಸಿ", popularRides: "ನಿಮ್ಮ ಹತ್ತಿರ ಜನಪ್ರಿಯ ರೈಡ್‌ಗಳು",
     trendingRides: "ಟ್ರೆಂಡಿಂಗ್ ರೈಡ್ ಗಮ್ಯಸ್ಥಾನಗಳು", sharedRoutes: "ಹಂಚಿಕೆ ಪ್ರಯಾಣ ಮಾರ್ಗಗಳು",
+    launchBannerTitle: "ಶೂನ್ಯ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಶುಲ್ಕ — ಲಾಂಚ್ ಹಂತ",
+launchBannerDesc: "ನಮ್ಮ ಲಾಂಚ್ ಹಂತದಲ್ಲಿ ChalRe ಯಾವುದೇ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಶುಲ್ಕ ವಿಧಿಸುವುದಿಲ್ಲ — ಪ್ರಯಾಣಿಕರಿಗೆ ಅಗ್ಗದ ಪ್ರಯಾಣ, ಚಾಲಕರಿಗೆ ಪೂರ್ಣ ಗಳಿಕೆ.",
     learnMore: "ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ", aboutChalRe: "ChalRe ಬಗ್ಗೆ", howItWorks: "ChalRe ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
     helpSupport: "ಸಹಾಯ & ಬೆಂಬಲ", joinTeam: "ನಮ್ಮ ತಂಡವನ್ನು ಸೇರಿ",
     terms: "ನಿಯಮಗಳು & ಷರತ್ತುಗಳು", copyright: "© ChalRe 2025", languageLabel: "ಭಾಷೆ",
@@ -285,6 +297,8 @@ const translations = {
   // ════════════════════════════════════════════════════════════
   "বাংলা (Bengali)": {
     rideAnywhere: "ChalRe এর সাথে যেকোনো জায়গায় যান", popularRides: "আপনার কাছের জনপ্রিয় রাইড",
+    launchBannerTitle: "শূন্য প্ল্যাটফর্ম ফি — লঞ্চ পর্যায়",
+launchBannerDesc: "আমাদের লঞ্চ পর্যায়ে ChalRe কোনো প্ল্যাটফর্ম ফি নেয় না — যাত্রীদের জন্য সাশ্রয়ী ভ্রমণ এবং চালকরা সম্পূর্ণ আয় রাখেন।",
     trendingRides: "ট্রেন্ডিং রাইড গন্তব্য", sharedRoutes: "শেয়ার্ড ট্র্যাভেল রুট",
     learnMore: "আরও জানুন", aboutChalRe: "ChalRe সম্পর্কে", howItWorks: "ChalRe কীভাবে কাজ করে",
     helpSupport: "সাহায্য ও সহায়তা", joinTeam: "আমাদের দলে যোগ দিন",
@@ -329,6 +343,8 @@ const translations = {
     rideAnywhere: "ChalRe સાથે ગમે ત્યાં પ્રવાસ કરો", popularRides: "તમારી નજીકની લોકપ્રિય રાઇડ્સ",
     trendingRides: "ટ્રેન્ડિંગ રાઇડ ડેસ્ટિનેશન્સ", sharedRoutes: "શેર્ડ ટ્રાવેલ રૂટ્સ",
     learnMore: "વધુ જાણો", aboutChalRe: "ChalRe વિશે", howItWorks: "ChalRe કેવી રીતે કામ કરે છે",
+    launchBannerTitle: "શૂન્ય પ્લેટફોર્મ ફી — લૉન્ચ તબક્કો",
+launchBannerDesc: "અમારા લૉન્ચ તબક્કા દરમિયાન ChalRe કોઈ પ્લેટફોર્મ ફી લેતી નથી — મુસાફરો માટે સસ્તી મુસાફરી અને ડ્રાઇવર્સ સંપૂર્ণ કમાણી રાખે.",
     helpSupport: "મદદ અને સહાય", joinTeam: "અમારી ટીમમાં જોડાઓ",
     terms: "નિયમો અને શરતો", copyright: "© ChalRe 2025", languageLabel: "ભાષા",
     heroTitle: "સાથે મળીને પ્રવાસ કરો", heroSubtitle: "નજીકના લોકો સાથે જોડાવાની આધુનિક રીત. સુરક્ષિત, ઝડપી અને પોસાય તેવો પ્રવાસ.",

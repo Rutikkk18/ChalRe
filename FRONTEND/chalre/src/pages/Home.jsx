@@ -33,8 +33,20 @@ export default function Home() {
   return (
     <div className="home-wrapper">
 
-      {/* ── HERO ── */}
+      {/* ── HERO (banner is now INSIDE hero) ── */}
       <header className="hero">
+
+       {/* ── LAUNCH BANNER — sits at top of hero on the background image ── */}
+<div className="launch-banner">
+  <div className="launch-banner-inner">
+    <div className="launch-banner-text">
+      <span className="launch-banner-title">{t("launchBannerTitle")}</span>
+      
+      <span className="launch-banner-desc">{t("launchBannerDesc")}</span>
+    </div>
+  </div>
+</div>
+
         <h1>{t("heroTitle")}</h1>
         <p>{t("heroSubtitle")}</p>
 

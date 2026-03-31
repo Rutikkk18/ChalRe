@@ -35,8 +35,8 @@ public class AdminPayoutController {
             map.put("paymentId", p.getId());
             map.put("amount", p.getAmount());
             map.put("amountRupees", p.getAmount() / 100.0);
-            map.put("driverAmount", Math.round(p.getAmount() * 0.85) / 100.0); // 85% to driver
-            map.put("chalreCut", Math.round(p.getAmount() * 0.15) / 100.0);   // 15% platform fee
+            map.put("driverAmount", p.getAmount() / 100.0);  // 100% to driver
+            map.put("chalreCut", 0.0);                        // 0% commission
             map.put("releasedAt", p.getReleasedAt());
             map.put("createdAt", p.getCreatedAt());
             map.put("razorpayPaymentId", p.getRazorpayPaymentId());
