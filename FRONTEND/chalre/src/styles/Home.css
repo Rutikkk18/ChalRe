@@ -1216,7 +1216,7 @@ html, body {
 .launch-banner-desc {
   font-family: 'Times New Roman', Times, serif;
   font-size: clamp(12px, 1.4vw, 14px);
-  color: rgba(0, 0, 0, 0.95);
+  color: rgba(92, 89, 89, 0.95);
   line-height: 1.4;
   white-space: nowrap;
   overflow: hidden;

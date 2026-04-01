@@ -150,7 +150,7 @@ export default function BookingPage() {
 
   if (!ride) return (
     <div className="booking-wrapper">
-      <div className="booking-card" style={{ display:"flex", alignItems:"center", justifyContent:"center", minHeight:300 }}>
+     
         <span style={{ color:"#6b7280", fontSize:"0.9rem" }}>Loading ride details…</span>
       </div>
     </div>
