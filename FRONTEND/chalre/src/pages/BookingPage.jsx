@@ -153,7 +153,7 @@ export default function BookingPage() {
      
         <span style={{ color:"#6b7280", fontSize:"0.9rem" }}>Loading ride details…</span>
       </div>
-    </div>
+   
   );
 
   return (
