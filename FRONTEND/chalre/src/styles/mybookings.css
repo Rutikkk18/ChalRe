@@ -40,7 +40,7 @@
    PAGE WRAPPER
 ============================================================ */
 .mb-wrapper {
-  max-width: 720px;
+  max-width: 1200px;       /* widened to fit 2 columns */
   width: 100%;
   margin: 16px auto 40px;
   padding: clamp(20px, 3vw, 32px) clamp(16px, 4vw, 24px) 0;
@@ -212,12 +212,13 @@
 }
 
 /* ============================================================
-   BOOKINGS LIST
+   BOOKINGS LIST — 2-COLUMN GRID
 ============================================================ */
 .mb-list {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(14px, 3vw, 20px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(14px, 2.5vw, 22px);
+  align-items: start;      /* cards don't stretch to match partner height */
 }
 
 /* ============================================================
@@ -494,12 +495,16 @@
 }
 
 /* ============================================================
-   RESPONSIVE – MOBILE (≤ 768px)
+   RESPONSIVE – MOBILE (≤ 768px) — drop to 1 column
 ============================================================ */
 @media (max-width: 768px) {
   .mb-wrapper {
     margin-top: 16px;
     padding: 20px 16px 0;
+  }
+
+  .mb-list {
+    grid-template-columns: 1fr;   /* single column on mobile */
   }
 
   .mb-card {
