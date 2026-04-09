@@ -6,6 +6,7 @@ import RideCard from "../components/RideCard";
 import "../styles/SearchRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import CustomDatePicker from "../components/CustomDatePicker";
+import { useLanguage } from "../context/LanguageContext";
 
 const vehicleModels = {
   car: ["SEDAN", "SUV", "HATCHBACK"],
@@ -17,6 +18,7 @@ const bikeSubModels = vehicleModels.bike.map((m) => m.toLowerCase());
 
 export default function SearchRides() {
   const location = useLocation();
+  const { t } = useLanguage();
   const hasAutoSearched = useRef(false);
   const [startLocation, setStartLocation] = useState("");
   const [endLocation, setEndLocation] = useState("");
@@ -134,7 +136,7 @@ export default function SearchRides() {
 
     try {
       if (!fromVal?.trim() || !toVal?.trim()) {
-        setError("Please enter both start and end locations.");
+        setError(t("srErrorBothLocations"));
         setLoading(false);
         return;
       }
@@ -162,7 +164,7 @@ export default function SearchRides() {
       });
     } catch (err) {
       console.error(err);
-      setError("Error while searching rides. Try again.");
+      setError(t("srErrorSearch"));
     } finally {
       setLoading(false);
     }
@@ -184,7 +186,7 @@ export default function SearchRides() {
       });
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch rides.");
+      setError(t("srErrorFetch"));
     } finally {
       setLoading(false);
     }
@@ -244,7 +246,7 @@ export default function SearchRides() {
           <div className="search-item">
             <LocationAutocomplete
               value={startLocation}
-              placeholder="Leaving From"
+              placeholder={t("leavingFrom")}
               onChange={setStartLocation}
             />
           </div>
@@ -255,7 +257,7 @@ export default function SearchRides() {
           <div className="search-item">
             <LocationAutocomplete
               value={endLocation}
-              placeholder="Going to"
+              placeholder={t("goingTo")}
               onChange={setEndLocation}
             />
           </div>
@@ -267,7 +269,7 @@ export default function SearchRides() {
             <CustomDatePicker
               value={date}
               onChange={(val) => setDate(val)}
-              placeholder="Date"
+              placeholder={t("date")}
             />
           </div>
 
@@ -276,7 +278,7 @@ export default function SearchRides() {
           {/* SEATS */}
           <div className="search-item small">
             <div className="sr-seat-input">
-              <span className="sr-seat-label">Seats</span>
+              <span className="sr-seat-label">{t("seats")}</span>
               <input
                 type="number"
                 min="1"
@@ -290,7 +292,7 @@ export default function SearchRides() {
           {/* BUTTONS */}
           <div className="sr-actions">
             <button type="submit" className="btn-search">
-              Search
+              {t("search")}
             </button>
             <button
               type="button"
@@ -312,7 +314,7 @@ export default function SearchRides() {
                 fetchAllRides();
               }}
             >
-              Reset
+              {t("srReset")}
             </button>
           </div>
         </form>
@@ -324,17 +326,17 @@ export default function SearchRides() {
 
           {/* LEFT SIDEBAR - FILTERS */}
           <aside className="filters-sidebar">
-            <h3>Filters</h3>
+            <h3>{t("srFilters")}</h3>
             <div className="filters-section">
               <div className="filters-grid">
 
                 {/* Price Range */}
                 <div className="filter-group">
-                  <label>Price Range (₹)</label>
+                  <label>{t("srPriceRange")}</label>
                   <div className="price-inputs">
                     <input
                       type="number"
-                      placeholder="Min"
+                      placeholder={t("srMin")}
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
                       min="0"
@@ -343,7 +345,7 @@ export default function SearchRides() {
                     <span>-</span>
                     <input
                       type="number"
-                      placeholder="Max"
+                      placeholder={t("srMax")}
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                       min="0"
@@ -354,11 +356,11 @@ export default function SearchRides() {
 
                 {/* Vehicle Type */}
                 <div className="filter-group">
-                  <label>Vehicle Type</label>
+                  <label>{t("srVehicleType")}</label>
                   <div className="vehicle-category-toggle">
                     {[
-                      { value: "car",  label: "Car"  },
-                      { value: "bike", label: "Bike" },
+                      { value: "car",  label: t("srCar")  },
+                      { value: "bike", label: t("srBike") },
                     ].map(({ value, label }) => (
                       <button
                         key={value}
@@ -382,7 +384,7 @@ export default function SearchRides() {
                       className="vehicle-submodel-select"
                     >
                       <option value="">
-                        All {vehicleCategory === "car" ? "Cars" : "Bikes"}
+                        {t("srAll")} {vehicleCategory === "car" ? t("srCars") : t("srBikes")}
                       </option>
                       {vehicleModels[vehicleCategory].map((model) => (
                         <option key={model} value={model}>
@@ -395,7 +397,7 @@ export default function SearchRides() {
 
                 {/* Seats Available */}
                 <div className="filter-group">
-                  <label>Seats Available</label>
+                  <label>{t("srSeatsAvailable")}</label>
                   <div className="checkbox-group">
                     {["1", "2", "3+", ""].map((val) => (
                       <label className="checkbox-label" key={val || "all"}>
@@ -407,9 +409,10 @@ export default function SearchRides() {
                           onChange={() => setSeatsAvailable(val)}
                         />
                         <span>
-                          {val === ""    ? "All"
-                          : val === "3+" ? "3+ seats"
-                          : `${val} seat${val !== "1" ? "s" : ""}`}
+                          {val === ""    ? t("srAll")
+                          : val === "3+" ? t("sr3PlusSeats")
+                          : val === "1"  ? t("sr1Seat")
+                          : t("sr2Seats")}
                         </span>
                       </label>
                     ))}
@@ -418,9 +421,9 @@ export default function SearchRides() {
 
                 {/* Driver Rating */}
                 <div className="filter-group">
-                  <label>Driver Rating</label>
+                  <label>{t("srDriverRating")}</label>
                   <div className="checkbox-group">
-                    {[["4", "4★ & above"], ["3", "3★ & above"]].map(([val, label]) => (
+                    {[["4", t("sr4Star")], ["3", t("sr3Star")]].map(([val, label]) => (
                       <label className="checkbox-label" key={val}>
                         <input
                           type="checkbox"
@@ -438,12 +441,12 @@ export default function SearchRides() {
 
                 {/* Time Preference */}
                 <div className="filter-group">
-                  <label>Time Preference</label>
+                  <label>{t("srTimePreference")}</label>
                   <div className="checkbox-group">
                     {[
-                      ["morning",   "Morning (6–12)"],
-                      ["afternoon", "Afternoon (12–18)"],
-                      ["evening",   "Evening (after 18)"],
+                      ["morning",   t("srMorning")],
+                      ["afternoon", t("srAfternoon")],
+                      ["evening",   t("srEvening")],
                     ].map(([val, label]) => (
                       <label className="checkbox-label" key={val}>
                         <input
@@ -470,8 +473,8 @@ export default function SearchRides() {
 
             {!loading && results.length === 0 && (
               <div className="empty">
-                No rides found. Try changing the route or date. You can also{" "}
-                <a href="/offer">offer a ride</a>.
+                {t("srNoRides")}{" "}
+                <a href="/offer">{t("srOfferRideLink")}</a>.
               </div>
             )}
 

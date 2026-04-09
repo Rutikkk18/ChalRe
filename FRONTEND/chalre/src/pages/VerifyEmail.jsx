@@ -91,7 +91,7 @@ export default function VerifyEmail() {
       // Check immediately if already verified
       checkEmailVerification(currentUser);
     } else {
-      setMessage("Verification email sent. Please verify and then login.");
+      setMessage("Verification email sent. Please check your inbox (and spam folder if needed) to verify your account, then login.");
     }
 
     // Listen to Firebase auth state changes

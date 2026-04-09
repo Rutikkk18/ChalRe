@@ -3,6 +3,7 @@ import { useState } from "react";
 import api from "../api/axios";
 import "../styles/offerRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
+import { useLanguage } from "../context/LanguageContext";
 
 function suggestEndTime(startTime) {
   if (!startTime) return "";
@@ -19,8 +20,6 @@ const vehicleModels = {
   bike: ["Bullet", "Splendor", "Shine"],
 };
 
-/* ── Inline style object — beats every external stylesheet,
-      Tailwind utility class, CSS reset, or global override.  ── */
 const btnStyle = {
   all: "unset",
   display: "inline-flex",
@@ -56,6 +55,8 @@ const btnDisabledStyle = {
 };
 
 export default function OfferRide() {
+  const { t } = useLanguage();
+
   const [form, setForm] = useState({
     from: "", to: "", date: "", time: "", endTime: "",
     seats: 1, price: "", carType: "", genderPreference: "", note: "",
@@ -82,18 +83,18 @@ export default function OfferRide() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const today = new Date().toISOString().split("T")[0];
-    if (form.date < today) { setError("Date cannot be in the past."); return; }
+    if (form.date < today) { setError(t("orErrorPastDate")); return; }
     if (form.date === today && form.time) {
       const now = new Date();
       const [h, m] = form.time.split(":");
       const rt = new Date(); rt.setHours(+h, +m, 0, 0);
-      if (rt <= now) { setError("Time cannot be in the past."); return; }
+      if (rt <= now) { setError(t("orErrorPastTime")); return; }
     }
     if (form.endTime && form.time && form.endTime <= form.time) {
-      setError("End time must be after start time."); return;
+      setError(t("orErrorEndTime")); return;
     }
-    if (form.price <= 0) { setError("Price must be greater than ₹0."); return; }
-    if (form.seats < 1 || form.seats > 10) { setError("Seats must be between 1 and 10."); return; }
+    if (form.price <= 0) { setError(t("orErrorPrice")); return; }
+    if (form.seats < 1 || form.seats > 10) { setError(t("orErrorSeats")); return; }
 
     setLoading(true); setError(""); setSuccess("");
     try {
@@ -105,20 +106,19 @@ export default function OfferRide() {
         genderPreference: form.genderPreference || null, note: form.note || null,
       });
       if (response.status === 200) {
-        setSuccess("Ride offered successfully!");
+        setSuccess(t("orSuccess"));
         setForm({ from:"",to:"",date:"",time:"",endTime:"",seats:1,price:"",carType:"",genderPreference:"",note:"" });
         setVehicleCategory("");
         setTimeout(() => { window.location.href = "/myrides"; }, 2000);
       }
     } catch (err) {
       console.error(err);
-      setError("Failed to offer ride. Try again.");
+      setError(t("orErrorFailed"));
     } finally {
       setLoading(false);
     }
   };
 
-  /* Compute final button style at render time */
   const computedBtnStyle = loading
     ? btnDisabledStyle
     : btnHovered
@@ -139,18 +139,16 @@ export default function OfferRide() {
             </svg>
           </div>
           <div>
-            <h1 className="offer-title">Offer a Ride</h1>
-            <p className="offer-subtitle">Share your journey &amp; earn on the go</p>
+            <h1 className="offer-title">{t("orTitle")}</h1>
+            <p className="offer-subtitle">{t("orSubtitle")}</p>
           </div>
         </div>
 
         <div className="offer-divider" />
 
-        {/* Banners */}
         {success && <div className="banner banner-success">{success}</div>}
         {error   && <div className="banner banner-error">{error}</div>}
 
-        {/* Form */}
         <form className={`offer-form${loading ? " loading" : ""}`} onSubmit={handleSubmit}>
 
           {/* ROW 1: Pickup | Drop */}
@@ -161,12 +159,12 @@ export default function OfferRide() {
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
                   <circle cx="12" cy="10" r="3"/>
                 </svg>
-                Pickup Location
+                {t("orPickup")}
               </label>
               <LocationAutocomplete
                 value={form.from}
                 onChange={(v) => updateField("from", v)}
-                placeholder="e.g. Pune Station"
+                placeholder={t("orPickupPlaceholder")}
               />
             </div>
             <div className="form-col">
@@ -175,12 +173,12 @@ export default function OfferRide() {
                   <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
                   <line x1="4" x2="4" y1="22" y2="15"/>
                 </svg>
-                Drop Location
+                {t("orDrop")}
               </label>
               <LocationAutocomplete
                 value={form.to}
                 onChange={(v) => updateField("to", v)}
-                placeholder="e.g. Mumbai CST"
+                placeholder={t("orDropPlaceholder")}
               />
             </div>
           </div>
@@ -193,7 +191,7 @@ export default function OfferRide() {
                   <circle cx="12" cy="12" r="10"/>
                   <polyline points="12 6 12 12 16 14"/>
                 </svg>
-                Departure Time
+                {t("orDeparture")}
               </label>
               <input type="time" className="field-input"
                 value={form.time}
@@ -206,9 +204,9 @@ export default function OfferRide() {
                   <circle cx="12" cy="12" r="10"/>
                   <polyline points="12 6 12 12 16 14"/>
                 </svg>
-                Arrival Time
+                {t("orArrival")}
                 {form.endTime && form.time && form.endTime > form.time && (
-                  <em className="auto-tag">auto</em>
+                  <em className="auto-tag">{t("orAuto")}</em>
                 )}
               </label>
               <input type="time" className="field-input"
@@ -227,7 +225,7 @@ export default function OfferRide() {
                   <line x1="8" x2="8" y1="2" y2="6"/>
                   <line x1="3" x2="21" y1="10" y2="10"/>
                 </svg>
-                Date
+                {t("date")}
               </label>
               <input type="date" className="field-input"
                 value={form.date}
@@ -243,10 +241,10 @@ export default function OfferRide() {
                   <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
                   <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                 </svg>
-                Seats Available
+                {t("orSeatsAvailable")}
               </label>
               <input type="number" className="field-input" min="1" max="10"
-                placeholder="e.g. 3"
+                placeholder={t("orSeatsPlaceholder")}
                 value={form.seats}
                 onChange={(e) => updateField("seats", Number(e.target.value))}
                 required />
@@ -262,10 +260,10 @@ export default function OfferRide() {
                   <path d="m6 13 8.5 8"/><path d="M6 13h3"/>
                   <path d="M9 13c6.667 0 6.667-10 0-10"/>
                 </svg>
-                Price / Seat (₹)
+                {t("orPrice")}
               </label>
               <input type="number" className="field-input" min="1" step="0.01"
-                placeholder="e.g. 250"
+                placeholder={t("orPricePlaceholder")}
                 value={form.price}
                 onChange={(e) => updateField("price", e.target.value)}
                 required />
@@ -277,10 +275,10 @@ export default function OfferRide() {
                   <circle cx="7.5" cy="17.5" r="1.5"/>
                   <circle cx="16.5" cy="17.5" r="1.5"/>
                 </svg>
-                Vehicle <span className="opt-tag">(optional)</span>
+                {t("orVehicle")} <span className="opt-tag">({t("orOptional")})</span>
               </label>
               <div className="vehicle-toggle">
-                {[{ value:"car", label:" Car" }, { value:"bike", label:" Bike" }].map(({ value, label }) => (
+                {[{ value:"car", label: t("srCar") }, { value:"bike", label: t("srBike") }].map(({ value, label }) => (
                   <button key={value} type="button"
                     className={`vtoggle-btn${vehicleCategory === value ? " active" : ""}`}
                     onClick={() => handleVehicleCategoryChange(value)}>
@@ -291,7 +289,7 @@ export default function OfferRide() {
                   <select className="field-input vehicle-model-select"
                     value={form.carType}
                     onChange={(e) => updateField("carType", e.target.value)}>
-                    <option value="">Model</option>
+                    <option value="">{t("orModel")}</option>
                     {vehicleModels[vehicleCategory].map((m) => (
                       <option key={m} value={m}>{m}</option>
                     ))}
@@ -301,7 +299,7 @@ export default function OfferRide() {
             </div>
           </div>
 
-          {/* ROW 5: Notes — full width */}
+          {/* ROW 5: Notes */}
           <div className="form-row form-row-full">
             <div className="form-col">
               <label className="field-label">
@@ -311,10 +309,10 @@ export default function OfferRide() {
                   <line x1="16" x2="8" y1="13" y2="13"/>
                   <line x1="16" x2="8" y1="17" y2="17"/>
                 </svg>
-                Notes <span className="opt-tag">(optional)</span>
+                {t("orNotes")} <span className="opt-tag">({t("orOptional")})</span>
               </label>
               <textarea className="field-input field-textarea"
-                placeholder="Stops, luggage info, preferences…"
+                placeholder={t("orNotesPlaceholder")}
                 value={form.note}
                 onChange={(e) => updateField("note", e.target.value)} />
             </div>
@@ -330,10 +328,10 @@ export default function OfferRide() {
               onMouseLeave={() => setBtnHovered(false)}
             >
               {loading ? (
-                <><span className="btn-spinner" /> Posting…</>
+                <><span className="btn-spinner" /> {t("orPosting")}</>
               ) : (
                 <>
-                  Offer Ride
+                  {t("orSubmit")}
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="14" height="14">
                     <line x1="5" x2="19" y1="12" y2="12"/>
                     <polyline points="12 5 19 12 12 19"/>
