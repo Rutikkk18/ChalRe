@@ -18,18 +18,14 @@ export default function VerifyEmail() {
 
   // Auto-login function when email is verified
   const performAutoLogin = async (user) => {
-    if (autoLoginAttempted.current) return; // Prevent multiple attempts
+    if (autoLoginAttempted.current) return;
     autoLoginAttempted.current = true;
 
     try {
-      // Get ID token from Firebase
       const idToken = await user.getIdToken();
-      
-      // Get registration profile data
       const registrationProfile = localStorage.getItem("registrationProfile");
       const parsedProfile = registrationProfile ? JSON.parse(registrationProfile) : {};
 
-      // Send to backend to create user and get JWT token
       const payload = {
         idToken,
         phone: parsedProfile.phone || undefined,
@@ -39,65 +35,49 @@ export default function VerifyEmail() {
       const res = await api.post("/auth/firebase-login", payload);
       const token = res.data.token;
 
-      // Store token and fetch user via AuthContext
       await login(token);
-
-      // Clear registration profile after successful login
       localStorage.removeItem("registrationProfile");
-
-      // Redirect to dashboard
       navigate("/dashboard");
     } catch (err) {
       console.error("Auto-login failed:", err);
-      autoLoginAttempted.current = false; // Allow retry on error
-      // Don't show error to user, let them manually login if needed
+      autoLoginAttempted.current = false;
     }
   };
 
-  // Check if user email is verified
   const checkEmailVerification = async (user) => {
     if (!user) return false;
 
     try {
-      // Reload user to get latest emailVerified status
       await user.reload();
-      
+
       if (user.emailVerified) {
-        // Stop checking once verified
         if (checkIntervalRef.current) {
           clearInterval(checkIntervalRef.current);
           checkIntervalRef.current = null;
         }
-        
-        // Perform auto-login
         await performAutoLogin(user);
         return true;
       }
     } catch (err) {
       console.error("Error checking email verification:", err);
     }
-    
+
     return false;
   };
 
   useEffect(() => {
     setError("");
-    
-    // Check initial state
+
     const currentUser = auth.currentUser;
     if (currentUser) {
       setMessage("Please verify your email to continue. Check your inbox.");
-      
-      // Check immediately if already verified
       checkEmailVerification(currentUser);
     } else {
       setMessage("Verification email sent. Please check your inbox (and spam folder if needed) to verify your account, then login.");
     }
 
-    // Listen to Firebase auth state changes
     authStateUnsubscribeRef.current = onAuthStateChanged(auth, async (user) => {
       if (user && user.emailVerified) {
-        // User verified via auth state change
         if (checkIntervalRef.current) {
           clearInterval(checkIntervalRef.current);
           checkIntervalRef.current = null;
@@ -108,7 +88,6 @@ export default function VerifyEmail() {
       }
     });
 
-    // Periodically check email verification status (every 3 seconds)
     if (currentUser && !currentUser.emailVerified) {
       checkIntervalRef.current = setInterval(() => {
         const user = auth.currentUser;
@@ -118,7 +97,6 @@ export default function VerifyEmail() {
       }, 3000);
     }
 
-    // Cleanup on unmount
     return () => {
       if (checkIntervalRef.current) {
         clearInterval(checkIntervalRef.current);
@@ -151,33 +129,36 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Verify Your Email</h2>
+    <div className="auth-login-container">
+      <div className="auth-form">
+        <h2>Verify Your Email ✉️</h2>
 
-        {message && <p className="success">{message}</p>}
-        {error && <p className="error">{error}</p>}
+        {message && <p className="auth-success">{message}</p>}
+        {error && <p className="auth-error">{error}</p>}
 
-        <p>
+        <p className="auth-p">
           We sent a verification email to your inbox. After verifying your email,
           you'll be automatically logged in.
         </p>
 
-        <button onClick={handleResend} disabled={loading}>
+        <button
+          className="auth-button-submit"
+          onClick={handleResend}
+          disabled={loading}
+        >
           {loading ? "Sending..." : "Resend Verification Email"}
         </button>
 
-        <p>
+        <p className="auth-p">
           Already verified?{" "}
-          <a href="/login" onClick={(e) => {
-            e.preventDefault();
-            navigate("/login");
-          }}>
+          <span
+            className="auth-span"
+            onClick={() => navigate("/login")}
+          >
             Go to Login
-          </a>
+          </span>
         </p>
       </div>
     </div>
   );
 }
-
