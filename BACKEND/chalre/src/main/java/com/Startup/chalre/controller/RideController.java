@@ -47,21 +47,29 @@ public class RideController {
 
     @GetMapping("/search")
     public ResponseEntity<?> searchRides(
-            @RequestParam String from,
-            @RequestParam String to,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Integer seats,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String carType,
             @RequestParam(required = false) String genderPreference,
+            @RequestParam(required = false) String pickup,
+            @RequestParam(required = false) String drop,
             @AuthenticationPrincipal User user
     ) {
-        String userGender = user != null ? user.getGender() : null;
-        return ResponseEntity.ok(rideService.searchRides(from, to, date, seats, 
-                minPrice, maxPrice, carType, genderPreference, userGender));
-    }
+        // ── NEW: Geo-based search (if pickup+drop provided) ──
+        if (pickup != null && !pickup.isBlank() && drop != null && !drop.isBlank()) {
+            return ResponseEntity.ok(rideService.searchRidesByRoute(pickup, drop));
+        }
 
+        // ── OLD: Text-based search (existing flow, untouched) ──
+        String userGender = user != null ? user.getGender() : null;
+        return ResponseEntity.ok(rideService.searchRides(
+                from, to, date, seats, minPrice, maxPrice, carType, genderPreference, userGender
+        ));
+    }
 
     @GetMapping("/my")
     public ResponseEntity<?> myRides(

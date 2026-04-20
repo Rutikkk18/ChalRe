@@ -137,8 +137,7 @@ export default function VerifyEmail() {
         {error && <p className="auth-error">{error}</p>}
 
         <p className="auth-p">
-          We sent a verification email to your inbox. After verifying your email,
-          you'll be automatically logged in.
+          We sent a verification email to your inbox. Please check your inbox (and spam folder if needed) to verify your account, then login.
         </p>
 
         <button

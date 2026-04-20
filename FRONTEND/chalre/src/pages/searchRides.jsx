@@ -1,12 +1,12 @@
 // src/pages/SearchRides.jsx
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import api from "../api/axios";
-import RideCard from "../components/RideCard";
-import "../styles/SearchRide.css";
-import LocationAutocomplete from "../components/LocationAutocomplete";
 import CustomDatePicker from "../components/CustomDatePicker";
+import LocationAutocomplete from "../components/LocationAutocomplete";
+import RideCard from "../components/RideCard";
 import { useLanguage } from "../context/LanguageContext";
+import "../styles/SearchRide.css";
 
 const vehicleModels = {
   car: ["SEDAN", "SUV", "HATCHBACK"],
@@ -141,15 +141,19 @@ export default function SearchRides() {
         return;
       }
 
-      const params = {};
-      if (fromVal)          params.from             = fromVal;
-      if (toVal)            params.to               = toVal;
-      if (dateVal)          params.date             = dateVal;
-      if (seatsVal)         params.seats            = seatsVal;
-      if (minPrice)         params.minPrice         = parseFloat(minPrice);
-      if (maxPrice)         params.maxPrice         = parseFloat(maxPrice);
-      if (carType)          params.carType          = carType;
-      if (genderPreference) params.genderPreference = genderPreference;
+     const params = {};
+
+// ── NEW: geo-based search (polyline matching) ──
+if (fromVal) params.pickup = fromVal;
+if (toVal)   params.drop   = toVal;
+
+// ── KEEP: fallback text filters still sent ──
+if (dateVal)          params.date             = dateVal;
+if (seatsVal)         params.seats            = seatsVal;
+if (minPrice)         params.minPrice         = parseFloat(minPrice);
+if (maxPrice)         params.maxPrice         = parseFloat(maxPrice);
+if (carType)          params.carType          = carType;
+if (genderPreference) params.genderPreference = genderPreference;
 
       const res = await api.get("/rides/search", { params });
 

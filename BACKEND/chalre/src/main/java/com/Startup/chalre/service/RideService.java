@@ -19,6 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.time.LocalDateTime;
+import com.Startup.chalre.model.LatLng;
+import com.Startup.chalre.model.RouteResponse;
+import com.Startup.chalre.utils.PolylineUtils;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,38 +32,42 @@ public class RideService {
     private final NotificationService notificationService;
     private final BookingRepository bookingRepository;
 
+    private final MapService mapService;
+    private final RouteService routeService;
+
     // CREATE RIDE
     public Ride createRide(RideDTO dto, User driver) {
 
-// Validate date and time - no past rides
+        // Validate date/time (your existing code — keep as-is)
         try {
             LocalDate rideDate = LocalDate.parse(dto.getDate());
             LocalDate today = LocalDate.now();
-
             if (rideDate.isBefore(today)) {
                 throw new RuntimeException("Cannot create a ride in the past");
             }
-
-// If ride is today, validate time is in the future
             if (rideDate.equals(today) && dto.getTime() != null && !dto.getTime().isEmpty()) {
                 try {
                     LocalTime rideTime = LocalTime.parse(dto.getTime());
-                    LocalTime now = LocalTime.now();
-
-                    if (rideTime.isBefore(now)) {
+                    if (rideTime.isBefore(LocalTime.now())) {
                         throw new RuntimeException("Cannot create a ride with past time for today");
                     }
                 } catch (Exception e) {
-// If time parsing fails, continue (invalid format will be caught elsewhere)
+                    if (e instanceof RuntimeException) throw e;
                 }
             }
-
         } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw e;
-            }
-// If date parsing fails, continue (invalid format will be caught elsewhere)
+            if (e instanceof RuntimeException) throw e;
         }
+
+        // ── NEW: Geocode + Route ──────────────────────────────
+        LatLng fromCoords = mapService.getCoordinates(dto.getStartLocation());
+        LatLng toCoords   = mapService.getCoordinates(dto.getEndLocation());
+
+        RouteResponse route = routeService.getRoute(
+                fromCoords.getLng(), fromCoords.getLat(),
+                toCoords.getLng(),   toCoords.getLat()
+        );
+        // ─────────────────────────────────────────────────────
 
         Ride ride = new Ride();
         ride.setStartLocation(dto.getStartLocation());
@@ -75,9 +83,17 @@ public class RideService {
         ride.setNote(dto.getNote());
         ride.setDriver(driver);
 
+        // ── NEW: Save geo data ───────────────────────────────
+        ride.setFromLat(fromCoords.getLat());
+        ride.setFromLng(fromCoords.getLng());
+        ride.setToLat(toCoords.getLat());
+        ride.setToLng(toCoords.getLng());
+        ride.setPolyline(route.getPolyline());
+        ride.setDistance(route.getDistance());
+        // ────────────────────────────────────────────────────
+
         Ride saved = rideRepository.save(ride);
 
-// 🔔 NOTIFICATION
         notificationService.sendNotification(
                 driver,
                 "Ride Created",
@@ -426,6 +442,37 @@ public class RideService {
         );
 
         return "Ride deleted successfully";
+    }
+
+    // ── NEW: Geo-based search (Phase 6 + 7) ─────────────────
+    public List<Ride> searchRidesByRoute(String pickup, String drop) {
+
+        // Step 1: Convert pickup/drop → lat/lng
+        LatLng pickupCoords = mapService.getCoordinates(pickup);
+        LatLng dropCoords   = mapService.getCoordinates(drop);
+
+        LocalDate today = LocalDate.now();
+
+        // Step 2: Get all active future rides with a saved polyline
+        List<Ride> allRides = rideRepository.findAll().stream()
+                .filter(r -> r.getPolyline() != null && !r.getPolyline().isEmpty())
+                .filter(r -> r.getAvailableSeats() > 0)
+                .filter(r -> {
+                    try {
+                        return !LocalDate.parse(r.getDate()).isBefore(today);
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                .toList();
+
+        // Step 3: Match rides where BOTH pickup AND drop are near the route
+        return allRides.stream()
+                .filter(r ->
+                        PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) &&
+                                PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline())
+                )
+                .toList();
     }
 
 }

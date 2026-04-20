@@ -61,4 +61,16 @@ public class Ride {
         return LocalDateTime.of(rideDate, rideTime);
     }
 
+
+    // ── GEO FIELDS (Phase 4) ──────────────────────────────
+    private double fromLat;
+    private double fromLng;
+    private double toLat;
+    private double toLng;
+
+    @Column(columnDefinition = "TEXT")
+    private String polyline;   // encoded route polyline (can be long)
+
+    private double distance;   // route distance in km
 }
+
