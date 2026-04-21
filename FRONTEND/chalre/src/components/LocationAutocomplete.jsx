@@ -4,6 +4,7 @@ import api from "../api/axios";
 const LocationAutocomplete = ({
   value = "",
   onChange = () => {},
+  onSelect = null, // ← NEW: optional callback with full place object (name + lat/lng)
   placeholder = "Search location",
 }) => {
   const [query, setQuery] = useState(value);
@@ -14,12 +15,10 @@ const LocationAutocomplete = ({
   const wrapperRef = useRef(null);
   const abortRef = useRef(null);
 
-  // 🔁 Sync with parent value (ONLY when parent changes)
   useEffect(() => {
     setQuery(value || "");
   }, [value]);
 
-  // ❌ Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
@@ -27,11 +26,9 @@ const LocationAutocomplete = ({
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🔍 Fetch locations (debounced)
   useEffect(() => {
     if (!query || query.trim().length < 2) {
       setSuggestions([]);
@@ -40,9 +37,7 @@ const LocationAutocomplete = ({
     }
 
     const fetchLocations = async () => {
-      if (abortRef.current) {
-        abortRef.current.abort();
-      }
+      if (abortRef.current) abortRef.current.abort();
       abortRef.current = new AbortController();
 
       setLoading(true);
@@ -70,32 +65,47 @@ const LocationAutocomplete = ({
     return () => clearTimeout(debounce);
   }, [query]);
 
-  // ✅ Select location (ONLY place where parent is updated)
   const handleSelect = (place) => {
     const name = place?.name || place?.display_name || "";
     setQuery(name);
-    onChange(name); // ✅ parent update ONLY here
+    onChange(name);
+
+    // ── NEW: if parent wants full place data (lat/lng), send it ──
+    if (onSelect) {
+      onSelect({
+        name,
+        lat: place?.lat ? parseFloat(place.lat) : null,
+        lng: place?.lon ? parseFloat(place.lon)
+              : place?.lng ? parseFloat(place.lng)
+              : null,
+      });
+    }
+
     setShow(false);
   };
 
-  console.log("LOCATIONS:", suggestions);
-
   return (
     <div className="autocomplete-wrapper" ref={wrapperRef}>
-              <input
-            type="text"
-            value={query}
-            placeholder={placeholder}
-            autoComplete="off"
-            onChange={(e) => {
-              const newValue = e.target.value;
-              setQuery(newValue); // ✅ Update local state
-              onChange(newValue); // ✅ Update parent state immediately
-            }}
-            onFocus={() => {
-              if (suggestions.length > 0) setShow(true);
-            }}
-          />
+      <input
+        type="text"
+        value={query}
+        placeholder={placeholder}
+        autoComplete="off"
+        onChange={(e) => {
+          const newValue = e.target.value;
+          setQuery(newValue);
+          onChange(newValue);
+
+          // ── NEW: if user types manually (no selection), clear saved coords ──
+          if (onSelect) {
+            onSelect({ name: newValue, lat: null, lng: null });
+          }
+        }}
+        onFocus={() => {
+          if (suggestions.length > 0) setShow(true);
+        }}
+      />
+
       {show && (
         <div className="autocomplete-dropdown">
           {loading && (
@@ -103,22 +113,19 @@ const LocationAutocomplete = ({
           )}
 
           {!loading && suggestions.length === 0 && (
-            <div className="autocomplete-item muted">
-              No locations found
-            </div>
+            <div className="autocomplete-item muted">No locations found</div>
           )}
 
           {!loading &&
             suggestions.map((place, index) => {
-              const text = place?.name || place?.display_name; // ✅ correct
+              const text = place?.name || place?.display_name;
               if (!text) return null;
-
               return (
                 <div
                   key={place.id || text || index}
                   className="autocomplete-item"
                   onMouseDown={(e) => {
-                    e.preventDefault(); // 🔑 keeps input focus
+                    e.preventDefault();
                     handleSelect(place);
                   }}
                 >

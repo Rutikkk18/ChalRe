@@ -23,14 +23,14 @@ public class RideController {
             @Valid @RequestBody RideDTO dto,
             BindingResult bindingResult,
             @AuthenticationPrincipal User user) {
-        
+
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getFieldErrors().stream()
                     .map(error -> error.getField() + ": " + error.getDefaultMessage())
                     .collect(java.util.stream.Collectors.joining(", "));
             return ResponseEntity.badRequest().body(errorMessage);
         }
-        
+
         return ResponseEntity.ok(rideService.createRide(dto, user));
     }
 
@@ -44,7 +44,6 @@ public class RideController {
         return ResponseEntity.ok(rideService.getRideById(id));
     }
 
-
     @GetMapping("/search")
     public ResponseEntity<?> searchRides(
             @RequestParam(required = false) String from,
@@ -55,16 +54,29 @@ public class RideController {
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String carType,
             @RequestParam(required = false) String genderPreference,
+            // ── geo params: direct coords (preferred) ──
+            @RequestParam(required = false) Double pickupLat,
+            @RequestParam(required = false) Double pickupLng,
+            @RequestParam(required = false) Double dropLat,
+            @RequestParam(required = false) Double dropLng,
+            // ── geo params: text fallback (backend geocodes) ──
             @RequestParam(required = false) String pickup,
             @RequestParam(required = false) String drop,
             @AuthenticationPrincipal User user
     ) {
-        // ── NEW: Geo-based search (if pickup+drop provided) ──
+        // ── CASE 1: Direct coords provided (fastest, most accurate) ──
+        if (pickupLat != null && pickupLng != null && dropLat != null && dropLng != null) {
+            return ResponseEntity.ok(
+                rideService.searchRidesByCoords(pickupLat, pickupLng, dropLat, dropLng)
+            );
+        }
+
+        // ── CASE 2: Text provided → backend geocodes ──
         if (pickup != null && !pickup.isBlank() && drop != null && !drop.isBlank()) {
             return ResponseEntity.ok(rideService.searchRidesByRoute(pickup, drop));
         }
 
-        // ── OLD: Text-based search (existing flow, untouched) ──
+        // ── CASE 3: Old text search (fallback, keeps existing behaviour) ──
         String userGender = user != null ? user.getGender() : null;
         return ResponseEntity.ok(rideService.searchRides(
                 from, to, date, seats, minPrice, maxPrice, carType, genderPreference, userGender

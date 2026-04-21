@@ -41,6 +41,10 @@ export default function SearchRides() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // ── NEW: store lat/lng from autocomplete selection ──
+  const [pickupCoords, setPickupCoords] = useState({ lat: null, lng: null });
+  const [dropCoords,   setDropCoords]   = useState({ lat: null, lng: null });
+
   const getRideVehicleCategory = (ride) => {
     if (ride.vehicleType && ride.vehicleType.trim() !== "") {
       return ride.vehicleType.toLowerCase().trim();
@@ -141,19 +145,32 @@ export default function SearchRides() {
         return;
       }
 
-     const params = {};
+      const params = {};
 
-// ── NEW: geo-based search (polyline matching) ──
-if (fromVal) params.pickup = fromVal;
-if (toVal)   params.drop   = toVal;
+      // ── NEW: geo-based search ──
+      // If we have coords from autocomplete selection, send them directly
+      // Otherwise fall back to text (Nominatim will geocode on backend)
+      if (pickupCoords.lat && pickupCoords.lng) {
+        params.pickupLat = pickupCoords.lat;
+        params.pickupLng = pickupCoords.lng;
+      } else if (fromVal) {
+        params.pickup = fromVal;  // backend will geocode
+      }
 
-// ── KEEP: fallback text filters still sent ──
-if (dateVal)          params.date             = dateVal;
-if (seatsVal)         params.seats            = seatsVal;
-if (minPrice)         params.minPrice         = parseFloat(minPrice);
-if (maxPrice)         params.maxPrice         = parseFloat(maxPrice);
-if (carType)          params.carType          = carType;
-if (genderPreference) params.genderPreference = genderPreference;
+      if (dropCoords.lat && dropCoords.lng) {
+        params.dropLat = dropCoords.lat;
+        params.dropLng = dropCoords.lng;
+      } else if (toVal) {
+        params.drop = toVal;  // backend will geocode
+      }
+
+      // ── KEEP: fallback text filters still sent ──
+      if (dateVal)          params.date             = dateVal;
+      if (seatsVal)         params.seats            = seatsVal;
+      if (minPrice)         params.minPrice         = parseFloat(minPrice);
+      if (maxPrice)         params.maxPrice         = parseFloat(maxPrice);
+      if (carType)          params.carType          = carType;
+      if (genderPreference) params.genderPreference = genderPreference;
 
       const res = await api.get("/rides/search", { params });
 
@@ -252,6 +269,10 @@ if (genderPreference) params.genderPreference = genderPreference;
               value={startLocation}
               placeholder={t("leavingFrom")}
               onChange={setStartLocation}
+              onSelect={(place) => {
+                setStartLocation(place.name);
+                setPickupCoords({ lat: place.lat, lng: place.lng });
+              }}
             />
           </div>
 
@@ -263,6 +284,10 @@ if (genderPreference) params.genderPreference = genderPreference;
               value={endLocation}
               placeholder={t("goingTo")}
               onChange={setEndLocation}
+              onSelect={(place) => {
+                setEndLocation(place.name);
+                setDropCoords({ lat: place.lat, lng: place.lng });
+              }}
             />
           </div>
 
@@ -315,6 +340,9 @@ if (genderPreference) params.genderPreference = genderPreference;
                 setRideType([]);
                 setDriverRating([]);
                 setTimePreference([]);
+                // ── NEW: reset coords too ──
+                setPickupCoords({ lat: null, lng: null });
+                setDropCoords({ lat: null, lng: null });
                 fetchAllRides();
               }}
             >

@@ -418,4 +418,29 @@ public class RideService {
                 )
                 .toList();
     }
+
+    // ── Geo search with direct coords (no geocoding needed) ─────
+public List<Ride> searchRidesByCoords(double pickupLat, double pickupLng,
+                                       double dropLat,   double dropLng) {
+    LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
+    LatLng dropCoords   = new LatLng(dropLat,   dropLng);
+
+    LocalDate today = LocalDate.now();
+
+    return rideRepository.findAll().stream()
+            .filter(r -> r.getPolyline() != null && !r.getPolyline().isEmpty())
+            .filter(r -> r.getAvailableSeats() > 0)
+            .filter(r -> {
+                try {
+                    return !LocalDate.parse(r.getDate()).isBefore(today);
+                } catch (Exception e) {
+                    return false;
+                }
+            })
+            .filter(r ->
+                PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) &&
+                PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline())
+            )
+            .toList();
+}
 }
