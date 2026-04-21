@@ -11,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/rides")
 @RequiredArgsConstructor
@@ -54,33 +56,58 @@ public class RideController {
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String carType,
             @RequestParam(required = false) String genderPreference,
-            // ── geo params: direct coords (preferred) ──
             @RequestParam(required = false) Double pickupLat,
             @RequestParam(required = false) Double pickupLng,
             @RequestParam(required = false) Double dropLat,
             @RequestParam(required = false) Double dropLng,
-            // ── geo params: text fallback (backend geocodes) ──
             @RequestParam(required = false) String pickup,
             @RequestParam(required = false) String drop,
             @AuthenticationPrincipal User user
     ) {
-        // ── CASE 1: Direct coords provided (fastest, most accurate) ──
-        if (pickupLat != null && pickupLng != null && dropLat != null && dropLng != null) {
-            return ResponseEntity.ok(
-                rideService.searchRidesByCoords(pickupLat, pickupLng, dropLat, dropLng)
-            );
-        }
+        try {
+            // ── CASE 1: Direct coords (fastest, most accurate) ──
+            if (pickupLat != null && pickupLng != null
+                    && dropLat != null && dropLng != null) {
+                return ResponseEntity.ok(
+                    rideService.searchRidesByCoords(
+                        pickupLat, pickupLng, dropLat, dropLng)
+                );
+            }
 
-        // ── CASE 2: Text provided → backend geocodes ──
-        if (pickup != null && !pickup.isBlank() && drop != null && !drop.isBlank()) {
-            return ResponseEntity.ok(rideService.searchRidesByRoute(pickup, drop));
-        }
+            // ── CASE 2: Text → backend geocodes via Nominatim ──
+            if (pickup != null && !pickup.isBlank()
+                    && drop != null && !drop.isBlank()) {
+                try {
+                    List<?> geoResults = rideService.searchRidesByRoute(pickup, drop);
+                    return ResponseEntity.ok(geoResults);
+                } catch (Exception e) {
+                    System.err.println("Geo search failed for "
+                            + pickup + "→" + drop
+                            + ", falling back to text search: " + e.getMessage());
 
-        // ── CASE 3: Old text search (fallback, keeps existing behaviour) ──
-        String userGender = user != null ? user.getGender() : null;
-        return ResponseEntity.ok(rideService.searchRides(
-                from, to, date, seats, minPrice, maxPrice, carType, genderPreference, userGender
-        ));
+                    // ── FALLBACK: if geocoding fails, use old text search ──
+                    String userGender = user != null ? user.getGender() : null;
+                    return ResponseEntity.ok(rideService.searchRides(
+                            pickup, drop, date, seats,
+                            minPrice, maxPrice, carType,
+                            genderPreference, userGender
+                    ));
+                }
+            }
+
+            // ── CASE 3: Old text search ──
+            String userGender = user != null ? user.getGender() : null;
+            return ResponseEntity.ok(rideService.searchRides(
+                    from, to, date, seats,
+                    minPrice, maxPrice, carType,
+                    genderPreference, userGender
+            ));
+
+        } catch (Exception e) {
+            System.err.println("Search error: " + e.getMessage());
+            // ── Never return 400 for search — return empty list ──
+            return ResponseEntity.ok(List.of());
+        }
     }
 
     @GetMapping("/my")

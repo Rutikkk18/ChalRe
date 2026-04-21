@@ -393,9 +393,16 @@ public class RideService {
 
     // ── Geo-based search (Phase 6 + 7) ──────────────────────
     public List<Ride> searchRidesByRoute(String pickup, String drop) {
-
         LatLng pickupCoords = mapService.getCoordinates(pickup);
         LatLng dropCoords   = mapService.getCoordinates(drop);
+
+        // ── If geocoding failed, return empty list gracefully ──
+        if (pickupCoords == null || dropCoords == null) {
+            System.err.println("Could not geocode: "
+                    + pickup + " or " + drop + ", returning empty");
+            return List.of();
+        }
+        // ... rest of method unchanged
 
         LocalDate today = LocalDate.now();
 

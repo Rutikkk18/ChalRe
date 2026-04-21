@@ -18,12 +18,17 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class MapService {
 
-    // Simple in-memory cache — no extra dependency needed
     private final ConcurrentHashMap<String, LatLng> cache = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
+    // ── Rate limiting: Nominatim allows 1 req/sec ──
+    private long lastRequestTime = 0;
+    private static final long MIN_INTERVAL_MS = 1100;
+
     public LatLng getCoordinates(String place) {
+        if (place == null || place.isBlank()) return null;
+
         String key = place.trim().toLowerCase();
 
         // Return cached result if available
@@ -31,21 +36,43 @@ public class MapService {
             return cache.get(key);
         }
 
+        // ── Rate limit ──
+        synchronized (this) {
+            long now = System.currentTimeMillis();
+            long elapsed = now - lastRequestTime;
+            if (elapsed < MIN_INTERVAL_MS) {
+                try {
+                    Thread.sleep(MIN_INTERVAL_MS - elapsed);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            lastRequestTime = System.currentTimeMillis();
+        }
+
         try {
-            String encoded = URLEncoder.encode(place, StandardCharsets.UTF_8);
+            String encoded = URLEncoder.encode(place.trim(), StandardCharsets.UTF_8);
             String url = "https://nominatim.openstreetmap.org/search?q="
                     + encoded
                     + "&format=json&limit=1&countrycodes=in";
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
-                    .header("User-Agent", "ChalreApp/1.0 (chalre@startup.com)")
+                    .header("User-Agent", "ChalreApp/1.0 (chalreofficial@gmail.com)")
+                    .header("Accept-Language", "en")
                     .GET()
                     .build();
 
             HttpResponse<String> response = httpClient.send(
                     request, HttpResponse.BodyHandlers.ofString()
             );
+
+            // ── Check HTTP status ──
+            if (response.statusCode() != 200) {
+                System.err.println("Nominatim returned status "
+                        + response.statusCode() + " for: " + place);
+                return null; // return null instead of throwing
+            }
 
             JsonNode root = objectMapper.readTree(response.body());
 
@@ -54,14 +81,16 @@ public class MapService {
                 double lat = first.get("lat").asDouble();
                 double lng = first.get("lon").asDouble();
                 LatLng result = new LatLng(lat, lng);
-                cache.put(key, result);   // Cache it
+                cache.put(key, result);
                 return result;
             }
 
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get coordinates for: " + place, e);
-        }
+            System.err.println("Nominatim: no results for: " + place);
+            return null; // return null instead of throwing
 
-        throw new RuntimeException("Location not found: " + place);
+        } catch (Exception e) {
+            System.err.println("MapService error for: " + place + " → " + e.getMessage());
+            return null; // return null instead of throwing
+        }
     }
 }
