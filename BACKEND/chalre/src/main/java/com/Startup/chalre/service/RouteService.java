@@ -111,8 +111,8 @@ private String encodeTwoPoints(double startLat, double startLng,
     double totalKm = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
     // Generate one point every 20km
-    int numPoints = Math.max(2, (int) Math.ceil(totalKm / 20.0));
-
+    int numPoints = Math.max(2, (int) Math.ceil(totalKm / 10.0));
+W
     StringBuilder result = new StringBuilder();
     int prevLatE5 = 0, prevLngE5 = 0;
 
