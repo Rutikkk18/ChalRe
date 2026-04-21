@@ -41,9 +41,13 @@ export default function SearchRides() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // ── NEW: store lat/lng from autocomplete selection ──
+  // ── Coords state (for UI consistency) ──
   const [pickupCoords, setPickupCoords] = useState({ lat: null, lng: null });
   const [dropCoords,   setDropCoords]   = useState({ lat: null, lng: null });
+
+  // ── Coords refs (always fresh, no stale closure issue) ──
+  const pickupCoordsRef = useRef({ lat: null, lng: null });
+  const dropCoordsRef   = useRef({ lat: null, lng: null });
 
   const getRideVehicleCategory = (ride) => {
     if (ride.vehicleType && ride.vehicleType.trim() !== "") {
@@ -134,7 +138,8 @@ export default function SearchRides() {
     setResults(filtered);
   };
 
-  const performSearch = async (fromVal, toVal, dateVal, seatsVal) => {
+  // ── performSearch accepts optional coords params to avoid stale closure ──
+  const performSearch = async (fromVal, toVal, dateVal, seatsVal, pCoords, dCoords) => {
     setLoading(true);
     setError("");
 
@@ -145,26 +150,28 @@ export default function SearchRides() {
         return;
       }
 
+      // Use passed coords first, then refs, then state (in order of freshness)
+      const resolvedPickup = pCoords || pickupCoordsRef.current;
+      const resolvedDrop   = dCoords || dropCoordsRef.current;
+
       const params = {};
 
-      // ── NEW: geo-based search ──
-      // If we have coords from autocomplete selection, send them directly
-      // Otherwise fall back to text (Nominatim will geocode on backend)
-      if (pickupCoords.lat && pickupCoords.lng) {
-        params.pickupLat = pickupCoords.lat;
-        params.pickupLng = pickupCoords.lng;
+      // ── Geo-based search: direct coords (most accurate) ──
+      if (resolvedPickup?.lat && resolvedPickup?.lng) {
+        params.pickupLat = resolvedPickup.lat;
+        params.pickupLng = resolvedPickup.lng;
       } else if (fromVal) {
-        params.pickup = fromVal;  // backend will geocode
+        params.pickup = fromVal;  // backend will geocode via Nominatim
       }
 
-      if (dropCoords.lat && dropCoords.lng) {
-        params.dropLat = dropCoords.lat;
-        params.dropLng = dropCoords.lng;
+      if (resolvedDrop?.lat && resolvedDrop?.lng) {
+        params.dropLat = resolvedDrop.lat;
+        params.dropLng = resolvedDrop.lng;
       } else if (toVal) {
-        params.drop = toVal;  // backend will geocode
+        params.drop = toVal;  // backend will geocode via Nominatim
       }
 
-      // ── KEEP: fallback text filters still sent ──
+      // ── Extra filters ──
       if (dateVal)          params.date             = dateVal;
       if (seatsVal)         params.seats            = seatsVal;
       if (minPrice)         params.minPrice         = parseFloat(minPrice);
@@ -236,9 +243,17 @@ export default function SearchRides() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
 
+  // ── handleSearch reads from refs — always fresh, no stale closure ──
   const handleSearch = async (e) => {
     e?.preventDefault();
-    performSearch(startLocation, endLocation, date, seats);
+    performSearch(
+      startLocation,
+      endLocation,
+      date,
+      seats,
+      pickupCoordsRef.current,
+      dropCoordsRef.current
+    );
   };
 
   useEffect(() => {
@@ -271,7 +286,9 @@ export default function SearchRides() {
               onChange={setStartLocation}
               onSelect={(place) => {
                 setStartLocation(place.name);
-                setPickupCoords({ lat: place.lat, lng: place.lng });
+                const coords = { lat: place.lat, lng: place.lng };
+                setPickupCoords(coords);
+                pickupCoordsRef.current = coords; // ← ref updates instantly
               }}
             />
           </div>
@@ -286,7 +303,9 @@ export default function SearchRides() {
               onChange={setEndLocation}
               onSelect={(place) => {
                 setEndLocation(place.name);
-                setDropCoords({ lat: place.lat, lng: place.lng });
+                const coords = { lat: place.lat, lng: place.lng };
+                setDropCoords(coords);
+                dropCoordsRef.current = coords; // ← ref updates instantly
               }}
             />
           </div>
@@ -340,9 +359,11 @@ export default function SearchRides() {
                 setRideType([]);
                 setDriverRating([]);
                 setTimePreference([]);
-                // ── NEW: reset coords too ──
+                // ── reset coords state + refs ──
                 setPickupCoords({ lat: null, lng: null });
                 setDropCoords({ lat: null, lng: null });
+                pickupCoordsRef.current = { lat: null, lng: null };
+                dropCoordsRef.current   = { lat: null, lng: null };
                 fetchAllRides();
               }}
             >
