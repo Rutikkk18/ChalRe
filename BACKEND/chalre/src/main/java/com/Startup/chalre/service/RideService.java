@@ -419,28 +419,44 @@ public class RideService {
                 .toList();
     }
 
-    // ── Geo search with direct coords (no geocoding needed) ─────
-public List<Ride> searchRidesByCoords(double pickupLat, double pickupLng,
-                                       double dropLat,   double dropLng) {
-    LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
-    LatLng dropCoords   = new LatLng(dropLat,   dropLng);
+    // ── Geo search with direct coords ───────────────────────
+    public List<Ride> searchRidesByCoords(double pickupLat, double pickupLng,
+                                          double dropLat,   double dropLng) {
+        LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
+        LatLng dropCoords   = new LatLng(dropLat,   dropLng);
 
-    LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now();
 
-    return rideRepository.findAll().stream()
-            .filter(r -> r.getPolyline() != null && !r.getPolyline().isEmpty())
-            .filter(r -> r.getAvailableSeats() > 0)
-            .filter(r -> {
-                try {
-                    return !LocalDate.parse(r.getDate()).isBefore(today);
-                } catch (Exception e) {
+        return rideRepository.findAll().stream()
+                .filter(r -> r.getAvailableSeats() > 0)
+                .filter(r -> {
+                    try {
+                        return !LocalDate.parse(r.getDate()).isBefore(today);
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                .filter(r -> {
+                    // ── PRIMARY: polyline-based matching ──
+                    if (r.getPolyline() != null && !r.getPolyline().isEmpty()) {
+                        return PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline())
+                                && PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline());
+                    }
+
+                    // ── FALLBACK: use stored from/to coords directly ──
+                    // If ride has no polyline but has coordinates, check radius from endpoints
+                    if (r.getFromLat() != 0 && r.getToLat() != 0) {
+                        LatLng rideFrom = new LatLng(r.getFromLat(), r.getFromLng());
+                        LatLng rideTo   = new LatLng(r.getToLat(),   r.getToLng());
+
+                        boolean pickupNearStart = PolylineUtils.haversineKm(pickupCoords, rideFrom) <= 5.0;
+                        boolean dropNearEnd     = PolylineUtils.haversineKm(dropCoords,   rideTo)   <= 5.0;
+
+                        return pickupNearStart && dropNearEnd;
+                    }
+
                     return false;
-                }
-            })
-            .filter(r ->
-                PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) &&
-                PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline())
-            )
-            .toList();
-}
+                })
+                .toList();
+    }
 }
