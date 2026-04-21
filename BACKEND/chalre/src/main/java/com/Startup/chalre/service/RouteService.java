@@ -40,29 +40,77 @@ public class RouteService {
                     request, HttpResponse.BodyHandlers.ofString()
             );
 
-            JsonNode root      = objectMapper.readTree(response.body());
-            JsonNode features  = root.get("features");
+            JsonNode root = objectMapper.readTree(response.body());
 
+            // ── Check for ORS error response ──
+            if (root.has("error")) {
+                String orsError = root.get("error").toString();
+                System.err.println("ORS error: " + orsError + " for coords: "
+                        + startLat + "," + startLng + " → " + endLat + "," + endLng);
+                return buildFallback(startLat, startLng, endLat, endLng);
+            }
+
+            JsonNode features = root.get("features");
             if (features == null || features.size() == 0) {
-                throw new RuntimeException("No route found from ORS");
+                System.err.println("ORS: no features returned, using fallback");
+                return buildFallback(startLat, startLng, endLat, endLng);
             }
 
             JsonNode props    = features.get(0).get("properties");
             JsonNode summary  = props.get("summary");
             JsonNode geometry = features.get(0).get("geometry");
 
-            double distance = summary.get("distance").asDouble() / 1000.0; // metres → km
-            double duration = summary.get("duration").asDouble();           // seconds
+            double distance = summary.get("distance").asDouble() / 1000.0;
+            double duration = summary.get("duration").asDouble();
 
-            // ORS returns GeoJSON coordinates — we encode to polyline ourselves
             JsonNode coords = geometry.get("coordinates");
             String polyline = encodePolyline(coords);
 
             return new RouteResponse(distance, duration, polyline);
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get route from ORS: " + e.getMessage(), e);
+            System.err.println("ORS call failed: " + e.getMessage() + ", using fallback");
+            return buildFallback(startLat, startLng, endLat, endLng);
         }
+    }
+
+    // Fallback: straight-line distance using Haversine, simple 2-point polyline
+    private RouteResponse buildFallback(double startLat, double startLng,
+                                         double endLat,   double endLng) {
+        double R = 6371;
+        double dLat = Math.toRadians(endLat - startLat);
+        double dLng = Math.toRadians(endLng - startLng);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                 + Math.cos(Math.toRadians(startLat))
+                 * Math.cos(Math.toRadians(endLat))
+                 * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Estimated duration: assume 60 km/h avg speed
+        double duration = (distance / 60.0) * 3600;
+
+        // Simple 2-point polyline (start → end straight line)
+        String polyline = encodeTwoPoints(startLat, startLng, endLat, endLng);
+
+        return new RouteResponse(distance, duration, polyline);
+    }
+
+    // Encode just 2 points as a polyline (start + end)
+    private String encodeTwoPoints(double startLat, double startLng,
+                                    double endLat,   double endLng) {
+        StringBuilder result = new StringBuilder();
+
+        int latE5 = (int) Math.round(startLat * 1e5);
+        int lngE5 = (int) Math.round(startLng * 1e5);
+        result.append(encodeValue(latE5));
+        result.append(encodeValue(lngE5));
+
+        int endLatE5 = (int) Math.round(endLat * 1e5);
+        int endLngE5 = (int) Math.round(endLng * 1e5);
+        result.append(encodeValue(endLatE5 - latE5));
+        result.append(encodeValue(endLngE5 - lngE5));
+
+        return result.toString();
     }
 
     // Encode GeoJSON coordinate array → Google Polyline format

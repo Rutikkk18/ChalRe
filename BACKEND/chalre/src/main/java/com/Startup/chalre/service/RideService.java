@@ -1,28 +1,25 @@
 package com.Startup.chalre.service;
+
 import com.Startup.chalre.DTO.RideDTO;
 import com.Startup.chalre.DTO.RideUpdateDTO;
 import com.Startup.chalre.entity.Booking;
 import com.Startup.chalre.entity.Ride;
 import com.Startup.chalre.entity.User;
+import com.Startup.chalre.model.LatLng;
+import com.Startup.chalre.model.RouteResponse;
 import com.Startup.chalre.repository.BookingRepository;
 import com.Startup.chalre.repository.RideRepository;
-import com.Startup.chalre.service.BookingService;
+import com.Startup.chalre.utils.PolylineUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.time.LocalDateTime;
-import com.Startup.chalre.model.LatLng;
-import com.Startup.chalre.model.RouteResponse;
-import com.Startup.chalre.utils.PolylineUtils;
-
 
 @Service
 @RequiredArgsConstructor
@@ -31,14 +28,13 @@ public class RideService {
     private final RideRepository rideRepository;
     private final NotificationService notificationService;
     private final BookingRepository bookingRepository;
-
     private final MapService mapService;
     private final RouteService routeService;
 
     // CREATE RIDE
     public Ride createRide(RideDTO dto, User driver) {
 
-        // Validate date/time (your existing code — keep as-is)
+        // Validate date/time
         try {
             LocalDate rideDate = LocalDate.parse(dto.getDate());
             LocalDate today = LocalDate.now();
@@ -59,15 +55,22 @@ public class RideService {
             if (e instanceof RuntimeException) throw e;
         }
 
-        // ── NEW: Geocode + Route ──────────────────────────────
-        LatLng fromCoords = mapService.getCoordinates(dto.getStartLocation());
-        LatLng toCoords   = mapService.getCoordinates(dto.getEndLocation());
+        // ── Geocode + Route (with fallback, never blocks ride creation) ──
+        LatLng fromCoords = null;
+        LatLng toCoords   = null;
+        RouteResponse route = null;
 
-        RouteResponse route = routeService.getRoute(
-                fromCoords.getLng(), fromCoords.getLat(),
-                toCoords.getLng(),   toCoords.getLat()
-        );
-        // ─────────────────────────────────────────────────────
+        try {
+            fromCoords = mapService.getCoordinates(dto.getStartLocation());
+            toCoords   = mapService.getCoordinates(dto.getEndLocation());
+            route = routeService.getRoute(
+                    fromCoords.getLng(), fromCoords.getLat(),
+                    toCoords.getLng(),   toCoords.getLat()
+            );
+        } catch (Exception e) {
+            System.err.println("Geo/Route failed, ride will save without polyline: " + e.getMessage());
+        }
+        // ─────────────────────────────────────────────────────────────────
 
         Ride ride = new Ride();
         ride.setStartLocation(dto.getStartLocation());
@@ -83,14 +86,20 @@ public class RideService {
         ride.setNote(dto.getNote());
         ride.setDriver(driver);
 
-        // ── NEW: Save geo data ───────────────────────────────
-        ride.setFromLat(fromCoords.getLat());
-        ride.setFromLng(fromCoords.getLng());
-        ride.setToLat(toCoords.getLat());
-        ride.setToLng(toCoords.getLng());
-        ride.setPolyline(route.getPolyline());
-        ride.setDistance(route.getDistance());
-        // ────────────────────────────────────────────────────
+        // ── Save geo data (only if available) ───────────────────────────
+        if (fromCoords != null) {
+            ride.setFromLat(fromCoords.getLat());
+            ride.setFromLng(fromCoords.getLng());
+        }
+        if (toCoords != null) {
+            ride.setToLat(toCoords.getLat());
+            ride.setToLng(toCoords.getLng());
+        }
+        if (route != null) {
+            ride.setPolyline(route.getPolyline());
+            ride.setDistance(route.getDistance());
+        }
+        // ────────────────────────────────────────────────────────────────
 
         Ride saved = rideRepository.save(ride);
 
@@ -112,17 +121,18 @@ public class RideService {
                 .filter(ride -> {
                     try {
                         LocalDate rideDate = LocalDate.parse(ride.getDate());
-                        return !rideDate.isBefore(today); // Show today and future dates
+                        return !rideDate.isBefore(today);
                     } catch (Exception e) {
-                        return false; // If date parsing fails, hide the ride
+                        return false;
                     }
                 })
                 .toList();
     }
 
-    public List<Ride> searchRides(String from, String to, String date, Integer seats, Double minPrice, Double maxPrice, String carType, String genderPreference, String userGender) {
+    public List<Ride> searchRides(String from, String to, String date, Integer seats,
+                                   Double minPrice, Double maxPrice, String carType,
+                                   String genderPreference, String userGender) {
 
-        // ✅ CHANGED: Use CONTAINING for partial/fuzzy matching
         List<Ride> rides = rideRepository
                 .findByStartLocationContainingIgnoreCaseAndEndLocationContainingIgnoreCase(from, to)
                 .stream()
@@ -136,67 +146,44 @@ public class RideService {
                         LocalDate rideDate = LocalDate.parse(ride.getDate());
                         return !rideDate.isBefore(today);
                     } catch (Exception e) {
-                        return false; // If date parsing fails, hide the ride
+                        return false;
                     }
                 })
                 .toList();
 
         if (date != null && !date.isEmpty()) {
-            rides = rides.stream()
-                    .filter(r -> r.getDate().equals(date))
-                    .toList();
+            rides = rides.stream().filter(r -> r.getDate().equals(date)).toList();
         }
 
         if (seats != null) {
-            rides = rides.stream()
-                    .filter(r -> r.getAvailableSeats() >= seats)
-                    .toList();
+            rides = rides.stream().filter(r -> r.getAvailableSeats() >= seats).toList();
         }
 
-        // Price filter
         if (minPrice != null) {
-            rides = rides.stream()
-                    .filter(r -> r.getPrice() >= minPrice)
-                    .toList();
+            rides = rides.stream().filter(r -> r.getPrice() >= minPrice).toList();
         }
 
         if (maxPrice != null) {
-            rides = rides.stream()
-                    .filter(r -> r.getPrice() <= maxPrice)
-                    .toList();
+            rides = rides.stream().filter(r -> r.getPrice() <= maxPrice).toList();
         }
 
-        // Car type filter
         if (carType != null && !carType.isEmpty()) {
             rides = rides.stream()
                     .filter(r -> r.getCarType() != null && r.getCarType().equalsIgnoreCase(carType))
                     .toList();
         }
 
-        // Gender preference filter
         if (genderPreference != null && !genderPreference.isEmpty()) {
             rides = rides.stream()
                     .filter(r -> {
-
-                        // If ride has no gender preference, show it
                         if (r.getGenderPreference() == null || r.getGenderPreference().isEmpty()) {
                             return true;
                         }
-
-                        // If user gender matches ride preference
                         if (userGender != null && !userGender.isEmpty()) {
-                            if (r.getGenderPreference().equals("MALE_ONLY") && userGender.equals("MALE")) {
-                                return true;
-                            }
-                            if (r.getGenderPreference().equals("FEMALE_ONLY") && userGender.equals("FEMALE")) {
-                                return true;
-                            }
-
-                            // If ride has preference but user doesn't match, hide it
+                            if (r.getGenderPreference().equals("MALE_ONLY") && userGender.equals("MALE")) return true;
+                            if (r.getGenderPreference().equals("FEMALE_ONLY") && userGender.equals("FEMALE")) return true;
                             return false;
                         }
-
-                        // If no user gender provided, show all rides
                         return true;
                     })
                     .toList();
@@ -225,17 +212,12 @@ public class RideService {
         for (Ride ride : allRides) {
             try {
                 LocalDate rideDate = LocalDate.parse(ride.getDate());
-
-// If ride date is before today → PAST
                 if (rideDate.isBefore(today)) {
                     past.add(ride);
-                }
-// If ride date is today or future → UPCOMING
-                else {
+                } else {
                     upcoming.add(ride);
                 }
             } catch (Exception e) {
-// If date parsing fails, consider it upcoming (safer default)
                 upcoming.add(ride);
             }
         }
@@ -243,7 +225,6 @@ public class RideService {
         Map<String, List<Ride>> result = new HashMap<>();
         result.put("upcoming", upcoming);
         result.put("past", past);
-
         return result;
     }
 
@@ -257,7 +238,6 @@ public class RideService {
         }
 
         List<Booking> bookings = bookingRepository.findByRide(ride);
-
         List<Booking> activeBookings = bookings.stream()
                 .filter(b -> "BOOKED".equals(b.getStatus()))
                 .toList();
@@ -268,7 +248,6 @@ public class RideService {
         result.put("activeBookings", activeBookings);
         result.put("totalBookings", bookings.size());
         result.put("activeBookingsCount", activeBookings.size());
-
         return result;
     }
 
@@ -282,36 +261,27 @@ public class RideService {
             throw new RuntimeException("You are not the owner of this ride");
         }
 
-// Validate date and time if being updated
         String newDate = dto.getDate() != null ? dto.getDate() : ride.getDate();
         String newTime = dto.getTime() != null ? dto.getTime() : ride.getTime();
 
         try {
             LocalDate rideDate = LocalDate.parse(newDate);
             LocalDate today = LocalDate.now();
-
             if (rideDate.isBefore(today)) {
                 throw new RuntimeException("Cannot update ride to a past date");
             }
-
-// If ride is today, validate time is in the future
             if (rideDate.equals(today) && newTime != null && !newTime.isEmpty()) {
                 try {
                     LocalTime rideTime = LocalTime.parse(newTime);
-                    LocalTime now = LocalTime.now();
-
-                    if (rideTime.isBefore(now)) {
+                    if (rideTime.isBefore(LocalTime.now())) {
                         throw new RuntimeException("Cannot update ride to a past time for today");
                     }
                 } catch (Exception e) {
-// If time parsing fails, continue
+                    if (e instanceof RuntimeException) throw e;
                 }
             }
-
         } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw e;
-            }
+            if (e instanceof RuntimeException) throw e;
         }
 
         if (dto.getStartLocation() != null) ride.setStartLocation(dto.getStartLocation());
@@ -328,7 +298,6 @@ public class RideService {
 
         Ride updated = rideRepository.save(ride);
 
-// 🔔 NOTIFICATION
         notificationService.sendNotification(
                 driver,
                 "Ride Updated",
@@ -340,7 +309,7 @@ public class RideService {
         return updated;
     }
 
-    // CANCEL RIDE (Driver) - Refunds all passengers
+    // CANCEL RIDE
     @Transactional
     public String cancelRide(Long rideId, User driver) {
 
@@ -351,37 +320,21 @@ public class RideService {
             throw new RuntimeException("You are not the owner of this ride");
         }
 
-        // Get all bookings for this ride
         List<Booking> bookings = bookingRepository.findByRide(ride);
         int refundedCount = 0;
-        int totalRefundAmount = 0;
 
-        // Cancel all bookings and refund passengers
         for (Booking booking : bookings) {
-
             if ("BOOKED".equals(booking.getStatus())) {
-
-                // Cancel the booking
                 booking.setStatus("CANCELLED");
-
-                // Mark payment as refunded if payment was PAID
                 if ("PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
-
-                    long pricePaise = (long) (ride.getPrice() * 100);
-                    long refundAmount = pricePaise * booking.getSeatsBooked();
-
                     booking.setPaymentStatus("REFUNDED");
                     refundedCount++;
-                    totalRefundAmount += refundAmount;
-
-                    // Note: Actual refund processing would be handled by payment gateway/webhook
                 }
-
-                // 🔔 Notify passenger
                 notificationService.sendNotification(
                         booking.getUser(),
                         "Ride Cancelled by Driver",
-                        "The ride from " + ride.getStartLocation() + " to " + ride.getEndLocation() + " has been cancelled by the driver. Refund will be processed.",
+                        "The ride from " + ride.getStartLocation() + " to " + ride.getEndLocation()
+                                + " has been cancelled by the driver. Refund will be processed.",
                         "RIDE_CANCELLED_BY_DRIVER",
                         Map.of(
                                 "rideId", ride.getId().toString(),
@@ -389,16 +342,12 @@ public class RideService {
                         )
                 );
             }
-
-            // 🔑 FIX: Break the relationship before deleting ride
             booking.setRide(null);
             bookingRepository.save(booking);
         }
 
-        // Delete the ride (safe now - no bookings reference it)
         rideRepository.delete(ride);
 
-        // 🔔 Notify driver
         notificationService.sendNotification(
                 driver,
                 "Ride Cancelled",
@@ -410,7 +359,7 @@ public class RideService {
         return "Ride cancelled successfully. " + refundedCount + " passenger(s) refunded.";
     }
 
-    // DELETE RIDE (Hard delete - use cancelRide instead if there are bookings)
+    // DELETE RIDE
     @Transactional
     public String deleteRide(Long rideId, User driver) {
 
@@ -421,7 +370,6 @@ public class RideService {
             throw new RuntimeException("You are not the owner of this ride");
         }
 
-// Check if there are any bookings
         List<Booking> bookings = bookingRepository.findByRide(ride);
         boolean hasActiveBookings = bookings.stream()
                 .anyMatch(b -> "BOOKED".equals(b.getStatus()));
@@ -432,7 +380,6 @@ public class RideService {
 
         rideRepository.delete(ride);
 
-// 🔔 NOTIFICATION
         notificationService.sendNotification(
                 driver,
                 "Ride Deleted",
@@ -444,16 +391,14 @@ public class RideService {
         return "Ride deleted successfully";
     }
 
-    // ── NEW: Geo-based search (Phase 6 + 7) ─────────────────
+    // ── Geo-based search (Phase 6 + 7) ──────────────────────
     public List<Ride> searchRidesByRoute(String pickup, String drop) {
 
-        // Step 1: Convert pickup/drop → lat/lng
         LatLng pickupCoords = mapService.getCoordinates(pickup);
         LatLng dropCoords   = mapService.getCoordinates(drop);
 
         LocalDate today = LocalDate.now();
 
-        // Step 2: Get all active future rides with a saved polyline
         List<Ride> allRides = rideRepository.findAll().stream()
                 .filter(r -> r.getPolyline() != null && !r.getPolyline().isEmpty())
                 .filter(r -> r.getAvailableSeats() > 0)
@@ -466,13 +411,11 @@ public class RideService {
                 })
                 .toList();
 
-        // Step 3: Match rides where BOTH pickup AND drop are near the route
         return allRides.stream()
                 .filter(r ->
                         PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) &&
-                                PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline())
+                        PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline())
                 )
                 .toList();
     }
-
 }

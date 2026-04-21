@@ -191,7 +191,7 @@ export default function OfferRide() {
                   <circle cx="12" cy="12" r="10"/>
                   <polyline points="12 6 12 12 16 14"/>
                 </svg>
-                {t("orDeparture")}
+                {t("Departure")}
               </label>
               <input type="time" className="field-input"
                 value={form.time}
@@ -204,7 +204,7 @@ export default function OfferRide() {
                   <circle cx="12" cy="12" r="10"/>
                   <polyline points="12 6 12 12 16 14"/>
                 </svg>
-                {t("orArrival")}
+                {t("Arrival")}
                 {form.endTime && form.time && form.endTime > form.time && (
                   <em className="auto-tag">{t("orAuto")}</em>
                 )}
