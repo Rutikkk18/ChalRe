@@ -96,22 +96,45 @@ public class RouteService {
     }
 
     // Encode just 2 points as a polyline (start + end)
-    private String encodeTwoPoints(double startLat, double startLng,
-                                    double endLat,   double endLng) {
-        StringBuilder result = new StringBuilder();
+    // Generate intermediate points every ~20km along straight line
+private String encodeTwoPoints(double startLat, double startLng,
+                                double endLat,   double endLng) {
 
-        int latE5 = (int) Math.round(startLat * 1e5);
-        int lngE5 = (int) Math.round(startLng * 1e5);
-        result.append(encodeValue(latE5));
-        result.append(encodeValue(lngE5));
+    // Calculate total distance
+    double R = 6371;
+    double dLat = Math.toRadians(endLat - startLat);
+    double dLng = Math.toRadians(endLng - startLng);
+    double a = Math.sin(dLat/2) * Math.sin(dLat/2)
+             + Math.cos(Math.toRadians(startLat))
+             * Math.cos(Math.toRadians(endLat))
+             * Math.sin(dLng/2) * Math.sin(dLng/2);
+    double totalKm = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-        int endLatE5 = (int) Math.round(endLat * 1e5);
-        int endLngE5 = (int) Math.round(endLng * 1e5);
-        result.append(encodeValue(endLatE5 - latE5));
-        result.append(encodeValue(endLngE5 - lngE5));
+    // Generate one point every 20km
+    int numPoints = Math.max(2, (int) Math.ceil(totalKm / 20.0));
 
-        return result.toString();
+    StringBuilder result = new StringBuilder();
+    int prevLatE5 = 0, prevLngE5 = 0;
+
+    for (int i = 0; i <= numPoints; i++) {
+        double t = (double) i / numPoints;
+
+        // Linear interpolation between start and end
+        double lat = startLat + t * (endLat - startLat);
+        double lng = startLng + t * (endLng - startLng);
+
+        int latE5 = (int) Math.round(lat * 1e5);
+        int lngE5 = (int) Math.round(lng * 1e5);
+
+        result.append(encodeValue(latE5 - prevLatE5));
+        result.append(encodeValue(lngE5 - prevLngE5));
+
+        prevLatE5 = latE5;
+        prevLngE5 = lngE5;
     }
+
+    return result.toString();
+}
 
     // Encode GeoJSON coordinate array → Google Polyline format
     private String encodePolyline(JsonNode coordinates) {
