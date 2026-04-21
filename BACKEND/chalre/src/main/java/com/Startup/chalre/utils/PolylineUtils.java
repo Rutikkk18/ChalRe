@@ -6,9 +6,8 @@ import java.util.List;
 
 public class PolylineUtils {
 
-    private static final double MATCH_RADIUS_KM = 5.0; // increased to 5km for better matching
+    private static final double MATCH_RADIUS_KM = 10.0; // 10km for text-based searches
 
-    // Decode encoded polyline → list of LatLng points
     public static List<LatLng> decode(String encoded) {
         List<LatLng> points = new ArrayList<>();
         int index = 0, len = encoded.length();
@@ -38,13 +37,10 @@ public class PolylineUtils {
         return points;
     }
 
-    // Check if a point is within MATCH_RADIUS_KM of the route
-    // Checks BOTH point-to-point AND point-to-segment distance
     public static boolean isPointNearRoute(LatLng point, String encodedPolyline) {
         if (encodedPolyline == null || encodedPolyline.isEmpty()) return false;
 
         List<LatLng> routePoints = decode(encodedPolyline);
-
         if (routePoints.isEmpty()) return false;
 
         // Check each point on route
@@ -54,13 +50,10 @@ public class PolylineUtils {
             }
         }
 
-        // ── KEY FIX: Check distance to each LINE SEGMENT ──
-        // This handles fallback 2-point polylines (straight line)
-        // and also improves matching for full polylines
+        // Check each line segment
         for (int i = 0; i < routePoints.size() - 1; i++) {
-            LatLng segStart = routePoints.get(i);
-            LatLng segEnd   = routePoints.get(i + 1);
-            if (distanceToSegmentKm(point, segStart, segEnd) <= MATCH_RADIUS_KM) {
+            if (distanceToSegmentKm(point, routePoints.get(i), routePoints.get(i + 1))
+                    <= MATCH_RADIUS_KM) {
                 return true;
             }
         }
@@ -68,31 +61,74 @@ public class PolylineUtils {
         return false;
     }
 
-    // Distance from point P to line segment AB (in km)
-    // Projects P onto AB, clamps to segment, returns distance
+    // ── FIXED: proper spherical segment distance ──────────────
     private static double distanceToSegmentKm(LatLng p, LatLng a, LatLng b) {
-        double ax = a.getLng(), ay = a.getLat();
-        double bx = b.getLng(), by = b.getLat();
-        double px = p.getLng(), py = p.getLat();
 
-        double dx = bx - ax;
-        double dy = by - ay;
+        // Convert all points to radians
+        double lat1 = Math.toRadians(a.getLat());
+        double lng1 = Math.toRadians(a.getLng());
+        double lat2 = Math.toRadians(b.getLat());
+        double lng2 = Math.toRadians(b.getLng());
+        double latP = Math.toRadians(p.getLat());
+        double lngP = Math.toRadians(p.getLng());
 
-        if (dx == 0 && dy == 0) {
-            // Segment is a single point
-            return haversineKm(p, a);
-        }
+        // Vector AB and AP in 3D cartesian (unit sphere)
+        double[] A = toCartesian(lat1, lng1);
+        double[] B = toCartesian(lat2, lng2);
+        double[] P = toCartesian(latP, lngP);
 
-        // Parameter t: projection of P onto AB, clamped [0,1]
-        double t = ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy);
-        t = Math.max(0, Math.min(1, t));
+        // Project P onto line AB, clamp to segment
+        double[] AB = subtract(B, A);
+        double[] AP = subtract(P, A);
 
-        // Closest point on segment to P
-        LatLng closest = new LatLng(ay + t * dy, ax + t * dx);
-        return haversineKm(p, closest);
+        double t = dot(AP, AB) / dot(AB, AB);
+        t = Math.max(0, Math.min(1, t));  // clamp to [0,1]
+
+        // Closest point on segment
+        double[] closest = add(A, scale(AB, t));
+
+        // Normalize back to unit sphere
+        double len = Math.sqrt(dot(closest, closest));
+        closest[0] /= len;
+        closest[1] /= len;
+        closest[2] /= len;
+
+        // Convert back to lat/lng
+        double closestLat = Math.asin(closest[2]);
+        double closestLng = Math.atan2(closest[1], closest[0]);
+
+        LatLng closestPoint = new LatLng(
+            Math.toDegrees(closestLat),
+            Math.toDegrees(closestLng)
+        );
+
+        return haversineKm(p, closestPoint);
     }
 
-    // Haversine formula — distance between two lat/lng points in km
+    private static double[] toCartesian(double lat, double lng) {
+        return new double[]{
+            Math.cos(lat) * Math.cos(lng),
+            Math.cos(lat) * Math.sin(lng),
+            Math.sin(lat)
+        };
+    }
+
+    private static double[] subtract(double[] a, double[] b) {
+        return new double[]{ a[0]-b[0], a[1]-b[1], a[2]-b[2] };
+    }
+
+    private static double[] add(double[] a, double[] b) {
+        return new double[]{ a[0]+b[0], a[1]+b[1], a[2]+b[2] };
+    }
+
+    private static double[] scale(double[] a, double t) {
+        return new double[]{ a[0]*t, a[1]*t, a[2]*t };
+    }
+
+    private static double dot(double[] a, double[] b) {
+        return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+    }
+
     public static double haversineKm(LatLng a, LatLng b) {
         final int R = 6371;
         double dLat = Math.toRadians(b.getLat() - a.getLat());

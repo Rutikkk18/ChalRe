@@ -443,16 +443,28 @@ public class RideService {
                                 && PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline());
                     }
 
-                    // ── FALLBACK: use stored from/to coords directly ──
-                    // If ride has no polyline but has coordinates, check radius from endpoints
+                    // ── FALLBACK: use stored from/to coords + segment check ──
                     if (r.getFromLat() != 0 && r.getToLat() != 0) {
                         LatLng rideFrom = new LatLng(r.getFromLat(), r.getFromLng());
                         LatLng rideTo   = new LatLng(r.getToLat(),   r.getToLng());
 
-                        boolean pickupNearStart = PolylineUtils.haversineKm(pickupCoords, rideFrom) <= 5.0;
-                        boolean dropNearEnd     = PolylineUtils.haversineKm(dropCoords,   rideTo)   <= 5.0;
+                        // Check if pickup and drop are both "between" the route endpoints
+                        // using the total route distance as reference
+                        double totalDist = PolylineUtils.haversineKm(rideFrom, rideTo);
 
-                        return pickupNearStart && dropNearEnd;
+                        double pickupFromDist = PolylineUtils.haversineKm(pickupCoords, rideFrom);
+                        double pickupToDist   = PolylineUtils.haversineKm(pickupCoords, rideTo);
+                        double dropFromDist   = PolylineUtils.haversineKm(dropCoords,   rideFrom);
+                        double dropToDist     = PolylineUtils.haversineKm(dropCoords,   rideTo);
+
+                        // Pickup must be closer to start than end
+                        // Drop must be closer to end than start
+                        // Both must be roughly within the corridor of the route
+                        boolean pickupOnRoute = pickupFromDist < totalDist && pickupToDist < totalDist;
+                        boolean dropOnRoute   = dropFromDist   < totalDist && dropToDist   < totalDist;
+                        boolean correctOrder  = pickupFromDist < dropFromDist; // pickup closer to start
+
+                        return pickupOnRoute && dropOnRoute && correctOrder;
                     }
 
                     return false;
