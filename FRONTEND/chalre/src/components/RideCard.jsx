@@ -1,21 +1,28 @@
 // RideCard.jsx
-import { Users, Clock, IndianRupee, Star, CheckCircle, Car, Bike } from "lucide-react";
+import { Users, IndianRupee, Star, CheckCircle, Car, Bike, CalendarRange } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "../styles/ridecard.css";
-import { CalendarRange } from "lucide-react";
 
-export default function RideCard({ ride }) {
+export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, dropName }) {
   const navigate = useNavigate();
   const isFull = Number(ride?.availableSeats) <= 0;
 
+  // ── Pass search context to RideDetails via navigation state ──
+  const navState = {
+    pickupCoords: pickupCoords || null,
+    dropCoords:   dropCoords   || null,
+    pickupName:   pickupName   || null,
+    dropName:     dropName     || null,
+  };
+
   const goToBooking = (e) => {
-    e.stopPropagation(); // prevent card click from firing
+    e.stopPropagation();
     if (isFull) return;
-    navigate(`/book-ride/${ride.id}`);
+    navigate(`/book-ride/${ride.id}`, { state: navState });
   };
 
   const goToRideDetails = () => {
-    navigate(`/ridedetails/${ride.id}`);
+    navigate(`/ridedetails/${ride.id}`, { state: navState });
   };
 
   const getLocationName = (fullLocation) => {
@@ -50,7 +57,6 @@ export default function RideCard({ ride }) {
 
       {/* ── ROW 1: ROUTE TIMELINE ── */}
       <div className="ride-card-header">
-
         <div className="location">
           <span className="location-name">{getLocationName(ride.startLocation)}</span>
           <span className="location-address">{ride.startLocation}</span>
@@ -72,16 +78,14 @@ export default function RideCard({ ride }) {
           <span className="location-name">{getLocationName(ride.endLocation)}</span>
           <span className="location-address">{ride.endLocation}</span>
         </div>
-
       </div>
 
       {/* ── ROW 2: 3-ZONE BOTTOM ── */}
       <div className="ride-card-bottom">
 
-        {/* ZONE 1 — Driver: [vehicle] [avatar] [name] [rating/badge] all horizontal */}
+        {/* ZONE 1 — Driver */}
         {driver && (
           <div className="driver-info">
-
             {hasVehicle && (
               <div className="vehicle-icon-wrap">
                 {isBike
@@ -90,8 +94,6 @@ export default function RideCard({ ride }) {
                 }
               </div>
             )}
-
-            {/* Avatar */}
             <div className="driver-avatar-wrap">
               {driver.profileImage ? (
                 <img src={driver.profileImage} alt={driver.name} className="driver-avatar" />
@@ -104,11 +106,7 @@ export default function RideCard({ ride }) {
                 <CheckCircle size={13} className="driver-verified-badge" />
               )}
             </div>
-
-            {/* Name — inline with avatar and rating */}
             <span className="driver-name">{driver.name || "Driver"}</span>
-
-            {/* Rating or New Driver badge — inline with name */}
             {driver.avgRating > 0 ? (
               <div className="driver-rating">
                 <Star size={12} fill="#f59e0b" color="#f59e0b" />
@@ -120,11 +118,10 @@ export default function RideCard({ ride }) {
             ) : (
               <span className="driver-new-badge">New Driver</span>
             )}
-
           </div>
         )}
 
-        {/* ZONE 2 — Meta (centred, with dividers) */}
+        {/* ZONE 2 — Meta */}
         <div className="ride-meta">
           <div className="meta-item">
             <CalendarRange size={13} />
@@ -143,9 +140,7 @@ export default function RideCard({ ride }) {
               <IndianRupee size={16} />
               {ride.price}
             </div>
-            <span className="ride-price-label"></span>
           </div>
-
           {isFull ? (
             <div className="full-badge">FULL</div>
           ) : (

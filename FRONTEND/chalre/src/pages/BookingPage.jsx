@@ -1,31 +1,38 @@
 // src/pages/BookingPage.jsx
 import { CreditCard, IndianRupee } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/booking.css";
 
-// Load Razorpay script dynamically
 function loadRazorpayScript() {
   return new Promise((resolve) => {
     if (window.Razorpay) { resolve(true); return; }
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve(true);
+    script.onload  = () => resolve(true);
     script.onerror = () => resolve(false);
     document.body.appendChild(script);
   });
 }
 
 export default function BookingPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id }       = useParams();
+  const navigate     = useNavigate();
+  const location     = useLocation();
 
-  const [ride, setRide] = useState(null);
-  const [seats, setSeats] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState("CASH");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  // ── Search context passed from RideCard ──
+  const navState     = location.state || {};
+  const pickupCoords = navState.pickupCoords || null;
+  const dropCoords   = navState.dropCoords   || null;
+  const pickupName   = navState.pickupName   || null;
+  const dropName     = navState.dropName     || null;
+
+  const [ride,      setRide]      = useState(null);
+  const [seats,     setSeats]     = useState(1);
+  const [loading,   setLoading]   = useState(false);
+  const [error,     setError]     = useState("");
+  const [priceInfo, setPriceInfo] = useState(null);
 
   const noSeatsLeft = ride && Number(ride.availableSeats) <= 0;
 
@@ -45,37 +52,63 @@ export default function BookingPage() {
     }
   };
 
+  // ── Fetch calculated partial price if coords available ──
+  useEffect(() => {
+    if (ride && pickupCoords?.lat && dropCoords?.lat) {
+      fetchCalculatedPrice();
+    }
+    // eslint-disable-next-line
+  }, [ride]);
+
+  const fetchCalculatedPrice = async () => {
+    try {
+      const res = await api.get(`/rides/${id}/calculate-price`, {
+        params: {
+          pickupLat: pickupCoords.lat,
+          pickupLng: pickupCoords.lng,
+          dropLat:   dropCoords.lat,
+          dropLng:   dropCoords.lng,
+        }
+      });
+      setPriceInfo(res.data);
+    } catch (e) {
+      console.error("Price calc failed:", e);
+    }
+  };
+
+  const effectivePrice = () => {
+    if (!ride) return 0;
+    return priceInfo?.calculatedPrice ?? ride.price;
+  };
+
   const handleBookRide = async () => {
-    if (!ride) return;
-    if (noSeatsLeft) { setError("No seats available."); return; }
-    if (seats < 1) { setError("Please select at least 1 seat."); return; }
+    if (!ride)        return;
+    if (noSeatsLeft)  { setError("No seats available.");              return; }
+    if (seats < 1)    { setError("Please select at least 1 seat.");   return; }
     if (seats > ride.availableSeats) {
-      setError(`Only ${ride.availableSeats} seat(s) left.`); return;
+      setError(`Only ${ride.availableSeats} seat(s) left.`);
+      return;
     }
 
     setLoading(true);
     setError("");
 
     try {
-      // ── CASH flow (unchanged) ──
-      if (paymentMethod === "CASH") {
-        const res = await api.post("/bookings/create", {
-          rideId: Number(ride.id),
-          seats: Number(seats),
-          paymentMethod: "CASH"
-        });
-        navigate(`/booking/success/${res.data.id}`);
+      // ── Use partial price if available ──
+      const basePrice  = priceInfo?.calculatedPrice ?? ride.price;
+      const totalPaise = Math.round(basePrice * seats * 100);
+
+      // STEP 1: Get Razorpay key
+      const configRes   = await api.get("/payments/config");
+      const razorpayKey = configRes.data.key;
+
+      if (!razorpayKey || !razorpayKey.startsWith("rzp_")) {
+        setError("Invalid payment configuration.");
+        setLoading(false);
         return;
       }
 
-      // ── ONLINE flow — Razorpay escrow ──
-      const totalPaise = Math.round(ride.price * seats * 100);
-
-      // STEP 1: Get Razorpay key
-      const configRes = await api.get("/payments/config");
-      const razorpayKey = configRes.data.key;
-
-      // STEP 2: Create order on backend
+      // STEP 2: Create order
       const orderRes = await api.post("/payments/create-order", {
         rideId: Number(ride.id),
         amount: totalPaise
@@ -83,7 +116,7 @@ export default function BookingPage() {
 
       const { orderId, amount, currency } = orderRes.data;
 
-      // STEP 3: Load Razorpay script
+      // STEP 3: Load Razorpay
       const loaded = await loadRazorpayScript();
       if (!loaded || !window.Razorpay) {
         setError("Failed to load payment gateway. Check your connection.");
@@ -93,26 +126,26 @@ export default function BookingPage() {
 
       // STEP 4: Open Razorpay popup
       const options = {
-        key: razorpayKey,
-        amount: amount,
-        currency: currency || "INR",
-        name: "Chalre",
+        key:         razorpayKey,
+        amount:      amount,
+        currency:    currency || "INR",
+        name:        "Chalre",
         description: `Ride: ${ride.startLocation} → ${ride.endLocation}`,
-        order_id: orderId,
+        order_id:    orderId,
         handler: async function (response) {
           try {
-            // STEP 5: Verify payment + auto create booking
             await api.post("/payments/verify", {
-              rideId: Number(ride.id),
-              amount: totalPaise,
-              seats: Number(seats),
-              razorpayOrderId: response.razorpay_order_id,
+              rideId:            Number(ride.id),
+              amount:            totalPaise,
+              seats:             Number(seats),
+              razorpayOrderId:   response.razorpay_order_id,
               razorpayPaymentId: response.razorpay_payment_id,
               razorpaySignature: response.razorpay_signature
             });
             navigate(`/booking/success/online`);
           } catch (err) {
-            const msg = err.response?.data || "Payment verification failed. Contact support if amount was deducted.";
+            const msg = err.response?.data ||
+              "Payment verification failed. Contact support if amount was deducted.";
             setError(typeof msg === "string" ? msg : JSON.stringify(msg));
             setLoading(false);
           }
@@ -120,7 +153,7 @@ export default function BookingPage() {
         prefill: { name: "", email: "", contact: "" },
         notes: {
           rideId: ride.id.toString(),
-          seats: seats.toString()
+          seats:  seats.toString()
         },
         theme: { color: "#1c7c31" },
         modal: {
@@ -139,8 +172,7 @@ export default function BookingPage() {
       const msg = err.response?.data;
       setError(
         typeof msg === "string" ? msg :
-        msg?.message || msg?.error ||
-        (paymentMethod === "CASH" ? "Booking failed." : "Payment initiation failed.")
+        msg?.message || msg?.error || "Payment initiation failed."
       );
       setLoading(false);
     }
@@ -150,10 +182,10 @@ export default function BookingPage() {
 
   if (!ride) return (
     <div className="booking-wrapper">
-     
-        <span style={{ color:"#6b7280", fontSize:"0.9rem" }}>Loading ride details…</span>
-      </div>
-   
+      <span style={{ color: "#6b7280", fontSize: "0.9rem" }}>
+        Loading ride details…
+      </span>
+    </div>
   );
 
   return (
@@ -202,13 +234,32 @@ export default function BookingPage() {
             </div>
           </div>
 
+          {/* ── Price highlight with partial info ── */}
           <div className="booking-price-highlight">
             <div>
-              <div className="booking-price-highlight-label">Price per seat</div>
-              <div className="booking-price-highlight-per">× {seats} seat{seats !== 1 ? "s" : ""}</div>
+              <div className="booking-price-highlight-label">
+                {priceInfo?.isPartial ? "Your fare (partial route)" : "Price per seat"}
+              </div>
+              {priceInfo?.isPartial && (
+                <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "2px" }}>
+                  {pickupName?.split(",")[0]} → {dropName?.split(",")[0]}
+                  &nbsp;·&nbsp;
+                  {priceInfo.partialDistance}km of {priceInfo.fullDistance}km
+                </div>
+              )}
+              <div className="booking-price-highlight-per">
+                × {seats} seat{seats !== 1 ? "s" : ""}
+              </div>
             </div>
             <div>
-              <div className="booking-price-highlight-val">₹{(ride.price * seats).toFixed(0)}</div>
+              <div className="booking-price-highlight-val">
+                ₹{(effectivePrice() * seats).toFixed(0)}
+              </div>
+              {priceInfo?.isPartial && (
+                <div style={{ fontSize: "0.72rem", color: "#9ca3af", textAlign: "right" }}>
+                  full fare ₹{priceInfo.fullPrice}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -217,7 +268,9 @@ export default function BookingPage() {
         <div className="booking-right">
           <div>
             <div className="booking-right-title">Book Your Seat</div>
-            <div className="booking-right-sub">Select seats and payment — it only takes a moment.</div>
+            <div className="booking-right-sub">
+              Select seats and pay — it only takes a moment.
+            </div>
           </div>
 
           <div className="form-section">
@@ -235,23 +288,16 @@ export default function BookingPage() {
 
           <div className="booking-total-row">
             <span className="booking-total-label">Total Amount</span>
-            <span className="booking-total-val">₹{(ride.price * seats).toFixed(2)}</span>
+            <span className="booking-total-val">
+              ₹{(effectivePrice() * seats).toFixed(2)}
+            </span>
           </div>
 
+          {/* ── Online only ── */}
           <div className="payment-section-label">Payment Method</div>
           <div className="payment-options">
-            <label className={`payment-option ${paymentMethod === "CASH" ? "selected" : ""}`}>
-              <input type="radio" value="CASH"
-                checked={paymentMethod === "CASH"}
-                onChange={(e) => setPaymentMethod(e.target.value)} />
-              <span className="payment-option-text">
-                <IndianRupee size={17} /> Pay with Cash
-              </span>
-            </label>
-            <label className={`payment-option ${paymentMethod === "ONLINE" ? "selected" : ""}`}>
-              <input type="radio" value="ONLINE"
-                checked={paymentMethod === "ONLINE"}
-                onChange={(e) => setPaymentMethod(e.target.value)} />
+            <label className="payment-option selected">
+              <input type="radio" value="ONLINE" checked readOnly />
               <span className="payment-option-text">
                 <CreditCard size={17} /> Online Payment
               </span>
@@ -265,7 +311,7 @@ export default function BookingPage() {
             onClick={handleBookRide}
             disabled={loading || noSeatsLeft}
           >
-            {loading ? "Processing…" : paymentMethod === "CASH" ? "Confirm Booking" : "Proceed to Pay"}
+            {loading ? "Processing…" : "Proceed to Pay"}
           </button>
         </div>
 

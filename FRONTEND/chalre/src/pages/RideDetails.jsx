@@ -1,23 +1,34 @@
 // src/pages/RideDetails.jsx
 import { useEffect, useState, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/rideDetails.css";
 import { Users, IndianRupee, Phone, CheckCircle, Star, CreditCard, Car, Bike } from "lucide-react";
 
 export default function RideDetails() {
-  const { id: rideId } = useParams();
-  const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
 
-  const [ride, setRide] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("");
-  const [seats, setSeats] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState("CASH");
-  const [bookingLoading, setBookingLoading] = useState(false);
+  const location  = useLocation();
+  const { id: rideId } = useParams();
+  const navigate  = useNavigate();
+  const { user }  = useContext(AuthContext);
+
+  // ── Search context passed from RideCard ──
+  const navState     = location.state || {};
+  const pickupCoords = navState.pickupCoords || null;
+  const dropCoords   = navState.dropCoords   || null;
+  const pickupName   = navState.pickupName   || null;
+  const dropName     = navState.dropName     || null;
+
+  const [ride,          setRide]          = useState(null);
+  const [loading,       setLoading]       = useState(false);
+  const [err,           setErr]           = useState("");
+  const [seats,         setSeats]         = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState("ONLINE");
+  const [bookingLoading,setBookingLoading]= useState(false);
   const [driverRatings, setDriverRatings] = useState([]);
+  const [priceInfo,     setPriceInfo]     = useState(null);
+
   const noSeatsLeft = ride && Number(ride.availableSeats) <= 0;
 
   useEffect(() => {
@@ -26,9 +37,12 @@ export default function RideDetails() {
   }, [rideId]);
 
   useEffect(() => {
-    if (ride?.driver?.id) {
-      fetchDriverRatings();
-    }
+    if (ride?.driver?.id) fetchDriverRatings();
+  }, [ride]);
+
+  useEffect(() => {
+    if (ride && pickupCoords?.lat) fetchCalculatedPrice();
+    // eslint-disable-next-line
   }, [ride]);
 
   async function fetchRide() {
@@ -59,10 +73,27 @@ export default function RideDetails() {
     }
   };
 
+  const fetchCalculatedPrice = async () => {
+    if (!pickupCoords?.lat || !dropCoords?.lat || !rideId) return;
+    try {
+      const res = await api.get(`/rides/${rideId}/calculate-price`, {
+        params: {
+          pickupLat: pickupCoords.lat,
+          pickupLng: pickupCoords.lng,
+          dropLat:   dropCoords.lat,
+          dropLng:   dropCoords.lng,
+        }
+      });
+      setPriceInfo(res.data);
+    } catch (e) {
+      console.error("Price calc failed:", e);
+    }
+  };
+
   const totalPrice = () => {
     if (!ride) return 0;
-    const price = Number(ride.price || 0);
-    return (price * seats).toFixed(0);
+    const basePrice = priceInfo?.calculatedPrice ?? Number(ride.price || 0);
+    return (basePrice * seats).toFixed(0);
   };
 
   const getVehicleIcon = () => {
@@ -72,32 +103,22 @@ export default function RideDetails() {
     return <Car size={18} className="rd__info-icon-svg" />;
   };
 
-  // Load Razorpay script dynamically
   function loadRazorpayScript() {
     return new Promise((resolve) => {
       if (window.Razorpay) { resolve(true); return; }
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
+      script.onload  = () => resolve(true);
       script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
   }
 
   const handleBookRide = async () => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    if (!ride) return;
-    if (noSeatsLeft) {
-      setErr("No seats available for this ride.");
-      return;
-    }
-    if (seats < 1) {
-      setErr("Please select at least 1 seat.");
-      return;
-    }
+    if (!user)  { navigate("/login"); return; }
+    if (!ride)  return;
+    if (noSeatsLeft) { setErr("No seats available for this ride."); return; }
+    if (seats < 1)   { setErr("Please select at least 1 seat.");    return; }
     if (seats > ride.availableSeats) {
       setErr(`Only ${ride.availableSeats} seat(s) left for this ride.`);
       return;
@@ -107,22 +128,12 @@ export default function RideDetails() {
     setErr("");
 
     try {
-      // ── CASH flow (unchanged) ──
-      if (paymentMethod === "CASH") {
-        await api.post("/bookings/create", {
-          rideId: Number(ride.id),
-          seats: Number(seats),
-          paymentMethod: "CASH"
-        });
-        navigate("/mybookings");
-        return;
-      }
+      // ── Use calculated partial price if available ──
+      const basePrice      = priceInfo?.calculatedPrice ?? ride.price;
+      const totalCostPaise = Math.round(basePrice * seats * 100);
 
-      // ── ONLINE flow — Razorpay escrow ──
-      const totalCostPaise = Math.round(ride.price * seats * 100);
-
-      // STEP 1: Get Razorpay public key from backend
-      const configRes = await api.get("/payments/config");
+      // STEP 1: Get Razorpay public key
+      const configRes  = await api.get("/payments/config");
       const razorpayKey = configRes.data.key;
 
       if (!razorpayKey || !razorpayKey.startsWith("rzp_")) {
@@ -155,26 +166,27 @@ export default function RideDetails() {
 
       // STEP 4: Open Razorpay popup
       const options = {
-        key: razorpayKey,
-        amount: amount,
-        currency: currency || "INR",
-        name: "Chalre",
+        key:         razorpayKey,
+        amount:      amount,
+        currency:    currency || "INR",
+        name:        "Chalre",
         description: `Ride from ${ride.startLocation} to ${ride.endLocation}`,
-        order_id: orderId,
+        order_id:    orderId,
         handler: async function (response) {
           try {
-            // STEP 5: Verify payment + auto-create booking in one backend call
+            // STEP 5: Verify payment + auto-create booking
             await api.post("/payments/verify", {
-              rideId: Number(ride.id),
-              amount: totalCostPaise,
-              seats: Number(seats),
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature
+              rideId:              Number(ride.id),
+              amount:              totalCostPaise,
+              seats:               Number(seats),
+              razorpayOrderId:     response.razorpay_order_id,
+              razorpayPaymentId:   response.razorpay_payment_id,
+              razorpaySignature:   response.razorpay_signature
             });
             navigate("/mybookings");
           } catch (err) {
-            const msg = err.response?.data || "Payment verification failed. Contact support if amount was deducted.";
+            const msg = err.response?.data ||
+              "Payment verification failed. Contact support if amount was deducted.";
             setErr(typeof msg === "string" ? msg : JSON.stringify(msg));
             setBookingLoading(false);
           }
@@ -182,13 +194,11 @@ export default function RideDetails() {
         prefill: { name: "", email: "", contact: "" },
         notes: {
           rideId: ride.id.toString(),
-          seats: seats.toString()
+          seats:  seats.toString()
         },
         theme: { color: "#1c7c31" },
         modal: {
-          ondismiss: function () {
-            setBookingLoading(false);
-          }
+          ondismiss: function () { setBookingLoading(false); }
         }
       };
 
@@ -201,21 +211,13 @@ export default function RideDetails() {
       }
 
     } catch (e) {
-      let errorMessage = paymentMethod === "CASH"
-        ? "Booking failed. Try again."
-        : "Failed to initiate payment. Try again.";
-
+      let errorMessage = "Failed to initiate payment. Try again.";
       if (e.response?.data) {
         const errorData = e.response.data;
-        if (typeof errorData === "object" && errorData.error) {
-          errorMessage = errorData.error;
-        } else if (typeof errorData === "string") {
-          errorMessage = errorData;
-        } else if (errorData.message) {
-          errorMessage = errorData.message;
-        }
+        if (typeof errorData === "object" && errorData.error) errorMessage = errorData.error;
+        else if (typeof errorData === "string")               errorMessage = errorData;
+        else if (errorData.message)                           errorMessage = errorData.message;
       }
-
       setErr(errorMessage);
       setBookingLoading(false);
     }
@@ -224,7 +226,6 @@ export default function RideDetails() {
   if (loading) {
     return <div className="rd__wrapper"><div className="rd__loading">Loading ride…</div></div>;
   }
-
   if (err && !ride) {
     return <div className="rd__wrapper"><div className="rd__error">{err}</div></div>;
   }
@@ -237,6 +238,7 @@ export default function RideDetails() {
 
         {ride && (
           <div className="rd__layout">
+
             {/* ── LEFT COLUMN ── */}
             <div className="rd__left">
 
@@ -275,7 +277,9 @@ export default function RideDetails() {
                     {ride.driver?.profileImage ? (
                       <img src={ride.driver.profileImage} alt="Profile" className="rd__avatar-img" />
                     ) : (
-                      <div className="rd__avatar-placeholder">{(ride.driver?.name || "D").charAt(0)}</div>
+                      <div className="rd__avatar-placeholder">
+                        {(ride.driver?.name || "D").charAt(0)}
+                      </div>
                     )}
                   </div>
                   <div className="rd__driver-info">
@@ -304,18 +308,19 @@ export default function RideDetails() {
                 <div className="rd__divider" />
                 <div className="rd__info-row">
                   <Users size={18} className="rd__info-icon-svg" />
-                  <span className="rd__info-text">{ride.availableSeats} seat{ride.availableSeats !== 1 ? "s" : ""} available</span>
+                  <span className="rd__info-text">
+                    {ride.availableSeats} seat{ride.availableSeats !== 1 ? "s" : ""} available
+                  </span>
                 </div>
                 <div className="rd__divider" />
                 <div className="rd__info-row">
                   {getVehicleIcon()}
                   <span className="rd__info-text">
                     {(() => {
-                      const carType = ride?.carType?.toLowerCase() || "";
-                      const isBike = ["bullet", "splendor", "shine"].includes(carType);
+                      const carType    = ride?.carType?.toLowerCase() || "";
+                      const isBike     = ["bullet", "splendor", "shine"].includes(carType);
                       const vehicleName = ride.vehicle?.model || ride.carModel || ride.carType || null;
-                      const seats = ride.availableSeats;
-                      const seatLabel = `${seats} seat${seats !== 1 ? "s" : ""} available`;
+                      const seatLabel  = `${ride.availableSeats} seat${ride.availableSeats !== 1 ? "s" : ""} available`;
                       if (isBike) return vehicleName ? `${vehicleName} · ${seatLabel}` : `Bike · ${seatLabel}`;
                       return vehicleName || "Car";
                     })()}
@@ -326,7 +331,9 @@ export default function RideDetails() {
                     <div className="rd__divider" />
                     <div className="rd__info-row">
                       <span className="rd__info-icon">🧳</span>
-                      <span className="rd__info-text">Luggage: {ride.luggageAllowed ? "Allowed" : "Not allowed"}</span>
+                      <span className="rd__info-text">
+                        Luggage: {ride.luggageAllowed ? "Allowed" : "Not allowed"}
+                      </span>
                     </div>
                   </>
                 )}
@@ -369,10 +376,16 @@ export default function RideDetails() {
                               />
                             ))}
                           </div>
-                          <span className="rd__review-date">{new Date(rating.createdAt).toLocaleDateString()}</span>
+                          <span className="rd__review-date">
+                            {new Date(rating.createdAt).toLocaleDateString()}
+                          </span>
                         </div>
-                        {rating.comment && <p className="rd__review-comment">{rating.comment}</p>}
-                        <p className="rd__review-author">by {rating.rater?.name || "Anonymous"}</p>
+                        {rating.comment && (
+                          <p className="rd__review-comment">{rating.comment}</p>
+                        )}
+                        <p className="rd__review-author">
+                          by {rating.rater?.name || "Anonymous"}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -383,6 +396,7 @@ export default function RideDetails() {
             {/* ── RIGHT COLUMN (sticky booking card) ── */}
             <div className="rd__right">
               <div className="rd__booking-card">
+
                 {ride.date && (
                   <div className="rd__booking-date">{ride.date}</div>
                 )}
@@ -396,13 +410,17 @@ export default function RideDetails() {
                   <div className="rd__booking-places">
                     <div className="rd__booking-place">
                       <span className="rd__booking-time">{ride.time}</span>
-                      <span className="rd__booking-place-name">{ride.startLocation || ride.from}</span>
+                      <span className="rd__booking-place-name">
+                        {ride.startLocation || ride.from}
+                      </span>
                     </div>
                     <div className="rd__booking-place">
                       {ride.endTime && (
                         <span className="rd__booking-time">{ride.endTime}</span>
                       )}
-                      <span className="rd__booking-place-name">{ride.endLocation || ride.to}</span>
+                      <span className="rd__booking-place-name">
+                        {ride.endLocation || ride.to}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -414,14 +432,19 @@ export default function RideDetails() {
                     {ride.driver?.profileImage ? (
                       <img src={ride.driver.profileImage} alt="Profile" className="rd__avatar-img" />
                     ) : (
-                      <div className="rd__avatar-placeholder rd__avatar-placeholder--sm">{(ride.driver?.name || "D").charAt(0)}</div>
+                      <div className="rd__avatar-placeholder rd__avatar-placeholder--sm">
+                        {(ride.driver?.name || "D").charAt(0)}
+                      </div>
                     )}
                   </div>
-                  <span className="rd__booking-driver-name">{ride.driver?.name || "Driver"}</span>
+                  <span className="rd__booking-driver-name">
+                    {ride.driver?.name || "Driver"}
+                  </span>
                 </div>
 
                 <div className="rd__booking-divider" />
 
+                {/* ── Price + Seats ── */}
                 <div className="rd__booking-price-row">
                   <div className="rd__booking-seats-control">
                     <button
@@ -429,43 +452,56 @@ export default function RideDetails() {
                       disabled={noSeatsLeft || seats <= 1}
                       onClick={() => setSeats((s) => Math.max(1, s - 1))}
                     >−</button>
-                    <span className="rd__seats-count">{seats} passenger{seats !== 1 ? "s" : ""}</span>
+                    <span className="rd__seats-count">
+                      {seats} passenger{seats !== 1 ? "s" : ""}
+                    </span>
                     <button
                       className="rd__seats-btn"
                       disabled={noSeatsLeft || seats >= ride.availableSeats}
                       onClick={() => setSeats((s) => Math.min(ride.availableSeats, s + 1))}
                     >+</button>
                   </div>
+
                   <div className="rd__booking-total">
-                    <IndianRupee size={16} />
-                    <span>{totalPrice()}</span>
+                    {/* ── Partial price info ── */}
+                    {priceInfo?.isPartial && (
+                      <div style={{
+                        fontSize: "0.7rem", color: "#6b7280",
+                        textAlign: "right", marginBottom: "4px"
+                      }}>
+                        {pickupName?.split(",")[0]} → {dropName?.split(",")[0]}
+                        <br />
+                        {priceInfo.partialDistance}km of {priceInfo.fullDistance}km
+                      </div>
+                    )}
+                    <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+                      <IndianRupee size={16} />
+                      <span>{totalPrice()}</span>
+                      {priceInfo?.isPartial && (
+                        <span style={{
+                          fontSize: "0.7rem", color: "#6b7280", marginLeft: "6px"
+                        }}>
+                          (full ₹{priceInfo.fullPrice})
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 <div className="rd__booking-divider" />
 
+                {/* ── Online payment only ── */}
                 <div className="rd__payment-options">
-                  <label className={`rd__payment-option ${paymentMethod === "CASH" ? "rd__payment-option--active" : ""}`}>
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="CASH"
-                      checked={paymentMethod === "CASH"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-                    <IndianRupee size={15} />
-                    <span>Cash</span>
-                  </label>
-                  <label className={`rd__payment-option ${paymentMethod === "ONLINE" ? "rd__payment-option--active" : ""}`}>
+                  <label className="rd__payment-option rd__payment-option--active">
                     <input
                       type="radio"
                       name="paymentMethod"
                       value="ONLINE"
-                      checked={paymentMethod === "ONLINE"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      checked={true}
+                      readOnly
                     />
                     <CreditCard size={15} />
-                    <span>Online</span>
+                    <span>Online Payment</span>
                   </label>
                 </div>
 
@@ -474,12 +510,13 @@ export default function RideDetails() {
                   disabled={bookingLoading || noSeatsLeft}
                   onClick={handleBookRide}
                 >
-                  {bookingLoading ? "Processing..." : paymentMethod === "CASH" ? "Book" : "Proceed to Pay"}
+                  {bookingLoading ? "Processing..." : "Proceed to Pay"}
                 </button>
 
                 {err && <div className="rd__error-msg">{err}</div>}
               </div>
             </div>
+
           </div>
         )}
       </div>

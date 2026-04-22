@@ -521,24 +521,32 @@ export default function SearchRides() {
           </aside>
 
           {/* RIGHT - RESULTS */}
-          <div className="results-container">
-            {error && <div className="error">{error}</div>}
+<div className="results-container">
+  {error && <div className="error">{error}</div>}
 
-            {!loading && results.length === 0 && (
-              <div className="empty">
-                {t("srNoRides")}{" "}
-                <a href="/offer">{t("srOfferRideLink")}</a>.
-              </div>
-            )}
+  {!loading && results.length === 0 && (
+    <div className="empty">
+      {t("srNoRides")}{" "}
+      <a href="/offer">{t("srOfferRideLink")}</a>.
+    </div>
+  )}
 
-            {!loading && (
-              <div className="cards-grid">
-                {results.map((ride) => (
-                  <RideCard key={ride.id} ride={ride} />
-                ))}
-              </div>
-            )}
-          </div>
+  {!loading && (
+    <div className="cards-grid">
+      {results.map((ride) => (
+        <RideCard
+          key={ride.id}
+          ride={ride}
+          // ── NEW: pass search coords so RideDetails can calc price ──
+          pickupCoords={pickupCoordsRef.current}
+          dropCoords={dropCoordsRef.current}
+          pickupName={startLocation}
+          dropName={endLocation}
+        />
+      ))}
+    </div>
+  )}
+</div>
 
         </div>
       </div>
