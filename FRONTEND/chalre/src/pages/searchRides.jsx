@@ -131,6 +131,28 @@ export default function SearchRides() {
     setResults(filtered);
   };
 
+  const fetchCoordsFromText = async (text, type) => {
+  try {
+    const res = await api.get("/locations/search", { params: { q: text } });
+    const places = res.data || [];
+    if (places.length > 0) {
+      const place = places[0];
+      const coords = {
+        lat: parseFloat(place.lat),
+        lng: parseFloat(place.lon || place.lng),
+      };
+      if (type === "pickup") {
+        setPickupCoords(coords);
+        pickupCoordsRef.current = coords;
+      } else {
+        setDropCoords(coords);
+        dropCoordsRef.current = coords;
+      }
+    }
+  } catch (e) {
+    console.error("Geocode from text failed:", e);
+  }
+};
   const performSearch = async (fromVal, toVal, dateVal, seatsVal, pCoords, dCoords) => {
     setLoading(true);
     setError("");
@@ -170,11 +192,19 @@ export default function SearchRides() {
 
       const res = await api.get("/rides/search", { params });
 
-      const fetchedRides = (res.data || []).filter(
-        (ride) => Number(ride.availableSeats) > 0
-      );
+const fetchedRides = (res.data || []).filter(
+  (ride) => Number(ride.availableSeats) > 0
+);
 
-      setAllRides(fetchedRides);
+setAllRides(fetchedRides);
+
+// ── NEW: if coords still null after search, geocode from text ──
+if (!pickupCoordsRef.current?.lat && fromVal) {
+  fetchCoordsFromText(fromVal, "pickup");
+}
+if (!dropCoordsRef.current?.lat && toVal) {
+  fetchCoordsFromText(toVal, "drop");
+}
       applyClientFilters(fetchedRides, {
         minPrice, maxPrice, vehicleCategory, carType,
         seatsAvailable, rideType, driverRating, timePreference,
