@@ -1,11 +1,47 @@
 // RideCard.jsx
 import { Users, IndianRupee, Star, CheckCircle, Car, Bike, CalendarRange } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 import "../styles/ridecard.css";
 
 export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, dropName }) {
   const navigate = useNavigate();
-  const isFull = Number(ride?.availableSeats) <= 0;
+  const isFull   = Number(ride?.availableSeats) <= 0;
+
+  const [calculatedPrice, setCalculatedPrice] = useState(null);
+  const [isPartial,       setIsPartial]       = useState(false);
+
+  // ── Calculate partial price as soon as coords are available ──
+  useEffect(() => {
+    if (
+      ride?.id &&
+      pickupCoords?.lat && pickupCoords?.lng &&
+      dropCoords?.lat   && dropCoords?.lng
+    ) {
+      fetchPrice();
+    }
+  // eslint-disable-next-line
+  }, [ride?.id, pickupCoords?.lat, dropCoords?.lat]);
+
+  const fetchPrice = async () => {
+    try {
+      const res = await api.get(`/rides/${ride.id}/calculate-price`, {
+        params: {
+          pickupLat: parseFloat(pickupCoords.lat),
+          pickupLng: parseFloat(pickupCoords.lng),
+          dropLat:   parseFloat(dropCoords.lat),
+          dropLng:   parseFloat(dropCoords.lng),
+        }
+      });
+      if (res.data?.calculatedPrice) {
+        setCalculatedPrice(res.data.calculatedPrice);
+        setIsPartial(res.data.isPartial || false);
+      }
+    } catch (e) {
+      console.error("RideCard price calc failed:", e);
+    }
+  };
 
   // ── Pass search context to RideDetails via navigation state ──
   const navState = {
@@ -30,9 +66,9 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
     return fullLocation.split(",")[0].trim();
   };
 
-  const driver = ride?.driver;
-  const carType = ride?.carType?.toLowerCase() || "";
-  const isBike = ["bullet", "splendor", "shine"].includes(carType);
+  const driver     = ride?.driver;
+  const carType    = ride?.carType?.toLowerCase() || "";
+  const isBike     = ["bullet", "splendor", "shine"].includes(carType);
   const hasVehicle = !!ride?.carType;
 
   const getDuration = () => {
@@ -45,21 +81,31 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
       const h = Math.floor(totalMins / 60);
       const m = totalMins % 60;
       return `${h}h ${String(m).padStart(2, "0")}m`;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   };
 
-  const duration = getDuration();
+  const duration     = getDuration();
+  const displayPrice = calculatedPrice ?? ride.price;
 
   return (
-    <div className={`ride-card ${isFull ? "full" : ""}`} onClick={goToRideDetails} style={{ cursor: "pointer" }}>
-
+    <div
+      className={`ride-card ${isFull ? "full" : ""}`}
+      onClick={goToRideDetails}
+      style={{ cursor: "pointer" }}
+    >
       {/* ── ROW 1: ROUTE TIMELINE ── */}
       <div className="ride-card-header">
+
+        {/* FROM — show passenger pickup if partial, else ride start */}
         <div className="location">
-          <span className="location-name">{getLocationName(ride.startLocation)}</span>
-          <span className="location-address">{ride.startLocation}</span>
+          <span className="location-name">
+            {isPartial && pickupName
+              ? pickupName.split(",")[0].trim()
+              : getLocationName(ride.startLocation)}
+          </span>
+          <span className="location-address">
+            {isPartial && pickupName ? pickupName : ride.startLocation}
+          </span>
         </div>
 
         <div className="route-arrow">
@@ -74,10 +120,18 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
           <div className="route-line" />
         </div>
 
+        {/* TO — show passenger drop if partial, else ride end */}
         <div className="location end">
-          <span className="location-name">{getLocationName(ride.endLocation)}</span>
-          <span className="location-address">{ride.endLocation}</span>
+          <span className="location-name">
+            {isPartial && dropName
+              ? dropName.split(",")[0].trim()
+              : getLocationName(ride.endLocation)}
+          </span>
+          <span className="location-address">
+            {isPartial && dropName ? dropName : ride.endLocation}
+          </span>
         </div>
+
       </div>
 
       {/* ── ROW 2: 3-ZONE BOTTOM ── */}
@@ -90,7 +144,7 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
               <div className="vehicle-icon-wrap">
                 {isBike
                   ? <Bike size={16} strokeWidth={1.8} className="vehicle-type-icon" />
-                  : <Car size={16} strokeWidth={1.8} className="vehicle-type-icon" />
+                  : <Car  size={16} strokeWidth={1.8} className="vehicle-type-icon" />
                 }
               </div>
             )}
@@ -138,8 +192,14 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
           <div className="ride-price-wrap">
             <div className="ride-price">
               <IndianRupee size={16} />
-              {ride.price}
+              {displayPrice}
             </div>
+            {/* Show "full ₹X" only when partial */}
+            {isPartial && (
+              <div style={{ fontSize: "0.68rem", color: "#9ca3af", marginTop: "2px" }}>
+                full ₹{ride.price}
+              </div>
+            )}
           </div>
           {isFull ? (
             <div className="full-badge">FULL</div>

@@ -18,34 +18,33 @@ const bikeSubModels = vehicleModels.bike.map((m) => m.toLowerCase());
 
 export default function SearchRides() {
   const location = useLocation();
-  const { t } = useLanguage();
+  const { t }    = useLanguage();
+
   const hasAutoSearched = useRef(false);
+
   const [startLocation, setStartLocation] = useState("");
-  const [endLocation, setEndLocation] = useState("");
-  const [date, setDate] = useState("");
-  const [seats, setSeats] = useState(1);
+  const [endLocation,   setEndLocation]   = useState("");
+  const [date,          setDate]          = useState("");
+  const [seats,         setSeats]         = useState(1);
 
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+  const [minPrice,        setMinPrice]        = useState("");
+  const [maxPrice,        setMaxPrice]        = useState("");
   const [vehicleCategory, setVehicleCategory] = useState("");
-  const [carType, setCarType] = useState("");
-  const [genderPreference, setGenderPreference] = useState("");
+  const [carType,         setCarType]         = useState("");
+  const [genderPreference,setGenderPreference]= useState("");
+  const [seatsAvailable,  setSeatsAvailable]  = useState("");
+  const [rideType,        setRideType]        = useState([]);
+  const [driverRating,    setDriverRating]    = useState([]);
+  const [timePreference,  setTimePreference]  = useState([]);
 
-  const [seatsAvailable, setSeatsAvailable] = useState("");
-  const [rideType, setRideType] = useState([]);
-  const [driverRating, setDriverRating] = useState([]);
-  const [timePreference, setTimePreference] = useState([]);
-
-  const [results, setResults] = useState([]);
+  const [results,  setResults]  = useState([]);
   const [allRides, setAllRides] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [loading,  setLoading]  = useState(false);
+  const [error,    setError]    = useState("");
 
-  // ── Coords state (for UI consistency) ──
+  // ── Coords: both state (for passing to RideCard) and refs (for search) ──
   const [pickupCoords, setPickupCoords] = useState({ lat: null, lng: null });
   const [dropCoords,   setDropCoords]   = useState({ lat: null, lng: null });
-
-  // ── Coords refs (always fresh, no stale closure issue) ──
   const pickupCoordsRef = useRef({ lat: null, lng: null });
   const dropCoordsRef   = useRef({ lat: null, lng: null });
 
@@ -75,47 +74,42 @@ export default function SearchRides() {
 
     if (fMinPrice) {
       const min = parseFloat(fMinPrice);
-      if (!isNaN(min)) filtered = filtered.filter((ride) => Number(ride.price) >= min);
+      if (!isNaN(min)) filtered = filtered.filter((r) => Number(r.price) >= min);
     }
     if (fMaxPrice) {
       const max = parseFloat(fMaxPrice);
-      if (!isNaN(max)) filtered = filtered.filter((ride) => Number(ride.price) <= max);
+      if (!isNaN(max)) filtered = filtered.filter((r) => Number(r.price) <= max);
     }
-
     if (fVehicleCategory) {
       filtered = filtered.filter(
-        (ride) => getRideVehicleCategory(ride) === fVehicleCategory.toLowerCase()
+        (r) => getRideVehicleCategory(r) === fVehicleCategory.toLowerCase()
       );
     }
-
     if (fCarType) {
-      filtered = filtered.filter((ride) => {
-        const model = (ride.carType || "").toLowerCase().trim();
+      filtered = filtered.filter((r) => {
+        const model = (r.carType || "").toLowerCase().trim();
         return model === fCarType.toLowerCase().trim();
       });
     }
-
     if (fSeatsAvailable) {
-      if (fSeatsAvailable === "1")       filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 1);
-      else if (fSeatsAvailable === "2")  filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 2);
-      else if (fSeatsAvailable === "3+") filtered = filtered.filter((ride) => Number(ride.availableSeats) >= 3);
+      if (fSeatsAvailable === "1")       filtered = filtered.filter((r) => Number(r.availableSeats) >= 1);
+      else if (fSeatsAvailable === "2")  filtered = filtered.filter((r) => Number(r.availableSeats) >= 2);
+      else if (fSeatsAvailable === "3+") filtered = filtered.filter((r) => Number(r.availableSeats) >= 3);
     }
-
     if (fRideType.length > 0) {
-      filtered = filtered.filter((ride) => {
-        if (ride.bookingType) {
-          if (fRideType.includes("instant") && ride.bookingType === "INSTANT") return true;
-          if (fRideType.includes("request") && ride.bookingType === "REQUEST") return true;
+      filtered = filtered.filter((r) => {
+        if (r.bookingType) {
+          if (fRideType.includes("instant") && r.bookingType === "INSTANT") return true;
+          if (fRideType.includes("request") && r.bookingType === "REQUEST") return true;
           return false;
         }
         return true;
       });
     }
-
     if (fDriverRating.length > 0) {
-      filtered = filtered.filter((ride) => {
-        if (ride.driver?.rating || ride.driver?.averageRating) {
-          const rating = Number(ride.driver.rating || ride.driver.averageRating);
+      filtered = filtered.filter((r) => {
+        if (r.driver?.rating || r.driver?.averageRating) {
+          const rating = Number(r.driver.rating || r.driver.averageRating);
           if (fDriverRating.includes("4") && rating >= 4) return true;
           if (fDriverRating.includes("3") && rating >= 3 && rating < 4) return true;
           return false;
@@ -123,11 +117,10 @@ export default function SearchRides() {
         return true;
       });
     }
-
     if (fTimePreference.length > 0) {
-      filtered = filtered.filter((ride) => {
-        if (!ride.time) return false;
-        const [hours] = ride.time.split(":").map(Number);
+      filtered = filtered.filter((r) => {
+        if (!r.time) return false;
+        const [hours] = r.time.split(":").map(Number);
         if (fTimePreference.includes("morning")   && hours >= 6  && hours < 12) return true;
         if (fTimePreference.includes("afternoon") && hours >= 12 && hours < 18) return true;
         if (fTimePreference.includes("evening")   && hours >= 18)               return true;
@@ -138,7 +131,6 @@ export default function SearchRides() {
     setResults(filtered);
   };
 
-  // ── performSearch accepts optional coords params to avoid stale closure ──
   const performSearch = async (fromVal, toVal, dateVal, seatsVal, pCoords, dCoords) => {
     setLoading(true);
     setError("");
@@ -150,28 +142,25 @@ export default function SearchRides() {
         return;
       }
 
-      // Use passed coords first, then refs, then state (in order of freshness)
       const resolvedPickup = pCoords || pickupCoordsRef.current;
       const resolvedDrop   = dCoords || dropCoordsRef.current;
 
       const params = {};
 
-      // ── Geo-based search: direct coords (most accurate) ──
       if (resolvedPickup?.lat && resolvedPickup?.lng) {
-        params.pickupLat = resolvedPickup.lat;
-        params.pickupLng = resolvedPickup.lng;
+        params.pickupLat = parseFloat(resolvedPickup.lat);
+        params.pickupLng = parseFloat(resolvedPickup.lng);
       } else if (fromVal) {
-        params.pickup = fromVal;  // backend will geocode via Nominatim
+        params.pickup = fromVal;
       }
 
       if (resolvedDrop?.lat && resolvedDrop?.lng) {
-        params.dropLat = resolvedDrop.lat;
-        params.dropLng = resolvedDrop.lng;
+        params.dropLat = parseFloat(resolvedDrop.lat);
+        params.dropLng = parseFloat(resolvedDrop.lng);
       } else if (toVal) {
-        params.drop = toVal;  // backend will geocode via Nominatim
+        params.drop = toVal;
       }
 
-      // ── Extra filters ──
       if (dateVal)          params.date             = dateVal;
       if (seatsVal)         params.seats            = seatsVal;
       if (minPrice)         params.minPrice         = parseFloat(minPrice);
@@ -206,7 +195,6 @@ export default function SearchRides() {
       const fetchedRides = (res.data || []).filter(
         (ride) => Number(ride.availableSeats) > 0
       );
-
       setAllRides(fetchedRides);
       applyClientFilters(fetchedRides, {
         minPrice, maxPrice, vehicleCategory, carType,
@@ -221,20 +209,16 @@ export default function SearchRides() {
   };
 
   useEffect(() => {
-    if (!location.state) {
-      fetchAllRides();
-    }
+    if (!location.state) fetchAllRides();
   }, []);
 
   useEffect(() => {
     if (location.state && !hasAutoSearched.current) {
       const { from, to, date: stateDate, passengers } = location.state;
-
       if (from)       setStartLocation(from);
       if (to)         setEndLocation(to);
       if (stateDate)  setDate(stateDate);
       if (passengers) setSeats(Number(passengers));
-
       if (from && to) {
         hasAutoSearched.current = true;
         performSearch(from, to, stateDate || "", passengers || 1);
@@ -243,7 +227,6 @@ export default function SearchRides() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
 
-  // ── handleSearch reads from refs — always fresh, no stale closure ──
   const handleSearch = async (e) => {
     e?.preventDefault();
     performSearch(
@@ -286,9 +269,12 @@ export default function SearchRides() {
               onChange={setStartLocation}
               onSelect={(place) => {
                 setStartLocation(place.name);
-                const coords = { lat: place.lat, lng: place.lng };
+                const coords = {
+                  lat: parseFloat(place.lat),
+                  lng: parseFloat(place.lng)
+                };
                 setPickupCoords(coords);
-                pickupCoordsRef.current = coords; // ← ref updates instantly
+                pickupCoordsRef.current = coords;
               }}
             />
           </div>
@@ -303,9 +289,12 @@ export default function SearchRides() {
               onChange={setEndLocation}
               onSelect={(place) => {
                 setEndLocation(place.name);
-                const coords = { lat: place.lat, lng: place.lng };
+                const coords = {
+                  lat: parseFloat(place.lat),
+                  lng: parseFloat(place.lng)
+                };
                 setDropCoords(coords);
-                dropCoordsRef.current = coords; // ← ref updates instantly
+                dropCoordsRef.current = coords;
               }}
             />
           </div>
@@ -359,7 +348,6 @@ export default function SearchRides() {
                 setRideType([]);
                 setDriverRating([]);
                 setTimePreference([]);
-                // ── reset coords state + refs ──
                 setPickupCoords({ lat: null, lng: null });
                 setDropCoords({ lat: null, lng: null });
                 pickupCoordsRef.current = { lat: null, lng: null };
@@ -387,23 +375,11 @@ export default function SearchRides() {
                 <div className="filter-group">
                   <label>{t("srPriceRange")}</label>
                   <div className="price-inputs">
-                    <input
-                      type="number"
-                      placeholder={t("srMin")}
-                      value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
-                      min="0"
-                      step="0.01"
-                    />
+                    <input type="number" placeholder={t("srMin")} value={minPrice}
+                      onChange={(e) => setMinPrice(e.target.value)} min="0" step="0.01" />
                     <span>-</span>
-                    <input
-                      type="number"
-                      placeholder={t("srMax")}
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                      min="0"
-                      step="0.01"
-                    />
+                    <input type="number" placeholder={t("srMax")} value={maxPrice}
+                      onChange={(e) => setMaxPrice(e.target.value)} min="0" step="0.01" />
                   </div>
                 </div>
 
@@ -411,38 +387,19 @@ export default function SearchRides() {
                 <div className="filter-group">
                   <label>{t("srVehicleType")}</label>
                   <div className="vehicle-category-toggle">
-                    {[
-                      { value: "car",  label: t("srCar")  },
-                      { value: "bike", label: t("srBike") },
-                    ].map(({ value, label }) => (
-                      <button
-                        key={value}
-                        type="button"
+                    {[{ value: "car", label: t("srCar") }, { value: "bike", label: t("srBike") }].map(({ value, label }) => (
+                      <button key={value} type="button"
                         className={`vehicle-cat-btn ${vehicleCategory === value ? "active" : ""}`}
-                        onClick={() =>
-                          handleVehicleCategoryChange(
-                            vehicleCategory === value ? "" : value
-                          )
-                        }
-                      >
+                        onClick={() => handleVehicleCategoryChange(vehicleCategory === value ? "" : value)}>
                         {label}
                       </button>
                     ))}
                   </div>
-
                   {vehicleCategory && (
-                    <select
-                      value={carType}
-                      onChange={(e) => setCarType(e.target.value)}
-                      className="vehicle-submodel-select"
-                    >
-                      <option value="">
-                        {t("srAll")} {vehicleCategory === "car" ? t("srCars") : t("srBikes")}
-                      </option>
+                    <select value={carType} onChange={(e) => setCarType(e.target.value)} className="vehicle-submodel-select">
+                      <option value="">{t("srAll")} {vehicleCategory === "car" ? t("srCars") : t("srBikes")}</option>
                       {vehicleModels[vehicleCategory].map((model) => (
-                        <option key={model} value={model}>
-                          {model}
-                        </option>
+                        <option key={model} value={model}>{model}</option>
                       ))}
                     </select>
                   )}
@@ -454,18 +411,11 @@ export default function SearchRides() {
                   <div className="checkbox-group">
                     {["1", "2", "3+", ""].map((val) => (
                       <label className="checkbox-label" key={val || "all"}>
-                        <input
-                          type="radio"
-                          name="seatsAvailable"
-                          value={val}
-                          checked={seatsAvailable === val}
-                          onChange={() => setSeatsAvailable(val)}
-                        />
+                        <input type="radio" name="seatsAvailable" value={val}
+                          checked={seatsAvailable === val} onChange={() => setSeatsAvailable(val)} />
                         <span>
-                          {val === ""    ? t("srAll")
-                          : val === "3+" ? t("sr3PlusSeats")
-                          : val === "1"  ? t("sr1Seat")
-                          : t("sr2Seats")}
+                          {val === "" ? t("srAll") : val === "3+" ? t("sr3PlusSeats")
+                            : val === "1" ? t("sr1Seat") : t("sr2Seats")}
                         </span>
                       </label>
                     ))}
@@ -478,14 +428,11 @@ export default function SearchRides() {
                   <div className="checkbox-group">
                     {[["4", t("sr4Star")], ["3", t("sr3Star")]].map(([val, label]) => (
                       <label className="checkbox-label" key={val}>
-                        <input
-                          type="checkbox"
-                          checked={driverRating.includes(val)}
+                        <input type="checkbox" checked={driverRating.includes(val)}
                           onChange={(e) => {
                             if (e.target.checked) setDriverRating([...driverRating, val]);
                             else setDriverRating(driverRating.filter((r) => r !== val));
-                          }}
-                        />
+                          }} />
                         <span>{label}</span>
                       </label>
                     ))}
@@ -496,20 +443,13 @@ export default function SearchRides() {
                 <div className="filter-group">
                   <label>{t("srTimePreference")}</label>
                   <div className="checkbox-group">
-                    {[
-                      ["morning",   t("srMorning")],
-                      ["afternoon", t("srAfternoon")],
-                      ["evening",   t("srEvening")],
-                    ].map(([val, label]) => (
+                    {[["morning", t("srMorning")], ["afternoon", t("srAfternoon")], ["evening", t("srEvening")]].map(([val, label]) => (
                       <label className="checkbox-label" key={val}>
-                        <input
-                          type="checkbox"
-                          checked={timePreference.includes(val)}
+                        <input type="checkbox" checked={timePreference.includes(val)}
                           onChange={(e) => {
                             if (e.target.checked) setTimePreference([...timePreference, val]);
                             else setTimePreference(timePreference.filter((t) => t !== val));
-                          }}
-                        />
+                          }} />
                         <span>{label}</span>
                       </label>
                     ))}
@@ -521,32 +461,31 @@ export default function SearchRides() {
           </aside>
 
           {/* RIGHT - RESULTS */}
-<div className="results-container">
-  {error && <div className="error">{error}</div>}
+          <div className="results-container">
+            {error && <div className="error">{error}</div>}
 
-  {!loading && results.length === 0 && (
-    <div className="empty">
-      {t("srNoRides")}{" "}
-      <a href="/offer">{t("srOfferRideLink")}</a>.
-    </div>
-  )}
+            {!loading && results.length === 0 && (
+              <div className="empty">
+                {t("srNoRides")}{" "}
+                <a href="/offer">{t("srOfferRideLink")}</a>.
+              </div>
+            )}
 
-  {!loading && (
-    <div className="cards-grid">
-      {results.map((ride) => (
-        <RideCard
-          key={ride.id}
-          ride={ride}
-          // ── NEW: pass search coords so RideDetails can calc price ──
-          pickupCoords={pickupCoordsRef.current}
-          dropCoords={dropCoordsRef.current}
-          pickupName={startLocation}
-          dropName={endLocation}
-        />
-      ))}
-    </div>
-  )}
-</div>
+            {!loading && (
+              <div className="cards-grid">
+                {results.map((ride) => (
+                  <RideCard
+                    key={ride.id}
+                    ride={ride}
+                    pickupCoords={pickupCoords}
+                    dropCoords={dropCoords}
+                    pickupName={startLocation}
+                    dropName={endLocation}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
 
         </div>
       </div>
