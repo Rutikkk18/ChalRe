@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/rides")
@@ -152,5 +153,22 @@ public class RideController {
             @AuthenticationPrincipal User user
     ) {
         return ResponseEntity.ok(rideService.deleteRide(id, user));
+    }
+
+    @GetMapping("/{id}/calculate-price")
+    public ResponseEntity<?> calculatePrice(
+            @PathVariable Long id,
+            @RequestParam(required = false) Double pickupLat,
+            @RequestParam(required = false) Double pickupLng,
+            @RequestParam(required = false) Double dropLat,
+            @RequestParam(required = false) Double dropLng
+    ) {
+        try {
+            return ResponseEntity.ok(
+                    rideService.calculatePrice(id, pickupLat, pickupLng, dropLat, dropLng)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.ok(Map.of("error", e.getMessage()));
+        }
     }
 }

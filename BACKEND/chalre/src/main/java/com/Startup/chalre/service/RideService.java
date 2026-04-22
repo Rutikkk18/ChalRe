@@ -478,4 +478,53 @@ public class RideService {
                 })
                 .toList();
     }
+
+    // ── Phase 8: Calculate partial fare ─────────────────────
+    public Map<String, Object> calculatePrice(Long rideId,
+                                              Double pickupLat, Double pickupLng,
+                                              Double dropLat,   Double dropLng) {
+        Ride ride = rideRepository.findById(rideId)
+                .orElseThrow(() -> new RuntimeException("Ride not found"));
+
+        double fullPrice    = ride.getPrice();
+        double fullDistance = ride.getDistance();
+
+        // ── If no geo data on ride, return full price ──
+        if (fullDistance <= 0 || pickupLat == null || pickupLng == null
+                || dropLat == null || dropLng == null) {
+            return Map.of(
+                    "fullPrice",       fullPrice,
+                    "calculatedPrice", fullPrice,
+                    "partialDistance", 0.0,
+                    "fullDistance",    fullDistance,
+                    "isPartial",       false
+            );
+        }
+
+        // ── Calculate passenger's segment distance ──
+        LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
+        LatLng dropCoords   = new LatLng(dropLat,   dropLng);
+
+        double partialDistance = PolylineUtils.haversineKm(pickupCoords, dropCoords);
+
+        // ── Partial price = (partial / full) * fullPrice ──
+        double ratio           = partialDistance / fullDistance;
+        // Cap ratio at 1.0 — never charge more than full price
+        ratio                  = Math.min(ratio, 1.0);
+        double calculatedPrice = Math.round(fullPrice * ratio);
+
+        // ── Minimum fare: at least 20% of full price ──
+        double minFare = Math.round(fullPrice * 0.20);
+        calculatedPrice = Math.max(calculatedPrice, minFare);
+
+        boolean isPartial = partialDistance < (fullDistance * 0.95);
+
+        return Map.of(
+                "fullPrice",       fullPrice,
+                "calculatedPrice", calculatedPrice,
+                "partialDistance", Math.round(partialDistance * 10.0) / 10.0,
+                "fullDistance",    Math.round(fullDistance   * 10.0) / 10.0,
+                "isPartial",       isPartial
+        );
+    }
 }
