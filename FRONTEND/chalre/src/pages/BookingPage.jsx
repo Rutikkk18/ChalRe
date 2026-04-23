@@ -21,7 +21,6 @@ export default function BookingPage() {
   const navigate     = useNavigate();
   const location     = useLocation();
 
-  // ── Search context passed from RideCard ──
   const navState     = location.state || {};
   const pickupCoords = navState.pickupCoords || null;
   const dropCoords   = navState.dropCoords   || null;
@@ -34,7 +33,13 @@ export default function BookingPage() {
   const [error,     setError]     = useState("");
   const [priceInfo, setPriceInfo] = useState(null);
 
-  const noSeatsLeft = ride && Number(ride.availableSeats) <= 0;
+  const noSeatsLeft    = ride && Number(ride.availableSeats) <= 0;
+  const isPartialRoute = priceInfo?.isPartial && pickupName && dropName;
+
+  const pickupCity = pickupName?.split(",")[0]?.trim() || "";
+  const dropCity   = dropName?.split(",")[0]?.trim()   || "";
+  const startCity  = ride?.startLocation?.split(",")[0]?.trim() || "";
+  const endCity    = ride?.endLocation?.split(",")[0]?.trim()   || "";
 
   useEffect(() => { fetchRide(); }, []);
 
@@ -52,7 +57,6 @@ export default function BookingPage() {
     }
   };
 
-  // ── Fetch calculated partial price if coords available ──
   useEffect(() => {
     if (ride && pickupCoords?.lat && dropCoords?.lat) {
       fetchCalculatedPrice();
@@ -64,10 +68,10 @@ export default function BookingPage() {
     try {
       const res = await api.get(`/rides/${id}/calculate-price`, {
         params: {
-          pickupLat: pickupCoords.lat,
-          pickupLng: pickupCoords.lng,
-          dropLat:   dropCoords.lat,
-          dropLng:   dropCoords.lng,
+          pickupLat: parseFloat(pickupCoords.lat),
+          pickupLng: parseFloat(pickupCoords.lng),
+          dropLat:   parseFloat(dropCoords.lat),
+          dropLng:   parseFloat(dropCoords.lng),
         }
       });
       setPriceInfo(res.data);
@@ -82,9 +86,9 @@ export default function BookingPage() {
   };
 
   const handleBookRide = async () => {
-    if (!ride)        return;
-    if (noSeatsLeft)  { setError("No seats available.");              return; }
-    if (seats < 1)    { setError("Please select at least 1 seat.");   return; }
+    if (!ride)       return;
+    if (noSeatsLeft) { setError("No seats available.");            return; }
+    if (seats < 1)   { setError("Please select at least 1 seat."); return; }
     if (seats > ride.availableSeats) {
       setError(`Only ${ride.availableSeats} seat(s) left.`);
       return;
@@ -94,11 +98,9 @@ export default function BookingPage() {
     setError("");
 
     try {
-      // ── Use partial price if available ──
       const basePrice  = priceInfo?.calculatedPrice ?? ride.price;
       const totalPaise = Math.round(basePrice * seats * 100);
 
-      // STEP 1: Get Razorpay key
       const configRes   = await api.get("/payments/config");
       const razorpayKey = configRes.data.key;
 
@@ -108,7 +110,6 @@ export default function BookingPage() {
         return;
       }
 
-      // STEP 2: Create order
       const orderRes = await api.post("/payments/create-order", {
         rideId: Number(ride.id),
         amount: totalPaise
@@ -116,7 +117,6 @@ export default function BookingPage() {
 
       const { orderId, amount, currency } = orderRes.data;
 
-      // STEP 3: Load Razorpay
       const loaded = await loadRazorpayScript();
       if (!loaded || !window.Razorpay) {
         setError("Failed to load payment gateway. Check your connection.");
@@ -124,7 +124,6 @@ export default function BookingPage() {
         return;
       }
 
-      // STEP 4: Open Razorpay popup
       const options = {
         key:         razorpayKey,
         amount:      amount,
@@ -151,10 +150,7 @@ export default function BookingPage() {
           }
         },
         prefill: { name: "", email: "", contact: "" },
-        notes: {
-          rideId: ride.id.toString(),
-          seats:  seats.toString()
-        },
+        notes: { rideId: ride.id.toString(), seats: seats.toString() },
         theme: { color: "#1c7c31" },
         modal: {
           ondismiss: function () {
@@ -178,8 +174,6 @@ export default function BookingPage() {
     }
   };
 
-  const getCity = (loc) => loc ? loc.split(",")[0].trim() : "";
-
   if (!ride) return (
     <div className="booking-wrapper">
       <span style={{ color: "#6b7280", fontSize: "0.9rem" }}>
@@ -192,29 +186,85 @@ export default function BookingPage() {
     <div className="booking-wrapper">
       <div className="booking-card">
 
-        {/* LEFT PANEL */}
+        {/* ── LEFT PANEL ── */}
         <div className="booking-left">
           <div className="booking-left-header">
             <div className="booking-left-label">Your Journey</div>
             <h2>Confirm Your Booking</h2>
           </div>
 
+          {/* ── Route: 3-point if partial, 2-point if full ── */}
           <div className="booking-route">
+
+            {/* Start location — always show */}
             <div>
-              <div className="booking-route-city">{getCity(ride.startLocation)}</div>
+              <div className="booking-route-city"
+                style={{ color: isPartialRoute ? "rgba(255,255,255,0.45)" : "#ffffff",
+                         fontSize: isPartialRoute ? "1rem" : undefined }}>
+                {startCity}
+              </div>
               <div className="booking-route-addr">{ride.startLocation}</div>
             </div>
+
+            {/* Line segment: start → pickup (dashed if partial) */}
             <div className="booking-route-line">
-              <div className="booking-route-dot" />
-              <div className="booking-route-track" />
-              <div className="booking-route-dot" />
+              <div className="booking-route-dot"
+                style={{ background: isPartialRoute ? "rgba(34,197,94,0.35)" : undefined,
+                         boxShadow: isPartialRoute ? "none" : undefined }} />
+              <div className="booking-route-track"
+                style={{ background: isPartialRoute
+                  ? "linear-gradient(to right, rgba(34,197,94,0.3), rgba(34,197,94,0.15))"
+                  : undefined,
+                  borderTop: isPartialRoute ? "1.5px dashed rgba(34,197,94,0.4)" : undefined,
+                  height: isPartialRoute ? "0" : undefined }} />
+              {isPartialRoute && (
+                <div className="booking-route-dot"
+                  style={{ background: "#22c55e", boxShadow: "0 0 0 3px rgba(34,197,94,0.35)" }} />
+              )}
+              {!isPartialRoute && (
+                <div className="booking-route-dot" />
+              )}
             </div>
+
+            {/* Boarding point — only if partial */}
+            {isPartialRoute && (
+              <div style={{ marginBottom: "4px" }}>
+                <div style={{
+                  display: "inline-block",
+                  fontSize: "0.64rem",
+                  fontWeight: 700,
+                  color: "#22c55e",
+                  letterSpacing: "0.5px",
+                  marginBottom: "3px",
+                  textTransform: "uppercase"
+                }}>
+                  🟢 Your boarding point
+                </div>
+                <div className="booking-route-city" style={{ fontSize: "1.25rem" }}>
+                  {pickupCity}
+                </div>
+                <div className="booking-route-addr">{pickupName}</div>
+              </div>
+            )}
+
+            {/* Line segment: pickup → end (solid) */}
+            {isPartialRoute && (
+              <div className="booking-route-line">
+                <div className="booking-route-dot"
+                  style={{ background: "#22c55e", boxShadow: "0 0 0 3px rgba(34,197,94,0.35)" }} />
+                <div className="booking-route-track" />
+                <div className="booking-route-dot" />
+              </div>
+            )}
+
+            {/* End location — always show */}
             <div>
-              <div className="booking-route-city">{getCity(ride.endLocation)}</div>
+              <div className="booking-route-city">{endCity}</div>
               <div className="booking-route-addr">{ride.endLocation}</div>
             </div>
           </div>
 
+          {/* Meta grid */}
           <div className="booking-meta-grid">
             <div className="booking-meta-pill">
               <div className="booking-meta-pill-label">Date</div>
@@ -234,37 +284,35 @@ export default function BookingPage() {
             </div>
           </div>
 
-          {/* ── Price highlight with partial info ── */}
+          {/* ── Price highlight ── */}
           <div className="booking-price-highlight">
             <div>
               <div className="booking-price-highlight-label">
-                {priceInfo?.isPartial ? "Your fare (partial route)" : "Price per seat"}
+                {isPartialRoute ? `${pickupCity} → ${dropCity}` : `${startCity} → ${endCity}`}
               </div>
-              {priceInfo?.isPartial && (
-                <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "2px" }}>
-                  {pickupName?.split(",")[0]} → {dropName?.split(",")[0]}
-                  &nbsp;·&nbsp;
-                  {priceInfo.partialDistance}km of {priceInfo.fullDistance}km
+              {isPartialRoute && (
+                <div style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.45)", marginTop: "3px" }}>
+                  {priceInfo.partialDistance}km of {priceInfo.fullDistance}km · full fare ₹{priceInfo.fullPrice}
                 </div>
               )}
               <div className="booking-price-highlight-per">
                 × {seats} seat{seats !== 1 ? "s" : ""}
               </div>
             </div>
-            <div>
+            <div style={{ textAlign: "right" }}>
               <div className="booking-price-highlight-val">
                 ₹{(effectivePrice() * seats).toFixed(0)}
               </div>
-              {priceInfo?.isPartial && (
-                <div style={{ fontSize: "0.72rem", color: "#9ca3af", textAlign: "right" }}>
-                  full fare ₹{priceInfo.fullPrice}
+              {isPartialRoute && seats > 1 && (
+                <div style={{ fontSize: "0.68rem", color: "rgba(255,255,255,0.45)", marginTop: "3px" }}>
+                  ₹{priceInfo.calculatedPrice} × {seats}
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* RIGHT PANEL */}
+        {/* ── RIGHT PANEL ── */}
         <div className="booking-right">
           <div>
             <div className="booking-right-title">Book Your Seat</div>
