@@ -137,10 +137,11 @@ export default function SearchRides() {
     const places = res.data || [];
     if (places.length > 0) {
       const place = places[0];
-      const coords = {
-        lat: parseFloat(place.lat),
-        lng: parseFloat(place.lon || place.lng),
-      };
+      // ── handle both lon and lng field names ──
+      const lat = parseFloat(place.lat);
+      const lng = parseFloat(place.lon || place.lng);
+      if (!lat || !lng) return;
+      const coords = { lat, lng };
       if (type === "pickup") {
         setPickupCoords(coords);
         pickupCoordsRef.current = coords;
@@ -152,6 +153,7 @@ export default function SearchRides() {
   } catch (e) {
     console.error("Geocode from text failed:", e);
   }
+
 };
   const performSearch = async (fromVal, toVal, dateVal, seatsVal, pCoords, dCoords) => {
     setLoading(true);
@@ -297,15 +299,19 @@ if (!dropCoordsRef.current?.lat && toVal) {
               value={startLocation}
               placeholder={t("leavingFrom")}
               onChange={setStartLocation}
-              onSelect={(place) => {
-                setStartLocation(place.name);
-                const coords = {
-                  lat: parseFloat(place.lat),
-                  lng: parseFloat(place.lng)
-                };
+             onSelect={(place) => {
+              setStartLocation(place.name);
+              const lat = parseFloat(place.lat);
+              const lng = parseFloat(place.lng || place.lon);
+              if (lat && lng) {
+                const coords = { lat, lng };
                 setPickupCoords(coords);
                 pickupCoordsRef.current = coords;
-              }}
+              } else {
+                // ── fallback: geocode the name ──
+                fetchCoordsFromText(place.name, "pickup");
+              }
+            }}
             />
           </div>
 
@@ -318,14 +324,18 @@ if (!dropCoordsRef.current?.lat && toVal) {
               placeholder={t("goingTo")}
               onChange={setEndLocation}
               onSelect={(place) => {
-                setEndLocation(place.name);
-                const coords = {
-                  lat: parseFloat(place.lat),
-                  lng: parseFloat(place.lng)
-                };
+              setEndLocation(place.name);
+              const lat = parseFloat(place.lat);
+              const lng = parseFloat(place.lng || place.lon);
+              if (lat && lng) {
+                const coords = { lat, lng };
                 setDropCoords(coords);
                 dropCoordsRef.current = coords;
-              }}
+              } else {
+                // ── fallback: geocode the name ──
+                fetchCoordsFromText(place.name, "drop");
+              }
+            }}
             />
           </div>
 
