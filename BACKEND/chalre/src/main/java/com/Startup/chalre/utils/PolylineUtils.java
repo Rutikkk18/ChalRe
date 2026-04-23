@@ -6,7 +6,7 @@ import java.util.List;
 
 public class PolylineUtils {
 
-    private static final double MATCH_RADIUS_KM = 20.0; // 10km for text-based searches
+    private static final double MATCH_RADIUS_KM = 30.0; // 10km for text-based searches
 
     public static List<LatLng> decode(String encoded) {
         List<LatLng> points = new ArrayList<>();
