@@ -404,51 +404,50 @@ public class RideService {
                 .filter(r -> isValidMatch(r, pickupCoords, dropCoords))
                 .toList();
     }
-
-    // ── Direction-aware match check ──────────────────────────
+        //direction check
     private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
 
-        // Need ride start/end coords for direction check
-        if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
+    if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
 
-        LatLng rideFrom = new LatLng(r.getFromLat(), r.getFromLng());
-        LatLng rideTo   = new LatLng(r.getToLat(),   r.getToLng());
+    LatLng rideFrom = new LatLng(r.getFromLat(), r.getFromLng());
+    LatLng rideTo   = new LatLng(r.getToLat(),   r.getToLng());
 
-        double totalDist = PolylineUtils.haversineKm(rideFrom, rideTo);
+    double totalDist = PolylineUtils.haversineKm(rideFrom, rideTo);
 
-        // Distance of pickup/drop from ride's start and end
-        double pickupFromDist = PolylineUtils.haversineKm(pickupCoords, rideFrom);
-        double pickupToDist   = PolylineUtils.haversineKm(pickupCoords, rideTo);
-        double dropFromDist   = PolylineUtils.haversineKm(dropCoords,   rideFrom);
-        double dropToDist     = PolylineUtils.haversineKm(dropCoords,   rideTo);
+    double pickupFromDist = PolylineUtils.haversineKm(pickupCoords, rideFrom);
+    double pickupToDist   = PolylineUtils.haversineKm(pickupCoords, rideTo);
+    double dropFromDist   = PolylineUtils.haversineKm(dropCoords,   rideFrom);
+    double dropToDist     = PolylineUtils.haversineKm(dropCoords,   rideTo);
 
-        // ── DIRECTION CHECK 1: pickup must be closer to START than to END ──
-        // This rejects locations BEHIND the start (like Kavane behind Kolhapur)
-        if (pickupFromDist >= pickupToDist) return false;
+    // ── TOLERANCE: 35km buffer for direction checks ──
+    // Handles cities equidistant from start/end (like Satara between Kolhapur/Pune)
+    double tolerance = 35.0;
 
-        // ── DIRECTION CHECK 2: drop must be closer to END than to START ──
-        // This rejects drop locations that are behind the start
-        if (dropToDist >= dropFromDist) return false;
+    // ── DIRECTION CHECK 1: pickup must NOT be clearly BEHIND the start ──
+    // Reject only if pickup is significantly closer to END than START
+    // i.e., pickup is in wrong direction (like Kavane behind Kolhapur)
+    if (pickupFromDist > pickupToDist + tolerance) return false;
 
-        // ── DIRECTION CHECK 3: pickup must come BEFORE drop on the route ──
-        // Pickup should be closer to start than drop is
-        if (pickupFromDist >= dropFromDist) return false;
+    // ── DIRECTION CHECK 2: drop must NOT be clearly BEHIND the end ──
+    if (dropToDist > dropFromDist + tolerance) return false;
 
-        // ── BOUNDS CHECK: both must be within total route distance ──
-        // With a small tolerance buffer (10% of total) for edge cases
-        double buffer = totalDist * 0.10;
-        if (pickupFromDist > totalDist + buffer) return false;
-        if (dropToDist     > totalDist + buffer) return false;
+    // ── DIRECTION CHECK 3: pickup must come BEFORE drop on route ──
+    // pickup should be closer to start than drop is (with tolerance)
+    if (pickupFromDist > dropFromDist + tolerance) return false;
 
-        // ── POLYLINE CHECK: must also be near the actual route ──
-        if (r.getPolyline() != null && !r.getPolyline().isEmpty()) {
-            return PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline())
-                && PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline());
-        }
+    // ── BOUNDS CHECK: both must be within total route distance + buffer ──
+    double buffer = Math.max(totalDist * 0.15, 40.0); // 15% or 40km whichever bigger
+    if (pickupFromDist > totalDist + buffer) return false;
+    if (dropToDist     > totalDist + buffer) return false;
 
-        // Fallback: passed all direction checks, no polyline to verify against
-        return true;
+    // ── POLYLINE CHECK: must be near the actual route ──
+    if (r.getPolyline() != null && !r.getPolyline().isEmpty()) {
+        return PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline())
+            && PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline());
     }
+
+    return true;
+}
 
     // ── Phase 8: Calculate partial fare ─────────────────────
     public Map<String, Object> calculatePrice(Long rideId,
