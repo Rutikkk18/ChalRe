@@ -12,10 +12,19 @@ const LocationAutocomplete = ({
   const [show,        setShow]        = useState(false);
   const [loading,     setLoading]     = useState(false);
 
-  const wrapperRef = useRef(null);
-  const abortRef   = useRef(null);
+  const wrapperRef      = useRef(null);
+  const abortRef        = useRef(null);
+  // ── Track whether last change was from user typing or programmatic ──
+  const userTypingRef   = useRef(false);
+  // ── Track if a selection was just made (suppress value sync) ──
+  const justSelectedRef = useRef(false);
 
+  // ── Sync value from parent ONLY if user hasn't just selected ──
   useEffect(() => {
+    if (justSelectedRef.current) {
+      justSelectedRef.current = false;
+      return; // skip sync — we just set it ourselves via handleSelect
+    }
     setQuery(value || "");
   }, [value]);
 
@@ -30,6 +39,8 @@ const LocationAutocomplete = ({
   }, []);
 
   useEffect(() => {
+    // ── Only fetch if user is actually typing ──
+    if (!userTypingRef.current) return;
     if (!query || query.trim().length < 2) {
       setSuggestions([]);
       setShow(false);
@@ -49,7 +60,7 @@ const LocationAutocomplete = ({
 
         const data = Array.isArray(response.data) ? response.data : [];
         setSuggestions(data);
-        setShow(true);
+        setShow(data.length > 0);
       } catch (err) {
         if (err.name !== "CanceledError") {
           console.error("Location search failed", err);
@@ -67,24 +78,24 @@ const LocationAutocomplete = ({
 
   const handleSelect = (place) => {
     const name = place?.name || place?.display_name || "";
+
+    // ── Mark that we just selected — suppress value sync ──
+    justSelectedRef.current = true;
+    userTypingRef.current   = false;
+
     setQuery(name);
+    setSuggestions([]);
+    setShow(false);
     onChange(name);
 
     if (onSelect) {
-      // ── Extract lat/lng — try all possible field names ──
       const rawLat = place?.lat;
       const rawLng = place?.lon ?? place?.lng;
-
-      const lat = rawLat  ? parseFloat(rawLat)  : null;
-      const lng = rawLng  ? parseFloat(rawLng)  : null;
-
-      // ── Log for debugging ──
-      console.log("LocationAutocomplete select:", { name, lat, lng, rawPlace: place });
-
+      const lat    = rawLat ? parseFloat(rawLat) : null;
+      const lng    = rawLng ? parseFloat(rawLng) : null;
+      console.log("LocationAutocomplete select:", { name, lat, lng });
       onSelect({ name, lat, lng });
     }
-
-    setShow(false);
   };
 
   return (
@@ -96,8 +107,12 @@ const LocationAutocomplete = ({
         autoComplete="off"
         onChange={(e) => {
           const newValue = e.target.value;
+          // ── Mark as user typing — allow coord clear ──
+          userTypingRef.current   = true;
+          justSelectedRef.current = false;
           setQuery(newValue);
           onChange(newValue);
+          // ── Clear coords only when user manually types ──
           if (onSelect) {
             onSelect({ name: newValue, lat: null, lng: null });
           }

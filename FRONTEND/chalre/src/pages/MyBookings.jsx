@@ -20,6 +20,134 @@ import {
 import RatingModal from "../components/RatingModal";
 import ChatModal from "../components/ChatModal";
 
+// --- Custom Slide to Confirm Component ---
+const SlideToConfirm = ({ onConfirm, isLoading }) => {
+  const [value, setValue] = useState(0);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleTouchEnd = () => {
+    // Snap back to 0 if they didn't slide all the way
+    if (!isSuccess && !isLoading) {
+      setValue(0);
+    }
+  };
+
+  const handleChange = (e) => {
+    if (isSuccess || isLoading) return;
+    const val = parseInt(e.target.value, 10);
+    setValue(val);
+    
+    // Trigger confirm when the slider reaches 95% or more
+    if (val >= 95) {
+      setValue(100);
+      setIsSuccess(true);
+      onConfirm();
+    }
+  };
+
+  return (
+    <div style={{
+      position: "relative",
+      width: "100%",
+      maxWidth: "320px",
+      height: "48px",
+      background: "#e5e7eb",
+      borderRadius: "24px",
+      overflow: "hidden",
+      display: "flex",
+      alignItems: "center",
+      boxShadow: "inset 0 1px 3px rgba(0,0,0,0.1)"
+    }}>
+      {/* Green fill background that tracks the slider */}
+      <div style={{
+        position: "absolute",
+        left: 0,
+        top: 0,
+        height: "100%",
+        width: `${value}%`,
+        background: "#16a34a",
+        transition: isSuccess ? "none" : "width 0.1s ease",
+        borderRadius: "24px"
+      }} />
+
+      {/* Button Text */}
+      <div style={{
+        position: "absolute",
+        width: "100%",
+        textAlign: "center",
+        color: value > 50 ? "#ffffff" : "#4b5563",
+        fontWeight: "600",
+        fontSize: "0.85rem",
+        pointerEvents: "none",
+        zIndex: 1,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "6px",
+        transition: "color 0.2s"
+      }}>
+        {isLoading ? "Confirming..." : isSuccess ? "Confirmed!" : "Slide to confirm"}
+        {!isLoading && !isSuccess && <span style={{ fontSize: "1rem" }}>»</span>}
+      </div>
+
+      {/* Invisible Range Input acting as the drag mechanism */}
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={value}
+        onChange={handleChange}
+        onMouseUp={handleTouchEnd}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          appearance: "none",
+          WebkitAppearance: "none",
+          width: "100%",
+          height: "100%",
+          background: "transparent",
+          position: "absolute",
+          zIndex: 2,
+          cursor: (isLoading || isSuccess) ? "not-allowed" : "grab",
+          margin: 0
+        }}
+        className="slide-confirm-input"
+      />
+      
+      {/* Inline styles specifically for the slider thumb */}
+      <style>{`
+        .slide-confirm-input::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #ffffff;
+          border: 1px solid #d1d5db;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+          cursor: grab;
+          margin-left: 2px;
+        }
+        .slide-confirm-input:active::-webkit-slider-thumb {
+          cursor: grabbing;
+        }
+        .slide-confirm-input::-moz-range-thumb {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #ffffff;
+          border: 1px solid #d1d5db;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+          cursor: grab;
+        }
+        .slide-confirm-input:active::-moz-range-thumb {
+          cursor: grabbing;
+        }
+      `}</style>
+    </div>
+  );
+};
+// ------------------------------------------
+
 export default function MyBookings() {
   const [upcomingBookings, setUpcomingBookings] = useState([]);
   const [pastBookings, setPastBookings]         = useState([]);
@@ -75,12 +203,12 @@ export default function MyBookings() {
   };
 
   const handleConfirmRide = async (b) => {
-    if (!window.confirm("Confirm that the ride is completed? This will release payment to the driver.")) return;
+    // Note: window.confirm removed here since the slider action IS the confirmation.
     setConfirmingId(b.id);
     try {
       await api.post(`/payments/confirm-ride/${b.ride.id}`);
       setConfirmedRides(prev => new Set([...prev, b.id]));
-      alert("Ride confirmed! Payment will be released to driver.");
+      // alert("Ride confirmed! Payment will be released to driver."); // Optional: remove if you want it fully seamless
     } catch (err) {
       const d = err.response?.data;
       alert(typeof d === "string" ? d : "Failed to confirm ride. Please try again.");
@@ -243,33 +371,20 @@ export default function MyBookings() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  gap: "0.75rem",
+                  gap: "1rem",
                   flexWrap: "wrap"
                 }}>
-                  <span style={{ fontSize: "0.8rem", color: "#166534" }}>
-                    🎯 Ride completed? Confirm to release payment to driver.
+                  <span style={{ fontSize: "0.85rem", color: "#166534", flex: 1, minWidth: "200px" }}>
+                    🎯 Ride completed? Release payment to the driver.
                   </span>
-                  <button
-                    onClick={() => handleConfirmRide(b)}
-                    disabled={confirmingId === b.id}
-                    style={{
-                      background: "#16a34a",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "6px",
-                      padding: "0.4rem 0.9rem",
-                      fontSize: "0.82rem",
-                      fontWeight: "500",
-                      cursor: confirmingId === b.id ? "not-allowed" : "pointer",
-                      opacity: confirmingId === b.id ? 0.7 : 1,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px"
-                    }}
-                  >
-                    <CheckCircle size={13} />
-                    {confirmingId === b.id ? "Confirming…" : "Confirm Ride"}
-                  </button>
+                  
+                  {/* Implementing the new Slider right here */}
+                  <div style={{ width: "100%", maxWidth: "240px" }}>
+                    <SlideToConfirm 
+                      onConfirm={() => handleConfirmRide(b)} 
+                      isLoading={confirmingId === b.id} 
+                    />
+                  </div>
                 </div>
               )}
 

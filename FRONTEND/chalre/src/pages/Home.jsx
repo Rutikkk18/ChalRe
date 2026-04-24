@@ -18,6 +18,10 @@ export default function Home() {
     passengers: 1,
   });
 
+  // ── Store coords from home search bar ──
+  const [fromCoords, setFromCoords] = useState(null);
+  const [toCoords,   setToCoords]   = useState(null);
+
   const updateSearch = (field, value) => {
     setSearch((prev) => ({ ...prev, [field]: value }));
   };
@@ -33,19 +37,17 @@ export default function Home() {
   return (
     <div className="home-wrapper">
 
-      {/* ── HERO (banner is now INSIDE hero) ── */}
+      {/* ── HERO ── */}
       <header className="hero">
 
-       {/* ── LAUNCH BANNER — sits at top of hero on the background image ── */}
-<div className="launch-banner">
-  <div className="launch-banner-inner">
-    <div className="launch-banner-text">
-      <span className="launch-banner-title">{t("launchBannerTitle")}</span>
-      
-      <span className="launch-banner-desc">{t("launchBannerDesc")}</span>
-    </div>
-  </div>
-</div>
+        <div className="launch-banner">
+          <div className="launch-banner-inner">
+            <div className="launch-banner-text">
+              <span className="launch-banner-title">{t("launchBannerTitle")}</span>
+              <span className="launch-banner-desc">{t("launchBannerDesc")}</span>
+            </div>
+          </div>
+        </div>
 
         <h1>{t("heroTitle")}</h1>
         <p>{t("heroSubtitle")}</p>
@@ -56,6 +58,14 @@ export default function Home() {
               value={search.from}
               onChange={(val) => updateSearch("from", val)}
               placeholder={t("leavingFrom")}
+              onSelect={(place) => {
+                updateSearch("from", place.name);
+                if (place.lat && place.lng) {
+                  setFromCoords({ lat: place.lat, lng: place.lng });
+                } else {
+                  setFromCoords(null);
+                }
+              }}
             />
           </div>
 
@@ -66,6 +76,14 @@ export default function Home() {
               value={search.to}
               onChange={(val) => updateSearch("to", val)}
               placeholder={t("goingTo")}
+              onSelect={(place) => {
+                updateSearch("to", place.name);
+                if (place.lat && place.lng) {
+                  setToCoords({ lat: place.lat, lng: place.lng });
+                } else {
+                  setToCoords(null);
+                }
+              }}
             />
           </div>
 
@@ -103,10 +121,13 @@ export default function Home() {
               }
               navigate("/search", {
                 state: {
-                  from: search.from,
-                  to: search.to,
-                  date: search.date,
+                  from:       search.from,
+                  to:         search.to,
+                  date:       search.date,
                   passengers: search.passengers,
+                  // ── Pass coords if available from dropdown selection ──
+                  fromCoords: fromCoords || null,
+                  toCoords:   toCoords   || null,
                 },
               });
             }}
@@ -123,13 +144,11 @@ export default function Home() {
           <h3>{t("verifiedUsers")}</h3>
           <p>{t("verifiedUsersDesc")}</p>
         </div>
-
         <div className="feature-card">
           <div className="feature-icon">🤖</div>
           <h3>{t("smartMatching")}</h3>
           <p>{t("smartMatchingDesc")}</p>
         </div>
-
         <div className="feature-card">
           <div className="feature-icon">🛡️</div>
           <h3>{t("securePayments")}</h3>
@@ -171,20 +190,17 @@ export default function Home() {
           <h2>{t("whyChalRe")}</h2>
           <p>{t("whyChalReSubtitle")}</p>
         </div>
-
         <div className="why-grid">
           <div className="why-card">
             <span className="why-icon">🚗 🏍️</span>
             <h3>{t("bikeCarOptions")}</h3>
             <p>{t("bikeCarOptionsDesc")}</p>
           </div>
-
           <div className="why-card">
             <span className="why-icon">📍</span>
             <h3>{t("localFocus")}</h3>
             <p>{t("localFocusDesc")}</p>
           </div>
-
           <div className="why-card">
             <span className="why-icon">🛣️</span>
             <h3>{t("longDistance")}</h3>
@@ -198,7 +214,6 @@ export default function Home() {
       {/* ── HELP CENTRE ── */}
       <div className="help-centre">
         <h2 className="help-title">{t("helpCentreTitle")}</h2>
-
         <div className="help-grid">
           <div className="help-col">
             <div className="help-item">
@@ -210,7 +225,6 @@ export default function Home() {
               <p>{t("helpA2")}</p>
             </div>
           </div>
-
           <div className="help-col">
             <div className="help-item">
               <h4>{t("helpQ3")}</h4>
@@ -222,13 +236,11 @@ export default function Home() {
             </div>
           </div>
         </div>
-
         <div className="help-btn-wrap">
           <button className="help-btn" onClick={() => navigate("/help-center")}>
             {t("readHelpCentre")}
           </button>
         </div>
-
         <div className="divider gradient" />
       </div>
 

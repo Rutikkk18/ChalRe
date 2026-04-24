@@ -130,7 +130,6 @@ export default function SearchRides() {
     setResults(filtered);
   };
 
-  // ── Geocode text → coords (fallback when no dropdown selection) ──
   const fetchCoordsFromText = async (text, type) => {
     try {
       const res    = await api.get("/locations/search", { params: { q: text } });
@@ -154,15 +153,24 @@ export default function SearchRides() {
     }
   };
 
-  // ── Helper: safely set coords from onSelect place object ──
   const extractCoords = (place) => {
     if (!place) return null;
-    const lat = place.lat  ? Number(place.lat)  : null;
-    const lng = place.lng  ? Number(place.lng)
-              : place.lon  ? Number(place.lon)
+    const lat = place.lat ? Number(place.lat) : null;
+    const lng = place.lng ? Number(place.lng)
+              : place.lon ? Number(place.lon)
               : null;
     if (lat && lng && !isNaN(lat) && !isNaN(lng)) return { lat, lng };
     return null;
+  };
+
+  const setPickupCoordsAndRef = (coords) => {
+    setPickupCoords(coords);
+    pickupCoordsRef.current = coords;
+  };
+
+  const setDropCoordsAndRef = (coords) => {
+    setDropCoords(coords);
+    dropCoordsRef.current = coords;
   };
 
   const performSearch = async (fromVal, toVal, dateVal, seatsVal, pCoords, dCoords) => {
@@ -204,8 +212,6 @@ export default function SearchRides() {
       if (carType)          params.carType          = carType;
       if (genderPreference) params.genderPreference = genderPreference;
 
-      console.log("Search params:", params); // ← debug
-
       const res = await api.get("/rides/search", { params });
 
       const fetchedRides = (res.data || []).filter(
@@ -214,7 +220,7 @@ export default function SearchRides() {
 
       setAllRides(fetchedRides);
 
-      // ── If coords still null, geocode from text so RideCard can calc price ──
+      // ── Geocode from text if coords still missing ──
       if (!pickupCoordsRef.current?.lat && fromVal) {
         fetchCoordsFromText(fromVal, "pickup");
       }
@@ -261,14 +267,26 @@ export default function SearchRides() {
 
   useEffect(() => {
     if (location.state && !hasAutoSearched.current) {
-      const { from, to, date: stateDate, passengers } = location.state;
-      if (from)       setStartLocation(from);
-      if (to)         setEndLocation(to);
+      const { from, to, date: stateDate, passengers, fromCoords, toCoords } = location.state;
+
+      if (from) setStartLocation(from);
+      if (to)   setEndLocation(to);
       if (stateDate)  setDate(stateDate);
       if (passengers) setSeats(Number(passengers));
+
+      // ── Restore coords if passed from Home ──
+      if (fromCoords?.lat && fromCoords?.lng) {
+        setPickupCoordsAndRef({ lat: Number(fromCoords.lat), lng: Number(fromCoords.lng) });
+      }
+      if (toCoords?.lat && toCoords?.lng) {
+        setDropCoordsAndRef({ lat: Number(toCoords.lat), lng: Number(toCoords.lng) });
+      }
+
       if (from && to) {
         hasAutoSearched.current = true;
-        performSearch(from, to, stateDate || "", passengers || 1);
+        const pCoords = fromCoords?.lat ? { lat: Number(fromCoords.lat), lng: Number(fromCoords.lng) } : null;
+        const dCoords = toCoords?.lat   ? { lat: Number(toCoords.lat),   lng: Number(toCoords.lng)   } : null;
+        performSearch(from, to, stateDate || "", passengers || 1, pCoords, dCoords);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -304,7 +322,6 @@ export default function SearchRides() {
   return (
     <div className="search-page">
 
-      {/* ── TOP: SEARCH BAR SECTION ── */}
       <div className="search-hero">
         <form className="search-form" onSubmit={handleSearch}>
 
@@ -318,8 +335,7 @@ export default function SearchRides() {
                 setStartLocation(place.name);
                 const coords = extractCoords(place);
                 if (coords) {
-                  setPickupCoords(coords);
-                  pickupCoordsRef.current = coords;
+                  setPickupCoordsAndRef(coords);
                 } else {
                   fetchCoordsFromText(place.name, "pickup");
                 }
@@ -339,8 +355,7 @@ export default function SearchRides() {
                 setEndLocation(place.name);
                 const coords = extractCoords(place);
                 if (coords) {
-                  setDropCoords(coords);
-                  dropCoordsRef.current = coords;
+                  setDropCoordsAndRef(coords);
                 } else {
                   fetchCoordsFromText(place.name, "drop");
                 }
@@ -377,9 +392,7 @@ export default function SearchRides() {
 
           {/* BUTTONS */}
           <div className="sr-actions">
-            <button type="submit" className="btn-search">
-              {t("search")}
-            </button>
+            <button type="submit" className="btn-search">{t("search")}</button>
             <button
               type="button"
               className="btn-reset"
@@ -410,17 +423,14 @@ export default function SearchRides() {
         </form>
       </div>
 
-      {/* ── BOTTOM: GRAY BODY (FILTERS + RESULTS) ── */}
       <div className="search-body">
         <div className="search-content-layout">
 
-          {/* LEFT SIDEBAR - FILTERS */}
           <aside className="filters-sidebar">
             <h3>{t("srFilters")}</h3>
             <div className="filters-section">
               <div className="filters-grid">
 
-                {/* Price Range */}
                 <div className="filter-group">
                   <label>{t("srPriceRange")}</label>
                   <div className="price-inputs">
@@ -432,7 +442,6 @@ export default function SearchRides() {
                   </div>
                 </div>
 
-                {/* Vehicle Type */}
                 <div className="filter-group">
                   <label>{t("srVehicleType")}</label>
                   <div className="vehicle-category-toggle">
@@ -454,7 +463,6 @@ export default function SearchRides() {
                   )}
                 </div>
 
-                {/* Seats Available */}
                 <div className="filter-group">
                   <label>{t("srSeatsAvailable")}</label>
                   <div className="checkbox-group">
@@ -471,7 +479,6 @@ export default function SearchRides() {
                   </div>
                 </div>
 
-                {/* Driver Rating */}
                 <div className="filter-group">
                   <label>{t("srDriverRating")}</label>
                   <div className="checkbox-group">
@@ -488,7 +495,6 @@ export default function SearchRides() {
                   </div>
                 </div>
 
-                {/* Time Preference */}
                 <div className="filter-group">
                   <label>{t("srTimePreference")}</label>
                   <div className="checkbox-group">
@@ -509,7 +515,6 @@ export default function SearchRides() {
             </div>
           </aside>
 
-          {/* RIGHT - RESULTS */}
           <div className="results-container">
             {error && <div className="error">{error}</div>}
 
