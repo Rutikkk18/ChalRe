@@ -12,39 +12,29 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
   const [calculatedPrice, setCalculatedPrice] = useState(null);
   const [isPartial,       setIsPartial]       = useState(false);
 
-  // ── Calculate partial price as soon as coords are available ──
-  useEffect(() => {
-  if (
+  const hasValidCoords =
     ride?.id &&
     pickupCoords?.lat && pickupCoords?.lng &&
-    dropCoords?.lat   && dropCoords?.lng
-  ) {
-    fetchPrice();
-  }
-// eslint-disable-next-line
-}, [ride?.id, pickupCoords?.lat, pickupCoords?.lng, dropCoords?.lat, dropCoords?.lng]);
+    dropCoords?.lat   && dropCoords?.lng   &&
+    !isNaN(Number(pickupCoords.lat)) &&
+    !isNaN(Number(dropCoords.lat));
 
-// ADD this new useEffect after the existing one:
-useEffect(() => {
-  if (
-    ride?.id &&
-    pickupCoords?.lat && pickupCoords?.lng &&
-    dropCoords?.lat   && dropCoords?.lng &&
-    calculatedPrice === null
-  ) {
-    fetchPrice();
-  }
-// eslint-disable-next-line
-}, [pickupCoords, dropCoords]);
+  // ── Fire whenever ride or coords change ──
+  useEffect(() => {
+    if (hasValidCoords) {
+      fetchPrice();
+    }
+  // eslint-disable-next-line
+  }, [ride?.id, pickupCoords?.lat, pickupCoords?.lng, dropCoords?.lat, dropCoords?.lng]);
 
   const fetchPrice = async () => {
     try {
       const res = await api.get(`/rides/${ride.id}/calculate-price`, {
         params: {
-          pickupLat: parseFloat(pickupCoords.lat),
-          pickupLng: parseFloat(pickupCoords.lng),
-          dropLat:   parseFloat(dropCoords.lat),
-          dropLng:   parseFloat(dropCoords.lng),
+          pickupLat: Number(pickupCoords.lat),
+          pickupLng: Number(pickupCoords.lng),
+          dropLat:   Number(dropCoords.lat),
+          dropLng:   Number(dropCoords.lng),
         }
       });
       if (res.data?.calculatedPrice) {
@@ -56,7 +46,6 @@ useEffect(() => {
     }
   };
 
-  // ── Pass search context to RideDetails via navigation state ──
   const navState = {
     pickupCoords: pickupCoords || null,
     dropCoords:   dropCoords   || null,
@@ -109,7 +98,6 @@ useEffect(() => {
       {/* ── ROW 1: ROUTE TIMELINE ── */}
       <div className="ride-card-header">
 
-        {/* FROM — show passenger pickup if partial, else ride start */}
         <div className="location">
           <span className="location-name">
             {isPartial && pickupName
@@ -133,7 +121,6 @@ useEffect(() => {
           <div className="route-line" />
         </div>
 
-        {/* TO — show passenger drop if partial, else ride end */}
         <div className="location end">
           <span className="location-name">
             {isPartial && dropName
@@ -150,7 +137,6 @@ useEffect(() => {
       {/* ── ROW 2: 3-ZONE BOTTOM ── */}
       <div className="ride-card-bottom">
 
-        {/* ZONE 1 — Driver */}
         {driver && (
           <div className="driver-info">
             {hasVehicle && (
@@ -188,7 +174,6 @@ useEffect(() => {
           </div>
         )}
 
-        {/* ZONE 2 — Meta */}
         <div className="ride-meta">
           <div className="meta-item">
             <CalendarRange size={13} />
@@ -200,14 +185,12 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* ZONE 3 — Price + CTA */}
         <div className="ride-price-action">
           <div className="ride-price-wrap">
             <div className="ride-price">
               <IndianRupee size={16} />
               {displayPrice}
             </div>
-            {/* Show "full ₹X" only when partial */}
             {isPartial && (
               <div style={{ fontSize: "0.68rem", color: "#9ca3af", marginTop: "2px" }}>
                 full ₹{ride.price}

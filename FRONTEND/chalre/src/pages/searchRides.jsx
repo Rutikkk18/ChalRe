@@ -27,22 +27,21 @@ export default function SearchRides() {
   const [date,          setDate]          = useState("");
   const [seats,         setSeats]         = useState(1);
 
-  const [minPrice,        setMinPrice]        = useState("");
-  const [maxPrice,        setMaxPrice]        = useState("");
-  const [vehicleCategory, setVehicleCategory] = useState("");
-  const [carType,         setCarType]         = useState("");
-  const [genderPreference,setGenderPreference]= useState("");
-  const [seatsAvailable,  setSeatsAvailable]  = useState("");
-  const [rideType,        setRideType]        = useState([]);
-  const [driverRating,    setDriverRating]    = useState([]);
-  const [timePreference,  setTimePreference]  = useState([]);
+  const [minPrice,         setMinPrice]         = useState("");
+  const [maxPrice,         setMaxPrice]         = useState("");
+  const [vehicleCategory,  setVehicleCategory]  = useState("");
+  const [carType,          setCarType]          = useState("");
+  const [genderPreference, setGenderPreference] = useState("");
+  const [seatsAvailable,   setSeatsAvailable]   = useState("");
+  const [rideType,         setRideType]         = useState([]);
+  const [driverRating,     setDriverRating]     = useState([]);
+  const [timePreference,   setTimePreference]   = useState([]);
 
   const [results,  setResults]  = useState([]);
   const [allRides, setAllRides] = useState([]);
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState("");
 
-  // ── Coords: both state (for passing to RideCard) and refs (for search) ──
   const [pickupCoords, setPickupCoords] = useState({ lat: null, lng: null });
   const [dropCoords,   setDropCoords]   = useState({ lat: null, lng: null });
   const pickupCoordsRef = useRef({ lat: null, lng: null });
@@ -131,30 +130,41 @@ export default function SearchRides() {
     setResults(filtered);
   };
 
+  // ── Geocode text → coords (fallback when no dropdown selection) ──
   const fetchCoordsFromText = async (text, type) => {
-  try {
-    const res = await api.get("/locations/search", { params: { q: text } });
-    const places = res.data || [];
-    if (places.length > 0) {
-      const place = places[0];
-      // ── handle both lon and lng field names ──
-      const lat = parseFloat(place.lat);
-      const lng = parseFloat(place.lon || place.lng);
-      if (!lat || !lng) return;
-      const coords = { lat, lng };
-      if (type === "pickup") {
-        setPickupCoords(coords);
-        pickupCoordsRef.current = coords;
-      } else {
-        setDropCoords(coords);
-        dropCoordsRef.current = coords;
+    try {
+      const res    = await api.get("/locations/search", { params: { q: text } });
+      const places = res.data || [];
+      if (places.length > 0) {
+        const place = places[0];
+        const lat   = parseFloat(place.lat);
+        const lng   = parseFloat(place.lon ?? place.lng);
+        if (!lat || !lng || isNaN(lat) || isNaN(lng)) return;
+        const coords = { lat, lng };
+        if (type === "pickup") {
+          setPickupCoords(coords);
+          pickupCoordsRef.current = coords;
+        } else {
+          setDropCoords(coords);
+          dropCoordsRef.current = coords;
+        }
       }
+    } catch (e) {
+      console.error("Geocode from text failed:", e);
     }
-  } catch (e) {
-    console.error("Geocode from text failed:", e);
-  }
+  };
 
-};
+  // ── Helper: safely set coords from onSelect place object ──
+  const extractCoords = (place) => {
+    if (!place) return null;
+    const lat = place.lat  ? Number(place.lat)  : null;
+    const lng = place.lng  ? Number(place.lng)
+              : place.lon  ? Number(place.lon)
+              : null;
+    if (lat && lng && !isNaN(lat) && !isNaN(lng)) return { lat, lng };
+    return null;
+  };
+
   const performSearch = async (fromVal, toVal, dateVal, seatsVal, pCoords, dCoords) => {
     setLoading(true);
     setError("");
@@ -171,16 +181,18 @@ export default function SearchRides() {
 
       const params = {};
 
-      if (resolvedPickup?.lat && resolvedPickup?.lng) {
-        params.pickupLat = parseFloat(resolvedPickup.lat);
-        params.pickupLng = parseFloat(resolvedPickup.lng);
+      if (resolvedPickup?.lat && resolvedPickup?.lng &&
+          !isNaN(resolvedPickup.lat) && !isNaN(resolvedPickup.lng)) {
+        params.pickupLat = Number(resolvedPickup.lat);
+        params.pickupLng = Number(resolvedPickup.lng);
       } else if (fromVal) {
         params.pickup = fromVal;
       }
 
-      if (resolvedDrop?.lat && resolvedDrop?.lng) {
-        params.dropLat = parseFloat(resolvedDrop.lat);
-        params.dropLng = parseFloat(resolvedDrop.lng);
+      if (resolvedDrop?.lat && resolvedDrop?.lng &&
+          !isNaN(resolvedDrop.lat) && !isNaN(resolvedDrop.lng)) {
+        params.dropLat = Number(resolvedDrop.lat);
+        params.dropLng = Number(resolvedDrop.lng);
       } else if (toVal) {
         params.drop = toVal;
       }
@@ -192,21 +204,24 @@ export default function SearchRides() {
       if (carType)          params.carType          = carType;
       if (genderPreference) params.genderPreference = genderPreference;
 
+      console.log("Search params:", params); // ← debug
+
       const res = await api.get("/rides/search", { params });
 
-const fetchedRides = (res.data || []).filter(
-  (ride) => Number(ride.availableSeats) > 0
-);
+      const fetchedRides = (res.data || []).filter(
+        (ride) => Number(ride.availableSeats) > 0
+      );
 
-setAllRides(fetchedRides);
+      setAllRides(fetchedRides);
 
-// ── NEW: if coords still null after search, geocode from text ──
-if (!pickupCoordsRef.current?.lat && fromVal) {
-  fetchCoordsFromText(fromVal, "pickup");
-}
-if (!dropCoordsRef.current?.lat && toVal) {
-  fetchCoordsFromText(toVal, "drop");
-}
+      // ── If coords still null, geocode from text so RideCard can calc price ──
+      if (!pickupCoordsRef.current?.lat && fromVal) {
+        fetchCoordsFromText(fromVal, "pickup");
+      }
+      if (!dropCoordsRef.current?.lat && toVal) {
+        fetchCoordsFromText(toVal, "drop");
+      }
+
       applyClientFilters(fetchedRides, {
         minPrice, maxPrice, vehicleCategory, carType,
         seatsAvailable, rideType, driverRating, timePreference,
@@ -299,19 +314,16 @@ if (!dropCoordsRef.current?.lat && toVal) {
               value={startLocation}
               placeholder={t("leavingFrom")}
               onChange={setStartLocation}
-             onSelect={(place) => {
-              setStartLocation(place.name);
-              const lat = parseFloat(place.lat);
-              const lng = parseFloat(place.lng || place.lon);
-              if (lat && lng) {
-                const coords = { lat, lng };
-                setPickupCoords(coords);
-                pickupCoordsRef.current = coords;
-              } else {
-                // ── fallback: geocode the name ──
-                fetchCoordsFromText(place.name, "pickup");
-              }
-            }}
+              onSelect={(place) => {
+                setStartLocation(place.name);
+                const coords = extractCoords(place);
+                if (coords) {
+                  setPickupCoords(coords);
+                  pickupCoordsRef.current = coords;
+                } else {
+                  fetchCoordsFromText(place.name, "pickup");
+                }
+              }}
             />
           </div>
 
@@ -324,18 +336,15 @@ if (!dropCoordsRef.current?.lat && toVal) {
               placeholder={t("goingTo")}
               onChange={setEndLocation}
               onSelect={(place) => {
-              setEndLocation(place.name);
-              const lat = parseFloat(place.lat);
-              const lng = parseFloat(place.lng || place.lon);
-              if (lat && lng) {
-                const coords = { lat, lng };
-                setDropCoords(coords);
-                dropCoordsRef.current = coords;
-              } else {
-                // ── fallback: geocode the name ──
-                fetchCoordsFromText(place.name, "drop");
-              }
-            }}
+                setEndLocation(place.name);
+                const coords = extractCoords(place);
+                if (coords) {
+                  setDropCoords(coords);
+                  dropCoordsRef.current = coords;
+                } else {
+                  fetchCoordsFromText(place.name, "drop");
+                }
+              }}
             />
           </div>
 
@@ -513,16 +522,16 @@ if (!dropCoordsRef.current?.lat && toVal) {
 
             {!loading && (
               <div className="cards-grid">
-               {results.map((ride) => (
-              <RideCard
-                key={`${ride.id}-${pickupCoords?.lat}-${dropCoords?.lat}`}
-                ride={ride}
-                pickupCoords={pickupCoords}
-                dropCoords={dropCoords}
-                pickupName={startLocation}
-                dropName={endLocation}
-              />
-            ))}
+                {results.map((ride) => (
+                  <RideCard
+                    key={`${ride.id}-${pickupCoords?.lat}-${dropCoords?.lat}`}
+                    ride={ride}
+                    pickupCoords={pickupCoords}
+                    dropCoords={dropCoords}
+                    pickupName={startLocation}
+                    dropName={endLocation}
+                  />
+                ))}
               </div>
             )}
           </div>

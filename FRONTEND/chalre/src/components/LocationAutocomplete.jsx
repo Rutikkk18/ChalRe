@@ -4,16 +4,16 @@ import api from "../api/axios";
 const LocationAutocomplete = ({
   value = "",
   onChange = () => {},
-  onSelect = null, // ← NEW: optional callback with full place object (name + lat/lng)
+  onSelect = null,
   placeholder = "Search location",
 }) => {
-  const [query, setQuery] = useState(value);
+  const [query,       setQuery]       = useState(value);
   const [suggestions, setSuggestions] = useState([]);
-  const [show, setShow] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [show,        setShow]        = useState(false);
+  const [loading,     setLoading]     = useState(false);
 
   const wrapperRef = useRef(null);
-  const abortRef = useRef(null);
+  const abortRef   = useRef(null);
 
   useEffect(() => {
     setQuery(value || "");
@@ -70,15 +70,18 @@ const LocationAutocomplete = ({
     setQuery(name);
     onChange(name);
 
-    // ── NEW: if parent wants full place data (lat/lng), send it ──
     if (onSelect) {
-      onSelect({
-        name,
-        lat: place?.lat ? parseFloat(place.lat) : null,
-        lng: place?.lon ? parseFloat(place.lon)
-              : place?.lng ? parseFloat(place.lng)
-              : null,
-      });
+      // ── Extract lat/lng — try all possible field names ──
+      const rawLat = place?.lat;
+      const rawLng = place?.lon ?? place?.lng;
+
+      const lat = rawLat  ? parseFloat(rawLat)  : null;
+      const lng = rawLng  ? parseFloat(rawLng)  : null;
+
+      // ── Log for debugging ──
+      console.log("LocationAutocomplete select:", { name, lat, lng, rawPlace: place });
+
+      onSelect({ name, lat, lng });
     }
 
     setShow(false);
@@ -95,8 +98,6 @@ const LocationAutocomplete = ({
           const newValue = e.target.value;
           setQuery(newValue);
           onChange(newValue);
-
-          // ── NEW: if user types manually (no selection), clear saved coords ──
           if (onSelect) {
             onSelect({ name: newValue, lat: null, lng: null });
           }
@@ -111,11 +112,9 @@ const LocationAutocomplete = ({
           {loading && (
             <div className="autocomplete-item muted">Searching…</div>
           )}
-
           {!loading && suggestions.length === 0 && (
             <div className="autocomplete-item muted">No locations found</div>
           )}
-
           {!loading &&
             suggestions.map((place, index) => {
               const text = place?.name || place?.display_name;
