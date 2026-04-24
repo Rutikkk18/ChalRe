@@ -513,16 +513,16 @@ if (!dropCoordsRef.current?.lat && toVal) {
 
             {!loading && (
               <div className="cards-grid">
-                {results.map((ride) => (
-                  <RideCard
-                    key={ride.id}
-                    ride={ride}
-                    pickupCoords={pickupCoords}
-                    dropCoords={dropCoords}
-                    pickupName={startLocation}
-                    dropName={endLocation}
-                  />
-                ))}
+               {results.map((ride) => (
+              <RideCard
+                key={`${ride.id}-${pickupCoords?.lat}-${dropCoords?.lat}`}
+                ride={ride}
+                pickupCoords={pickupCoords}
+                dropCoords={dropCoords}
+                pickupName={startLocation}
+                dropName={endLocation}
+              />
+            ))}
               </div>
             )}
           </div>

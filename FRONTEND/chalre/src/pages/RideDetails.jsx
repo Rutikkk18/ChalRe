@@ -49,11 +49,11 @@ export default function RideDetails() {
   }, [ride]);
 
   useEffect(() => {
-    if (ride && pickupCoords?.lat && dropCoords?.lat) {
-      fetchCalculatedPrice();
-    }
-    // eslint-disable-next-line
-  }, [ride]);
+  if (ride && pickupCoords?.lat && dropCoords?.lat) {
+    fetchCalculatedPrice();
+  }
+  // eslint-disable-next-line
+}, [ride, pickupCoords?.lat, dropCoords?.lat]);
 
   async function fetchRide() {
     setLoading(true);

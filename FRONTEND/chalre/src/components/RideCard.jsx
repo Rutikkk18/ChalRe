@@ -14,15 +14,28 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
 
   // ── Calculate partial price as soon as coords are available ──
   useEffect(() => {
-    if (
-      ride?.id &&
-      pickupCoords?.lat && pickupCoords?.lng &&
-      dropCoords?.lat   && dropCoords?.lng
-    ) {
-      fetchPrice();
-    }
-  // eslint-disable-next-line
-  }, [ride?.id, pickupCoords?.lat, dropCoords?.lat]);
+  if (
+    ride?.id &&
+    pickupCoords?.lat && pickupCoords?.lng &&
+    dropCoords?.lat   && dropCoords?.lng
+  ) {
+    fetchPrice();
+  }
+// eslint-disable-next-line
+}, [ride?.id, pickupCoords?.lat, pickupCoords?.lng, dropCoords?.lat, dropCoords?.lng]);
+
+// ADD this new useEffect after the existing one:
+useEffect(() => {
+  if (
+    ride?.id &&
+    pickupCoords?.lat && pickupCoords?.lng &&
+    dropCoords?.lat   && dropCoords?.lng &&
+    calculatedPrice === null
+  ) {
+    fetchPrice();
+  }
+// eslint-disable-next-line
+}, [pickupCoords, dropCoords]);
 
   const fetchPrice = async () => {
     try {
