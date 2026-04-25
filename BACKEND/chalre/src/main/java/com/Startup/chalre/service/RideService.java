@@ -419,7 +419,7 @@ public class RideService {
             double dropFromDist   = PolylineUtils.haversineKm(dropCoords,   rideFrom);
             double dropToDist     = PolylineUtils.haversineKm(dropCoords,   rideTo);
 
-            double tolerance = 35.0;
+            double tolerance = 55.0;
 
             // ── DIRECTION CHECK 1 ──
             if (pickupFromDist > pickupToDist + tolerance) return false;
