@@ -405,49 +405,56 @@ public class RideService {
                 .toList();
     }
         //direction check
-    private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
+        private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
 
-    if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
+            if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
 
-    LatLng rideFrom = new LatLng(r.getFromLat(), r.getFromLng());
-    LatLng rideTo   = new LatLng(r.getToLat(),   r.getToLng());
+            LatLng rideFrom = new LatLng(r.getFromLat(), r.getFromLng());
+            LatLng rideTo   = new LatLng(r.getToLat(),   r.getToLng());
 
-    double totalDist = PolylineUtils.haversineKm(rideFrom, rideTo);
+            double totalDist = PolylineUtils.haversineKm(rideFrom, rideTo);
 
-    double pickupFromDist = PolylineUtils.haversineKm(pickupCoords, rideFrom);
-    double pickupToDist   = PolylineUtils.haversineKm(pickupCoords, rideTo);
-    double dropFromDist   = PolylineUtils.haversineKm(dropCoords,   rideFrom);
-    double dropToDist     = PolylineUtils.haversineKm(dropCoords,   rideTo);
+            double pickupFromDist = PolylineUtils.haversineKm(pickupCoords, rideFrom);
+            double pickupToDist   = PolylineUtils.haversineKm(pickupCoords, rideTo);
+            double dropFromDist   = PolylineUtils.haversineKm(dropCoords,   rideFrom);
+            double dropToDist     = PolylineUtils.haversineKm(dropCoords,   rideTo);
 
-    // ── TOLERANCE: 35km buffer for direction checks ──
-    // Handles cities equidistant from start/end (like Satara between Kolhapur/Pune)
-    double tolerance = 35.0;
+            double tolerance = 35.0;
 
-    // ── DIRECTION CHECK 1: pickup must NOT be clearly BEHIND the start ──
-    // Reject only if pickup is significantly closer to END than START
-    // i.e., pickup is in wrong direction (like Kavane behind Kolhapur)
-    if (pickupFromDist > pickupToDist + tolerance) return false;
+            // ── DIRECTION CHECK 1 ──
+            if (pickupFromDist > pickupToDist + tolerance) return false;
 
-    // ── DIRECTION CHECK 2: drop must NOT be clearly BEHIND the end ──
-    if (dropToDist > dropFromDist + tolerance) return false;
+            // ── DIRECTION CHECK 2 ──
+            if (dropToDist > dropFromDist + tolerance) return false;
 
-    // ── DIRECTION CHECK 3: pickup must come BEFORE drop on route ──
-    // pickup should be closer to start than drop is (with tolerance)
-    if (pickupFromDist > dropFromDist + tolerance) return false;
+            // ── DIRECTION CHECK 3 ──
+            if (pickupFromDist > dropFromDist + tolerance) return false;
 
-    // ── BOUNDS CHECK: both must be within total route distance + buffer ──
-    double buffer = Math.max(totalDist * 0.15, 40.0); // 15% or 40km whichever bigger
-    if (pickupFromDist > totalDist + buffer) return false;
-    if (dropToDist     > totalDist + buffer) return false;
+            // ── BOUNDS CHECK ──
+            double buffer = Math.max(totalDist * 0.15, 40.0);
+            if (pickupFromDist > totalDist + buffer) return false;
+            if (dropToDist     > totalDist + buffer) return false;
 
-    // ── POLYLINE CHECK: must be near the actual route ──
-    if (r.getPolyline() != null && !r.getPolyline().isEmpty()) {
-        return PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline())
-            && PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline());
-    }
+            // ── POLYLINE CHECK — only for full ORS polylines (many points) ──
+            // For fallback 2-point straight-line polylines, skip polyline check
+            // because straight line doesn't represent actual road corridor
+            if (r.getPolyline() != null && !r.getPolyline().isEmpty()) {
+                // Count decoded points — if more than 5, it's a real ORS polyline
+                // If only 2-10 points, it's our interpolated fallback — skip check
+                List<com.Startup.chalre.model.LatLng> points =
+                        com.Startup.chalre.utils.PolylineUtils.decode(r.getPolyline());
 
-    return true;
-}
+                if (points.size() > 10) {
+                    // Real ORS polyline — use strict check
+                    return PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline())
+                            && PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline());
+                }
+                // Fallback interpolated polyline — direction checks already passed, allow it
+                // Sangli is a valid pickup for Kolhapur→Pune even though it's off the straight line
+            }
+
+            return true;
+        }
 
     // ── Phase 8: Calculate partial fare ─────────────────────
     public Map<String, Object> calculatePrice(Long rideId,
