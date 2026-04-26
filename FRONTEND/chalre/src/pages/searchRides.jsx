@@ -239,8 +239,11 @@ export default function SearchRides() {
       const fetchedRides = (res.data || []).filter(
         (ride) => Number(ride.availableSeats) > 0
       );
+setAllRides(fetchedRides);
 
-      setAllRides(fetchedRides);
+      // ── Sync ref coords to state ──
+      if (pickupCoordsRef.current?.lat) setPickupCoords({ ...pickupCoordsRef.current });
+      if (dropCoordsRef.current?.lat)   setDropCoords({ ...dropCoordsRef.current });
 
       // ── Geocode from text if coords still missing ──
       if (!pickupCoordsRef.current?.lat && fromVal) {
@@ -260,7 +263,9 @@ export default function SearchRides() {
     } finally {
       setLoading(false);
     }
+    
   };
+
 
   // ── Always fetch all rides on mount ──
   useEffect(() => {
