@@ -41,13 +41,14 @@ export default function SearchRides() {
   const [allRides,    setAllRides]    = useState([]);
   const [loading,     setLoading]     = useState(false);
   const [error,       setError]       = useState("");
-  // ── NEW: track if user has explicitly clicked Search ──
+
+  // ── hasSearched: true only after Search button clicked ──
   const [hasSearched, setHasSearched] = useState(false);
 
-  const [pickupCoords, setPickupCoords] = useState({ lat: null, lng: null });
-  const [dropCoords,   setDropCoords]   = useState({ lat: null, lng: null });
-  const pickupCoordsRef = useRef({ lat: null, lng: null });
-  const dropCoordsRef   = useRef({ lat: null, lng: null });
+  const [pickupCoords, setPickupCoords] = useState(null);
+  const [dropCoords,   setDropCoords]   = useState(null);
+  const pickupCoordsRef = useRef(null);
+  const dropCoordsRef   = useRef(null);
 
   const getRideVehicleCategory = (ride) => {
     if (ride.vehicleType && ride.vehicleType.trim() !== "") {
@@ -175,7 +176,7 @@ export default function SearchRides() {
     dropCoordsRef.current = coords;
   };
 
-  // ── Fetch all rides and show unfiltered (before Search clicked) ──
+  // ── Always fetch all rides on mount — needed for before-search display ──
   const fetchAllRides = async () => {
     setLoading(true);
     setError("");
@@ -185,10 +186,7 @@ export default function SearchRides() {
         (ride) => Number(ride.availableSeats) > 0
       );
       setAllRides(fetchedRides);
-      applyClientFilters(fetchedRides, {
-        minPrice, maxPrice, vehicleCategory, carType,
-        seatsAvailable, rideType, driverRating, timePreference,
-      });
+      setResults(fetchedRides); // show all unfiltered initially
     } catch (err) {
       console.error(err);
       setError(t("srErrorFetch"));
@@ -208,8 +206,8 @@ export default function SearchRides() {
         return;
       }
 
-      const resolvedPickup = pCoords || pickupCoordsRef.current;
-      const resolvedDrop   = dCoords || dropCoordsRef.current;
+      const resolvedPickup = pCoords ?? pickupCoordsRef.current;
+      const resolvedDrop   = dCoords ?? dropCoordsRef.current;
 
       const params = {};
 
@@ -264,10 +262,13 @@ export default function SearchRides() {
     }
   };
 
+  // ── Always fetch all rides on mount ──
   useEffect(() => {
-    if (!location.state) fetchAllRides();
+    fetchAllRides();
+  // eslint-disable-next-line
   }, []);
 
+  // ── Handle navigation from Home page ──
   useEffect(() => {
     if (location.state && !hasAutoSearched.current) {
       const { from, to, date: stateDate, passengers, fromCoords, toCoords } = location.state;
@@ -286,14 +287,13 @@ export default function SearchRides() {
 
       if (from && to) {
         hasAutoSearched.current = true;
-        // ── Coming from Home = treat as explicit search ──
-        setHasSearched(true);
+        setHasSearched(true); // treat Home search as explicit search
         const pCoords = fromCoords?.lat ? { lat: Number(fromCoords.lat), lng: Number(fromCoords.lng) } : null;
         const dCoords = toCoords?.lat   ? { lat: Number(toCoords.lat),   lng: Number(toCoords.lng)   } : null;
         performSearch(from, to, stateDate || "", passengers || 1, pCoords, dCoords);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line
   }, [location.state]);
 
   // ── Search button clicked ──
@@ -310,30 +310,6 @@ export default function SearchRides() {
     );
   };
 
-  // ── When inputs change → reset hasSearched → show all rides again ──
-  const handleStartLocationChange = (val) => {
-    setStartLocation(val);
-    // ── Only reset if user is typing (clearing a selection) ──
-    if (hasSearched) {
-      setHasSearched(false);
-      applyClientFilters(allRides, {
-        minPrice, maxPrice, vehicleCategory, carType,
-        seatsAvailable, rideType, driverRating, timePreference,
-      });
-    }
-  };
-
-  const handleEndLocationChange = (val) => {
-    setEndLocation(val);
-    if (hasSearched) {
-      setHasSearched(false);
-      applyClientFilters(allRides, {
-        minPrice, maxPrice, vehicleCategory, carType,
-        seatsAvailable, rideType, driverRating, timePreference,
-      });
-    }
-  };
-
   useEffect(() => {
     if (allRides.length > 0) {
       applyClientFilters(allRides, {
@@ -341,7 +317,7 @@ export default function SearchRides() {
         seatsAvailable, rideType, driverRating, timePreference,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line
   }, [seatsAvailable, rideType, driverRating, timePreference, minPrice, maxPrice, vehicleCategory, carType]);
 
   const handleVehicleCategoryChange = (category) => {
@@ -349,11 +325,11 @@ export default function SearchRides() {
     setCarType("");
   };
 
-  // ── What coords to pass to RideCard ──
-  // Before search: pass coords if available (for partial price display)
-  // After search: pass coords from search (already set)
-  const displayPickupCoords = pickupCoords?.lat ? pickupCoords : null;
-  const displayDropCoords   = dropCoords?.lat   ? dropCoords   : null;
+  // ── KEY: only pass coords to RideCard AFTER search is clicked ──
+  const cardPickupCoords = hasSearched ? pickupCoords : null;
+  const cardDropCoords   = hasSearched ? dropCoords   : null;
+  const cardPickupName   = hasSearched ? startLocation : null;
+  const cardDropName     = hasSearched ? endLocation   : null;
 
   return (
     <div className="search-page">
@@ -366,24 +342,27 @@ export default function SearchRides() {
             <LocationAutocomplete
               value={startLocation}
               placeholder={t("leavingFrom")}
-              onChange={handleStartLocationChange}
+              onChange={(val) => {
+                setStartLocation(val);
+                // typing resets search state → show all rides
+                if (hasSearched) {
+                  setHasSearched(false);
+                  setResults(allRides);
+                }
+              }}
               onSelect={(place) => {
                 setStartLocation(place.name);
                 const coords = extractCoords(place);
                 if (coords) {
                   setPickupCoordsAndRef(coords);
                 } else {
-                  // clear coords if no valid place selected
-                  setPickupCoordsAndRef({ lat: null, lng: null });
+                  setPickupCoordsAndRef(null);
                   fetchCoordsFromText(place.name, "pickup");
                 }
-                // ── Reset search state when new location selected ──
+                // selecting new location resets search
                 if (hasSearched) {
                   setHasSearched(false);
-                  applyClientFilters(allRides, {
-                    minPrice, maxPrice, vehicleCategory, carType,
-                    seatsAvailable, rideType, driverRating, timePreference,
-                  });
+                  setResults(allRides);
                 }
               }}
             />
@@ -396,22 +375,25 @@ export default function SearchRides() {
             <LocationAutocomplete
               value={endLocation}
               placeholder={t("goingTo")}
-              onChange={handleEndLocationChange}
+              onChange={(val) => {
+                setEndLocation(val);
+                if (hasSearched) {
+                  setHasSearched(false);
+                  setResults(allRides);
+                }
+              }}
               onSelect={(place) => {
                 setEndLocation(place.name);
                 const coords = extractCoords(place);
                 if (coords) {
                   setDropCoordsAndRef(coords);
                 } else {
-                  setDropCoordsAndRef({ lat: null, lng: null });
+                  setDropCoordsAndRef(null);
                   fetchCoordsFromText(place.name, "drop");
                 }
                 if (hasSearched) {
                   setHasSearched(false);
-                  applyClientFilters(allRides, {
-                    minPrice, maxPrice, vehicleCategory, carType,
-                    seatsAvailable, rideType, driverRating, timePreference,
-                  });
+                  setResults(allRides);
                 }
               }}
             />
@@ -464,10 +446,10 @@ export default function SearchRides() {
                 setRideType([]);
                 setDriverRating([]);
                 setTimePreference([]);
-                setPickupCoords({ lat: null, lng: null });
-                setDropCoords({ lat: null, lng: null });
-                pickupCoordsRef.current = { lat: null, lng: null };
-                dropCoordsRef.current   = { lat: null, lng: null };
+                setPickupCoords(null);
+                setDropCoords(null);
+                pickupCoordsRef.current = null;
+                dropCoordsRef.current   = null;
                 setHasSearched(false);
                 fetchAllRides();
               }}
@@ -584,12 +566,12 @@ export default function SearchRides() {
               <div className="cards-grid">
                 {results.map((ride) => (
                   <RideCard
-                    key={`${ride.id}-${displayPickupCoords?.lat}-${displayDropCoords?.lat}`}
+                    key={`${ride.id}-${cardPickupCoords?.lat}-${cardDropCoords?.lat}`}
                     ride={ride}
-                    pickupCoords={displayPickupCoords}
-                    dropCoords={displayDropCoords}
-                    pickupName={startLocation}
-                    dropName={endLocation}
+                    pickupCoords={cardPickupCoords}
+                    dropCoords={cardDropCoords}
+                    pickupName={cardPickupName}
+                    dropName={cardDropName}
                   />
                 ))}
               </div>
