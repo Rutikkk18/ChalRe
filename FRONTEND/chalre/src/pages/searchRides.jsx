@@ -37,10 +37,12 @@ export default function SearchRides() {
   const [driverRating,     setDriverRating]     = useState([]);
   const [timePreference,   setTimePreference]   = useState([]);
 
-  const [results,  setResults]  = useState([]);
-  const [allRides, setAllRides] = useState([]);
-  const [loading,  setLoading]  = useState(false);
-  const [error,    setError]    = useState("");
+  const [results,     setResults]     = useState([]);
+  const [allRides,    setAllRides]    = useState([]);
+  const [loading,     setLoading]     = useState(false);
+  const [error,       setError]       = useState("");
+  // ── NEW: track if user has explicitly clicked Search ──
+  const [hasSearched, setHasSearched] = useState(false);
 
   const [pickupCoords, setPickupCoords] = useState({ lat: null, lng: null });
   const [dropCoords,   setDropCoords]   = useState({ lat: null, lng: null });
@@ -173,6 +175,28 @@ export default function SearchRides() {
     dropCoordsRef.current = coords;
   };
 
+  // ── Fetch all rides and show unfiltered (before Search clicked) ──
+  const fetchAllRides = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await api.get("/rides");
+      const fetchedRides = (res.data || []).filter(
+        (ride) => Number(ride.availableSeats) > 0
+      );
+      setAllRides(fetchedRides);
+      applyClientFilters(fetchedRides, {
+        minPrice, maxPrice, vehicleCategory, carType,
+        seatsAvailable, rideType, driverRating, timePreference,
+      });
+    } catch (err) {
+      console.error(err);
+      setError(t("srErrorFetch"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const performSearch = async (fromVal, toVal, dateVal, seatsVal, pCoords, dCoords) => {
     setLoading(true);
     setError("");
@@ -240,27 +264,6 @@ export default function SearchRides() {
     }
   };
 
-  const fetchAllRides = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await api.get("/rides");
-      const fetchedRides = (res.data || []).filter(
-        (ride) => Number(ride.availableSeats) > 0
-      );
-      setAllRides(fetchedRides);
-      applyClientFilters(fetchedRides, {
-        minPrice, maxPrice, vehicleCategory, carType,
-        seatsAvailable, rideType, driverRating, timePreference,
-      });
-    } catch (err) {
-      console.error(err);
-      setError(t("srErrorFetch"));
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (!location.state) fetchAllRides();
   }, []);
@@ -274,7 +277,6 @@ export default function SearchRides() {
       if (stateDate)  setDate(stateDate);
       if (passengers) setSeats(Number(passengers));
 
-      // ── Restore coords if passed from Home ──
       if (fromCoords?.lat && fromCoords?.lng) {
         setPickupCoordsAndRef({ lat: Number(fromCoords.lat), lng: Number(fromCoords.lng) });
       }
@@ -284,6 +286,8 @@ export default function SearchRides() {
 
       if (from && to) {
         hasAutoSearched.current = true;
+        // ── Coming from Home = treat as explicit search ──
+        setHasSearched(true);
         const pCoords = fromCoords?.lat ? { lat: Number(fromCoords.lat), lng: Number(fromCoords.lng) } : null;
         const dCoords = toCoords?.lat   ? { lat: Number(toCoords.lat),   lng: Number(toCoords.lng)   } : null;
         performSearch(from, to, stateDate || "", passengers || 1, pCoords, dCoords);
@@ -292,8 +296,10 @@ export default function SearchRides() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
 
+  // ── Search button clicked ──
   const handleSearch = async (e) => {
     e?.preventDefault();
+    setHasSearched(true);
     performSearch(
       startLocation,
       endLocation,
@@ -302,6 +308,30 @@ export default function SearchRides() {
       pickupCoordsRef.current,
       dropCoordsRef.current
     );
+  };
+
+  // ── When inputs change → reset hasSearched → show all rides again ──
+  const handleStartLocationChange = (val) => {
+    setStartLocation(val);
+    // ── Only reset if user is typing (clearing a selection) ──
+    if (hasSearched) {
+      setHasSearched(false);
+      applyClientFilters(allRides, {
+        minPrice, maxPrice, vehicleCategory, carType,
+        seatsAvailable, rideType, driverRating, timePreference,
+      });
+    }
+  };
+
+  const handleEndLocationChange = (val) => {
+    setEndLocation(val);
+    if (hasSearched) {
+      setHasSearched(false);
+      applyClientFilters(allRides, {
+        minPrice, maxPrice, vehicleCategory, carType,
+        seatsAvailable, rideType, driverRating, timePreference,
+      });
+    }
   };
 
   useEffect(() => {
@@ -319,6 +349,12 @@ export default function SearchRides() {
     setCarType("");
   };
 
+  // ── What coords to pass to RideCard ──
+  // Before search: pass coords if available (for partial price display)
+  // After search: pass coords from search (already set)
+  const displayPickupCoords = pickupCoords?.lat ? pickupCoords : null;
+  const displayDropCoords   = dropCoords?.lat   ? dropCoords   : null;
+
   return (
     <div className="search-page">
 
@@ -330,14 +366,24 @@ export default function SearchRides() {
             <LocationAutocomplete
               value={startLocation}
               placeholder={t("leavingFrom")}
-              onChange={setStartLocation}
+              onChange={handleStartLocationChange}
               onSelect={(place) => {
                 setStartLocation(place.name);
                 const coords = extractCoords(place);
                 if (coords) {
                   setPickupCoordsAndRef(coords);
                 } else {
+                  // clear coords if no valid place selected
+                  setPickupCoordsAndRef({ lat: null, lng: null });
                   fetchCoordsFromText(place.name, "pickup");
+                }
+                // ── Reset search state when new location selected ──
+                if (hasSearched) {
+                  setHasSearched(false);
+                  applyClientFilters(allRides, {
+                    minPrice, maxPrice, vehicleCategory, carType,
+                    seatsAvailable, rideType, driverRating, timePreference,
+                  });
                 }
               }}
             />
@@ -350,14 +396,22 @@ export default function SearchRides() {
             <LocationAutocomplete
               value={endLocation}
               placeholder={t("goingTo")}
-              onChange={setEndLocation}
+              onChange={handleEndLocationChange}
               onSelect={(place) => {
                 setEndLocation(place.name);
                 const coords = extractCoords(place);
                 if (coords) {
                   setDropCoordsAndRef(coords);
                 } else {
+                  setDropCoordsAndRef({ lat: null, lng: null });
                   fetchCoordsFromText(place.name, "drop");
+                }
+                if (hasSearched) {
+                  setHasSearched(false);
+                  applyClientFilters(allRides, {
+                    minPrice, maxPrice, vehicleCategory, carType,
+                    seatsAvailable, rideType, driverRating, timePreference,
+                  });
                 }
               }}
             />
@@ -414,6 +468,7 @@ export default function SearchRides() {
                 setDropCoords({ lat: null, lng: null });
                 pickupCoordsRef.current = { lat: null, lng: null };
                 dropCoordsRef.current   = { lat: null, lng: null };
+                setHasSearched(false);
                 fetchAllRides();
               }}
             >
@@ -529,10 +584,10 @@ export default function SearchRides() {
               <div className="cards-grid">
                 {results.map((ride) => (
                   <RideCard
-                    key={`${ride.id}-${pickupCoords?.lat}-${dropCoords?.lat}`}
+                    key={`${ride.id}-${displayPickupCoords?.lat}-${displayDropCoords?.lat}`}
                     ride={ride}
-                    pickupCoords={pickupCoords}
-                    dropCoords={dropCoords}
+                    pickupCoords={displayPickupCoords}
+                    dropCoords={displayDropCoords}
                     pickupName={startLocation}
                     dropName={endLocation}
                   />
