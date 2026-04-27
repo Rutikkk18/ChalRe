@@ -415,7 +415,12 @@ public class RideService {
 
             if (points.size() < 2) return false;
 
-            // 1. Calculate distances along the route
+            // 1. Macro Direction Alignment (NEW - Strongest Guard)
+            if (!PolylineUtils.isForwardDirection(pickupCoords, dropCoords, points)) {
+                return false;
+            }
+
+            // 2. Calculate distances along the route
             double pickupDist = PolylineUtils.getDistanceAlongRoute(pickupCoords, points);
             double dropDist   = PolylineUtils.getDistanceAlongRoute(dropCoords, points);
             
@@ -428,17 +433,17 @@ public class RideService {
             // Normalize near start: handles GPS/projection noise near origin
             if (pickupDist < 1.0) pickupDist = 0.0;
 
-            // 2. Forward Direction (PRIMARY Guard)
+            // 3. Strict progression ordering
             if (dropDist <= pickupDist) return false;         // strictly backward ordering
             if (dropDist > totalDist + 1.0) return false;     // beyond end
 
-            // 3. Geographic Boundary (Secondary Safety Guard)
+            // 4. Geographic Boundary (Secondary Safety Guard)
             // Ensures that pickups exactly at 0.0 distance aren't geographically far behind the starting city
             if (PolylineUtils.isStrictlyBehindOrAhead(pickupCoords, dropCoords, points)) {
                 return false;
             }
 
-            // 4. Radius Proximity (SECONDARY Filter)
+            // 5. Radius Proximity (SECONDARY Filter)
             if (!PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) ||
                 !PolylineUtils.isPointNearRoute(dropCoords, r.getPolyline())) {
                 return false;

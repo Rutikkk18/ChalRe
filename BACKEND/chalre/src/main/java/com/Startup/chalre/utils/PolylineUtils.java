@@ -129,6 +129,25 @@ public class PolylineUtils {
         return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     }
 
+    public static boolean isForwardDirection(LatLng pickup, LatLng drop, List<LatLng> polyline) {
+        if (polyline.size() < 2) return false;
+
+        // Overall route direction (start → end)
+        LatLng start = polyline.get(0);
+        LatLng end   = polyline.get(polyline.size() - 1);
+
+        double routeDx = end.getLat() - start.getLat();
+        double routeDy = end.getLng() - start.getLng();
+
+        // User direction (pickup → drop)
+        double userDx = drop.getLat() - pickup.getLat();
+        double userDy = drop.getLng() - pickup.getLng();
+
+        double dot = routeDx * userDx + routeDy * userDy;
+
+        return dot > 0; // must be forward
+    }
+
     public static boolean isStrictlyBehindOrAhead(LatLng pickup, LatLng drop, List<LatLng> polyline) {
         if (polyline == null || polyline.size() < 2) return false;
 
