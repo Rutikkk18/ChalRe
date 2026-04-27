@@ -206,6 +206,14 @@ export default function SearchRides() {
         return;
       }
 
+      // ── Geocode from text if coords still missing ──
+      if (!pCoords?.lat && !pickupCoordsRef.current?.lat && fromVal) {
+        await fetchCoordsFromText(fromVal, "pickup");
+      }
+      if (!dCoords?.lat && !dropCoordsRef.current?.lat && toVal) {
+        await fetchCoordsFromText(toVal, "drop");
+      }
+
       const resolvedPickup = pCoords ?? pickupCoordsRef.current;
       const resolvedDrop   = dCoords ?? dropCoordsRef.current;
 
@@ -241,14 +249,6 @@ export default function SearchRides() {
       );
 
       setAllRides(fetchedRides);
-
-      // ── Geocode from text if coords still missing ──
-      if (!pickupCoordsRef.current?.lat && fromVal) {
-        fetchCoordsFromText(fromVal, "pickup");
-      }
-      if (!dropCoordsRef.current?.lat && toVal) {
-        fetchCoordsFromText(toVal, "drop");
-      }
 
       applyClientFilters(fetchedRides, {
         minPrice, maxPrice, vehicleCategory, carType,
@@ -344,6 +344,7 @@ export default function SearchRides() {
               placeholder={t("leavingFrom")}
               onChange={(val) => {
                 setStartLocation(val);
+                setPickupCoordsAndRef(null);
                 // typing resets search state → show all rides
                 if (hasSearched) {
                   setHasSearched(false);
@@ -355,9 +356,6 @@ export default function SearchRides() {
                 const coords = extractCoords(place);
                 if (coords) {
                   setPickupCoordsAndRef(coords);
-                } else {
-                  setPickupCoordsAndRef(null);
-                  fetchCoordsFromText(place.name, "pickup");
                 }
                 // selecting new location resets search
                 if (hasSearched) {
@@ -377,6 +375,7 @@ export default function SearchRides() {
               placeholder={t("goingTo")}
               onChange={(val) => {
                 setEndLocation(val);
+                setDropCoordsAndRef(null);
                 if (hasSearched) {
                   setHasSearched(false);
                   setResults(allRides);
@@ -387,9 +386,6 @@ export default function SearchRides() {
                 const coords = extractCoords(place);
                 if (coords) {
                   setDropCoordsAndRef(coords);
-                } else {
-                  setDropCoordsAndRef(null);
-                  fetchCoordsFromText(place.name, "drop");
                 }
                 if (hasSearched) {
                   setHasSearched(false);

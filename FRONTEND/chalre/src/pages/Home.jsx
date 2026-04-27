@@ -56,7 +56,10 @@ export default function Home() {
           <div className="search-item location-from">
             <LocationAutocomplete
               value={search.from}
-              onChange={(val) => updateSearch("from", val)}
+              onChange={(val) => {
+                updateSearch("from", val);
+                setFromCoords(null);
+              }}
               placeholder={t("leavingFrom")}
               onSelect={(place) => {
                 updateSearch("from", place.name);
@@ -74,7 +77,10 @@ export default function Home() {
           <div className="search-item location-to">
             <LocationAutocomplete
               value={search.to}
-              onChange={(val) => updateSearch("to", val)}
+              onChange={(val) => {
+                updateSearch("to", val);
+                setToCoords(null);
+              }}
               placeholder={t("goingTo")}
               onSelect={(place) => {
                 updateSearch("to", place.name);

@@ -112,10 +112,6 @@ const LocationAutocomplete = ({
           justSelectedRef.current = false;
           setQuery(newValue);
           onChange(newValue);
-          // ── Clear coords only when user manually types ──
-          if (onSelect) {
-            onSelect({ name: newValue, lat: null, lng: null });
-          }
         }}
         onFocus={() => {
           if (suggestions.length > 0) setShow(true);
