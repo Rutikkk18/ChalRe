@@ -328,8 +328,6 @@ export default function SearchRides() {
   // ── KEY: only pass coords to RideCard AFTER search is clicked ──
   const cardPickupCoords = hasSearched ? pickupCoords : null;
   const cardDropCoords   = hasSearched ? dropCoords   : null;
-  const cardPickupName   = hasSearched ? startLocation : null;
-  const cardDropName     = hasSearched ? endLocation   : null;
 
   return (
     <div className="search-page">
@@ -566,8 +564,8 @@ export default function SearchRides() {
                     ride={ride}
                     pickupCoords={cardPickupCoords}
                     dropCoords={cardDropCoords}
-                    pickupName={cardPickupName}
-                    dropName={cardDropName}
+                    pickupName={ride.isPartial ? startLocation : null}
+                    dropName={ride.isPartial ? endLocation : null}
                   />
                 ))}
               </div>

@@ -72,5 +72,8 @@
         private String polyline;   // encoded route polyline (can be long)
 
         private double distance;   // route distance in km
+
+        @Transient
+        private Boolean isPartial = false;
     }
 

@@ -403,7 +403,10 @@ public class RideService {
         })
 
         // 🔥 TRANSFORM INTO PARTIAL RIDE
-        .map(r -> createPartialRide(r, pickupCoords, dropCoords))
+        .map(r -> {
+            r.setIsPartial(false);
+            return createPartialRide(r, pickupCoords, dropCoords);
+        })
 
         // remove invalid ones
         .filter(r -> r != null)
@@ -436,9 +439,11 @@ public class RideService {
         partial.setCarModel(r.getCarModel());
         partial.setGenderPreference(r.getGenderPreference());
 
+        partial.setIsPartial(true);
+
         // 🔥 IMPORTANT: UI CHANGE
-        partial.setStartLocation("From your pickup");
-        partial.setEndLocation("To your drop");
+        partial.setStartLocation(r.getStartLocation()); // default fallback
+        partial.setEndLocation(r.getEndLocation());
 
         // 🔥 set user coords
         partial.setFromLat(pickup.getLat());

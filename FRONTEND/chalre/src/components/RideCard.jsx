@@ -89,6 +89,9 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
   const duration     = getDuration();
   const displayPrice = calculatedPrice ?? ride.price;
 
+  const start = pickupName || ride.startLocation;
+  const end   = dropName   || ride.endLocation;
+
   return (
     <div
       className={`ride-card ${isFull ? "full" : ""}`}
@@ -100,12 +103,10 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
 
         <div className="location">
           <span className="location-name">
-            {isPartial && pickupName
-              ? pickupName.split(",")[0].trim()
-              : getLocationName(ride.startLocation)}
+            {getLocationName(start)}
           </span>
           <span className="location-address">
-            {isPartial && pickupName ? pickupName : ride.startLocation}
+            {start}
           </span>
         </div>
 
@@ -123,12 +124,10 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
 
         <div className="location end">
           <span className="location-name">
-            {isPartial && dropName
-              ? dropName.split(",")[0].trim()
-              : getLocationName(ride.endLocation)}
+            {getLocationName(end)}
           </span>
           <span className="location-address">
-            {isPartial && dropName ? dropName : ride.endLocation}
+            {end}
           </span>
         </div>
 
