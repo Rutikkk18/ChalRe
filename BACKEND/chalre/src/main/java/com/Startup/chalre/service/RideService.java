@@ -408,44 +408,30 @@ public class RideService {
         private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
 
             if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
+            if (r.getPolyline() == null || r.getPolyline().isEmpty()) return false;
 
-            LatLng rideFrom = new LatLng(r.getFromLat(), r.getFromLng());
-            LatLng rideTo   = new LatLng(r.getToLat(),   r.getToLng());
+            List<com.Startup.chalre.model.LatLng> points =
+                    com.Startup.chalre.utils.PolylineUtils.decode(r.getPolyline());
 
-            double totalDist = PolylineUtils.haversineKm(rideFrom, rideTo);
+            if (points.size() < 2) return false;
 
-            double pickupFromDist = PolylineUtils.haversineKm(pickupCoords, rideFrom);
-            double pickupToDist   = PolylineUtils.haversineKm(pickupCoords, rideTo);
-            double dropFromDist   = PolylineUtils.haversineKm(dropCoords,   rideFrom);
-            double dropToDist     = PolylineUtils.haversineKm(dropCoords,   rideTo);
-
-            double tolerance = 35.0;
-
-            if (!PolylineUtils.isStrictlyWithinBoundsAndDirection(pickupCoords, dropCoords, rideFrom, rideTo)) {
+            // 1. Ensure points are near the route (50km radius)
+            if (!PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) ||
+                !PolylineUtils.isPointNearRoute(dropCoords, r.getPolyline())) {
                 return false;
             }
 
-            // ── BOUNDS CHECK ──
-            double buffer = Math.max(totalDist * 0.15, 40.0);
-            if (pickupFromDist > totalDist + buffer) return false;
-            if (dropToDist     > totalDist + buffer) return false;
+            // 2. Ensure strictly not behind start / ahead of end
+            if (PolylineUtils.isStrictlyBehindOrAhead(pickupCoords, dropCoords, points)) {
+                return false;
+            }
 
-            // ── POLYLINE CHECK — only for full ORS polylines (many points) ──
-            // For fallback 2-point straight-line polylines, skip polyline check
-            // because straight line doesn't represent actual road corridor
-            if (r.getPolyline() != null && !r.getPolyline().isEmpty()) {
-                // Count decoded points — if more than 5, it's a real ORS polyline
-                // If only 2-10 points, it's our interpolated fallback — skip check
-                List<com.Startup.chalre.model.LatLng> points =
-                        com.Startup.chalre.utils.PolylineUtils.decode(r.getPolyline());
+            // 3. Distance along route check (Ensures forward direction)
+            double pickupDist = PolylineUtils.getDistanceAlongRoute(pickupCoords, points);
+            double dropDist   = PolylineUtils.getDistanceAlongRoute(dropCoords, points);
 
-                if (points.size() > 10) {
-                    // Real ORS polyline — use strict check
-                    return PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline())
-                            && PolylineUtils.isPointNearRoute(dropCoords,   r.getPolyline());
-                }
-                // Fallback interpolated polyline — direction checks already passed, allow it
-                // Sangli is a valid pickup for Kolhapur→Pune even though it's off the straight line
+            if (pickupDist >= dropDist) {
+                return false;
             }
 
             return true;

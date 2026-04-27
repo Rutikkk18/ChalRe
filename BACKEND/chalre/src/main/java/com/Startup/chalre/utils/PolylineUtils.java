@@ -129,38 +129,94 @@ public class PolylineUtils {
         return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     }
 
-    public static boolean isStrictlyWithinBoundsAndDirection(LatLng pickup, LatLng drop, LatLng rideStart, LatLng rideEnd) {
-        // Convert to Cartesian
-        double[] A = toCartesian(Math.toRadians(rideStart.getLat()), Math.toRadians(rideStart.getLng()));
-        double[] B = toCartesian(Math.toRadians(rideEnd.getLat()), Math.toRadians(rideEnd.getLng()));
-        double[] P = toCartesian(Math.toRadians(pickup.getLat()), Math.toRadians(pickup.getLng()));
-        double[] D = toCartesian(Math.toRadians(drop.getLat()), Math.toRadians(drop.getLng()));
+    public static boolean isStrictlyBehindOrAhead(LatLng pickup, LatLng drop, List<LatLng> polyline) {
+        if (polyline == null || polyline.size() < 2) return false;
 
-        // Define Vectors
-        double[] AB = subtract(B, A);
-        double[] AP = subtract(P, A);
-        double[] AD = subtract(D, A);
+        // Check pickup against the FIRST segment
+        LatLng startA = polyline.get(0);
+        LatLng startB = polyline.get(1);
+        double[] sA = toCartesian(Math.toRadians(startA.getLat()), Math.toRadians(startA.getLng()));
+        double[] sB = toCartesian(Math.toRadians(startB.getLat()), Math.toRadians(startB.getLng()));
+        double[] sP = toCartesian(Math.toRadians(pickup.getLat()), Math.toRadians(pickup.getLng()));
 
-        double dot_AB_AB = dot(AB, AB);
-        if (dot_AB_AB < 1e-10) return false; // Ride is too short
+        double[] sAB = subtract(sB, sA);
+        double[] sAP = subtract(sP, sA);
+        double dot_sAB = dot(sAB, sAB);
 
-        // Calculate exact fractional progression along the main route
-        double t_pickup = dot(AP, AB) / dot_AB_AB;
-        double t_drop   = dot(AD, AB) / dot_AB_AB;
+        if (dot_sAB > 1e-10) {
+            double t_pickup = dot(sAP, sAB) / dot_sAB;
+            if (t_pickup < 0 && haversineKm(pickup, startA) > 3.0) {
+                return true; // Strictly behind start
+            }
+        }
 
-        double pickupBehindDist = (t_pickup < 0) ? haversineKm(pickup, rideStart) : 0.0;
-        double dropAheadDist    = (t_drop > 1)   ? haversineKm(drop, rideEnd) : 0.0;
+        // Check drop against the LAST segment
+        LatLng endA = polyline.get(polyline.size() - 2);
+        LatLng endB = polyline.get(polyline.size() - 1);
+        double[] eA = toCartesian(Math.toRadians(endA.getLat()), Math.toRadians(endA.getLng()));
+        double[] eB = toCartesian(Math.toRadians(endB.getLat()), Math.toRadians(endB.getLng()));
+        double[] eD = toCartesian(Math.toRadians(drop.getLat()), Math.toRadians(drop.getLng()));
 
-        // 1. If pickup is mathematically behind the start, block it if it's > 3km behind
-        if (t_pickup < 0 && pickupBehindDist > 3.0) return false;
+        double[] eAB = subtract(eB, eA);
+        double[] eAD = subtract(eD, eA);
+        double dot_eAB = dot(eAB, eAB);
 
-        // 2. If drop is mathematically ahead of the end, block it if it's > 3km ahead
-        if (t_drop > 1 && dropAheadDist > 3.0) return false;
+        if (dot_eAB > 1e-10) {
+            double t_drop = dot(eAD, eAB) / dot_eAB;
+            if (t_drop > 1 && haversineKm(drop, endB) > 3.0) {
+                return true; // Strictly ahead of end
+            }
+        }
 
-        // 3. Drop must be mathematically after Pickup along the route direction
-        if (t_drop <= t_pickup) return false;
+        return false;
+    }
 
-        return true;
+    public static double getDistanceAlongRoute(LatLng p, List<LatLng> polyline) {
+        if (polyline == null || polyline.size() < 2) return 0.0;
+
+        double minDist = Double.MAX_VALUE;
+        int minIndex = 0;
+        double minT = 0.0;
+
+        for (int i = 0; i < polyline.size() - 1; i++) {
+            LatLng a = polyline.get(i);
+            LatLng b = polyline.get(i + 1);
+
+            double[] A = toCartesian(Math.toRadians(a.getLat()), Math.toRadians(a.getLng()));
+            double[] B = toCartesian(Math.toRadians(b.getLat()), Math.toRadians(b.getLng()));
+            double[] P = toCartesian(Math.toRadians(p.getLat()), Math.toRadians(p.getLng()));
+
+            double[] AB = subtract(B, A);
+            double[] AP = subtract(P, A);
+
+            double dot_AB_AB = dot(AB, AB);
+            double t = (dot_AB_AB < 1e-10) ? 0.0 : dot(AP, AB) / dot_AB_AB;
+            t = Math.max(0, Math.min(1, t));
+
+            double[] closest = add(A, scale(AB, t));
+            double len = Math.sqrt(dot(closest, closest));
+            closest[0] /= len; closest[1] /= len; closest[2] /= len;
+
+            double closestLat = Math.asin(closest[2]);
+            double closestLng = Math.atan2(closest[1], closest[0]);
+            LatLng closestPoint = new LatLng(Math.toDegrees(closestLat), Math.toDegrees(closestLng));
+
+            double distToSegment = haversineKm(p, closestPoint);
+
+            if (distToSegment < minDist) {
+                minDist = distToSegment;
+                minIndex = i;
+                minT = t;
+            }
+        }
+
+        double distanceAlong = 0.0;
+        for (int i = 0; i < minIndex; i++) {
+            distanceAlong += haversineKm(polyline.get(i), polyline.get(i + 1));
+        }
+        distanceAlong += haversineKm(polyline.get(minIndex), polyline.get(minIndex + 1)) * minT;
+
+        return distanceAlong;
     }
 
     public static double haversineKm(LatLng a, LatLng b) {
