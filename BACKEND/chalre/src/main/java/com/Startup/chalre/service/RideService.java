@@ -418,10 +418,17 @@ public class RideService {
             // 1. Calculate distances along the route
             double pickupDist = PolylineUtils.getDistanceAlongRoute(pickupCoords, points);
             double dropDist   = PolylineUtils.getDistanceAlongRoute(dropCoords, points);
-            double totalDist  = PolylineUtils.getDistanceAlongRoute(points.get(points.size()-1), points);
+            
+            // FIXED total distance: beautifully accurate cumulative sum of segments
+            double totalDist = 0.0;
+            for (int i = 0; i < points.size() - 1; i++) {
+                totalDist += PolylineUtils.haversineKm(points.get(i), points.get(i + 1));
+            }
+
+            // Normalize near start: handles GPS/projection noise near origin
+            if (pickupDist < 1.0) pickupDist = 0.0;
 
             // 2. Forward Direction (PRIMARY Guard)
-            if (pickupDist < 0) return false;                 // before start
             if (dropDist <= pickupDist) return false;         // strictly backward ordering
             if (dropDist > totalDist + 1.0) return false;     // beyond end
 

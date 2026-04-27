@@ -6,7 +6,7 @@ import java.util.List;
 
 public class PolylineUtils {
 
-    private static final double MATCH_RADIUS_KM = 15.0; // Reduced from 50.0 for better precision
+    private static final double MATCH_RADIUS_KM = 25.0; // Balanced for Indian highways
 
     public static List<LatLng> decode(String encoded) {
         List<LatLng> points = new ArrayList<>();
