@@ -223,4 +223,25 @@ public class PolylineUtils {
 
         return R * 2 * Math.asin(Math.sqrt(h));
     }
+
+    // ✅ NEW METHOD: Direction check (MOST IMPORTANT)
+    public static boolean isForwardDirection(LatLng pickup, LatLng drop, List<LatLng> polyline) {
+
+        if (polyline == null || polyline.size() < 2) return false;
+
+        double pickupDist = getDistanceAlongRoute(pickup, polyline);
+        double dropDist   = getDistanceAlongRoute(drop, polyline);
+
+        // 🚨 STRICT: drop must be AFTER pickup
+        if (dropDist <= pickupDist) {
+            return false;
+        }
+
+        // extra buffer to avoid edge noise
+        if (dropDist <= pickupDist + 1.0) {
+            return false;
+        }
+
+        return true;
+    }
 }
