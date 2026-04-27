@@ -393,64 +393,129 @@ public class RideService {
         LocalDate today = LocalDate.now();
 
         return rideRepository.findAll().stream()
-                .filter(r -> r.getAvailableSeats() > 0)
-                .filter(r -> {
-                    try {
-                        return !LocalDate.parse(r.getDate()).isBefore(today);
-                    } catch (Exception e) {
-                        return false;
-                    }
-                })
-                .filter(r -> isValidMatch(r, pickupCoords, dropCoords))
-                .toList();
+        .filter(r -> r.getAvailableSeats() > 0)
+        .filter(r -> {
+            try {
+                return !LocalDate.parse(r.getDate()).isBefore(today);
+            } catch (Exception e) {
+                return false;
+            }
+        })
+
+        // 🔥 TRANSFORM INTO PARTIAL RIDE
+        .map(r -> createPartialRide(r, pickupCoords, dropCoords))
+
+        // remove invalid ones
+        .filter(r -> r != null)
+
+        .toList();
     }
-        //direction check
-        private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
+    private Ride createPartialRide(Ride r, LatLng pickup, LatLng drop) {
 
-    if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
-    if (r.getPolyline() == null || r.getPolyline().isEmpty()) return false;
+        // validate first
+        if (!isValidMatch(r, pickup, drop)) return null;
 
-    List<LatLng> points = PolylineUtils.decode(r.getPolyline());
-    if (points.size() < 2) return false;
+        List<LatLng> points = PolylineUtils.decode(r.getPolyline());
 
-    // 1. MUST be near route (FIRST filter)
-    if (!PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) ||
-        !PolylineUtils.isPointNearRoute(dropCoords, r.getPolyline())) {
-        return false;
+        double pickupDist = PolylineUtils.getDistanceAlongRoute(pickup, points);
+        double dropDist   = PolylineUtils.getDistanceAlongRoute(drop, points);
+
+        // 🚫 FINAL HARD BLOCK (extra safety)
+        if (dropDist <= pickupDist) return null;
+
+        // 🔥 DO NOT MODIFY ORIGINAL RIDE
+        Ride partial = new Ride();
+
+        // copy needed fields
+        partial.setId(r.getId());
+        partial.setDriver(r.getDriver());
+        partial.setDate(r.getDate());
+        partial.setTime(r.getTime());
+        partial.setAvailableSeats(r.getAvailableSeats());
+        partial.setCarType(r.getCarType());
+        partial.setCarModel(r.getCarModel());
+        partial.setGenderPreference(r.getGenderPreference());
+
+        // 🔥 IMPORTANT: UI CHANGE
+        partial.setStartLocation("From your pickup");
+        partial.setEndLocation("To your drop");
+
+        // 🔥 set user coords
+        partial.setFromLat(pickup.getLat());
+        partial.setFromLng(pickup.getLng());
+        partial.setToLat(drop.getLat());
+        partial.setToLng(drop.getLng());
+
+        // 🔥 PRICE CALC (route-based)
+        double totalDist = r.getDistance();
+        double partialDist = dropDist - pickupDist;
+
+        double ratio = (totalDist > 0) ? (partialDist / totalDist) : 1.0;
+        ratio = Math.max(0.1, Math.min(1.0, ratio));
+
+        partial.setPrice((double) Math.round(r.getPrice() * ratio));
+
+        return partial;
     }
 
-    // 2. Get distance along route
-    double pickupDist = PolylineUtils.getDistanceAlongRoute(pickupCoords, points);
-    double dropDist   = PolylineUtils.getDistanceAlongRoute(dropCoords, points);
+    //direction check
+    private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
 
-    // total route distance
-    double totalDist = 0.0;
-    for (int i = 0; i < points.size() - 1; i++) {
-        totalDist += PolylineUtils.haversineKm(points.get(i), points.get(i + 1));
-    }
+        if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
+        if (r.getPolyline() == null || r.getPolyline().isEmpty()) return false;
 
-    // normalize
-    if (pickupDist < 1.0) pickupDist = 0.0;
+        List<LatLng> points = PolylineUtils.decode(r.getPolyline());
+        if (points.size() < 2) return false;
 
-    // 3. STRICT ORDER (MAIN FIX)
-    if (dropDist <= pickupDist + 2.0) return false;
+        // ✅ MUST be near route FIRST
+        if (!PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) ||
+            !PolylineUtils.isPointNearRoute(dropCoords, r.getPolyline())) {
+            return false;
+        }
 
-    // 4. prevent pickup far behind start
-    LatLng start = points.get(0);
-    if (pickupDist == 0.0 &&
-        PolylineUtils.haversineKm(pickupCoords, start) > 5.0) {
-        return false;
-    }
+        // ✅ 🚨 HARD DIRECTION CHECK (MOST IMPORTANT FIX)
+        if (!PolylineUtils.isForwardDirection(pickupCoords, dropCoords, points)) {
+            return false;
+        }
 
-    // 5. prevent drop far after end
-    LatLng end = points.get(points.size() - 1);
-    if (dropDist >= totalDist &&
-        PolylineUtils.haversineKm(dropCoords, end) > 5.0) {
+        LatLng start = points.get(0);
+        LatLng end   = points.get(points.size() - 1);
+
+        double pickupDist = PolylineUtils.getDistanceAlongRoute(pickupCoords, points);
+        double dropDist   = PolylineUtils.getDistanceAlongRoute(dropCoords, points);
+
+        double totalDist = 0.0;
+        for (int i = 0; i < points.size() - 1; i++) {
+            totalDist += PolylineUtils.haversineKm(points.get(i), points.get(i + 1));
+        }
+
+        // 🚨 ABSOLUTE HARD BLOCK: BEHIND START
+        double directDistFromStart = PolylineUtils.haversineKm(pickupCoords, start);
+
+        // if projection says near start BUT actual distance is far → reject
+        if (pickupDist <= 1.0 && directDistFromStart > 3.0) {
+            return false;
+        }
+
+        // 🚨 STRICT ORDER
+        if (dropDist <= pickupDist + 1.0) {
+            return false;
+        }
+
+        // 🚫 EXTRA SAFETY: prevent reverse overlap edge cases
+        if (dropDist <= pickupDist) {
+            return false;
+        }
+
+    // 🚨 BLOCK AFTER END
+    double dropDistFromEnd = PolylineUtils.haversineKm(dropCoords, end);
+    if (dropDist >= totalDist && dropDistFromEnd > 5.0) {
         return false;
     }
 
     return true;
 }
+
 
     // ── Phase 8: Calculate partial fare ─────────────────────
     public Map<String, Object> calculatePrice(Long rideId,
