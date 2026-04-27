@@ -129,6 +129,32 @@ public class PolylineUtils {
         return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     }
 
+    public static boolean isStrictlyWithinBoundsAndDirection(LatLng pickup, LatLng drop, LatLng rideStart, LatLng rideEnd) {
+        // Convert to Cartesian
+        double[] A = toCartesian(Math.toRadians(rideStart.getLat()), Math.toRadians(rideStart.getLng()));
+        double[] B = toCartesian(Math.toRadians(rideEnd.getLat()), Math.toRadians(rideEnd.getLng()));
+        double[] P = toCartesian(Math.toRadians(pickup.getLat()), Math.toRadians(pickup.getLng()));
+        double[] D = toCartesian(Math.toRadians(drop.getLat()), Math.toRadians(drop.getLng()));
+
+        // Define Vectors
+        double[] AB = subtract(B, A);
+        double[] AP = subtract(P, A);
+        double[] BD = subtract(D, B);
+        double[] PD = subtract(D, P);
+
+        // Dot Products
+        // If dot(AP, AB) < 0, the angle is > 90 deg -> Pickup is BEHIND Start
+        if (dot(AP, AB) < -0.00001) return false; 
+
+        // If dot(BD, AB) > 0, Drop is moving further in the direction of AB -> AHEAD of End
+        if (dot(BD, AB) > 0.00001) return false; 
+
+        // If dot(PD, AB) < 0, the partial route is going backwards relative to main route
+        if (dot(PD, AB) < 0) return false;
+
+        return true;
+    }
+
     public static double haversineKm(LatLng a, LatLng b) {
         final int R = 6371;
         double dLat = Math.toRadians(b.getLat() - a.getLat());

@@ -421,17 +421,9 @@ public class RideService {
 
             double tolerance = 35.0;
 
-            // ── DIRECTION CHECK 1: Pickup must not be further along the route than Drop ──
-            if (pickupFromDist > dropFromDist + tolerance) return false;
-
-            // ── DIRECTION CHECK 2: Drop must not be further back towards start than Pickup ──
-            if (dropToDist > pickupToDist + tolerance) return false;
-
-            // ── DIRECTION CHECK 3: Pickup must not be behind the start point ──
-            if (pickupToDist > totalDist + 15.0) return false;
-
-            // ── DIRECTION CHECK 4: Drop must not be ahead of the end point ──
-            if (dropFromDist > totalDist + 15.0) return false;
+            if (!PolylineUtils.isStrictlyWithinBoundsAndDirection(pickupCoords, dropCoords, rideFrom, rideTo)) {
+                return false;
+            }
 
             // ── BOUNDS CHECK ──
             double buffer = Math.max(totalDist * 0.15, 40.0);
