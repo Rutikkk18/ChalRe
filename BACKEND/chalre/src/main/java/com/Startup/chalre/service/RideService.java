@@ -407,50 +407,50 @@ public class RideService {
         //direction check
         private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
 
-            if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
-            if (r.getPolyline() == null || r.getPolyline().isEmpty()) return false;
+    if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
+    if (r.getPolyline() == null || r.getPolyline().isEmpty()) return false;
 
-            List<com.Startup.chalre.model.LatLng> points =
-                    com.Startup.chalre.utils.PolylineUtils.decode(r.getPolyline());
+    List<LatLng> points = PolylineUtils.decode(r.getPolyline());
+    if (points.size() < 2) return false;
 
-            if (points.size() < 2) return false;
+    // 1. MUST be near route (FIRST filter)
+    if (!PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) ||
+        !PolylineUtils.isPointNearRoute(dropCoords, r.getPolyline())) {
+        return false;
+    }
 
-            // 1. Macro Direction Alignment (NEW - Strongest Guard)
-            if (!PolylineUtils.isForwardDirection(pickupCoords, dropCoords, points)) {
-                return false;
-            }
+    // 2. Get distance along route
+    double pickupDist = PolylineUtils.getDistanceAlongRoute(pickupCoords, points);
+    double dropDist   = PolylineUtils.getDistanceAlongRoute(dropCoords, points);
 
-            // 2. Calculate distances along the route
-            double pickupDist = PolylineUtils.getDistanceAlongRoute(pickupCoords, points);
-            double dropDist   = PolylineUtils.getDistanceAlongRoute(dropCoords, points);
-            
-            // FIXED total distance: beautifully accurate cumulative sum of segments
-            double totalDist = 0.0;
-            for (int i = 0; i < points.size() - 1; i++) {
-                totalDist += PolylineUtils.haversineKm(points.get(i), points.get(i + 1));
-            }
+    // total route distance
+    double totalDist = 0.0;
+    for (int i = 0; i < points.size() - 1; i++) {
+        totalDist += PolylineUtils.haversineKm(points.get(i), points.get(i + 1));
+    }
 
-            // Normalize near start: handles GPS/projection noise near origin
-            if (pickupDist < 1.0) pickupDist = 0.0;
+    // normalize
+    if (pickupDist < 1.0) pickupDist = 0.0;
 
-            // 3. Strict progression ordering
-            if (dropDist <= pickupDist) return false;         // strictly backward ordering
-            if (dropDist > totalDist + 1.0) return false;     // beyond end
+    // 3. STRICT ORDER (MAIN FIX)
+    if (dropDist <= pickupDist + 2.0) return false;
 
-            // 4. Geographic Boundary (Secondary Safety Guard)
-            // Ensures that pickups exactly at 0.0 distance aren't geographically far behind the starting city
-            if (PolylineUtils.isStrictlyBehindOrAhead(pickupCoords, dropCoords, points)) {
-                return false;
-            }
+    // 4. prevent pickup far behind start
+    LatLng start = points.get(0);
+    if (pickupDist == 0.0 &&
+        PolylineUtils.haversineKm(pickupCoords, start) > 5.0) {
+        return false;
+    }
 
-            // 5. Radius Proximity (SECONDARY Filter)
-            if (!PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) ||
-                !PolylineUtils.isPointNearRoute(dropCoords, r.getPolyline())) {
-                return false;
-            }
+    // 5. prevent drop far after end
+    LatLng end = points.get(points.size() - 1);
+    if (dropDist >= totalDist &&
+        PolylineUtils.haversineKm(dropCoords, end) > 5.0) {
+        return false;
+    }
 
-            return true;
-        }
+    return true;
+}
 
     // ── Phase 8: Calculate partial fare ─────────────────────
     public Map<String, Object> calculatePrice(Long rideId,

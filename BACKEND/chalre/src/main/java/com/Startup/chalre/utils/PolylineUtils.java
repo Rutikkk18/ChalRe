@@ -6,7 +6,8 @@ import java.util.List;
 
 public class PolylineUtils {
 
-    private static final double MATCH_RADIUS_KM = 25.0; // Balanced for Indian highways
+    // Increased for long highway coverage (fixes Satara issue)
+    private static final double MATCH_RADIUS_KM = 35.0;
 
     public static List<LatLng> decode(String encoded) {
         List<LatLng> points = new ArrayList<>();
@@ -43,14 +44,23 @@ public class PolylineUtils {
         List<LatLng> routePoints = decode(encodedPolyline);
         if (routePoints.isEmpty()) return false;
 
-        // Check each point on route
+        // 🔥 FAST FAIL (avoid wrong far matches)
+        LatLng first = routePoints.get(0);
+        LatLng last  = routePoints.get(routePoints.size() - 1);
+
+        double distStart = haversineKm(point, first);
+        double distEnd   = haversineKm(point, last);
+
+        if (Math.min(distStart, distEnd) > 500) return false;
+
+        // Check each point
         for (LatLng routePoint : routePoints) {
             if (haversineKm(point, routePoint) <= MATCH_RADIUS_KM) {
                 return true;
             }
         }
 
-        // Check each line segment
+        // Check each segment
         for (int i = 0; i < routePoints.size() - 1; i++) {
             if (distanceToSegmentKm(point, routePoints.get(i), routePoints.get(i + 1))
                     <= MATCH_RADIUS_KM) {
@@ -61,10 +71,8 @@ public class PolylineUtils {
         return false;
     }
 
-    // ── FIXED: proper spherical segment distance ──────────────
     private static double distanceToSegmentKm(LatLng p, LatLng a, LatLng b) {
 
-        // Convert all points to radians
         double lat1 = Math.toRadians(a.getLat());
         double lng1 = Math.toRadians(a.getLng());
         double lat2 = Math.toRadians(b.getLat());
@@ -72,34 +80,29 @@ public class PolylineUtils {
         double latP = Math.toRadians(p.getLat());
         double lngP = Math.toRadians(p.getLng());
 
-        // Vector AB and AP in 3D cartesian (unit sphere)
         double[] A = toCartesian(lat1, lng1);
         double[] B = toCartesian(lat2, lng2);
         double[] P = toCartesian(latP, lngP);
 
-        // Project P onto line AB, clamp to segment
         double[] AB = subtract(B, A);
         double[] AP = subtract(P, A);
 
         double t = dot(AP, AB) / dot(AB, AB);
-        t = Math.max(0, Math.min(1, t));  // clamp to [0,1]
+        t = Math.max(0, Math.min(1, t));
 
-        // Closest point on segment
         double[] closest = add(A, scale(AB, t));
 
-        // Normalize back to unit sphere
         double len = Math.sqrt(dot(closest, closest));
         closest[0] /= len;
         closest[1] /= len;
         closest[2] /= len;
 
-        // Convert back to lat/lng
         double closestLat = Math.asin(closest[2]);
         double closestLng = Math.atan2(closest[1], closest[0]);
 
         LatLng closestPoint = new LatLng(
-            Math.toDegrees(closestLat),
-            Math.toDegrees(closestLng)
+                Math.toDegrees(closestLat),
+                Math.toDegrees(closestLng)
         );
 
         return haversineKm(p, closestPoint);
@@ -107,9 +110,9 @@ public class PolylineUtils {
 
     private static double[] toCartesian(double lat, double lng) {
         return new double[]{
-            Math.cos(lat) * Math.cos(lng),
-            Math.cos(lat) * Math.sin(lng),
-            Math.sin(lat)
+                Math.cos(lat) * Math.cos(lng),
+                Math.cos(lat) * Math.sin(lng),
+                Math.sin(lat)
         };
     }
 
@@ -129,62 +132,29 @@ public class PolylineUtils {
         return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     }
 
-    public static boolean isForwardDirection(LatLng pickup, LatLng drop, List<LatLng> polyline) {
-        if (polyline.size() < 2) return false;
-
-        // Overall route direction (start → end)
-        LatLng start = polyline.get(0);
-        LatLng end   = polyline.get(polyline.size() - 1);
-
-        double routeDx = end.getLat() - start.getLat();
-        double routeDy = end.getLng() - start.getLng();
-
-        // User direction (pickup → drop)
-        double userDx = drop.getLat() - pickup.getLat();
-        double userDy = drop.getLng() - pickup.getLng();
-
-        double dot = routeDx * userDx + routeDy * userDy;
-
-        return dot > 0; // must be forward
-    }
-
     public static boolean isStrictlyBehindOrAhead(LatLng pickup, LatLng drop, List<LatLng> polyline) {
         if (polyline == null || polyline.size() < 2) return false;
 
-        // Check pickup against the FIRST segment
-        LatLng startA = polyline.get(0);
-        LatLng startB = polyline.get(1);
-        double[] sA = toCartesian(Math.toRadians(startA.getLat()), Math.toRadians(startA.getLng()));
-        double[] sB = toCartesian(Math.toRadians(startB.getLat()), Math.toRadians(startB.getLng()));
-        double[] sP = toCartesian(Math.toRadians(pickup.getLat()), Math.toRadians(pickup.getLng()));
+        LatLng start = polyline.get(0);
+        LatLng end   = polyline.get(polyline.size() - 1);
 
-        double[] sAB = subtract(sB, sA);
-        double[] sAP = subtract(sP, sA);
-        double dot_sAB = dot(sAB, sAB);
-
-        if (dot_sAB > 1e-10) {
-            double t_pickup = dot(sAP, sAB) / dot_sAB;
-            if (t_pickup < 0 && haversineKm(pickup, startA) > 3.0) {
-                return true; // Strictly behind start
-            }
+        // Behind start
+        if (haversineKm(pickup, start) > 5.0 &&
+            getDistanceAlongRoute(pickup, polyline) == 0.0) {
+            return true;
         }
 
-        // Check drop against the LAST segment
-        LatLng endA = polyline.get(polyline.size() - 2);
-        LatLng endB = polyline.get(polyline.size() - 1);
-        double[] eA = toCartesian(Math.toRadians(endA.getLat()), Math.toRadians(endA.getLng()));
-        double[] eB = toCartesian(Math.toRadians(endB.getLat()), Math.toRadians(endB.getLng()));
-        double[] eD = toCartesian(Math.toRadians(drop.getLat()), Math.toRadians(drop.getLng()));
+        // Ahead of end
+        double totalDist = 0.0;
+        for (int i = 0; i < polyline.size() - 1; i++) {
+            totalDist += haversineKm(polyline.get(i), polyline.get(i + 1));
+        }
 
-        double[] eAB = subtract(eB, eA);
-        double[] eAD = subtract(eD, eA);
-        double dot_eAB = dot(eAB, eAB);
+        double dropDist = getDistanceAlongRoute(drop, polyline);
 
-        if (dot_eAB > 1e-10) {
-            double t_drop = dot(eAD, eAB) / dot_eAB;
-            if (t_drop > 1 && haversineKm(drop, endB) > 3.0) {
-                return true; // Strictly ahead of end
-            }
+        if (dropDist >= totalDist &&
+            haversineKm(drop, end) > 5.0) {
+            return true;
         }
 
         return false;
