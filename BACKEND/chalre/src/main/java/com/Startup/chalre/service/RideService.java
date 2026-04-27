@@ -482,7 +482,7 @@ public class RideService {
         double dropFromEnd     = PolylineUtils.haversineKm(dropCoords,   rideTo);
 
         // If pickup is near start AND drop is near end, it's the main route
-        if (pickupFromStart <= 15.0 && dropFromEnd <= 15.0) {
+        if (pickupFromStart <= 3.0 && dropFromEnd <= 3.0) {
             return Map.of(
                     "fullPrice",       fullPrice,
                     "calculatedPrice", fullPrice,

@@ -139,18 +139,26 @@ public class PolylineUtils {
         // Define Vectors
         double[] AB = subtract(B, A);
         double[] AP = subtract(P, A);
-        double[] BD = subtract(D, B);
-        double[] PD = subtract(D, P);
+        double[] AD = subtract(D, A);
 
-        // Dot Products
-        // If dot(AP, AB) < 0, the angle is > 90 deg -> Pickup is BEHIND Start
-        if (dot(AP, AB) < -0.00001) return false; 
+        double dot_AB_AB = dot(AB, AB);
+        if (dot_AB_AB < 1e-10) return false; // Ride is too short
 
-        // If dot(BD, AB) > 0, Drop is moving further in the direction of AB -> AHEAD of End
-        if (dot(BD, AB) > 0.00001) return false; 
+        // Calculate exact fractional progression along the main route
+        double t_pickup = dot(AP, AB) / dot_AB_AB;
+        double t_drop   = dot(AD, AB) / dot_AB_AB;
 
-        // If dot(PD, AB) < 0, the partial route is going backwards relative to main route
-        if (dot(PD, AB) < 0) return false;
+        double pickupBehindDist = (t_pickup < 0) ? haversineKm(pickup, rideStart) : 0.0;
+        double dropAheadDist    = (t_drop > 1)   ? haversineKm(drop, rideEnd) : 0.0;
+
+        // 1. If pickup is mathematically behind the start, block it if it's > 3km behind
+        if (t_pickup < 0 && pickupBehindDist > 3.0) return false;
+
+        // 2. If drop is mathematically ahead of the end, block it if it's > 3km ahead
+        if (t_drop > 1 && dropAheadDist > 3.0) return false;
+
+        // 3. Drop must be mathematically after Pickup along the route direction
+        if (t_drop <= t_pickup) return false;
 
         return true;
     }
