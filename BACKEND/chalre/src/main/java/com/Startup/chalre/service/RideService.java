@@ -427,6 +427,12 @@ public class RideService {
             // ── DIRECTION CHECK 2: Drop must not be further back towards start than Pickup ──
             if (dropToDist > pickupToDist + tolerance) return false;
 
+            // ── DIRECTION CHECK 3: Pickup must not be behind the start point ──
+            if (pickupToDist > totalDist + 15.0) return false;
+
+            // ── DIRECTION CHECK 4: Drop must not be ahead of the end point ──
+            if (dropFromDist > totalDist + 15.0) return false;
+
             // ── BOUNDS CHECK ──
             double buffer = Math.max(totalDist * 0.15, 40.0);
             if (pickupFromDist > totalDist + buffer) return false;
@@ -477,23 +483,43 @@ public class RideService {
         LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
         LatLng dropCoords   = new LatLng(dropLat,   dropLng);
 
-        double partialDistance = PolylineUtils.haversineKm(pickupCoords, dropCoords);
+        LatLng rideFrom = new LatLng(ride.getFromLat(), ride.getFromLng());
+        LatLng rideTo   = new LatLng(ride.getToLat(),   ride.getToLng());
 
-        double ratio           = partialDistance / fullDistance;
-        ratio                  = Math.min(ratio, 1.0);
+        double pickupFromStart = PolylineUtils.haversineKm(pickupCoords, rideFrom);
+        double dropFromEnd     = PolylineUtils.haversineKm(dropCoords,   rideTo);
+
+        // If pickup is near start AND drop is near end, it's the main route
+        if (pickupFromStart <= 15.0 && dropFromEnd <= 15.0) {
+            return Map.of(
+                    "fullPrice",       fullPrice,
+                    "calculatedPrice", fullPrice,
+                    "partialDistance", fullDistance,
+                    "fullDistance",    fullDistance,
+                    "isPartial",       false
+            );
+        }
+
+        double partialDistance = PolylineUtils.haversineKm(pickupCoords, dropCoords);
+        double fullHaversineDist = PolylineUtils.haversineKm(rideFrom, rideTo);
+
+        double ratio = 1.0;
+        if (fullHaversineDist > 0) {
+            ratio = partialDistance / fullHaversineDist;
+        }
+        ratio = Math.min(ratio, 1.0);
+        
         double calculatedPrice = Math.round(fullPrice * ratio);
 
         double minFare = Math.round(fullPrice * 0.20);
         calculatedPrice = Math.max(calculatedPrice, minFare);
-
-        boolean isPartial = partialDistance < (fullDistance * 0.95);
 
         return Map.of(
                 "fullPrice",       fullPrice,
                 "calculatedPrice", calculatedPrice,
                 "partialDistance", Math.round(partialDistance * 10.0) / 10.0,
                 "fullDistance",    Math.round(fullDistance   * 10.0) / 10.0,
-                "isPartial",       isPartial
+                "isPartial",       true
         );
     }
 }
