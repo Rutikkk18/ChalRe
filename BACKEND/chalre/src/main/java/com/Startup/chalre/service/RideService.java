@@ -125,8 +125,8 @@ public class RideService {
     }
 
     public List<Ride> searchRides(String from, String to, String date, Integer seats,
-                                   Double minPrice, Double maxPrice, String carType,
-                                   String genderPreference, String userGender) {
+                                  Double minPrice, Double maxPrice, String carType,
+                                  String genderPreference, String userGender) {
 
         List<Ride> rides = rideRepository
                 .findByStartLocationContainingIgnoreCaseAndEndLocationContainingIgnoreCase(from, to)
@@ -393,26 +393,24 @@ public class RideService {
         LocalDate today = LocalDate.now();
 
         return rideRepository.findAll().stream()
-        .filter(r -> r.getAvailableSeats() > 0)
-        .filter(r -> {
-            try {
-                return !LocalDate.parse(r.getDate()).isBefore(today);
-            } catch (Exception e) {
-                return false;
-            }
-        })
-
-        // 🔥 TRANSFORM INTO PARTIAL RIDE
-        .map(r -> {
-            r.setIsPartial(false);
-            return ,(r, pickupCoords, dropCoords);
-        })
-
-        // remove invalid ones
-        .filter(r -> r != null)
-
-        .toList();
+                .filter(r -> r.getAvailableSeats() > 0)
+                .filter(r -> {
+                    try {
+                        return !LocalDate.parse(r.getDate()).isBefore(today);
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                // ── FIX: was `return ,(r, pickupCoords, dropCoords)` — typo/corrupt paste ──
+                .map(r -> {
+                    r.setIsPartial(false);
+                    return createPartialRide(r, pickupCoords, dropCoords);
+                })
+                // remove rides that didn't pass validation (createPartialRide returns null)
+                .filter(r -> r != null)
+                .toList();
     }
+
     private Ride createPartialRide(Ride r, LatLng pickup, LatLng drop) {
 
         // validate first
@@ -441,18 +439,18 @@ public class RideService {
 
         partial.setIsPartial(true);
 
-        // 🔥 IMPORTANT: UI CHANGE
-        partial.setStartLocation(r.getStartLocation()); // default fallback
+        // UI CHANGE: always carry original route locations for display
+        partial.setStartLocation(r.getStartLocation());
         partial.setEndLocation(r.getEndLocation());
 
-        // 🔥 set user coords
+        // set user coords
         partial.setFromLat(pickup.getLat());
         partial.setFromLng(pickup.getLng());
         partial.setToLat(drop.getLat());
         partial.setToLng(drop.getLng());
 
-        // 🔥 PRICE CALC (route-based)
-        double totalDist = r.getDistance();
+        // PRICE CALC (route-based)
+        double totalDist   = r.getDistance();
         double partialDist = dropDist - pickupDist;
 
         double ratio = (totalDist > 0) ? (partialDist / totalDist) : 1.0;
@@ -463,7 +461,7 @@ public class RideService {
         return partial;
     }
 
-    //direction check
+    // direction check
     private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
 
         if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
@@ -472,13 +470,13 @@ public class RideService {
         List<LatLng> points = PolylineUtils.decode(r.getPolyline());
         if (points.size() < 2) return false;
 
-        // ✅ MUST be near route FIRST
+        // MUST be near route FIRST
         if (!PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) ||
-            !PolylineUtils.isPointNearRoute(dropCoords, r.getPolyline())) {
+                !PolylineUtils.isPointNearRoute(dropCoords, r.getPolyline())) {
             return false;
         }
 
-        // ✅ 🚨 HARD DIRECTION CHECK (MOST IMPORTANT FIX)
+        // HARD DIRECTION CHECK (MOST IMPORTANT)
         if (!PolylineUtils.isForwardDirection(pickupCoords, dropCoords, points)) {
             return false;
         }
@@ -494,7 +492,7 @@ public class RideService {
             totalDist += PolylineUtils.haversineKm(points.get(i), points.get(i + 1));
         }
 
-        // 🚨 ABSOLUTE HARD BLOCK: BEHIND START
+        // ABSOLUTE HARD BLOCK: BEHIND START
         double directDistFromStart = PolylineUtils.haversineKm(pickupCoords, start);
 
         // if projection says near start BUT actual distance is far → reject
@@ -502,25 +500,24 @@ public class RideService {
             return false;
         }
 
-        // 🚨 STRICT ORDER
+        // STRICT ORDER
         if (dropDist <= pickupDist + 1.0) {
             return false;
         }
 
-        // 🚫 EXTRA SAFETY: prevent reverse overlap edge cases
+        // EXTRA SAFETY: prevent reverse overlap edge cases
         if (dropDist <= pickupDist) {
             return false;
         }
 
-    // 🚨 BLOCK AFTER END
-    double dropDistFromEnd = PolylineUtils.haversineKm(dropCoords, end);
-    if (dropDist >= totalDist && dropDistFromEnd > 5.0) {
-        return false;
+        // BLOCK AFTER END
+        double dropDistFromEnd = PolylineUtils.haversineKm(dropCoords, end);
+        if (dropDist >= totalDist && dropDistFromEnd > 5.0) {
+            return false;
+        }
+
+        return true;
     }
-
-    return true;
-}
-
 
     // ── Phase 8: Calculate partial fare ─────────────────────
     public Map<String, Object> calculatePrice(Long rideId,
@@ -552,7 +549,7 @@ public class RideService {
         double pickupFromStart = PolylineUtils.haversineKm(pickupCoords, rideFrom);
         double dropFromEnd     = PolylineUtils.haversineKm(dropCoords,   rideTo);
 
-        // If pickup is near start AND drop is near end, it's the main route
+        // If pickup is near start AND drop is near end, it's the full route
         if (pickupFromStart <= 3.0 && dropFromEnd <= 3.0) {
             return Map.of(
                     "fullPrice",       fullPrice,
@@ -563,7 +560,7 @@ public class RideService {
             );
         }
 
-        double partialDistance = PolylineUtils.haversineKm(pickupCoords, dropCoords);
+        double partialDistance   = PolylineUtils.haversineKm(pickupCoords, dropCoords);
         double fullHaversineDist = PolylineUtils.haversineKm(rideFrom, rideTo);
 
         double ratio = 1.0;
@@ -571,7 +568,7 @@ public class RideService {
             ratio = partialDistance / fullHaversineDist;
         }
         ratio = Math.min(ratio, 1.0);
-        
+
         double calculatedPrice = Math.round(fullPrice * ratio);
 
         double minFare = Math.round(fullPrice * 0.20);
