@@ -71,6 +71,9 @@
         @Column(columnDefinition = "TEXT")
         private String polyline;   // encoded route polyline (can be long)
 
+        @Column(columnDefinition = "geometry(LineString,4326)")
+        private org.locationtech.jts.geom.LineString route;
+
         private double distance;   // route distance in km
 
         @Transient

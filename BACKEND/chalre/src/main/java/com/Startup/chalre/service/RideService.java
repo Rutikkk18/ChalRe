@@ -96,6 +96,14 @@ public class RideService {
         if (route != null) {
             ride.setPolyline(route.getPolyline());
             ride.setDistance(route.getDistance());
+            
+            try {
+                List<LatLng> points = PolylineUtils.decode(route.getPolyline());
+                org.locationtech.jts.geom.LineString jtsRoute = PolylineUtils.createJTSLineString(points);
+                ride.setRoute(jtsRoute);
+            } catch (Exception e) {
+                System.err.println("Could not create JTS LineString: " + e.getMessage());
+            }
         }
 
         Ride saved = rideRepository.save(ride);
@@ -394,7 +402,14 @@ public class RideService {
     private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords) {
         LocalDate today = LocalDate.now();
 
-        return rideRepository.findAll().stream()
+        // 1. Let the DB handle the spatial matching
+        List<Ride> matchedRides = rideRepository.findValidRidesForRoute(
+                pickupCoords.getLat(), pickupCoords.getLng(),
+                dropCoords.getLat(), dropCoords.getLng()
+        );
+
+        // 2. Filter available seats and dates
+        return matchedRides.stream()
                 .filter(r -> r.getAvailableSeats() > 0)
                 .filter(r -> {
                     try {
@@ -412,16 +427,6 @@ public class RideService {
     }
 
     private Ride createPartialRide(Ride r, LatLng pickup, LatLng drop) {
-
-        if (!isValidMatch(r, pickup, drop)) return null;
-
-        List<LatLng> points = PolylineUtils.decode(r.getPolyline());
-
-
-        double pickupDist = PolylineUtils.getDistanceAlongRoute(pickup, points);
-        double dropDist   = PolylineUtils.getDistanceAlongRoute(drop, points);
-
-        if (dropDist <= pickupDist) return null;
 
         Ride partial = new Ride();
 
@@ -445,7 +450,7 @@ public class RideService {
         partial.setToLng(drop.getLng());
 
         double totalDist   = r.getDistance();
-        double partialDist = dropDist - pickupDist;
+        double partialDist = PolylineUtils.haversineKm(pickup, drop);
 
         double ratio = (totalDist > 0) ? (partialDist / totalDist) : 1.0;
         ratio = Math.max(0.1, Math.min(1.0, ratio));
@@ -455,83 +460,7 @@ public class RideService {
         return partial;
     }
 
-    private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
 
-         if (r.getFromLat() == 0 || r.getToLat() == 0) {
-        System.out.println("REJECT ride " + r.getId() + ": no coords stored");
-        return false;
-    }
-    if (r.getPolyline() == null || r.getPolyline().isEmpty()) {
-        System.out.println("REJECT ride " + r.getId() + ": no polyline");
-        return false;
-    } 
-
-        if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
-        if (r.getPolyline() == null || r.getPolyline().isEmpty()) return false;
-
-        List<LatLng> points = PolylineUtils.decode(r.getPolyline());
-        if (points.size() < 2) return false;
-
-        // Both points must be near the route polyline
-        if (!PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) ||
-                !PolylineUtils.isPointNearRoute(dropCoords, r.getPolyline())) {
-            return false;
-        }
-
-        // Drop must be strictly after pickup along the route
-        if (!PolylineUtils.isForwardDirection(pickupCoords, dropCoords, points)) {
-            return false;
-        }
-
-        LatLng start = points.get(0);
-        LatLng end   = points.get(points.size() - 1);
-
-        double pickupDist = PolylineUtils.getDistanceAlongRoute(pickupCoords, points);
-        double dropDist   = PolylineUtils.getDistanceAlongRoute(dropCoords, points);
-
-        double totalDist = 0.0;
-        for (int i = 0; i < points.size() - 1; i++) {
-            totalDist += PolylineUtils.haversineKm(points.get(i), points.get(i + 1));
-        }
-
-        // ── KEY FIX: raised threshold from 1.0 → 5.0 ───────────────────────────
-        //
-        // PROBLEM: Kavane (8km from Kolhapur) was being tested against the
-        // Kolhapur→Pune polyline. The polyline STARTS at Kolhapur, so Kavane
-        // projected to pickupDist ≈ 2-4km (just past the old 1.0 threshold).
-        // directDistFromStart was ~8km, but 1.0 < 2-4 so the old block didn't fire.
-        //
-        // FIX: If pickup projects to within 5km of the route start (pickupDist ≤ 5.0),
-        // the actual geographic distance from pickup to route-start must ALSO be ≤ 5km.
-        // This catches cases where the point is nearby in projection space but is actually
-        // a different city/location that shouldn't board this ride.
-        //
-        // Safe side: a genuine intermediate boarding point 4km past the start would
-        // also be ≤ 5km from the start geographically — so valid boardings still pass.
-        // ─────────────────────────────────────────────────────────────────────────
-        double directDistFromStart = PolylineUtils.haversineKm(pickupCoords, start);
-        if (pickupDist <= 5.0 && directDistFromStart > 5.0) {
-            return false;
-        }
-
-        // Strict order check
-        if (dropDist <= pickupDist + 1.0) {
-            return false;
-        }
-
-        // Extra safety against reverse overlap
-        if (dropDist <= pickupDist) {
-            return false;
-        }
-
-        // Block drop that is past route end but geographically far from it
-        double dropDistFromEnd = PolylineUtils.haversineKm(dropCoords, end);
-        if (dropDist >= totalDist && dropDistFromEnd > 5.0) {
-            return false;
-        }
-
-        return true;
-    }
 
     // ── Calculate partial fare ───────────────────────────────
     public Map<String, Object> calculatePrice(Long rideId,
