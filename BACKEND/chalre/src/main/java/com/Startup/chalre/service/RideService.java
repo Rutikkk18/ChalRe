@@ -33,7 +33,7 @@ public class RideService {
     private final MapService mapService;
     private final RouteService routeService;
 
-    // CREATE RIDE
+    // ── CREATE RIDE ──────────────────────────────────────────
     public Ride createRide(RideDTO dto, User driver) {
 
         try {
@@ -57,15 +57,15 @@ public class RideService {
         }
 
         LatLng fromCoords = null;
-        LatLng toCoords   = null;
+        LatLng toCoords = null;
         RouteResponse route = null;
 
         try {
             fromCoords = mapService.getCoordinates(dto.getStartLocation());
-            toCoords   = mapService.getCoordinates(dto.getEndLocation());
+            toCoords = mapService.getCoordinates(dto.getEndLocation());
             route = routeService.getRoute(
                     fromCoords.getLng(), fromCoords.getLat(),
-                    toCoords.getLng(),   toCoords.getLat()
+                    toCoords.getLng(), toCoords.getLat()
             );
         } catch (Exception e) {
             System.err.println("Geo/Route failed, ride will save without polyline: " + e.getMessage());
@@ -96,7 +96,7 @@ public class RideService {
         if (route != null) {
             ride.setPolyline(route.getPolyline());
             ride.setDistance(route.getDistance());
-            
+
             try {
                 List<LatLng> points = PolylineUtils.decode(route.getPolyline());
                 org.locationtech.jts.geom.LineString jtsRoute = PolylineUtils.createJTSLineString(points);
@@ -119,6 +119,7 @@ public class RideService {
         return saved;
     }
 
+    // ── GET ALL RIDES ────────────────────────────────────────
     public List<Ride> getallRides() {
         LocalDate today = LocalDate.now();
         return rideRepository.findAll().stream()
@@ -134,6 +135,7 @@ public class RideService {
                 .toList();
     }
 
+    // ── SEARCH RIDES (text-based) ────────────────────────────
     public List<Ride> searchRides(String from, String to, String date, Integer seats,
                                   Double minPrice, Double maxPrice, String carType,
                                   String genderPreference, String userGender) {
@@ -176,10 +178,13 @@ public class RideService {
         if (genderPreference != null && !genderPreference.isEmpty()) {
             rides = rides.stream()
                     .filter(r -> {
-                        if (r.getGenderPreference() == null || r.getGenderPreference().isEmpty()) return true;
+                        if (r.getGenderPreference() == null || r.getGenderPreference().isEmpty())
+                            return true;
                         if (userGender != null && !userGender.isEmpty()) {
-                            if (r.getGenderPreference().equals("MALE_ONLY") && userGender.equals("MALE")) return true;
-                            if (r.getGenderPreference().equals("FEMALE_ONLY") && userGender.equals("FEMALE")) return true;
+                            if (r.getGenderPreference().equals("MALE_ONLY") && userGender.equals("MALE"))
+                                return true;
+                            if (r.getGenderPreference().equals("FEMALE_ONLY") && userGender.equals("FEMALE"))
+                                return true;
                             return false;
                         }
                         return true;
@@ -380,7 +385,7 @@ public class RideService {
     // ── Geo-based search (text input → backend geocodes) ────
     public List<Ride> searchRidesByRoute(String pickup, String drop) {
         LatLng pickupCoords = mapService.getCoordinates(pickup);
-        LatLng dropCoords   = mapService.getCoordinates(drop);
+        LatLng dropCoords = mapService.getCoordinates(drop);
 
         if (pickupCoords == null || dropCoords == null) {
             System.err.println("Could not geocode: " + pickup + " or " + drop);
@@ -392,9 +397,9 @@ public class RideService {
 
     // ── Geo search with direct coords (from frontend) ───────
     public List<Ride> searchRidesByCoords(double pickupLat, double pickupLng,
-                                          double dropLat,   double dropLng) {
+                                          double dropLat, double dropLng) {
         LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
-        LatLng dropCoords   = new LatLng(dropLat,   dropLng);
+        LatLng dropCoords = new LatLng(dropLat, dropLng);
         return matchRides(pickupCoords, dropCoords);
     }
 
@@ -402,13 +407,11 @@ public class RideService {
     private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords) {
         LocalDate today = LocalDate.now();
 
-        // 1. Let the DB handle the spatial matching
         List<Ride> matchedRides = rideRepository.findValidRidesForRoute(
                 pickupCoords.getLat(), pickupCoords.getLng(),
                 dropCoords.getLat(), dropCoords.getLng()
         );
 
-        // 2. Filter available seats and dates
         return matchedRides.stream()
                 .filter(r -> r.getAvailableSeats() > 0)
                 .filter(r -> {
@@ -418,92 +421,115 @@ public class RideService {
                         return false;
                     }
                 })
-                .map(r -> {
-                    r.setIsPartial(false);
-                    return createPartialRide(r, pickupCoords, dropCoords);
-                })
-                .filter(r -> r != null)
+                // ✅ Don't touch `r` at all before passing to createPartialRide.
+                // The old code called r.setIsPartial(false) on the managed JPA
+                // entity which is a side-effect on a DB-tracked object.
+                .map(r -> createPartialRide(r, pickupCoords, dropCoords))
                 .toList();
     }
 
+    /**
+     * Builds a detached Ride object safe to return in the API response.
+     *
+     * Rules:
+     *  - startLocation / endLocation → driver's REAL origin/destination (for display)
+     *  - fromLat/fromLng/toLat/toLng → driver's REAL route endpoints (for map polyline)
+     *  - pickupLat/pickupLng/dropLat/dropLng → user's requested board/alight point
+     *  - price → prorated by partial distance / full distance ratio
+     *  - isPartial → always true (caller requested a mid-route segment)
+     */
     private Ride createPartialRide(Ride r, LatLng pickup, LatLng drop) {
-
         Ride partial = new Ride();
 
+        // Identity & driver
         partial.setId(r.getId());
         partial.setDriver(r.getDriver());
+
+        // Schedule
         partial.setDate(r.getDate());
         partial.setTime(r.getTime());
+        partial.setEndTime(r.getEndTime());
+
+        // Capacity & vehicle
         partial.setAvailableSeats(r.getAvailableSeats());
         partial.setCarType(r.getCarType());
         partial.setCarModel(r.getCarModel());
         partial.setGenderPreference(r.getGenderPreference());
+        partial.setNote(r.getNote());
+        partial.setStatus(r.getStatus());
+
+        // Route display — keep ORIGINAL driver route, never overwrite with user coords
+        partial.setStartLocation(r.getStartLocation());
+        partial.setEndLocation(r.getEndLocation());
+        partial.setPolyline(r.getPolyline());
+        partial.setDistance(r.getDistance());
+
+        // Driver's real geo endpoints (used to draw full polyline on map)
+        partial.setFromLat(r.getFromLat());
+        partial.setFromLng(r.getFromLng());
+        partial.setToLat(r.getToLat());
+        partial.setToLng(r.getToLng());
+
+        // User's requested board/alight points (frontend uses these to show
+        // pickup pin and drop pin, separate from the driver's route endpoints)
+        partial.setPickupLat(pickup.getLat());
+        partial.setPickupLng(pickup.getLng());
+        partial.setDropLat(drop.getLat());
+        partial.setDropLng(drop.getLng());
 
         partial.setIsPartial(true);
 
-        partial.setStartLocation(r.getStartLocation());
-        partial.setEndLocation(r.getEndLocation());
-
-        partial.setFromLat(pickup.getLat());
-        partial.setFromLng(pickup.getLng());
-        partial.setToLat(drop.getLat());
-        partial.setToLng(drop.getLng());
-
-        double totalDist   = r.getDistance();
+        // Prorated price: partial haversine distance / full route distance
+        double totalDist = r.getDistance();
         double partialDist = PolylineUtils.haversineKm(pickup, drop);
-
         double ratio = (totalDist > 0) ? (partialDist / totalDist) : 1.0;
         ratio = Math.max(0.1, Math.min(1.0, ratio));
-
         partial.setPrice((double) Math.round(r.getPrice() * ratio));
 
         return partial;
     }
 
-
-
     // ── Calculate partial fare ───────────────────────────────
     public Map<String, Object> calculatePrice(Long rideId,
                                               Double pickupLat, Double pickupLng,
-                                              Double dropLat,   Double dropLng) {
+                                              Double dropLat, Double dropLng) {
         Ride ride = rideRepository.findById(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
-        double fullPrice    = ride.getPrice();
+        double fullPrice = ride.getPrice();
         double fullDistance = ride.getDistance();
 
         if (fullDistance <= 0 || pickupLat == null || pickupLng == null
                 || dropLat == null || dropLng == null) {
             return Map.of(
-                    "fullPrice",       fullPrice,
+                    "fullPrice", fullPrice,
                     "calculatedPrice", fullPrice,
                     "partialDistance", 0.0,
-                    "fullDistance",    fullDistance,
-                    "isPartial",       false
+                    "fullDistance", fullDistance,
+                    "isPartial", false
             );
         }
 
         LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
-        LatLng dropCoords   = new LatLng(dropLat,   dropLng);
+        LatLng dropCoords = new LatLng(dropLat, dropLng);
 
         LatLng rideFrom = new LatLng(ride.getFromLat(), ride.getFromLng());
-        LatLng rideTo   = new LatLng(ride.getToLat(),   ride.getToLng());
+        LatLng rideTo = new LatLng(ride.getToLat(), ride.getToLng());
 
         double pickupFromStart = PolylineUtils.haversineKm(pickupCoords, rideFrom);
-        double dropFromEnd     = PolylineUtils.haversineKm(dropCoords,   rideTo);
+        double dropFromEnd = PolylineUtils.haversineKm(dropCoords, rideTo);
 
-        // If pickup is near start AND drop is near end, it's the full route
         if (pickupFromStart <= 3.0 && dropFromEnd <= 3.0) {
             return Map.of(
-                    "fullPrice",       fullPrice,
+                    "fullPrice", fullPrice,
                     "calculatedPrice", fullPrice,
                     "partialDistance", fullDistance,
-                    "fullDistance",    fullDistance,
-                    "isPartial",       false
+                    "fullDistance", fullDistance,
+                    "isPartial", false
             );
         }
 
-        double partialDistance   = PolylineUtils.haversineKm(pickupCoords, dropCoords);
+        double partialDistance = PolylineUtils.haversineKm(pickupCoords, dropCoords);
         double fullHaversineDist = PolylineUtils.haversineKm(rideFrom, rideTo);
 
         double ratio = 1.0;
@@ -513,16 +539,15 @@ public class RideService {
         ratio = Math.min(ratio, 1.0);
 
         double calculatedPrice = Math.round(fullPrice * ratio);
-
         double minFare = Math.round(fullPrice * 0.20);
         calculatedPrice = Math.max(calculatedPrice, minFare);
 
         return Map.of(
-                "fullPrice",       fullPrice,
+                "fullPrice", fullPrice,
                 "calculatedPrice", calculatedPrice,
                 "partialDistance", Math.round(partialDistance * 10.0) / 10.0,
-                "fullDistance",    Math.round(fullDistance   * 10.0) / 10.0,
-                "isPartial",       true
+                "fullDistance", Math.round(fullDistance * 10.0) / 10.0,
+                "isPartial", true
         );
     }
 }
