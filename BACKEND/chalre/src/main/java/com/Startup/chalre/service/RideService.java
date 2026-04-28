@@ -405,7 +405,7 @@ public class RideService {
         // 🔥 TRANSFORM INTO PARTIAL RIDE
         .map(r -> {
             r.setIsPartial(false);
-            return createPartialRide(r, pickupCoords, dropCoords);
+            return ,(r, pickupCoords, dropCoords);
         })
 
         // remove invalid ones

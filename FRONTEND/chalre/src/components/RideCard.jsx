@@ -12,15 +12,22 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
   const [calculatedPrice, setCalculatedPrice] = useState(null);
   const [isPartial,       setIsPartial]       = useState(false);
 
+  // ── FIX: coords are now always passed when a search has been done ──
+  // hasValidCoords checks for real numeric coords — no hasSearched gate needed
   const hasValidCoords =
     ride?.id &&
     pickupCoords?.lat && pickupCoords?.lng &&
     dropCoords?.lat   && dropCoords?.lng   &&
     !isNaN(Number(pickupCoords.lat)) &&
-    !isNaN(Number(dropCoords.lat));
+    !isNaN(Number(pickupCoords.lng)) &&
+    !isNaN(Number(dropCoords.lat))   &&
+    !isNaN(Number(dropCoords.lng));
 
-  // ── Fire whenever ride or coords change ──
+  // ── Reset calculated price when coords change (new search) ──
   useEffect(() => {
+    setCalculatedPrice(null);
+    setIsPartial(false);
+
     if (hasValidCoords) {
       fetchPrice();
     }
@@ -37,12 +44,14 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
           dropLng:   Number(dropCoords.lng),
         }
       });
-      if (res.data?.calculatedPrice) {
+      // ── Match exactly what RideDetails uses ──
+      if (res.data?.calculatedPrice != null) {
         setCalculatedPrice(res.data.calculatedPrice);
         setIsPartial(res.data.isPartial || false);
       }
     } catch (e) {
       console.error("RideCard price calc failed:", e);
+      // On failure keep showing ride.price — don't break the card
     }
   };
 
@@ -86,9 +95,12 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
     } catch { return null; }
   };
 
-  const duration     = getDuration();
-  const displayPrice = calculatedPrice ?? ride.price;
+  const duration = getDuration();
 
+  // ── FIX: Same logic as RideDetails — use calculatedPrice if available, else ride.price ──
+  const displayPrice = calculatedPrice != null ? calculatedPrice : ride.price;
+
+  // ── Display names: prefer passed pickupName/dropName for partial, else full route ──
   const start = pickupName || ride.startLocation;
   const end   = dropName   || ride.endLocation;
 
@@ -190,7 +202,8 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
               <IndianRupee size={16} />
               {displayPrice}
             </div>
-            {isPartial && (
+            {/* ── Show partial label only when we have a confirmed partial price ── */}
+            {isPartial && calculatedPrice != null && (
               <div style={{ fontSize: "0.68rem", color: "#9ca3af", marginTop: "2px" }}>
                 full ₹{ride.price}
               </div>

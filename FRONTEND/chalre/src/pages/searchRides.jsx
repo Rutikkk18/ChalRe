@@ -42,7 +42,6 @@ export default function SearchRides() {
   const [loading,     setLoading]     = useState(false);
   const [error,       setError]       = useState("");
 
-  // ── hasSearched: true only after Search button clicked ──
   const [hasSearched, setHasSearched] = useState(false);
 
   const [pickupCoords, setPickupCoords] = useState(null);
@@ -186,7 +185,7 @@ export default function SearchRides() {
         (ride) => Number(ride.availableSeats) > 0
       );
       setAllRides(fetchedRides);
-      setResults(fetchedRides); // show all unfiltered initially
+      setResults(fetchedRides);
     } catch (err) {
       console.error(err);
       setError(t("srErrorFetch"));
@@ -199,6 +198,10 @@ export default function SearchRides() {
     setLoading(true);
     setError("");
 
+    // ── FIX 2: Clear old rides immediately so stale results never show ──
+    setAllRides([]);
+    setResults([]);
+
     try {
       if (!fromVal?.trim() || !toVal?.trim()) {
         setError(t("srErrorBothLocations"));
@@ -206,7 +209,7 @@ export default function SearchRides() {
         return;
       }
 
-      // ── Geocode from text if coords still missing ──
+      // ── FIX 1: Always resolve coords — fetch from text if not available, then re-read from ref ──
       if (!pCoords?.lat && !pickupCoordsRef.current?.lat && fromVal) {
         await fetchCoordsFromText(fromVal, "pickup");
       }
@@ -214,8 +217,14 @@ export default function SearchRides() {
         await fetchCoordsFromText(toVal, "drop");
       }
 
+      // ✅ Always resolve AFTER async fetch — read the latest value from ref
       const resolvedPickup = pCoords ?? pickupCoordsRef.current;
       const resolvedDrop   = dCoords ?? dropCoordsRef.current;
+
+      // Warn but don't block — backend text search will still work
+      if (!resolvedPickup || !resolvedDrop) {
+        console.warn("Coords missing after resolution, falling back to text search");
+      }
 
       const params = {};
 
@@ -248,6 +257,7 @@ export default function SearchRides() {
         (ride) => Number(ride.availableSeats) > 0
       );
 
+      // ── FIX 2: Strict overwrite — never merge with stale data ──
       setAllRides(fetchedRides);
 
       applyClientFilters(fetchedRides, {
@@ -287,7 +297,7 @@ export default function SearchRides() {
 
       if (from && to) {
         hasAutoSearched.current = true;
-        setHasSearched(true); // treat Home search as explicit search
+        setHasSearched(true);
         const pCoords = fromCoords?.lat ? { lat: Number(fromCoords.lat), lng: Number(fromCoords.lng) } : null;
         const dCoords = toCoords?.lat   ? { lat: Number(toCoords.lat),   lng: Number(toCoords.lng)   } : null;
         performSearch(from, to, stateDate || "", passengers || 1, pCoords, dCoords);
@@ -325,9 +335,11 @@ export default function SearchRides() {
     setCarType("");
   };
 
-  // ── KEY: only pass coords to RideCard AFTER search is clicked ──
-  const cardPickupCoords = hasSearched ? pickupCoords : null;
-  const cardDropCoords   = hasSearched ? dropCoords   : null;
+  // ── FIX 3: Always pass coords and names if available — remove hasSearched gate ──
+  const cardPickupCoords = pickupCoords;
+  const cardDropCoords   = dropCoords;
+  const cardPickupName   = startLocation;
+  const cardDropName     = endLocation;
 
   return (
     <div className="search-page">
@@ -343,7 +355,6 @@ export default function SearchRides() {
               onChange={(val) => {
                 setStartLocation(val);
                 setPickupCoordsAndRef(null);
-                // typing resets search state → show all rides
                 if (hasSearched) {
                   setHasSearched(false);
                   setResults(allRides);
@@ -355,7 +366,6 @@ export default function SearchRides() {
                 if (coords) {
                   setPickupCoordsAndRef(coords);
                 }
-                // selecting new location resets search
                 if (hasSearched) {
                   setHasSearched(false);
                   setResults(allRides);
@@ -564,8 +574,8 @@ export default function SearchRides() {
                     ride={ride}
                     pickupCoords={cardPickupCoords}
                     dropCoords={cardDropCoords}
-                    pickupName={ride.isPartial ? startLocation : null}
-                    dropName={ride.isPartial ? endLocation : null}
+                    pickupName={cardPickupName || null}
+                    dropName={cardDropName || null}
                   />
                 ))}
               </div>
