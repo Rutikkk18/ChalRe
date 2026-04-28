@@ -388,7 +388,7 @@ public class RideService {
         return matchRides(pickupCoords, dropCoords);
     }
 
-    // ── CORE matching logic — shared by both search methods ─
+    // ── CORE matching logic ──────────────────────────────────
     private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords) {
         LocalDate today = LocalDate.now();
 
@@ -401,19 +401,16 @@ public class RideService {
                         return false;
                     }
                 })
-                // ── FIX: was `return ,(r, pickupCoords, dropCoords)` — typo/corrupt paste ──
                 .map(r -> {
                     r.setIsPartial(false);
                     return createPartialRide(r, pickupCoords, dropCoords);
                 })
-                // remove rides that didn't pass validation (createPartialRide returns null)
                 .filter(r -> r != null)
                 .toList();
     }
 
     private Ride createPartialRide(Ride r, LatLng pickup, LatLng drop) {
 
-        // validate first
         if (!isValidMatch(r, pickup, drop)) return null;
 
         List<LatLng> points = PolylineUtils.decode(r.getPolyline());
@@ -421,13 +418,10 @@ public class RideService {
         double pickupDist = PolylineUtils.getDistanceAlongRoute(pickup, points);
         double dropDist   = PolylineUtils.getDistanceAlongRoute(drop, points);
 
-        // 🚫 FINAL HARD BLOCK (extra safety)
         if (dropDist <= pickupDist) return null;
 
-        // 🔥 DO NOT MODIFY ORIGINAL RIDE
         Ride partial = new Ride();
 
-        // copy needed fields
         partial.setId(r.getId());
         partial.setDriver(r.getDriver());
         partial.setDate(r.getDate());
@@ -439,17 +433,14 @@ public class RideService {
 
         partial.setIsPartial(true);
 
-        // UI CHANGE: always carry original route locations for display
         partial.setStartLocation(r.getStartLocation());
         partial.setEndLocation(r.getEndLocation());
 
-        // set user coords
         partial.setFromLat(pickup.getLat());
         partial.setFromLng(pickup.getLng());
         partial.setToLat(drop.getLat());
         partial.setToLng(drop.getLng());
 
-        // PRICE CALC (route-based)
         double totalDist   = r.getDistance();
         double partialDist = dropDist - pickupDist;
 
@@ -461,7 +452,6 @@ public class RideService {
         return partial;
     }
 
-    // direction check
     private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
 
         if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
@@ -470,13 +460,13 @@ public class RideService {
         List<LatLng> points = PolylineUtils.decode(r.getPolyline());
         if (points.size() < 2) return false;
 
-        // MUST be near route FIRST
+        // Both points must be near the route polyline
         if (!PolylineUtils.isPointNearRoute(pickupCoords, r.getPolyline()) ||
                 !PolylineUtils.isPointNearRoute(dropCoords, r.getPolyline())) {
             return false;
         }
 
-        // HARD DIRECTION CHECK (MOST IMPORTANT)
+        // Drop must be strictly after pickup along the route
         if (!PolylineUtils.isForwardDirection(pickupCoords, dropCoords, points)) {
             return false;
         }
@@ -492,25 +482,37 @@ public class RideService {
             totalDist += PolylineUtils.haversineKm(points.get(i), points.get(i + 1));
         }
 
-        // ABSOLUTE HARD BLOCK: BEHIND START
+        // ── KEY FIX: raised threshold from 1.0 → 5.0 ───────────────────────────
+        //
+        // PROBLEM: Kavane (8km from Kolhapur) was being tested against the
+        // Kolhapur→Pune polyline. The polyline STARTS at Kolhapur, so Kavane
+        // projected to pickupDist ≈ 2-4km (just past the old 1.0 threshold).
+        // directDistFromStart was ~8km, but 1.0 < 2-4 so the old block didn't fire.
+        //
+        // FIX: If pickup projects to within 5km of the route start (pickupDist ≤ 5.0),
+        // the actual geographic distance from pickup to route-start must ALSO be ≤ 5km.
+        // This catches cases where the point is nearby in projection space but is actually
+        // a different city/location that shouldn't board this ride.
+        //
+        // Safe side: a genuine intermediate boarding point 4km past the start would
+        // also be ≤ 5km from the start geographically — so valid boardings still pass.
+        // ─────────────────────────────────────────────────────────────────────────
         double directDistFromStart = PolylineUtils.haversineKm(pickupCoords, start);
-
-        // if projection says near start BUT actual distance is far → reject
-        if (pickupDist <= 1.0 && directDistFromStart > 3.0) {
+        if (pickupDist <= 5.0 && directDistFromStart > 5.0) {
             return false;
         }
 
-        // STRICT ORDER
+        // Strict order check
         if (dropDist <= pickupDist + 1.0) {
             return false;
         }
 
-        // EXTRA SAFETY: prevent reverse overlap edge cases
+        // Extra safety against reverse overlap
         if (dropDist <= pickupDist) {
             return false;
         }
 
-        // BLOCK AFTER END
+        // Block drop that is past route end but geographically far from it
         double dropDistFromEnd = PolylineUtils.haversineKm(dropCoords, end);
         if (dropDist >= totalDist && dropDistFromEnd > 5.0) {
             return false;
@@ -519,7 +521,7 @@ public class RideService {
         return true;
     }
 
-    // ── Phase 8: Calculate partial fare ─────────────────────
+    // ── Calculate partial fare ───────────────────────────────
     public Map<String, Object> calculatePrice(Long rideId,
                                               Double pickupLat, Double pickupLng,
                                               Double dropLat,   Double dropLng) {

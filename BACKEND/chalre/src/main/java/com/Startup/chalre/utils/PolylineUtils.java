@@ -1,13 +1,16 @@
 package com.Startup.chalre.utils;
 
-import com.Startup.chalre.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.Startup.chalre.model.LatLng;
+
 public class PolylineUtils {
 
-    // Increased for long highway coverage (fixes Satara issue)
-    private static final double MATCH_RADIUS_KM = 35.0;
+    // ── REDUCED from 35km → 15km ──────────────────────────────────────────────
+    // 35km was too generous: a city 20km off-route was matching as "near route"
+    // 15km still covers wide highways and village offsets without false positives
+    private static final double MATCH_RADIUS_KM = 15.0;
 
     public static List<LatLng> decode(String encoded) {
         List<LatLng> points = new ArrayList<>();
@@ -44,7 +47,7 @@ public class PolylineUtils {
         List<LatLng> routePoints = decode(encodedPolyline);
         if (routePoints.isEmpty()) return false;
 
-        // 🔥 FAST FAIL (avoid wrong far matches)
+        // Fast fail — skip obviously far-away routes
         LatLng first = routePoints.get(0);
         LatLng last  = routePoints.get(routePoints.size() - 1);
 
@@ -224,7 +227,6 @@ public class PolylineUtils {
         return R * 2 * Math.asin(Math.sqrt(h));
     }
 
-    // ✅ NEW METHOD: Direction check (MOST IMPORTANT)
     public static boolean isForwardDirection(LatLng pickup, LatLng drop, List<LatLng> polyline) {
 
         if (polyline == null || polyline.size() < 2) return false;
@@ -232,12 +234,7 @@ public class PolylineUtils {
         double pickupDist = getDistanceAlongRoute(pickup, polyline);
         double dropDist   = getDistanceAlongRoute(drop, polyline);
 
-        // 🚨 STRICT: drop must be AFTER pickup
-        if (dropDist <= pickupDist) {
-            return false;
-        }
-
-        // extra buffer to avoid edge noise
+        // Drop must be strictly after pickup with 1km buffer
         if (dropDist <= pickupDist + 1.0) {
             return false;
         }
