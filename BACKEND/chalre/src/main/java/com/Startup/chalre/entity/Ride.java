@@ -71,6 +71,7 @@
         @Column(columnDefinition = "TEXT")
         private String polyline;   // encoded route polyline (can be long)
 
+        @com.fasterxml.jackson.annotation.JsonIgnore
         @Column(columnDefinition = "geometry(LineString,4326)")
         private org.locationtech.jts.geom.LineString route;
 
