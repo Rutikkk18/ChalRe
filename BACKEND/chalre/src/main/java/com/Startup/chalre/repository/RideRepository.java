@@ -28,10 +28,10 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     List<Ride> findByStatus(String status);
 
     @Query(value = "SELECT * FROM ride r WHERE " +
-           "ST_DWithin(r.route, CAST(ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326) AS geography), 15000) AND " +
-           "ST_DWithin(r.route, CAST(ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326) AS geography), 15000) AND " +
-           "ST_LineLocatePoint(CAST(r.route AS geometry), ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326)) < " +
-           "ST_LineLocatePoint(CAST(r.route AS geometry), ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326))", 
+           "ST_DWithin(CAST(r.route AS geography), CAST(ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326) AS geography), 5000) AND " +
+           "ST_DWithin(CAST(r.route AS geography), CAST(ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326) AS geography), 5000) AND " +
+           "(ST_LineLocatePoint(CAST(r.route AS geometry), ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326)) - " +
+           "ST_LineLocatePoint(CAST(r.route AS geometry), ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326))) > 0.02", 
            nativeQuery = true)
     List<Ride> findValidRidesForRoute(@Param("pLat") double pLat, @Param("pLng") double pLng, @Param("dLat") double dLat, @Param("dLng") double dLng);
 }
