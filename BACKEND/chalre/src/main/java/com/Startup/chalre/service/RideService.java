@@ -417,6 +417,33 @@ public class RideService {
 
         List<LatLng> points = PolylineUtils.decode(r.getPolyline());
 
+        // --- STRICT DIRECTIONAL HEURISTIC ---
+// Check direct distances to prevent points that are physically "behind" the start 
+// or "past" the end of the route.
+
+double routeTotalDirectDist = PolylineUtils.haversineKm(start, end);
+double pickupToEndDist      = PolylineUtils.haversineKm(pickupCoords, end);
+double startToDropDist      = PolylineUtils.haversineKm(start, dropCoords);
+
+// 1. If pickup is further from the END than the START is, it's behind the start line.
+// We add a 2.0km buffer to account for inner-city boarding.
+if (pickupToEndDist > routeTotalDirectDist + 2.0) {
+    System.out.println("REJECT: Pickup is behind the start point.");
+    return false;
+}
+
+// 2. If drop is further from the START than the END is, it's past the finish line.
+if (startToDropDist > routeTotalDirectDist + 2.0) {
+    System.out.println("REJECT: Drop is past the end point.");
+    return false;
+}
+
+// 3. Ensure they aren't searching a route that is too short or reversed
+double pickupToDropDirect = PolylineUtils.haversineKm(pickupCoords, dropCoords);
+if (pickupToDropDirect < 2.0) {
+    System.out.println("REJECT: Ride distance too short.");
+    return false;
+}
         double pickupDist = PolylineUtils.getDistanceAlongRoute(pickup, points);
         double dropDist   = PolylineUtils.getDistanceAlongRoute(drop, points);
 
