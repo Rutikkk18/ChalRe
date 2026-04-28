@@ -335,12 +335,12 @@ export default function SearchRides() {
     setCarType("");
   };
 
-  // ── FIX 3: Always pass coords and names if available — remove hasSearched gate ──
-  const cardPickupCoords = pickupCoords;
-  const cardDropCoords   = dropCoords;
-  const cardPickupName   = startLocation;
-  const cardDropName     = endLocation;
-
+ // ── THE FIX: Only pass the search text/coords to the cards IF a search is active ──
+  // This prevents the cards from live-updating while the user is still typing.
+  const cardPickupCoords = hasSearched ? pickupCoords : null;
+  const cardDropCoords   = hasSearched ? dropCoords : null;
+  const cardPickupName   = hasSearched ? startLocation : null;
+  const cardDropName     = hasSearched ? endLocation : null;
   return (
     <div className="search-page">
 
