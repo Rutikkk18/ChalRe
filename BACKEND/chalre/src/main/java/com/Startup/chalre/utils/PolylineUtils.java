@@ -1,9 +1,8 @@
 package com.Startup.chalre.utils;
 
+import com.Startup.chalre.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.Startup.chalre.model.LatLng;
 
 public class PolylineUtils {
 

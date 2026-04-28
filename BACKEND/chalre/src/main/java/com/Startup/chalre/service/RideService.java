@@ -1,5 +1,14 @@
 package com.Startup.chalre.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
 import com.Startup.chalre.DTO.RideDTO;
 import com.Startup.chalre.DTO.RideUpdateDTO;
 import com.Startup.chalre.entity.Booking;
@@ -10,16 +19,9 @@ import com.Startup.chalre.model.RouteResponse;
 import com.Startup.chalre.repository.BookingRepository;
 import com.Startup.chalre.repository.RideRepository;
 import com.Startup.chalre.utils.PolylineUtils;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -453,6 +455,15 @@ public class RideService {
     }
 
     private boolean isValidMatch(Ride r, LatLng pickupCoords, LatLng dropCoords) {
+
+         if (r.getFromLat() == 0 || r.getToLat() == 0) {
+        System.out.println("REJECT ride " + r.getId() + ": no coords stored");
+        return false;
+    }
+    if (r.getPolyline() == null || r.getPolyline().isEmpty()) {
+        System.out.println("REJECT ride " + r.getId() + ": no polyline");
+        return false;
+    } 
 
         if (r.getFromLat() == 0 || r.getToLat() == 0) return false;
         if (r.getPolyline() == null || r.getPolyline().isEmpty()) return false;
