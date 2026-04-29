@@ -14,16 +14,13 @@ const LocationAutocomplete = ({
 
   const wrapperRef      = useRef(null);
   const abortRef        = useRef(null);
-  // ── Track whether last change was from user typing or programmatic ──
   const userTypingRef   = useRef(false);
-  // ── Track if a selection was just made (suppress value sync) ──
   const justSelectedRef = useRef(false);
 
-  // ── Sync value from parent ONLY if user hasn't just selected ──
   useEffect(() => {
     if (justSelectedRef.current) {
       justSelectedRef.current = false;
-      return; // skip sync — we just set it ourselves via handleSelect
+      return;
     }
     setQuery(value || "");
   }, [value]);
@@ -39,7 +36,6 @@ const LocationAutocomplete = ({
   }, []);
 
   useEffect(() => {
-    // ── Only fetch if user is actually typing ──
     if (!userTypingRef.current) return;
     if (!query || query.trim().length < 2) {
       setSuggestions([]);
@@ -77,9 +73,8 @@ const LocationAutocomplete = ({
   }, [query]);
 
   const handleSelect = (place) => {
-    const name = place?.name || place?.display_name || "";
+    const name = place?.display_name || place?.name || "";
 
-    // ── Mark that we just selected — suppress value sync ──
     justSelectedRef.current = true;
     userTypingRef.current   = false;
 
@@ -107,7 +102,6 @@ const LocationAutocomplete = ({
         autoComplete="off"
         onChange={(e) => {
           const newValue = e.target.value;
-          // ── Mark as user typing — allow coord clear ──
           userTypingRef.current   = true;
           justSelectedRef.current = false;
           setQuery(newValue);
@@ -128,7 +122,7 @@ const LocationAutocomplete = ({
           )}
           {!loading &&
             suggestions.map((place, index) => {
-              const text = place?.name || place?.display_name;
+              const text = place?.display_name || place?.name;
               if (!text) return null;
               return (
                 <div
