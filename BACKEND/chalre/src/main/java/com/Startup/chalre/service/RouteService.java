@@ -66,7 +66,7 @@ public class RouteService {
             JsonNode coords = geometry.get("coordinates");
             String polyline = encodePolyline(coords);
 
-            return new RouteResponse(distance, duration, polyline);
+            return new RouteResponse(distance, duration, polyline, false);
 
         } catch (Exception e) {
             System.err.println("ORS call failed: " + e.getMessage() + ", using fallback");
@@ -92,7 +92,7 @@ public class RouteService {
         // Simple 2-point polyline (start → end straight line)
         String polyline = encodeTwoPoints(startLat, startLng, endLat, endLng);
 
-        return new RouteResponse(distance, duration, polyline);
+        return new RouteResponse(distance, duration, polyline, true);
     }
 
     // Encode just 2 points as a polyline (start + end)

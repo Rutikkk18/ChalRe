@@ -60,6 +60,10 @@ public class Ride {
 
     private double distance;
 
+    // ✅ ADD HERE
+@Column(nullable = false)
+private boolean isFallbackRoute = false;
+
     // ── TRANSIENT (not persisted, only in search results) ───
     @Transient
     private Boolean isPartial = false;

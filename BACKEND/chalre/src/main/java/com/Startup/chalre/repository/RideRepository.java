@@ -45,6 +45,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     @Query(value = """
             SELECT * FROM ride r
             WHERE r.route IS NOT NULL
+              AND r.is_fallback_route = false
               AND ST_DWithin(
                     CAST(r.route AS geography),
                     CAST(ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326) AS geography),

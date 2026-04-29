@@ -194,6 +194,23 @@ export default function SearchRides() {
     }
   };
 
+  const forceGeocode = async (text) => {
+    try {
+      const res = await api.get("/locations/search", { params: { q: text } });
+      const place = res.data?.[0];
+
+      if (!place) return null;
+
+      return {
+        lat: parseFloat(place.lat),
+        lng: parseFloat(place.lon ?? place.lng),
+      };
+    } catch (e) {
+      console.error("forceGeocode failed", e);
+      return null;
+    }
+  };
+
   const performSearch = async (fromVal, toVal, dateVal, seatsVal, pCoords, dCoords) => {
     setLoading(true);
     setError("");
@@ -209,21 +226,20 @@ export default function SearchRides() {
         return;
       }
 
-      // ── FIX 1: Always resolve coords — fetch from text if not available, then re-read from ref ──
-      if (!pCoords?.lat && !pickupCoordsRef.current?.lat && fromVal) {
-        await fetchCoordsFromText(fromVal, "pickup");
+      let resolvedPickup = pCoords ?? pickupCoordsRef.current;
+      let resolvedDrop   = dCoords ?? dropCoordsRef.current;
+
+      if (!resolvedPickup) {
+        resolvedPickup = await forceGeocode(fromVal);
       }
-      if (!dCoords?.lat && !dropCoordsRef.current?.lat && toVal) {
-        await fetchCoordsFromText(toVal, "drop");
+      if (!resolvedDrop) {
+        resolvedDrop = await forceGeocode(toVal);
       }
 
-      // ✅ Always resolve AFTER async fetch — read the latest value from ref
-      const resolvedPickup = pCoords ?? pickupCoordsRef.current;
-      const resolvedDrop   = dCoords ?? dropCoordsRef.current;
-
-      // Warn but don't block — backend text search will still work
       if (!resolvedPickup || !resolvedDrop) {
-        console.warn("Coords missing after resolution, falling back to text search");
+        setError("Please select valid locations from dropdown");
+        setLoading(false);
+        return;
       }
 
       const params = {};
@@ -232,16 +248,12 @@ export default function SearchRides() {
           !isNaN(resolvedPickup.lat) && !isNaN(resolvedPickup.lng)) {
         params.pickupLat = Number(resolvedPickup.lat);
         params.pickupLng = Number(resolvedPickup.lng);
-      } else if (fromVal) {
-        params.pickup = fromVal;
-      }
+      } 
 
       if (resolvedDrop?.lat && resolvedDrop?.lng &&
           !isNaN(resolvedDrop.lat) && !isNaN(resolvedDrop.lng)) {
         params.dropLat = Number(resolvedDrop.lat);
         params.dropLng = Number(resolvedDrop.lng);
-      } else if (toVal) {
-        params.drop = toVal;
       }
 
       if (dateVal)          params.date             = dateVal;

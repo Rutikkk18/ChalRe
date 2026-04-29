@@ -96,6 +96,7 @@ public class RideService {
         if (route != null) {
             ride.setPolyline(route.getPolyline());
             ride.setDistance(route.getDistance());
+            ride.setFallbackRoute(route.isFallback());
 
             try {
                 List<LatLng> points = PolylineUtils.decode(route.getPolyline());
