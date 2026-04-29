@@ -18,7 +18,6 @@ export default function Home() {
     passengers: 1,
   });
 
-  // ── Store coords from home search bar ──
   const [fromCoords, setFromCoords] = useState(null);
   const [toCoords,   setToCoords]   = useState(null);
 
@@ -62,7 +61,8 @@ export default function Home() {
               }}
               placeholder={t("leavingFrom")}
               onSelect={(place) => {
-                updateSearch("from", place.name);
+                // place = { name, lat, lng } — already normalized by LocationAutocomplete
+                updateSearch("from", place.name || place.display_name || "");
                 if (place.lat && place.lng) {
                   setFromCoords({ lat: place.lat, lng: place.lng });
                 } else {
@@ -83,7 +83,8 @@ export default function Home() {
               }}
               placeholder={t("goingTo")}
               onSelect={(place) => {
-                updateSearch("to", place.name);
+                // place = { name, lat, lng } — already normalized by LocationAutocomplete
+                updateSearch("to", place.name || place.display_name || "");
                 if (place.lat && place.lng) {
                   setToCoords({ lat: place.lat, lng: place.lng });
                 } else {
@@ -131,7 +132,6 @@ export default function Home() {
                   to:         search.to,
                   date:       search.date,
                   passengers: search.passengers,
-                  // ── Pass coords if available from dropdown selection ──
                   fromCoords: fromCoords || null,
                   toCoords:   toCoords   || null,
                 },
