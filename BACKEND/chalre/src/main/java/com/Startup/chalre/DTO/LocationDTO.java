@@ -1,37 +1,26 @@
-package com.Startup.chalre.DTO;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class LocationDTO {
 
-    @JsonProperty("display_name")
-    private String name;
+    @JsonProperty("display_name") // reads "display_name" from Nominatim
+    private String displayName;   // stored internally as displayName
 
     private String lat;
     private String lon;
 
-    public String getName() {          // ✅ FIX
-        return name;
+    // ── Serialize to frontend with clean field names ──
+    @JsonProperty("name")         // frontend receives "name" ✅
+    public String getName() {
+        return displayName;
     }
 
-    public void setName(String name) { // ✅ FIX
-        this.name = name;
-    }
-
-    public String getLat() {
-        return lat;
-    }
-
-    public void setLat(String lat) {
-        this.lat = lat;
-    }
-
-    public String getLon() {
+    @JsonProperty("lng")          // frontend receives "lng" ✅
+    public String getLng() {
         return lon;
     }
 
-    public void setLon(String lon) {
-        this.lon = lon;
-    }
-}
+    public String getLat() { return lat; }
 
+    // setters for Jackson deserialization
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
+    public void setLat(String lat) { this.lat = lat; }
+    public void setLon(String lon) { this.lon = lon; }
+}

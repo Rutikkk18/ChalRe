@@ -156,14 +156,15 @@ export default function SearchRides() {
   };
 
   const extractCoords = (place) => {
-    if (!place) return null;
-    const lat = place.lat ? Number(place.lat) : null;
-    const lng = place.lng ? Number(place.lng)
-              : place.lon ? Number(place.lon)
-              : null;
-    if (lat && lng && !isNaN(lat) && !isNaN(lng)) return { lat, lng };
-    return null;
-  };
+  if (!place) return null;
+  const lat = place.lat ? Number(place.lat) : null;
+  // ✅ check lon first, then lng
+  const lng = place.lon ? Number(place.lon)
+            : place.lng ? Number(place.lng)
+            : null;
+  if (lat && lng && !isNaN(lat) && !isNaN(lng)) return { lat, lng };
+  return null;
+};
 
   const setPickupCoordsAndRef = (coords) => {
     setPickupCoords(coords);
