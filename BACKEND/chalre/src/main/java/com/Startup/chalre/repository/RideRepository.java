@@ -31,30 +31,30 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
      * PostGIS spatial query to find rides whose stored route passes through
      * both the pickup and drop points (in that order, i.e. pickup comes before
      * drop along the route direction).
-     *
+     * <p>
      * Key fixes vs the old query:
-     *  1. r.route IS NOT NULL  — skip rides that only have a fallback straight-line
-     *     or no geometry at all; straight lines cause false direction matches.
-     *  2. ST_ClosestPoint before ST_LineLocatePoint — gets a stable fraction
-     *     even when the point is not exactly on the line.
-     *  3. fraction difference > 0.05 (was 0.02) — eliminates noise where
-     *     pickup and drop are nearly the same point on the line.
-     *  4. Both DWithin checks use 5000m (5km) radius — tight enough to avoid
-     *     matching a city that is "near" the route but behind the origin.
+     * 1. r.route IS NOT NULL  — skip rides that only have a fallback straight-line
+     * or no geometry at all; straight lines cause false direction matches.
+     * 2. ST_ClosestPoint before ST_LineLocatePoint — gets a stable fraction
+     * even when the point is not exactly on the line.
+     * 3. fraction difference > 0.05 (was 0.02) — eliminates noise where
+     * pickup and drop are nearly the same point on the line.
+     * 4. Both DWithin checks use 5000m (5km) radius — tight enough to avoid
+     * matching a city that is "near" the route but behind the origin.
      */
     @Query(value = """
             SELECT * FROM ride r
             WHERE r.route IS NOT NULL
-              AND r.is_fallback_route = false
+              AND (r.is_fallback_route = false OR r.is_fallback_route IS NULL)
               AND ST_DWithin(
                     CAST(r.route AS geography),
                     CAST(ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326) AS geography),
-                    5000
+                    15000
                   )
               AND ST_DWithin(
                     CAST(r.route AS geography),
                     CAST(ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326) AS geography),
-                    5000
+                    15000
                   )
               AND (
                     ST_LineLocatePoint(
@@ -78,4 +78,5 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     List<Ride> findValidRidesForRoute(
             @Param("pLat") double pLat, @Param("pLng") double pLng,
             @Param("dLat") double dLat, @Param("dLng") double dLng);
+
 }

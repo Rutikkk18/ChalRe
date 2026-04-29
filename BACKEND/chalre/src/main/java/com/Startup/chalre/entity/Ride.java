@@ -61,7 +61,7 @@ public class Ride {
     private double distance;
 
     // ✅ ADD HERE
-    @Column(name = "is_fallback_route", columnDefinition = "boolean default false")
+    @Column(name = "is_fallback_route")
     private Boolean isFallbackRoute = false;
 
     // ── TRANSIENT (not persisted, only in search results) ───
