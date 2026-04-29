@@ -32,7 +32,7 @@ public class RideService {
     private final BookingRepository bookingRepository;
     private final MapService mapService;
     private final RouteService routeService;
-
+    private static final double MATCH_RADIUS_KM = 15.0;
     // ── CREATE RIDE ──────────────────────────────────────────
     public Ride createRide(RideDTO dto, User driver) {
 
@@ -408,25 +408,65 @@ public class RideService {
     private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords) {
         LocalDate today = LocalDate.now();
 
-        List<Ride> matchedRides = rideRepository.findValidRidesForRoute(
+        List<Ride> candidates = rideRepository.findValidRidesForRoute(
                 pickupCoords.getLat(), pickupCoords.getLng(),
                 dropCoords.getLat(), dropCoords.getLng()
         );
 
-        return matchedRides.stream()
+        return candidates.stream()
                 .filter(r -> r.getAvailableSeats() > 0)
                 .filter(r -> {
-                    try {
-                        return !LocalDate.parse(r.getDate()).isBefore(today);
-                    } catch (Exception e) {
-                        return false;
-                    }
+                    try { return !LocalDate.parse(r.getDate()).isBefore(today); }
+                    catch (Exception e) { return false; }
                 })
-                // ✅ Don't touch `r` at all before passing to createPartialRide.
-                // The old code called r.setIsPartial(false) on the managed JPA
-                // entity which is a side-effect on a DB-tracked object.
+                .filter(r -> {
+                    // Skip rides with no polyline — can't do progress check
+                    if (r.getPolyline() == null || r.getPolyline().isEmpty()) return false;
+
+                    List<LatLng> route = PolylineUtils.decode(r.getPolyline());
+
+                    double tPickup = PolylineUtils.projectOntoRoute(route, pickupCoords);
+                    double tDrop   = PolylineUtils.projectOntoRoute(route, dropCoords);
+
+                    // ── Core order constraint ──────────────────────────────────
+                    // pickup must come BEFORE drop on the route, with a minimum
+                    // segment (5%) to avoid degenerate near-identical points
+                    if (tPickup < 0 || tDrop < 0)        return false;
+                    if (tDrop - tPickup < 0.05)           return false; // too short/reversed
+
+                    // ── Proximity guard (still needed) ────────────────────────
+                    // Both points must be reasonably near the route, not just
+                    // near the start/end endpoints
+                    double pickupDistKm = nearestDistToRoute(route, pickupCoords);
+                    double dropDistKm   = nearestDistToRoute(route, dropCoords);
+
+                    return pickupDistKm <= MATCH_RADIUS_KM && dropDistKm <= MATCH_RADIUS_KM;
+                })
                 .map(r -> createPartialRide(r, pickupCoords, dropCoords))
                 .toList();
+    }
+
+    /** Minimum distance from point to any segment of the route */
+    private double nearestDistToRoute(List<LatLng> route, LatLng point) {
+        double minDist = Double.MAX_VALUE;
+        for (int i = 0; i < route.size() - 1; i++) {
+            LatLng p1 = route.get(i);
+            LatLng p2 = route.get(i + 1);
+            double dx = p2.getLng() - p1.getLng();
+            double dy = p2.getLat() - p1.getLat();
+            double segLen2 = dx * dx + dy * dy;
+            double t = segLen2 > 0
+                    ? Math.max(0, Math.min(1,
+                    ((point.getLng() - p1.getLng()) * dx
+                            + (point.getLat() - p1.getLat()) * dy) / segLen2))
+                    : 0;
+            LatLng proj = new LatLng(
+                    p1.getLat() + t * dy,
+                    p1.getLng() + t * dx
+            );
+            minDist = Math.min(minDist, PolylineUtils.haversineKm(point, proj));
+        }
+        return minDist;
     }
 
     /**

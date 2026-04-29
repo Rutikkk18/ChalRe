@@ -45,6 +45,57 @@ public class PolylineUtils {
     }
 
 
+    /**
+ * Returns the fractional progress [0.0, 1.0] of 'point' 
+ * projected onto the nearest segment of the decoded route.
+ * Returns -1 if route has fewer than 2 points.
+ */
+public static double projectOntoRoute(List<LatLng> route, LatLng point) {
+    if (route == null || route.size() < 2) return -1;
+
+    double bestT = 0;
+    double bestDist = Double.MAX_VALUE;
+    double totalLength = 0;
+    double[] segLengths = new double[route.size() - 1];
+
+    for (int i = 0; i < route.size() - 1; i++) {
+        segLengths[i] = haversineKm(route.get(i), route.get(i + 1));
+        totalLength += segLengths[i];
+    }
+    if (totalLength == 0) return 0;
+
+    double accumulated = 0;
+    for (int i = 0; i < route.size() - 1; i++) {
+        LatLng p1 = route.get(i);
+        LatLng p2 = route.get(i + 1);
+
+        // Project 'point' onto segment p1→p2 using dot product in lat/lng space
+        double dx = p2.getLng() - p1.getLng();
+        double dy = p2.getLat() - p1.getLat();
+        double segLen2 = dx * dx + dy * dy;
+
+        double t = 0;
+        if (segLen2 > 0) {
+            t = ((point.getLng() - p1.getLng()) * dx
+               + (point.getLat() - p1.getLat()) * dy) / segLen2;
+            t = Math.max(0, Math.min(1, t));
+        }
+
+        double projLat = p1.getLat() + t * dy;
+        double projLng = p1.getLng() + t * dx;
+        LatLng proj = new LatLng(projLat, projLng);
+        double dist = haversineKm(point, proj);
+
+        if (dist < bestDist) {
+            bestDist = dist;
+            // Global t: how far along the whole route this projection is
+            bestT = (accumulated + t * segLengths[i]) / totalLength;
+        }
+        accumulated += segLengths[i];
+    }
+    return bestT; // 0.0 = at driver start, 1.0 = at driver end
+}
+
 
     public static double haversineKm(LatLng a, LatLng b) {
         final int R = 6371;
