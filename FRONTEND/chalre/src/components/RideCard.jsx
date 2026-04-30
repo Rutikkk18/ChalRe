@@ -1,5 +1,5 @@
 // RideCard.jsx
-import { Users, IndianRupee, Star, CheckCircle, Car, Bike, CalendarRange } from "lucide-react";
+import { Bike, CalendarRange, Car, CheckCircle, IndianRupee, Star, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";

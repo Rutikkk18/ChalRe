@@ -32,7 +32,7 @@ public class RideService {
     private final BookingRepository bookingRepository;
     private final MapService mapService;
     private final RouteService routeService;
-    private static final double MATCH_RADIUS_KM = 15.0;
+
     // ── CREATE RIDE ──────────────────────────────────────────
     public Ride createRide(RideDTO dto, User driver) {
 
@@ -404,7 +404,7 @@ public class RideService {
         return matchRides(pickupCoords, dropCoords);
     }
 
-    // ── CORE matching logic ──────────────────────────────────
+    // ── CORE matching logic — PostGIS handles proximity + order ──
     private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords) {
         LocalDate today = LocalDate.now();
 
@@ -419,54 +419,14 @@ public class RideService {
                     try { return !LocalDate.parse(r.getDate()).isBefore(today); }
                     catch (Exception e) { return false; }
                 })
-                .filter(r -> {
-                    // Skip rides with no polyline — can't do progress check
-                    if (r.getPolyline() == null || r.getPolyline().isEmpty()) return false;
-
-                    List<LatLng> route = PolylineUtils.decode(r.getPolyline());
-
-                    double tPickup = PolylineUtils.projectOntoRoute(route, pickupCoords);
-                    double tDrop   = PolylineUtils.projectOntoRoute(route, dropCoords);
-
-                    // ── Core order constraint ──────────────────────────────────
-                    // pickup must come BEFORE drop on the route, with a minimum
-                    // segment (5%) to avoid degenerate near-identical points
-                    if (tPickup < 0 || tDrop < 0)        return false;
-                    if (tDrop - tPickup < 0.05)           return false; // too short/reversed
-
-                    // ── Proximity guard (still needed) ────────────────────────
-                    // Both points must be reasonably near the route, not just
-                    // near the start/end endpoints
-                    double pickupDistKm = nearestDistToRoute(route, pickupCoords);
-                    double dropDistKm   = nearestDistToRoute(route, dropCoords);
-
-                    return pickupDistKm <= MATCH_RADIUS_KM && dropDistKm <= MATCH_RADIUS_KM;
-                })
+                // ── PostGIS already verified:
+                //    1. pickup is within 15km of route
+                //    2. drop is within 15km of route
+                //    3. drop fraction > pickup fraction (correct direction)
+                //    4. fraction diff > 0.05 (meaningful segment)
+                // No Java-side proximity or order check needed.
                 .map(r -> createPartialRide(r, pickupCoords, dropCoords))
                 .toList();
-    }
-
-    /** Minimum distance from point to any segment of the route */
-    private double nearestDistToRoute(List<LatLng> route, LatLng point) {
-        double minDist = Double.MAX_VALUE;
-        for (int i = 0; i < route.size() - 1; i++) {
-            LatLng p1 = route.get(i);
-            LatLng p2 = route.get(i + 1);
-            double dx = p2.getLng() - p1.getLng();
-            double dy = p2.getLat() - p1.getLat();
-            double segLen2 = dx * dx + dy * dy;
-            double t = segLen2 > 0
-                    ? Math.max(0, Math.min(1,
-                    ((point.getLng() - p1.getLng()) * dx
-                            + (point.getLat() - p1.getLat()) * dy) / segLen2))
-                    : 0;
-            LatLng proj = new LatLng(
-                    p1.getLat() + t * dy,
-                    p1.getLng() + t * dx
-            );
-            minDist = Math.min(minDist, PolylineUtils.haversineKm(point, proj));
-        }
-        return minDist;
     }
 
     /**
@@ -482,16 +442,13 @@ public class RideService {
     private Ride createPartialRide(Ride r, LatLng pickup, LatLng drop) {
         Ride partial = new Ride();
 
-        // Identity & driver
         partial.setId(r.getId());
         partial.setDriver(r.getDriver());
 
-        // Schedule
         partial.setDate(r.getDate());
         partial.setTime(r.getTime());
         partial.setEndTime(r.getEndTime());
 
-        // Capacity & vehicle
         partial.setAvailableSeats(r.getAvailableSeats());
         partial.setCarType(r.getCarType());
         partial.setCarModel(r.getCarModel());
@@ -499,20 +456,16 @@ public class RideService {
         partial.setNote(r.getNote());
         partial.setStatus(r.getStatus());
 
-        // Route display — keep ORIGINAL driver route, never overwrite with user coords
         partial.setStartLocation(r.getStartLocation());
         partial.setEndLocation(r.getEndLocation());
         partial.setPolyline(r.getPolyline());
         partial.setDistance(r.getDistance());
 
-        // Driver's real geo endpoints (used to draw full polyline on map)
         partial.setFromLat(r.getFromLat());
         partial.setFromLng(r.getFromLng());
         partial.setToLat(r.getToLat());
         partial.setToLng(r.getToLng());
 
-        // User's requested board/alight points (frontend uses these to show
-        // pickup pin and drop pin, separate from the driver's route endpoints)
         partial.setPickupLat(pickup.getLat());
         partial.setPickupLng(pickup.getLng());
         partial.setDropLat(drop.getLat());
@@ -520,7 +473,6 @@ public class RideService {
 
         partial.setIsPartial(true);
 
-        // Prorated price: partial haversine distance / full route distance
         double totalDist = r.getDistance();
         double partialDist = PolylineUtils.haversineKm(pickup, drop);
         double ratio = (totalDist > 0) ? (partialDist / totalDist) : 1.0;
