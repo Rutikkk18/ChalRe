@@ -13,8 +13,17 @@ public class PolylineUtils {
     // ── REDUCED from 35km → 15km ──────────────────────────────────────────────
     // 35km was too generous: a city 20km off-route was matching as "near route"
     // 15km still covers wide highways and village offsets without false positives
-    private static final double MATCH_RADIUS_KM = 15.0;
+    public static double getDynamicRadiusKm(double routeLengthKm) {
+        return Math.min(15.0, Math.max(3.0, routeLengthKm / 20.0));
+    }
 
+    public static double calculateRouteLength(List<LatLng> route) {
+        double total = 0;
+        for (int i = 0; i < route.size() - 1; i++) {
+            total += haversineKm(route.get(i), route.get(i + 1));
+        }
+        return total;
+    }
     public static List<LatLng> decode(String encoded) {
         List<LatLng> points = new ArrayList<>();
         int index = 0, len = encoded.length();
@@ -44,7 +53,36 @@ public class PolylineUtils {
         return points;
     }
 
+    // 🔥 NEW METHOD — add this
+    public static double distanceToRoute(List<LatLng> route, LatLng point) {
+        double minDist = Double.MAX_VALUE;
 
+        for (int i = 0; i < route.size() - 1; i++) {
+            LatLng p1 = route.get(i);
+            LatLng p2 = route.get(i + 1);
+
+            double dx = p2.getLng() - p1.getLng();
+            double dy = p2.getLat() - p1.getLat();
+
+            double denom = (dx * dx + dy * dy);
+            if (denom == 0) continue; // safety
+
+            double t = ((point.getLng() - p1.getLng()) * dx +
+                    (point.getLat() - p1.getLat()) * dy) / denom;
+
+            t = Math.max(0, Math.min(1, t));
+
+            double projLat = p1.getLat() + t * dy;
+            double projLng = p1.getLng() + t * dx;
+
+            LatLng proj = new LatLng(projLat, projLng);
+
+            double dist = haversineKm(point, proj);
+            minDist = Math.min(minDist, dist);
+        }
+
+        return minDist;
+    }
     /**
  * Returns the fractional progress [0.0, 1.0] of 'point' 
  * projected onto the nearest segment of the decoded route.

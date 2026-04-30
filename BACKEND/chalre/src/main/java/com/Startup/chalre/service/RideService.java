@@ -413,22 +413,62 @@ public class RideService {
                 dropCoords.getLat(), dropCoords.getLng()
         );
 
-        return candidates.stream()
-                .filter(r -> r.getAvailableSeats() > 0)
-                .filter(r -> {
-                    try { return !LocalDate.parse(r.getDate()).isBefore(today); }
-                    catch (Exception e) { return false; }
-                })
-                // ── PostGIS already verified:
-                //    1. pickup is within 15km of route
-                //    2. drop is within 15km of route
-                //    3. drop fraction > pickup fraction (correct direction)
-                //    4. fraction diff > 0.05 (meaningful segment)
-                // No Java-side proximity or order check needed.
-                .map(r -> createPartialRide(r, pickupCoords, dropCoords))
-                .toList();
-    }
+        List<Ride> filtered = new ArrayList<>();
 
+        for (Ride r : candidates) {
+
+            // basic filters
+            if (r.getAvailableSeats() <= 0) continue;
+
+            try {
+                if (LocalDate.parse(r.getDate()).isBefore(today)) continue;
+            } catch (Exception e) {
+                continue;
+            }
+
+            // skip if no polyline
+            if (r.getPolyline() == null) continue;
+
+            List<LatLng> route = PolylineUtils.decode(r.getPolyline());
+
+            if (route.size() < 2) continue;
+
+            // 🔥 dynamic radius based on route length
+            double routeLength = PolylineUtils.calculateRouteLength(route);
+            double dynamicRadius = PolylineUtils.getDynamicRadiusKm(routeLength);
+
+            // 🔥 distance from route (STRICT FILTER)
+            double pickupDist = PolylineUtils.distanceToRoute(route, pickupCoords);
+            double dropDist = PolylineUtils.distanceToRoute(route, dropCoords);
+
+            if (pickupDist > dynamicRadius) continue;
+            if (dropDist > dynamicRadius) continue;
+
+            // 🔥 progression check again (extra safety)
+            double pickupProg = PolylineUtils.projectOntoRoute(route, pickupCoords);
+            double dropProg = PolylineUtils.projectOntoRoute(route, dropCoords);
+
+            if (pickupProg < 0 || dropProg < 0) continue;
+            if (pickupProg >= dropProg) continue;
+            if ((dropProg - pickupProg) < 0.08) continue;
+
+            // 🔥 OPTIONAL but VERY powerful → detour filter
+            double directDist = PolylineUtils.haversineKm(pickupCoords, dropCoords);
+
+            if (directDist > routeLength * 0.5) continue;
+            // prevents weird long off-route matches
+
+            filtered.add(createPartialRide(r, pickupCoords, dropCoords));
+
+            System.out.println("PickupDist: " + pickupDist);
+            System.out.println("DropDist: " + dropDist);
+            System.out.println("DynamicRadius: " + dynamicRadius);
+            System.out.println("PickupProg: " + pickupProg);
+            System.out.println("DropProg: " + dropProg);
+        }
+
+        return filtered;
+    }
     /**
      * Builds a detached Ride object safe to return in the API response.
      *

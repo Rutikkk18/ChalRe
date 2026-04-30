@@ -43,36 +43,39 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
      * matching a city that is "near" the route but behind the origin.
      */
     @Query(value = """
-        SELECT * FROM ride r
-        WHERE r.route IS NOT NULL
-          AND ST_DWithin(
-                CAST(r.route AS geography),
-                CAST(ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326) AS geography),
-                35000
-              )
-          AND ST_DWithin(
-                CAST(r.route AS geography),
-                CAST(ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326) AS geography),
-                35000
-              )
-          AND (
-                ST_LineLocatePoint(
+    SELECT * FROM ride r
+    WHERE r.route IS NOT NULL
+
+      AND ST_DWithin(
+            CAST(r.route AS geography),
+            CAST(ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326) AS geography),
+            LEAST(15000, GREATEST(3000, ST_Length(CAST(r.route AS geography)) / 20))
+          )
+
+      AND ST_DWithin(
+            CAST(r.route AS geography),
+            CAST(ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326) AS geography),
+            LEAST(15000, GREATEST(3000, ST_Length(CAST(r.route AS geography)) / 20))
+          )
+
+      AND (
+            ST_LineLocatePoint(
+                CAST(r.route AS geometry),
+                ST_ClosestPoint(
                     CAST(r.route AS geometry),
-                    ST_ClosestPoint(
-                        CAST(r.route AS geometry),
-                        ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326)
-                    )
+                    ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326)
                 )
-                -
-                ST_LineLocatePoint(
+            )
+            -
+            ST_LineLocatePoint(
+                CAST(r.route AS geometry),
+                ST_ClosestPoint(
                     CAST(r.route AS geometry),
-                    ST_ClosestPoint(
-                        CAST(r.route AS geometry),
-                        ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326)
-                    )
+                    ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326)
                 )
-              ) > 0.05
-        """,
+            )
+          ) > 0.08
+    """,
             nativeQuery = true)
     List<Ride> findValidRidesForRoute(
             @Param("pLat") double pLat, @Param("pLng") double pLng,
