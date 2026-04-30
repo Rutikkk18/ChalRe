@@ -176,25 +176,27 @@ export default function SearchRides() {
     dropCoordsRef.current = coords;
   };
 
-  // ── Always fetch all rides on mount — needed for before-search display ──
   const fetchAllRides = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await api.get("/rides");
-      const fetchedRides = (res.data || []).filter(
-        (ride) => Number(ride.availableSeats) > 0
-      );
-      setAllRides(fetchedRides);
-      setResults(fetchedRides);
-    } catch (err) {
-      console.error(err);
-      setError(t("srErrorFetch"));
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // ── Never overwrite search results with all rides ──
+  if (hasAutoSearched.current) return;
+  setLoading(true);
+  setError("");
+  try {
+    const res = await api.get("/rides");
+    // ── Check again after await — search may have started while fetching ──
+    if (hasAutoSearched.current) return;
+    const fetchedRides = (res.data || []).filter(
+      (ride) => Number(ride.availableSeats) > 0
+    );
+    setAllRides(fetchedRides);
+    setResults(fetchedRides);
+  } catch (err) {
+    console.error(err);
+    setError(t("srErrorFetch"));
+  } finally {
+    setLoading(false);
+  }
+};
   const forceGeocode = async (text) => {
     try {
       const res = await api.get("/locations/search", { params: { q: text } });
@@ -285,11 +287,13 @@ export default function SearchRides() {
     }
   };
 
-  // ── Always fetch all rides on mount ──
-  useEffect(() => {
+  // ── Only fetch all rides on mount if NOT coming from Home with search state ──
+useEffect(() => {
+  if (!location.state?.from) {
     fetchAllRides();
-  // eslint-disable-next-line
-  }, []);
+  }
+// eslint-disable-next-line
+}, []);
 
   // ── Handle navigation from Home page ──
   useEffect(() => {
