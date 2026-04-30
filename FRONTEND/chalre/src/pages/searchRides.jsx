@@ -176,12 +176,24 @@ export default function SearchRides() {
     dropCoordsRef.current = coords;
   };
 
-  // ── Only fetch all rides on mount if NOT coming from Home ──
-useEffect(() => {
-  if (!location.state?.from) {
-    fetchAllRides();
-  }
-}, []);
+  // ── Always fetch all rides on mount — needed for before-search display ──
+  const fetchAllRides = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await api.get("/rides");
+      const fetchedRides = (res.data || []).filter(
+        (ride) => Number(ride.availableSeats) > 0
+      );
+      setAllRides(fetchedRides);
+      setResults(fetchedRides);
+    } catch (err) {
+      console.error(err);
+      setError(t("srErrorFetch"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const forceGeocode = async (text) => {
     try {
