@@ -10,9 +10,6 @@ import org.locationtech.jts.geom.PrecisionModel;
 
 public class PolylineUtils {
 
-    // ── REDUCED from 35km → 15km ──────────────────────────────────────────────
-    // 35km was too generous: a city 20km off-route was matching as "near route"
-    // 15km still covers wide highways and village offsets without false positives
     public static double getDynamicRadiusKm(double routeLengthKm) {
         return Math.min(25.0, Math.max(5.0, routeLengthKm / 15.0));
     }

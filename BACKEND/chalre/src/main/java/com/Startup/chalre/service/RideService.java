@@ -441,6 +441,13 @@ public class RideService {
             double pickupDist = PolylineUtils.distanceToRoute(route, pickupCoords);
             double dropDist = PolylineUtils.distanceToRoute(route, dropCoords);
 
+            System.out.println("---- DEBUG ----");
+            System.out.println("pickupDist: " + pickupDist);
+            System.out.println("dropDist: " + dropDist);
+            System.out.println("dynamicRadius: " + dynamicRadius);
+            System.out.println("routeLength: " + routeLength);
+           
+
             if (pickupDist > dynamicRadius) continue;
             if (dropDist > dynamicRadius) continue;
 
@@ -448,21 +455,16 @@ public class RideService {
             double pickupProg = PolylineUtils.projectOntoRoute(route, pickupCoords);
             double dropProg = PolylineUtils.projectOntoRoute(route, dropCoords);
 
+            
+
             if (pickupProg < 0 || dropProg < 0) continue;
             if (pickupProg >= dropProg) continue;
-            if ((dropProg - pickupProg) < 0.03) continue;
+            if ((dropProg - pickupProg) < 0.01) continue;
 
             // 🔥 OPTIONAL but VERY powerful → detour filter
             double directDist = PolylineUtils.haversineKm(pickupCoords, dropCoords);
 
-            System.out.println("---- DEBUG ----");
-            System.out.println("pickupDist: " + pickupDist);
-            System.out.println("dropDist: " + dropDist);
-            System.out.println("dynamicRadius: " + dynamicRadius);
-            System.out.println("pickupProg: " + pickupProg);
-            System.out.println("dropProg: " + dropProg);
-            System.out.println("directDist: " + directDist);
-            System.out.println("routeLength: " + routeLength);
+           
             // prevents weird long off-route matches
 
             filtered.add(createPartialRide(r, pickupCoords, dropCoords));
@@ -554,6 +556,7 @@ public class RideService {
 
         double pickupFromStart = PolylineUtils.haversineKm(pickupCoords, rideFrom);
         double dropFromEnd = PolylineUtils.haversineKm(dropCoords, rideTo);
+
 
         if (pickupFromStart <= 3.0 && dropFromEnd <= 3.0) {
             return Map.of(
