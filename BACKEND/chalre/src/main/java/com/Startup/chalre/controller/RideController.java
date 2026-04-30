@@ -70,43 +70,25 @@ public class RideController {
             if (pickupLat != null && pickupLng != null
                     && dropLat != null && dropLng != null) {
                 return ResponseEntity.ok(
-                    rideService.searchRidesByCoords(
-                        pickupLat, pickupLng, dropLat, dropLng)
+                        rideService.searchRidesByCoords(
+                                pickupLat, pickupLng, dropLat, dropLng)
                 );
             }
 
             // ── CASE 2: Text → backend geocodes via Nominatim ──
+            // No fallback to text search — if geocoding fails return empty
             if (pickup != null && !pickup.isBlank()
                     && drop != null && !drop.isBlank()) {
-                try {
-                    List<?> geoResults = rideService.searchRidesByRoute(pickup, drop);
-                    return ResponseEntity.ok(geoResults);
-                } catch (Exception e) {
-                    System.err.println("Geo search failed for "
-                            + pickup + "→" + drop
-                            + ", falling back to text search: " + e.getMessage());
-
-                    // ── FALLBACK: if geocoding fails, use old text search ──
-                    String userGender = user != null ? user.getGender() : null;
-                    return ResponseEntity.ok(rideService.searchRides(
-                            pickup, drop, date, seats,
-                            minPrice, maxPrice, carType,
-                            genderPreference, userGender
-                    ));
-                }
+                List<?> geoResults = rideService.searchRidesByRoute(pickup, drop);
+                return ResponseEntity.ok(geoResults);
             }
 
-            // ── CASE 3: Old text search ──
-            String userGender = user != null ? user.getGender() : null;
-            return ResponseEntity.ok(rideService.searchRides(
-                    from, to, date, seats,
-                    minPrice, maxPrice, carType,
-                    genderPreference, userGender
-            ));
+            // ── CASE 3: No valid params — return empty ──
+            // Never do text search for geo matching — it's unreliable
+            return ResponseEntity.ok(List.of());
 
         } catch (Exception e) {
             System.err.println("Search error: " + e.getMessage());
-            // ── Never return 400 for search — return empty list ──
             return ResponseEntity.ok(List.of());
         }
     }

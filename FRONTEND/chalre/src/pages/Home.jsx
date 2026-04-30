@@ -2,7 +2,7 @@
 import "../styles/Home.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Footer from "../components/Footer";
 import CustomDatePicker from "../components/CustomDatePicker";
 import { useLanguage } from "../context/LanguageContext";
@@ -18,8 +18,11 @@ export default function Home() {
     passengers: 1,
   });
 
-  const [fromCoords, setFromCoords] = useState(null);
-  const [toCoords,   setToCoords]   = useState(null);
+  // ── Refs so coords are always current at button-click time ──
+  // useState is async — by the time Search is clicked, state
+  // may not have updated yet. Refs update synchronously.
+  const fromCoordsRef = useRef(null);
+  const toCoordsRef   = useRef(null);
 
   const updateSearch = (field, value) => {
     setSearch((prev) => ({ ...prev, [field]: value }));
@@ -57,16 +60,15 @@ export default function Home() {
               value={search.from}
               onChange={(val) => {
                 updateSearch("from", val);
-                setFromCoords(null);
+                fromCoordsRef.current = null;
               }}
               placeholder={t("leavingFrom")}
               onSelect={(place) => {
-                // place = { name, lat, lng } — already normalized by LocationAutocomplete
                 updateSearch("from", place.name || place.display_name || "");
                 if (place.lat && place.lng) {
-                  setFromCoords({ lat: place.lat, lng: place.lng });
+                  fromCoordsRef.current = { lat: place.lat, lng: place.lng };
                 } else {
-                  setFromCoords(null);
+                  fromCoordsRef.current = null;
                 }
               }}
             />
@@ -79,16 +81,15 @@ export default function Home() {
               value={search.to}
               onChange={(val) => {
                 updateSearch("to", val);
-                setToCoords(null);
+                toCoordsRef.current = null;
               }}
               placeholder={t("goingTo")}
               onSelect={(place) => {
-                // place = { name, lat, lng } — already normalized by LocationAutocomplete
                 updateSearch("to", place.name || place.display_name || "");
                 if (place.lat && place.lng) {
-                  setToCoords({ lat: place.lat, lng: place.lng });
+                  toCoordsRef.current = { lat: place.lat, lng: place.lng };
                 } else {
-                  setToCoords(null);
+                  toCoordsRef.current = null;
                 }
               }}
             />
@@ -126,6 +127,10 @@ export default function Home() {
                 alert(t("searchAlert"));
                 return;
               }
+              // ── Read from refs — always current, never stale ──
+              const fromCoords = fromCoordsRef.current;
+              const toCoords   = toCoordsRef.current;
+              console.log("Home search coords:", { fromCoords, toCoords });
               navigate("/search", {
                 state: {
                   from:       search.from,
