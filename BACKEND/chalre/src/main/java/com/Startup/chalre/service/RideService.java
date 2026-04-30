@@ -450,21 +450,24 @@ public class RideService {
 
             if (pickupProg < 0 || dropProg < 0) continue;
             if (pickupProg >= dropProg) continue;
-            if ((dropProg - pickupProg) < 0.08) continue;
+            if ((dropProg - pickupProg) < 0.03) continue;
 
             // 🔥 OPTIONAL but VERY powerful → detour filter
             double directDist = PolylineUtils.haversineKm(pickupCoords, dropCoords);
 
-            if (directDist > routeLength * 0.5) continue;
+            System.out.println("---- DEBUG ----");
+            System.out.println("pickupDist: " + pickupDist);
+            System.out.println("dropDist: " + dropDist);
+            System.out.println("dynamicRadius: " + dynamicRadius);
+            System.out.println("pickupProg: " + pickupProg);
+            System.out.println("dropProg: " + dropProg);
+            System.out.println("directDist: " + directDist);
+            System.out.println("routeLength: " + routeLength);
             // prevents weird long off-route matches
 
             filtered.add(createPartialRide(r, pickupCoords, dropCoords));
 
-            System.out.println("PickupDist: " + pickupDist);
-            System.out.println("DropDist: " + dropDist);
-            System.out.println("DynamicRadius: " + dynamicRadius);
-            System.out.println("PickupProg: " + pickupProg);
-            System.out.println("DropProg: " + dropProg);
+
         }
 
         return filtered;

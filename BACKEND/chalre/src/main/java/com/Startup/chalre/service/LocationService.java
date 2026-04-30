@@ -47,17 +47,17 @@ public class LocationService {
         }
 
         String url = UriComponentsBuilder
-                .fromHttpUrl("https://nominatim.openstreetmap.org/search")
+                .fromHttpUrl("https://api.locationiq.com/v1/autocomplete")
+                .queryParam("key", "pk.902213fbf559ab93b6f1b9fa744ddbfa")
                 .queryParam("q", query.trim())
-                .queryParam("format", "json")
-                .queryParam("addressdetails", 1)
                 .queryParam("limit", 5)
                 .queryParam("countrycodes", "in")
                 .toUriString();
 
+
+
         HttpHeaders headers = new HttpHeaders();
-        headers.set("User-Agent", "ChalreApp/1.0 (chalreofficial@gmail.com)");
-        headers.set("Accept-Language", "en");
+
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
