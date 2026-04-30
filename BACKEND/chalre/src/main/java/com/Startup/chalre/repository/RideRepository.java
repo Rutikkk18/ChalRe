@@ -48,12 +48,12 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
           AND ST_DWithin(
                 CAST(r.route AS geography),
                 CAST(ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326) AS geography),
-                8000
+                25000
               )
           AND ST_DWithin(
                 CAST(r.route AS geography),
                 CAST(ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326) AS geography),
-                8000
+                25000
               )
           AND (
                 ST_LineLocatePoint(
