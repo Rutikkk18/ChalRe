@@ -156,15 +156,15 @@ export default function SearchRides() {
   };
 
   const extractCoords = (place) => {
-  if (!place) return null;
-  const lat = place.lat ? Number(place.lat) : null;
-  // ✅ check lon first, then lng
-  const lng = place.lon ? Number(place.lon)
-            : place.lng ? Number(place.lng)
-            : null;
-  if (lat && lng && !isNaN(lat) && !isNaN(lng)) return { lat, lng };
-  return null;
-};
+    if (!place) return null;
+    const lat = place.lat ? Number(place.lat) : null;
+    // ✅ check lon first, then lng
+    const lng = place.lon ? Number(place.lon)
+              : place.lng ? Number(place.lng)
+              : null;
+    if (lat && lng && !isNaN(lat) && !isNaN(lng)) return { lat, lng };
+    return null;
+  };
 
   const setPickupCoordsAndRef = (coords) => {
     setPickupCoords(coords);
@@ -177,26 +177,27 @@ export default function SearchRides() {
   };
 
   const fetchAllRides = async () => {
-  // ── Never overwrite search results with all rides ──
-  if (hasAutoSearched.current) return;
-  setLoading(true);
-  setError("");
-  try {
-    const res = await api.get("/rides");
-    // ── Check again after await — search may have started while fetching ──
+    // ── Never overwrite search results with all rides ──
     if (hasAutoSearched.current) return;
-    const fetchedRides = (res.data || []).filter(
-      (ride) => Number(ride.availableSeats) > 0
-    );
-    setAllRides(fetchedRides);
-    setResults(fetchedRides);
-  } catch (err) {
-    console.error(err);
-    setError(t("srErrorFetch"));
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+    setError("");
+    try {
+      const res = await api.get("/rides");
+      // ── Check again after await — search may have started while fetching ──
+      if (hasAutoSearched.current) return;
+      const fetchedRides = (res.data || []).filter(
+        (ride) => Number(ride.availableSeats) > 0
+      );
+      setAllRides(fetchedRides);
+      setResults(fetchedRides);
+    } catch (err) {
+      console.error(err);
+      setError(t("srErrorFetch"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const forceGeocode = async (text) => {
     try {
       const res = await api.get("/locations/search", { params: { q: text } });
@@ -218,7 +219,7 @@ export default function SearchRides() {
     setLoading(true);
     setError("");
 
-    // ── FIX 2: Clear old rides immediately so stale results never show ──
+    // ── Clear old rides immediately so stale results never show ──
     setAllRides([]);
     setResults([]);
 
@@ -251,7 +252,7 @@ export default function SearchRides() {
           !isNaN(resolvedPickup.lat) && !isNaN(resolvedPickup.lng)) {
         params.pickupLat = Number(resolvedPickup.lat);
         params.pickupLng = Number(resolvedPickup.lng);
-      } 
+      }
 
       if (resolvedDrop?.lat && resolvedDrop?.lng &&
           !isNaN(resolvedDrop.lat) && !isNaN(resolvedDrop.lng)) {
@@ -268,11 +269,13 @@ export default function SearchRides() {
 
       const res = await api.get("/rides/search", { params });
 
+      // 🔥 Backend now returns flat objects with calculatedPrice + isPartial already embedded.
+      // Each item IS the ride — no need to unwrap ride.ride anymore.
       const fetchedRides = (res.data || []).filter(
         (ride) => Number(ride.availableSeats) > 0
       );
 
-      // ── FIX 2: Strict overwrite — never merge with stale data ──
+      // ── Strict overwrite — never merge with stale data ──
       setAllRides(fetchedRides);
 
       applyClientFilters(fetchedRides, {
@@ -288,12 +291,12 @@ export default function SearchRides() {
   };
 
   // ── Only fetch all rides on mount if NOT coming from Home with search state ──
-useEffect(() => {
-  if (!location.state?.from) {
-    fetchAllRides();
-  }
-// eslint-disable-next-line
-}, []);
+  useEffect(() => {
+    if (!location.state?.from) {
+      fetchAllRides();
+    }
+  // eslint-disable-next-line
+  }, []);
 
   // ── Handle navigation from Home page ──
   useEffect(() => {
@@ -352,12 +355,13 @@ useEffect(() => {
     setCarType("");
   };
 
- // ── THE FIX: Only pass the search text/coords to the cards IF a search is active ──
-  // This prevents the cards from live-updating while the user is still typing.
+  // 🔥 Since backend now embeds price, we always pass coords to RideCard for navigation state only.
+  // RideCard no longer uses these coords to fetch price — it reads ride.calculatedPrice directly.
   const cardPickupCoords = hasSearched ? pickupCoords : null;
   const cardDropCoords   = hasSearched ? dropCoords : null;
   const cardPickupName   = hasSearched ? startLocation : null;
   const cardDropName     = hasSearched ? endLocation : null;
+
   return (
     <div className="search-page">
 
@@ -585,6 +589,8 @@ useEffect(() => {
 
             {!loading && (
               <div className="cards-grid">
+                {/* 🔥 ride objects already have calculatedPrice + isPartial flat on them —
+                    RideCard reads ride.calculatedPrice directly, no extra API calls */}
                 {results.map((ride) => (
                   <RideCard
                     key={`${ride.id}-${cardPickupCoords?.lat}-${cardDropCoords?.lat}`}

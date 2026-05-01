@@ -67,20 +67,21 @@ public class RideController {
     ) {
         try {
             // ── CASE 1: Direct coords (fastest, most accurate) ──
+            // 🔥 Now returns List<Map> with calculatedPrice + isPartial embedded — zero extra calls
             if (pickupLat != null && pickupLng != null
                     && dropLat != null && dropLng != null) {
-                return ResponseEntity.ok(
-                        rideService.searchRidesByCoords(
-                                pickupLat, pickupLng, dropLat, dropLng, date   // ✅ FIX
-                        )
+                List<Map<String, Object>> results = rideService.searchRidesByCoords(
+                        pickupLat, pickupLng, dropLat, dropLng, date
                 );
+                return ResponseEntity.ok(results);
             }
 
-// ── CASE 2: Text → backend geocodes via locatioio ──
+            // ── CASE 2: Text → backend geocodes via locationiq ──
+            // 🔥 Now returns List<Map> with calculatedPrice + isPartial embedded — zero extra calls
             if (pickup != null && !pickup.isBlank()
                     && drop != null && !drop.isBlank()) {
-                List<?> geoResults = rideService.searchRidesByRoute(
-                        pickup, drop, date   // ✅ FIX
+                List<Map<String, Object>> geoResults = rideService.searchRidesByRoute(
+                        pickup, drop, date
                 );
                 return ResponseEntity.ok(geoResults);
             }

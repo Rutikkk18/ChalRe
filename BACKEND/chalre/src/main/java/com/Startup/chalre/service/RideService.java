@@ -384,7 +384,8 @@ public class RideService {
     }
 
     // ── Geo-based search (text input → backend geocodes) ────
-    public List<Ride> searchRidesByRoute(String pickup, String drop, String date) {
+    // 🔥 NOW returns List<Map> with calculatedPrice + isPartial embedded — NO extra API calls needed
+    public List<Map<String, Object>> searchRidesByRoute(String pickup, String drop, String date) {
         LatLng pickupCoords = mapService.getCoordinates(pickup);
         LatLng dropCoords = mapService.getCoordinates(drop);
 
@@ -393,15 +394,75 @@ public class RideService {
             return List.of();
         }
 
-        return matchRides(pickupCoords, dropCoords, date);
+        List<Ride> rides = matchRides(pickupCoords, dropCoords, date);
+        return attachPriceToRides(rides, pickupCoords, dropCoords);
     }
 
     // ── Geo search with direct coords (from frontend) ───────
-    public List<Ride> searchRidesByCoords(double pickupLat, double pickupLng,
-                                          double dropLat, double dropLng, String date) {
+    // 🔥 NOW returns List<Map> with calculatedPrice + isPartial embedded — NO extra API calls needed
+    public List<Map<String, Object>> searchRidesByCoords(double pickupLat, double pickupLng,
+                                                         double dropLat, double dropLng, String date) {
         LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
         LatLng dropCoords = new LatLng(dropLat, dropLng);
-        return matchRides(pickupCoords, dropCoords, date);
+        List<Ride> rides = matchRides(pickupCoords, dropCoords, date);
+        return attachPriceToRides(rides, pickupCoords, dropCoords);
+    }
+
+    // ── 🔥 Attach calculatedPrice + isPartial to each ride in-place ──
+    private List<Map<String, Object>> attachPriceToRides(List<Ride> rides, LatLng pickupCoords, LatLng dropCoords) {
+        return rides.stream().map(ride -> {
+            Map<String, Object> rideMap = new HashMap<>();
+
+            // Embed all ride fields at the top level so frontend can use ride.calculatedPrice etc.
+            rideMap.put("id", ride.getId());
+            rideMap.put("startLocation", ride.getStartLocation());
+            rideMap.put("endLocation", ride.getEndLocation());
+            rideMap.put("date", ride.getDate());
+            rideMap.put("time", ride.getTime());
+            rideMap.put("endTime", ride.getEndTime());
+            rideMap.put("availableSeats", ride.getAvailableSeats());
+            rideMap.put("price", ride.getPrice());
+            rideMap.put("carModel", ride.getCarModel());
+            rideMap.put("carType", ride.getCarType());
+            rideMap.put("genderPreference", ride.getGenderPreference());
+            rideMap.put("note", ride.getNote());
+            rideMap.put("status", ride.getStatus());
+            rideMap.put("driver", ride.getDriver());
+            rideMap.put("polyline", ride.getPolyline());
+            rideMap.put("distance", ride.getDistance());
+            rideMap.put("fromLat", ride.getFromLat());
+            rideMap.put("fromLng", ride.getFromLng());
+            rideMap.put("toLat", ride.getToLat());
+            rideMap.put("toLng", ride.getToLng());
+            rideMap.put("pickupLat", ride.getPickupLat());
+            rideMap.put("pickupLng", ride.getPickupLng());
+            rideMap.put("dropLat", ride.getDropLat());
+            rideMap.put("dropLng", ride.getDropLng());
+
+            // 🔥 CALL EXISTING calculatePrice logic — NO extra HTTP call, all in-memory
+            try {
+                Map<String, Object> priceData = calculatePrice(
+                        ride.getId(),
+                        pickupCoords.getLat(), pickupCoords.getLng(),
+                        dropCoords.getLat(), dropCoords.getLng()
+                );
+                rideMap.put("calculatedPrice", priceData.get("calculatedPrice"));
+                rideMap.put("fullPrice", priceData.get("fullPrice"));
+                rideMap.put("isPartial", priceData.get("isPartial"));
+                rideMap.put("partialDistance", priceData.get("partialDistance"));
+                rideMap.put("fullDistance", priceData.get("fullDistance"));
+            } catch (Exception e) {
+                // Fallback: use ride's full price if price calc fails
+                rideMap.put("calculatedPrice", ride.getPrice());
+                rideMap.put("fullPrice", ride.getPrice());
+                rideMap.put("isPartial", false);
+                rideMap.put("partialDistance", ride.getDistance());
+                rideMap.put("fullDistance", ride.getDistance());
+                System.err.println("Price calc failed for ride " + ride.getId() + ": " + e.getMessage());
+            }
+
+            return rideMap;
+        }).toList();
     }
 
     // ── CORE matching logic — PostGIS handles proximity + order ──
@@ -456,7 +517,6 @@ public class RideService {
             System.out.println("dropDist: " + dropDist);
             System.out.println("dynamicRadius: " + dynamicRadius);
             System.out.println("routeLength: " + routeLength);
-           
 
             if (pickupDist > dynamicRadius) continue;
             if (dropDist > dynamicRadius) continue;
@@ -465,8 +525,6 @@ public class RideService {
             double pickupProg = PolylineUtils.projectOntoRoute(route, pickupCoords);
             double dropProg = PolylineUtils.projectOntoRoute(route, dropCoords);
 
-            
-
             if (pickupProg < 0 || dropProg < 0) continue;
             if (pickupProg >= dropProg) continue;
             if ((dropProg - pickupProg) < 0.01) continue;
@@ -474,16 +532,14 @@ public class RideService {
             // 🔥 OPTIONAL but VERY powerful → detour filter
             double directDist = PolylineUtils.haversineKm(pickupCoords, dropCoords);
 
-           
             // prevents weird long off-route matches
 
             filtered.add(createPartialRide(r, pickupCoords, dropCoords));
-
-
         }
 
         return filtered;
     }
+
     /**
      * Builds a detached Ride object safe to return in the API response.
      *
@@ -528,11 +584,7 @@ public class RideService {
 
         partial.setIsPartial(true);
 
-        double totalDist = r.getDistance();
-        double partialDist = PolylineUtils.haversineKm(pickup, drop);
-        double ratio = (totalDist > 0) ? (partialDist / totalDist) : 1.0;
-        ratio = Math.max(0.1, Math.min(1.0, ratio));
-        partial.setPrice(r.getPrice()); // keep full price
+        partial.setPrice(r.getPrice()); // keep full price — calculatedPrice is added separately
 
         return partial;
     }
@@ -566,7 +618,6 @@ public class RideService {
 
         double pickupFromStart = PolylineUtils.haversineKm(pickupCoords, rideFrom);
         double dropFromEnd = PolylineUtils.haversineKm(dropCoords, rideTo);
-
 
         if (pickupFromStart <= 3.0 && dropFromEnd <= 3.0) {
             return Map.of(

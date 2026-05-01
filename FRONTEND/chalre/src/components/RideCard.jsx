@@ -1,61 +1,17 @@
 // RideCard.jsx
 import { Bike, CalendarRange, Car, CheckCircle, IndianRupee, Star, Users } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/axios";
 import "../styles/ridecard.css";
 
 export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, dropName }) {
   const navigate = useNavigate();
   const isFull   = Number(ride?.availableSeats) <= 0;
 
-  const [calculatedPrice, setCalculatedPrice] = useState(null);
-const [fullPrice,       setFullPrice]       = useState(null);
-const [isPartial,       setIsPartial]       = useState(false);
-
-  // ── FIX: coords are now always passed when a search has been done ──
-  // hasValidCoords checks for real numeric coords — no hasSearched gate needed
-  const hasValidCoords =
-    ride?.id &&
-    pickupCoords?.lat && pickupCoords?.lng &&
-    dropCoords?.lat   && dropCoords?.lng   &&
-    !isNaN(Number(pickupCoords.lat)) &&
-    !isNaN(Number(pickupCoords.lng)) &&
-    !isNaN(Number(dropCoords.lat))   &&
-    !isNaN(Number(dropCoords.lng));
-
-  // ── Reset calculated price when coords change (new search) ──
-  useEffect(() => {
-    setCalculatedPrice(null);
-    setIsPartial(false);
-
-    if (hasValidCoords) {
-      fetchPrice();
-    }
-  // eslint-disable-next-line
-  }, [ride?.id, pickupCoords?.lat, pickupCoords?.lng, dropCoords?.lat, dropCoords?.lng]);
-
-  const fetchPrice = async () => {
-    try {
-      const res = await api.get(`/rides/${ride.id}/calculate-price`, {
-        params: {
-          pickupLat: Number(pickupCoords.lat),
-          pickupLng: Number(pickupCoords.lng),
-          dropLat:   Number(dropCoords.lat),
-          dropLng:   Number(dropCoords.lng),
-        }
-      });
-      // ── Match exactly what RideDetails uses ──
-      if (res.data?.calculatedPrice != null) {
-  setCalculatedPrice(res.data.calculatedPrice);
-  setFullPrice(res.data.fullPrice);   // 🔥 ADD THIS
-  setIsPartial(res.data.isPartial || false);
-}
-    } catch (e) {
-      console.error("RideCard price calc failed:", e);
-      // On failure keep showing ride.price — don't break the card
-    }
-  };
+  // 🔥 USE BACKEND DATA DIRECTLY — no more fetchPrice, no more N extra API calls
+  // Backend now embeds calculatedPrice + isPartial inside each ride object from /search
+  const calculatedPrice = ride?.calculatedPrice ?? null;
+  const fullPrice       = ride?.fullPrice       ?? ride?.price ?? null;
+  const isPartial       = ride?.isPartial       ?? false;
 
   const navState = {
     pickupCoords: pickupCoords || null,
@@ -99,9 +55,9 @@ const [isPartial,       setIsPartial]       = useState(false);
 
   const duration = getDuration();
 
-  // ── FIX: Same logic as RideDetails — use calculatedPrice if available, else ride.price ──
-  const displayPrice = calculatedPrice != null ? calculatedPrice : ride.price;
-const originalPrice = fullPrice != null ? fullPrice : ride.price;
+  // 🔥 Use calculatedPrice from backend if available, else fall back to ride.price
+  const displayPrice  = calculatedPrice != null ? calculatedPrice : ride.price;
+  const originalPrice = fullPrice != null ? fullPrice : ride.price;
 
   // ── Display names: prefer passed pickupName/dropName for partial, else full route ──
   const start = pickupName || ride.startLocation;
@@ -205,12 +161,12 @@ const originalPrice = fullPrice != null ? fullPrice : ride.price;
               <IndianRupee size={16} />
               {displayPrice}
             </div>
-            {/* ── Show partial label only when we have a confirmed partial price ── */}
+            {/* ── Show partial label only when backend confirmed isPartial ── */}
             {isPartial && calculatedPrice != null && (
-  <div style={{ fontSize: "0.68rem", color: "#9ca3af", marginTop: "2px" }}>
-    full ₹{originalPrice}
-  </div>
-)}
+              <div style={{ fontSize: "0.68rem", color: "#9ca3af", marginTop: "2px" }}>
+                full ₹{originalPrice}
+              </div>
+            )}
           </div>
           {isFull ? (
             <div className="full-badge">FULL</div>
