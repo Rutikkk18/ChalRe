@@ -71,15 +71,17 @@ public class RideController {
                     && dropLat != null && dropLng != null) {
                 return ResponseEntity.ok(
                         rideService.searchRidesByCoords(
-                                pickupLat, pickupLng, dropLat, dropLng)
+                                pickupLat, pickupLng, dropLat, dropLng, date   // ✅ FIX
+                        )
                 );
             }
 
-            // ── CASE 2: Text → backend geocodes via Nominatim ──
-            // No fallback to text search — if geocoding fails return empty
+// ── CASE 2: Text → backend geocodes via locatioio ──
             if (pickup != null && !pickup.isBlank()
                     && drop != null && !drop.isBlank()) {
-                List<?> geoResults = rideService.searchRidesByRoute(pickup, drop);
+                List<?> geoResults = rideService.searchRidesByRoute(
+                        pickup, drop, date   // ✅ FIX
+                );
                 return ResponseEntity.ok(geoResults);
             }
 
