@@ -527,7 +527,7 @@ public class RideService {
 
             if (pickupProg < 0 || dropProg < 0) continue;
             if (pickupProg >= dropProg) continue;
-            if ((dropProg - pickupProg) < 0.01) continue;
+            if ((dropProg - pickupProg) < 0.005) continue;
 
             // 🔥 OPTIONAL but VERY powerful → detour filter
             double directDist = PolylineUtils.haversineKm(pickupCoords, dropCoords);
