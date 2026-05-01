@@ -10,7 +10,8 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
   const isFull   = Number(ride?.availableSeats) <= 0;
 
   const [calculatedPrice, setCalculatedPrice] = useState(null);
-  const [isPartial,       setIsPartial]       = useState(false);
+const [fullPrice,       setFullPrice]       = useState(null);
+const [isPartial,       setIsPartial]       = useState(false);
 
   // ── FIX: coords are now always passed when a search has been done ──
   // hasValidCoords checks for real numeric coords — no hasSearched gate needed
@@ -46,9 +47,10 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
       });
       // ── Match exactly what RideDetails uses ──
       if (res.data?.calculatedPrice != null) {
-        setCalculatedPrice(res.data.calculatedPrice);
-        setIsPartial(res.data.isPartial || false);
-      }
+  setCalculatedPrice(res.data.calculatedPrice);
+  setFullPrice(res.data.fullPrice);   // 🔥 ADD THIS
+  setIsPartial(res.data.isPartial || false);
+}
     } catch (e) {
       console.error("RideCard price calc failed:", e);
       // On failure keep showing ride.price — don't break the card
@@ -99,6 +101,7 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
 
   // ── FIX: Same logic as RideDetails — use calculatedPrice if available, else ride.price ──
   const displayPrice = calculatedPrice != null ? calculatedPrice : ride.price;
+const originalPrice = fullPrice != null ? fullPrice : ride.price;
 
   // ── Display names: prefer passed pickupName/dropName for partial, else full route ──
   const start = pickupName || ride.startLocation;
@@ -204,10 +207,10 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
             </div>
             {/* ── Show partial label only when we have a confirmed partial price ── */}
             {isPartial && calculatedPrice != null && (
-              <div style={{ fontSize: "0.68rem", color: "#9ca3af", marginTop: "2px" }}>
-                full ₹{ride.price}
-              </div>
-            )}
+  <div style={{ fontSize: "0.68rem", color: "#9ca3af", marginTop: "2px" }}>
+    full ₹{originalPrice}
+  </div>
+)}
           </div>
           {isFull ? (
             <div className="full-badge">FULL</div>

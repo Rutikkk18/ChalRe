@@ -384,7 +384,7 @@ public class RideService {
     }
 
     // ── Geo-based search (text input → backend geocodes) ────
-    public List<Ride> searchRidesByRoute(String pickup, String drop) {
+    public List<Ride> searchRidesByRoute(String pickup, String drop, String date) {
         LatLng pickupCoords = mapService.getCoordinates(pickup);
         LatLng dropCoords = mapService.getCoordinates(drop);
 
@@ -393,19 +393,19 @@ public class RideService {
             return List.of();
         }
 
-        return matchRides(pickupCoords, dropCoords);
+        return matchRides(pickupCoords, dropCoords, date);
     }
 
     // ── Geo search with direct coords (from frontend) ───────
     public List<Ride> searchRidesByCoords(double pickupLat, double pickupLng,
-                                          double dropLat, double dropLng) {
+                                          double dropLat, double dropLng, String date) {
         LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
         LatLng dropCoords = new LatLng(dropLat, dropLng);
-        return matchRides(pickupCoords, dropCoords);
+        return matchRides(pickupCoords, dropCoords, date);
     }
 
     // ── CORE matching logic — PostGIS handles proximity + order ──
-    private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords) {
+    private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords, String date) {
         LocalDate today = LocalDate.now();
 
         List<Ride> candidates = rideRepository.findValidRidesForRoute(
@@ -421,7 +421,17 @@ public class RideService {
             if (r.getAvailableSeats() <= 0) continue;
 
             try {
-                if (LocalDate.parse(r.getDate()).isBefore(today)) continue;
+                LocalDate rideDate = LocalDate.parse(r.getDate());
+
+                // ❌ skip past rides
+                if (rideDate.isBefore(today)) continue;
+
+                // 🔥 STRICT DATE MATCH (FIX)
+                if (date != null && !date.isEmpty()) {
+                    LocalDate searchDate = LocalDate.parse(date);
+                    if (!rideDate.equals(searchDate)) continue;
+                }
+
             } catch (Exception e) {
                 continue;
             }
@@ -522,7 +532,7 @@ public class RideService {
         double partialDist = PolylineUtils.haversineKm(pickup, drop);
         double ratio = (totalDist > 0) ? (partialDist / totalDist) : 1.0;
         ratio = Math.max(0.1, Math.min(1.0, ratio));
-        partial.setPrice((double) Math.round(r.getPrice() * ratio));
+        partial.setPrice(r.getPrice()); // keep full price
 
         return partial;
     }

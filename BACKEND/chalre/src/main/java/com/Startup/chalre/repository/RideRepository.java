@@ -62,7 +62,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
                     ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326)
                 )
             )
-          ) > 0.05
+          ) > 0.03
     """, nativeQuery = true)
     List<Ride> findValidRidesForRoute(
             @Param("pLat") double pLat, @Param("pLng") double pLng,
