@@ -35,17 +35,26 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     WHERE r.route IS NOT NULL
 
       AND ST_DWithin(
-            CAST(r.route AS geography),
-            CAST(ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326) AS geography),
-            LEAST(40000, GREATEST(5000, ST_Length(CAST(r.route AS geography)) / 10))
-          )
+                      CAST(r.route AS geography),
+                      CAST(ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326) AS geography),
+            
+                      CASE\s
+                          WHEN ST_Length(CAST(r.route AS geography)) > 120000
+                          THEN 30000   -- 🔥 30 km for long routes
+                          ELSE LEAST(15000, GREATEST(3000, ST_Length(CAST(r.route AS geography)) / 20))
+                      END
+                  )
 
       AND ST_DWithin(
-            CAST(r.route AS geography),
-            CAST(ST_SetSRID(ST_MakePoint(:dLng, :dLat), 4326) AS geography),
+                      CAST(r.route AS geography),
+                      CAST(ST_SetSRID(ST_MakePoint(:pLng, :pLat), 4326) AS geography),
             
-            LEAST(40000, GREATEST(5000, ST_Length(CAST(r.route AS geography)) / 10))
-          )
+                      CASE\s
+                          WHEN ST_Length(CAST(r.route AS geography)) > 120000
+                          THEN 30000   -- 🔥 30 km for long routes
+                          ELSE LEAST(15000, GREATEST(3000, ST_Length(CAST(r.route AS geography)) / 20))
+                      END
+                  )
 
       AND (
             ST_LineLocatePoint(
