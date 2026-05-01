@@ -506,7 +506,18 @@ public class RideService {
 
             // 🔥 dynamic radius based on route length
             double routeLength = PolylineUtils.calculateRouteLength(route);
-            double dynamicRadius = PolylineUtils.getDynamicRadiusKm(routeLength);
+            double dynamicRadius;
+
+            if (routeLength > 120) {
+                // 🔥 LONG ROUTES (like Kolhapur → Pune)
+                dynamicRadius = Math.min(40.0, routeLength / 8.0);
+            } else {
+                // ✅ SHORT ROUTES (keep tight)
+                dynamicRadius = PolylineUtils.getDynamicRadiusKm(routeLength);
+            }
+
+            System.out.println("routeLength: " + routeLength);
+            System.out.println("dynamicRadius: " + dynamicRadius);
 
             // 🔥 distance from route (STRICT FILTER)
             double pickupDist = PolylineUtils.distanceToRoute(route, pickupCoords);
@@ -518,8 +529,14 @@ public class RideService {
             System.out.println("dynamicRadius: " + dynamicRadius);
             System.out.println("routeLength: " + routeLength);
 
-            if (pickupDist > dynamicRadius) continue;
-            if (dropDist > dynamicRadius) continue;
+            // 🔥 More tolerant for long routes
+            if (routeLength > 120) {
+                if (pickupDist > dynamicRadius * 1.3) continue;
+                if (dropDist > dynamicRadius * 1.3) continue;
+            } else {
+                if (pickupDist > dynamicRadius) continue;
+                if (dropDist > dynamicRadius) continue;
+            }
 
             // 🔥 progression check again (extra safety)
             double pickupProg = PolylineUtils.projectOntoRoute(route, pickupCoords);
@@ -527,7 +544,7 @@ public class RideService {
 
             if (pickupProg < 0 || dropProg < 0) continue;
             if (pickupProg >= dropProg) continue;
-            if ((dropProg - pickupProg) < 0.005) continue;
+            if ((dropProg - pickupProg) < 0.01) continue;
 
             // 🔥 OPTIONAL but VERY powerful → detour filter
             double directDist = PolylineUtils.haversineKm(pickupCoords, dropCoords);
