@@ -9,6 +9,8 @@ import com.Startup.chalre.entity.User;
 import com.Startup.chalre.repository.BookingRepository;
 import com.Startup.chalre.repository.ChatMessageRepository;
 import com.Startup.chalre.repository.RideRepository;
+import com.Startup.chalre.repository.UserRepository;
+import org.springframework.data.domain.PageRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ public class ChatService {
     private final RideRepository rideRepository;
     private final BookingRepository bookingRepository;
     private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
     @Transactional
     public ChatMessage sendMessage(ChatMessageDTO dto, User sender) {
@@ -128,19 +131,27 @@ public class ChatService {
      * Each conversation is a unique (ride, otherUser) pair.
      */
     public List<ConversationDTO> getConversations(User user) {
-        List<Object[]> conversationPairs = chatMessageRepository.findDistinctConversations(user);
+        List<Object[]> conversationPairs = chatMessageRepository.findDistinctConversationIds(user.getId());
         List<ConversationDTO> conversations = new ArrayList<>();
 
         for (Object[] pair : conversationPairs) {
-            Ride ride = (Ride) pair[0];
-            User otherUser = (User) pair[1];
+            Long rideId = (Long) pair[0];
+            Long otherUserId = (Long) pair[1];
+
+            if (rideId == null || otherUserId == null) continue;
+
+            Ride ride = rideRepository.findById(rideId).orElse(null);
+            User otherUser = userRepository.findById(otherUserId).orElse(null);
 
             // Skip if either is null (shouldn't happen, but safety)
             if (ride == null || otherUser == null) continue;
 
-            // Get latest message in this conversation
-            ChatMessage latestMsg = chatMessageRepository.findLatestMessageBetweenUsers(ride, user, otherUser);
-            if (latestMsg == null) continue;
+            // Get latest message in this conversation using Pageable
+            List<ChatMessage> latestMsgs = chatMessageRepository.findLatestMessageBetweenUsers(
+                    ride, user, otherUser, PageRequest.of(0, 1));
+            
+            if (latestMsgs.isEmpty()) continue;
+            ChatMessage latestMsg = latestMsgs.get(0);
 
             // Count unread messages FROM otherUser TO me
             long unread = chatMessageRepository.countByRideAndSenderAndReceiverAndIsReadFalse(ride, otherUser, user);
