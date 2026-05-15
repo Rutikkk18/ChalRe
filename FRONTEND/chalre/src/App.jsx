@@ -14,6 +14,7 @@ import NotificationPage from "./pages/NotificationPage";
 import VerificationPage from "./pages/VerificationPage";
 import VerifyEmail from "./pages/VerifyEmail";
 import MyRides from "./pages/MyRides";
+import Inbox from "./pages/Inbox";
 import ProfilePage from "./pages/ProfilePage";
 import MainLayout from "./layouts/MainLayout";
 import Scamm from "./pages/Scamm";
@@ -94,6 +95,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <MyRides />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inbox"
+            element={
+              <ProtectedRoute>
+                <Inbox />
               </ProtectedRoute>
             }
           />

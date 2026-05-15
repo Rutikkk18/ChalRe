@@ -1,6 +1,7 @@
 package com.Startup.chalre.controller;
 
 import com.Startup.chalre.DTO.ChatMessageDTO;
+import com.Startup.chalre.DTO.ConversationDTO;
 import com.Startup.chalre.entity.ChatMessage;
 import com.Startup.chalre.entity.User;
 import com.Startup.chalre.service.ChatService;
@@ -54,4 +55,23 @@ public class ChatController {
         long count = chatService.getUnreadCount(rideId, user);
         return ResponseEntity.ok(Map.of("count", count));
     }
+
+    // ── Inbox endpoints ──────────────────────────────────────────
+
+    @GetMapping("/conversations")
+    public ResponseEntity<?> getConversations(
+            @AuthenticationPrincipal User user
+    ) {
+        List<ConversationDTO> conversations = chatService.getConversations(user);
+        return ResponseEntity.ok(conversations);
+    }
+
+    @GetMapping("/unread-total")
+    public ResponseEntity<?> getTotalUnread(
+            @AuthenticationPrincipal User user
+    ) {
+        long count = chatService.getTotalUnreadCount(user);
+        return ResponseEntity.ok(Map.of("count", count));
+    }
 }
+

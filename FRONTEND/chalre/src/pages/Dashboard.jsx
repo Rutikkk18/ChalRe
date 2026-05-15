@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/dashboard.css";
 
-import { CheckCircle, CreditCard, Search, Plus, Car, Calendar, User, Bell, AlertCircle } from "lucide-react";
+import { CheckCircle, CreditCard, Search, Plus, Car, Calendar, User, Bell, AlertCircle, MessageCircle } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 
 export default function Dashboard() {
@@ -162,6 +162,10 @@ export default function Dashboard() {
             <button className="dash-sec-btn" onClick={() => navigate("/mybookings")}>
               <Calendar size={17} />
               <span>My Bookings</span>
+            </button>
+            <button className="dash-sec-btn" onClick={() => navigate("/inbox")}>
+              <MessageCircle size={17} />
+              <span>Messages</span>
             </button>
             <button className="dash-sec-btn" onClick={() => navigate("/profile")}>
               <User size={17} />
