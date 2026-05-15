@@ -47,6 +47,20 @@ public class ChatService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Invalid receiver"));
 
+        // 48-hour post-ride chat window check
+        try {
+            java.time.LocalDateTime rideDateTime = ride.getRideDateTime();
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            if (now.isAfter(rideDateTime.plusHours(48))) {
+                throw new RuntimeException("Chat locked — ride ended more than 48 hours ago");
+            }
+        } catch (RuntimeException e) {
+            if (e.getMessage() != null && e.getMessage().startsWith("Chat locked")) {
+                throw e;
+            }
+            // If date/time parsing fails, allow the message (don't block on bad data)
+        }
+
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setRide(ride);
         chatMessage.setSender(sender);

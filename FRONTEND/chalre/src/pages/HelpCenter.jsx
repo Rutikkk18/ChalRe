@@ -125,7 +125,7 @@ export default function HelpCenter() {
           <p>Can't find what you're looking for? Our support team is here to help.</p>
           <div className="support-contact">
             <Mail size={18} />
-            <a href="mailto:chalre@gmail.com"></a>chalreofficial@gmail.com
+            <a href="mailto:chalreofficial@gmail.com">chalreofficial@gmail.com</a>
           </div>
         </div>
       </div>

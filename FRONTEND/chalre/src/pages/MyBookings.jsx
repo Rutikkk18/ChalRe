@@ -190,6 +190,32 @@ export default function MyBookings() {
   const handleRatingSuccess  = (rideId) => { setRatedRides((prev) => new Set([...prev, rideId])); loadBookings(); };
   const handleChatClick      = (b) => setChatModal({ rideId: b.ride.id, otherUser: b.ride.driver });
 
+  // Check if chat is still available (within 48h after ride time)
+  const isChatAvailable = (b) => {
+    if (b.status !== "BOOKED") return false;
+    try {
+      const rideDateTime = new Date(`${b.ride.date}T${b.ride.time}:00`);
+      const now = new Date();
+      const hoursSinceRide = (now - rideDateTime) / (1000 * 60 * 60);
+      // Available if ride hasn't happened yet OR within 48h after ride
+      return hoursSinceRide < 48;
+    } catch {
+      return false;
+    }
+  };
+
+  // Get remaining chat hours for display
+  const getChatHoursLeft = (b) => {
+    try {
+      const rideDateTime = new Date(`${b.ride.date}T${b.ride.time}:00`);
+      const now = new Date();
+      const hoursLeft = 48 - ((now - rideDateTime) / (1000 * 60 * 60));
+      return Math.max(0, Math.ceil(hoursLeft));
+    } catch {
+      return 0;
+    }
+  };
+
   const cancelBooking = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this booking?")) return;
     try {
@@ -419,6 +445,12 @@ export default function MyBookings() {
                       <XCircle size={14} /> Cancel
                     </button>
                   </>
+                )}
+
+                {activeTab === "past" && isChatAvailable(b) && (
+                  <button className="mb-btn mb-btn--chat" onClick={() => handleChatClick(b)} title={`Chat available for ${getChatHoursLeft(b)}h`}>
+                    <MessageCircle size={14} /> Chat ({getChatHoursLeft(b)}h left)
+                  </button>
                 )}
 
                 {activeTab === "past" && b.status === "BOOKED" && !ratedRides.has(b.ride.id) && (

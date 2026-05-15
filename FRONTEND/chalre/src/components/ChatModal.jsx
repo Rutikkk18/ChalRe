@@ -10,6 +10,7 @@ export default function ChatModal({ rideId, otherUser, onClose }) {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
+  const [chatLocked, setChatLocked] = useState(false);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
 
@@ -64,7 +65,12 @@ export default function ChatModal({ rideId, otherUser, onClose }) {
       markAsRead();
     } catch (err) {
       console.error("Failed to send message:", err);
-      alert("Failed to send message. Please try again.");
+      const errMsg = err.response?.data?.message || err.response?.data || "";
+      if (typeof errMsg === "string" && errMsg.includes("Chat locked")) {
+        setChatLocked(true);
+      } else {
+        alert("Failed to send message. Please try again.");
+      }
     } finally {
       setSending(false);
     }
@@ -116,19 +122,32 @@ export default function ChatModal({ rideId, otherUser, onClose }) {
           <div ref={messagesEndRef} />
         </div>
 
-        <form className="chat-input-form" onSubmit={handleSend}>
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type a message..."
-            disabled={sending}
-            maxLength={500}
-          />
-          <button type="submit" disabled={sending || !newMessage.trim()}>
-            <Send size={18} />
-          </button>
-        </form>
+        {chatLocked ? (
+          <div style={{
+            padding: "0.75rem 1rem",
+            background: "#fef2f2",
+            borderTop: "1px solid #fecaca",
+            textAlign: "center",
+            fontSize: "0.85rem",
+            color: "#991b1b"
+          }}>
+            🔒 Chat locked — ride ended more than 48 hours ago
+          </div>
+        ) : (
+          <form className="chat-input-form" onSubmit={handleSend}>
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type a message..."
+              disabled={sending}
+              maxLength={500}
+            />
+            <button type="submit" disabled={sending || !newMessage.trim()}>
+              <Send size={18} />
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

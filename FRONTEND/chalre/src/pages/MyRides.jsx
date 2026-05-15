@@ -60,6 +60,30 @@ export default function MyRides() {
     setExpandedRides(prev => ({ ...prev, [rideId]: !prev[rideId] }));
   };
 
+  // Check if chat is still available (within 48h after ride time)
+  const isChatAvailable = (ride) => {
+    try {
+      const rideDateTime = new Date(`${ride.date}T${ride.time}:00`);
+      const now = new Date();
+      const hoursSinceRide = (now - rideDateTime) / (1000 * 60 * 60);
+      return hoursSinceRide < 48;
+    } catch {
+      return false;
+    }
+  };
+
+  // Get remaining chat hours for display
+  const getChatHoursLeft = (ride) => {
+    try {
+      const rideDateTime = new Date(`${ride.date}T${ride.time}:00`);
+      const now = new Date();
+      const hoursLeft = 48 - ((now - rideDateTime) / (1000 * 60 * 60));
+      return Math.max(0, Math.ceil(hoursLeft));
+    } catch {
+      return 0;
+    }
+  };
+
   const cancelRide = async (id) => {
     if (!window.confirm("Cancel this ride? All passengers will be notified and refunds processed.")) return;
     try {
@@ -209,12 +233,18 @@ export default function MyRides() {
                             {booking.user?.phone && (
                               <a className="mr-btn-call" href={`tel:${booking.user.phone}`}>Call</a>
                             )}
-                            <button
-                              className="mr-btn-chat"
-                              onClick={() => setChatModal({ rideId: ride.id, otherUser: booking.user })}
-                            >
-                              <MessageCircle size={13} /> Chat
-                            </button>
+                            {isChatAvailable(ride) && (
+                              <button
+                                className="mr-btn-chat"
+                                onClick={() => setChatModal({ rideId: ride.id, otherUser: booking.user })}
+                              >
+                                <MessageCircle size={13} />
+                                {new Date() > new Date(`${ride.date}T${ride.time}:00`)
+                                  ? ` Chat (${getChatHoursLeft(ride)}h left)`
+                                  : " Chat"
+                                }
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))}
