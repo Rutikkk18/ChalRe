@@ -31,12 +31,15 @@ export default function RideDetails() {
   const [driverRatings,  setDriverRatings] = useState([]);
   const [priceInfo,      setPriceInfo]     = useState(null);
 
+  // ✅ Start as true only when we expect a partial price calculation
+  const [priceLoading, setPriceLoading] = useState(
+    !!(pickupCoords?.lat && dropCoords?.lat)
+  );
+
   const noSeatsLeft = ride && Number(ride.availableSeats) <= 0;
 
-  // Is this a partial/intermediate boarding?
   const isPartialRoute = priceInfo?.isPartial && pickupName && dropName;
 
-  // Short city names for display
   const pickupCity = pickupName?.split(",")[0]?.trim() || "";
   const dropCity   = dropName?.split(",")[0]?.trim()   || "";
   const startCity  = ride?.startLocation?.split(",")[0]?.trim() || "";
@@ -49,11 +52,11 @@ export default function RideDetails() {
   }, [ride]);
 
   useEffect(() => {
-  if (ride && pickupCoords?.lat && dropCoords?.lat) {
-    fetchCalculatedPrice();
-  }
+    if (ride && pickupCoords?.lat && dropCoords?.lat) {
+      fetchCalculatedPrice();
+    }
   // eslint-disable-next-line
-}, [ride, pickupCoords?.lat, dropCoords?.lat]);
+  }, [ride, pickupCoords?.lat, dropCoords?.lat]);
 
   async function fetchRide() {
     setLoading(true);
@@ -94,6 +97,8 @@ export default function RideDetails() {
       setPriceInfo(res.data);
     } catch (e) {
       console.error("Price calc failed:", e);
+    } finally {
+      setPriceLoading(false); // ✅ done either way
     }
   };
 
@@ -234,71 +239,67 @@ export default function RideDetails() {
             {/* ── LEFT COLUMN ── */}
             <div className="rd__left">
 
-              {/* ── Route timeline — 3 points if partial, 2 if full ── */}
+              {/* ── Route timeline ── */}
               <div className="rd__card rd__route-card">
-                <div className="rd__timeline">
-                  <div className="rd__timeline-row">
-                    <div className="rd__timeline-time">
-                      <span className="rd__time">{ride.time}</span>
-                      {isPartialRoute && <span className="rd__time" style={{ color: "#024110", fontWeight: 700 }}>{ride.time}</span>}
-                      {ride.endTime
-                        ? <span className="rd__time">{ride.endTime}</span>
-                        : <span className="rd__time rd__time--none"> </span>
-                      }
-                    </div>
-
-                    <div className="rd__timeline-track">
-                      {/* Start dot */}
-                      <div className="rd__dot rd__dot--filled" />
-                      {isPartialRoute && (
-                        <>
-                          {/* Line from start to pickup */}
-                          <div className="rd__line" style={{ flex: "none", height: "28px", borderLeft: "2px dashed #d1d5db" }} />
-                          {/* Pickup dot — highlighted */}
-                          <div className="rd__dot rd__dot--filled" style={{ background: "#024110", border: "2px solid #024110", width: "12px", height: "12px" }} />
-                        </>
-                      )}
-                      {/* Main line */}
-                      <div className="rd__line" />
-                      {/* End dot */}
-                      <div className="rd__dot rd__dot--outline" />
-                    </div>
-
-                    <div className="rd__timeline-places">
-                      {/* Start location — always show */}
-                      <div className="rd__place-block">
-                        <span className="rd__place-name" style={{ color: "#6b7280", fontSize: "0.85rem" }}>
-                          {ride.startLocation || ride.from}
-                        </span>
+                {priceLoading ? (
+                  /* ✅ Skeleton while price/route is loading */
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "4px 0" }}>
+                    <div style={skeletonStyle(200, 16)} />
+                    <div style={skeletonStyle(140, 16)} />
+                    <div style={skeletonStyle(180, 16)} />
+                  </div>
+                ) : (
+                  <div className="rd__timeline">
+                    <div className="rd__timeline-row">
+                      <div className="rd__timeline-time">
+                        <span className="rd__time">{ride.time}</span>
+                        {isPartialRoute && <span className="rd__time" style={{ color: "#024110", fontWeight: 700 }}>{ride.time}</span>}
+                        {ride.endTime
+                          ? <span className="rd__time">{ride.endTime}</span>
+                          : <span className="rd__time rd__time--none"> </span>
+                        }
                       </div>
 
-                      {/* Pickup — only if partial and different from start */}
-                      {isPartialRoute && (
-                        <div className="rd__place-block" style={{ marginTop: "4px" }}>
-                          <span style={{
-                            fontSize: "0.7rem",
-                            fontWeight: 600,
-                            color: "#024110",
-                            background: "#f0fdf4",
-                            padding: "2px 8px",
-                            borderRadius: "999px",
-                            display: "inline-block",
-                            marginBottom: "2px"
-                          }}>
-                            🟢 Your boarding point
-                          </span>
-                          <br />
-                          <span className="rd__place-name">{pickupName}</span>
-                        </div>
-                      )}
+                      <div className="rd__timeline-track">
+                        <div className="rd__dot rd__dot--filled" />
+                        {isPartialRoute && (
+                          <>
+                            <div className="rd__line" style={{ flex: "none", height: "28px", borderLeft: "2px dashed #d1d5db" }} />
+                            <div className="rd__dot rd__dot--filled" style={{ background: "#024110", border: "2px solid #024110", width: "12px", height: "12px" }} />
+                          </>
+                        )}
+                        <div className="rd__line" />
+                        <div className="rd__dot rd__dot--outline" />
+                      </div>
 
-                      {/* End location — always show */}
-                      <div className="rd__place-block rd__place-block--bottom">
-                        <span className="rd__place-name">{ride.endLocation || ride.to}</span>
+                      <div className="rd__timeline-places">
+                        <div className="rd__place-block">
+                          <span className="rd__place-name" style={{ color: isPartialRoute ? "#6b7280" : undefined, fontSize: isPartialRoute ? "0.85rem" : undefined }}>
+                            {ride.startLocation || ride.from}
+                          </span>
+                        </div>
+
+                        {isPartialRoute && (
+                          <div className="rd__place-block" style={{ marginTop: "4px" }}>
+                            <span style={{
+                              fontSize: "0.7rem", fontWeight: 600, color: "#024110",
+                              background: "#f0fdf4", padding: "2px 8px",
+                              borderRadius: "999px", display: "inline-block", marginBottom: "2px"
+                            }}>
+                              🟢 Your boarding point
+                            </span>
+                            <br />
+                            <span className="rd__place-name">{pickupName}</span>
+                          </div>
+                        )}
+
+                        <div className="rd__place-block rd__place-block--bottom">
+                          <span className="rd__place-name">{ride.endLocation || ride.to}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Driver card */}
@@ -409,73 +410,71 @@ export default function RideDetails() {
 
                 {ride.date && <div className="rd__booking-date">{ride.date}</div>}
 
-                {/* ── Route in booking card: 3-point if partial ── */}
-                <div className="rd__booking-route">
-                  <div className="rd__booking-timeline">
+                {/* ✅ Route in booking card: skeleton while loading */}
+                {priceLoading ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px", margin: "12px 0" }}>
+                    <div style={skeletonStyle("100%", 14)} />
+                    <div style={skeletonStyle("70%", 14)} />
+                    <div style={skeletonStyle("85%", 14)} />
+                  </div>
+                ) : (
+                  <div className="rd__booking-route">
+                    <div className="rd__booking-timeline">
+                      <div className="rd__booking-dot rd__booking-dot--filled"
+                        style={{ background: isPartialRoute ? "#d1d5db" : "#111827" }} />
 
-                    {/* Always: start dot */}
-                    <div className="rd__booking-dot rd__booking-dot--filled"
-                      style={{ background: isPartialRoute ? "#d1d5db" : "#111827" }} />
-
-                    {isPartialRoute ? (
-                      <>
-                        {/* Dashed line: start → pickup */}
-                        <div style={{
-                          flex: "none", height: "22px",
-                          borderLeft: "2px dashed #d1d5db", margin: "0 auto"
-                        }} />
-                        {/* Pickup dot — green highlighted */}
-                        <div style={{
-                          width: "12px", height: "12px", borderRadius: "50%",
-                          background: "#024110", border: "2px solid #024110",
-                          margin: "0 auto"
-                        }} />
-                        {/* Solid line: pickup → end */}
+                      {isPartialRoute ? (
+                        <>
+                          <div style={{
+                            flex: "none", height: "22px",
+                            borderLeft: "2px dashed #d1d5db", margin: "0 auto"
+                          }} />
+                          <div style={{
+                            width: "12px", height: "12px", borderRadius: "50%",
+                            background: "#024110", border: "2px solid #024110",
+                            margin: "0 auto"
+                          }} />
+                          <div className="rd__booking-line" />
+                        </>
+                      ) : (
                         <div className="rd__booking-line" />
-                      </>
-                    ) : (
-                      <div className="rd__booking-line" />
-                    )}
-
-                    {/* Always: end dot */}
-                    <div className="rd__booking-dot rd__booking-dot--outline" />
-                  </div>
-
-                  <div className="rd__booking-places">
-
-                    {/* Start location */}
-                    <div className="rd__booking-place">
-                      <span className="rd__booking-time" style={{ color: isPartialRoute ? "#9ca3af" : undefined }}>
-                        {ride.time}
-                      </span>
-                      <span className="rd__booking-place-name"
-                        style={{ color: isPartialRoute ? "#9ca3af" : undefined, fontSize: isPartialRoute ? "0.78rem" : undefined }}>
-                        {startCity || ride.startLocation}
-                      </span>
-                    </div>
-
-                    {/* Pickup — only if partial */}
-                    {isPartialRoute && (
-                      <div className="rd__booking-place" style={{ margin: "6px 0" }}>
-                        <span className="rd__booking-time" style={{ color: "#024110", fontWeight: 700 }}>
-                          Board here
-                        </span>
-                        <span className="rd__booking-place-name" style={{ color: "#024110", fontWeight: 600 }}>
-                          {pickupCity}
-                        </span>
-                        <span style={{ fontSize: "0.7rem", color: "#6b7280" }}>{pickupName}</span>
-                      </div>
-                    )}
-
-                    {/* End location */}
-                    <div className="rd__booking-place">
-                      {ride.endTime && (
-                        <span className="rd__booking-time">{ride.endTime}</span>
                       )}
-                      <span className="rd__booking-place-name">{endCity || ride.endLocation}</span>
+
+                      <div className="rd__booking-dot rd__booking-dot--outline" />
+                    </div>
+
+                    <div className="rd__booking-places">
+                      <div className="rd__booking-place">
+                        <span className="rd__booking-time" style={{ color: isPartialRoute ? "#9ca3af" : undefined }}>
+                          {ride.time}
+                        </span>
+                        <span className="rd__booking-place-name"
+                          style={{ color: isPartialRoute ? "#9ca3af" : undefined, fontSize: isPartialRoute ? "0.78rem" : undefined }}>
+                          {startCity || ride.startLocation}
+                        </span>
+                      </div>
+
+                      {isPartialRoute && (
+                        <div className="rd__booking-place" style={{ margin: "6px 0" }}>
+                          <span className="rd__booking-time" style={{ color: "#024110", fontWeight: 700 }}>
+                            Board here
+                          </span>
+                          <span className="rd__booking-place-name" style={{ color: "#024110", fontWeight: 600 }}>
+                            {pickupCity}
+                          </span>
+                          <span style={{ fontSize: "0.7rem", color: "#6b7280" }}>{pickupName}</span>
+                        </div>
+                      )}
+
+                      <div className="rd__booking-place">
+                        {ride.endTime && (
+                          <span className="rd__booking-time">{ride.endTime}</span>
+                        )}
+                        <span className="rd__booking-place-name">{endCity || ride.endLocation}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div className="rd__booking-divider" />
 
@@ -506,57 +505,54 @@ export default function RideDetails() {
                     onClick={() => setSeats((s) => Math.min(ride.availableSeats, s + 1))}>+</button>
                 </div>
 
-                {/* ── Price block ── */}
-                <div style={{
-                  background: isPartialRoute ? "#f0fdf4" : "#f9fafb",
-                  borderRadius: "10px",
-                  padding: "12px 14px",
-                  marginBottom: "14px",
-                  border: isPartialRoute ? "1px solid #bbf7d0" : "1px solid #e5e7eb"
-                }}>
-                  {isPartialRoute ? (
-                    <>
-                      {/* Partial route price breakdown */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                {/* ✅ Price block: skeleton while loading */}
+                {priceLoading ? (
+                  <div style={{ ...skeletonStyle("100%", 64), borderRadius: "10px", marginBottom: "14px" }} />
+                ) : (
+                  <div style={{
+                    background: isPartialRoute ? "#f0fdf4" : "#f9fafb",
+                    borderRadius: "10px", padding: "12px 14px", marginBottom: "14px",
+                    border: isPartialRoute ? "1px solid #bbf7d0" : "1px solid #e5e7eb"
+                  }}>
+                    {isPartialRoute ? (
+                      <>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                          <span style={{ fontSize: "0.78rem", color: "#374151", fontWeight: 600 }}>
+                            {pickupCity} → {dropCity}
+                          </span>
+                          <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+                            <IndianRupee size={16} color="#024110" />
+                            <span style={{ fontSize: "1.2rem", fontWeight: 700, color: "#024110" }}>
+                              {totalPrice()}
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ fontSize: "0.72rem", color: "#6b7280", display: "flex", justifyContent: "space-between" }}>
+                          <span>{priceInfo.partialDistance}km of {priceInfo.fullDistance}km total route</span>
+                          <span>Full fare ₹{priceInfo.fullPrice * seats}</span>
+                        </div>
+                        {seats > 1 && (
+                          <div style={{ fontSize: "0.72rem", color: "#6b7280", marginTop: "3px" }}>
+                            ₹{priceInfo.calculatedPrice} × {seats} passengers
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <span style={{ fontSize: "0.78rem", color: "#374151", fontWeight: 600 }}>
-                          {pickupCity} → {dropCity}
+                          {startCity} → {endCity}
                         </span>
                         <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-                          <IndianRupee size={16} color="#024110" />
-                          <span style={{ fontSize: "1.2rem", fontWeight: 700, color: "#024110" }}>
-                            {totalPrice()}
-                          </span>
+                          <IndianRupee size={16} />
+                          <span style={{ fontSize: "1.2rem", fontWeight: 700 }}>{totalPrice()}</span>
                         </div>
                       </div>
-                      <div style={{ fontSize: "0.72rem", color: "#6b7280", display: "flex", justifyContent: "space-between" }}>
-                        <span>
-                          {priceInfo.partialDistance}km of {priceInfo.fullDistance}km total route
-                        </span>
-                        <span>Full fare ₹{priceInfo.fullPrice * seats}</span>
-                      </div>
-                      {seats > 1 && (
-                        <div style={{ fontSize: "0.72rem", color: "#6b7280", marginTop: "3px" }}>
-                          ₹{priceInfo.calculatedPrice} × {seats} passengers
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    /* Full route price */
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontSize: "0.78rem", color: "#374151", fontWeight: 600 }}>
-                        {startCity} → {endCity}
-                      </span>
-                      <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-                        <IndianRupee size={16} />
-                        <span style={{ fontSize: "1.2rem", fontWeight: 700 }}>{totalPrice()}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="rd__booking-divider" />
 
-                {/* ── Online payment only ── */}
                 <div className="rd__payment-options">
                   <label className="rd__payment-option rd__payment-option--active">
                     <input type="radio" name="paymentMethod" value="ONLINE" checked readOnly />
@@ -567,10 +563,10 @@ export default function RideDetails() {
 
                 <button
                   className="rd__book-btn"
-                  disabled={bookingLoading || noSeatsLeft}
+                  disabled={bookingLoading || noSeatsLeft || priceLoading}
                   onClick={handleBookRide}
                 >
-                  {bookingLoading ? "Processing..." : "Proceed to Pay"}
+                  {bookingLoading ? "Processing..." : priceLoading ? "Calculating price..." : "Proceed to Pay"}
                 </button>
 
                 {err && <div className="rd__error-msg">{err}</div>}
@@ -582,4 +578,16 @@ export default function RideDetails() {
       </div>
     </div>
   );
+}
+
+// ✅ Reusable inline skeleton style helper
+function skeletonStyle(width, height) {
+  return {
+    width,
+    height,
+    borderRadius: "6px",
+    background: "linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%)",
+    backgroundSize: "200% 100%",
+    animation: "shimmer 1.2s infinite",
+  };
 }
