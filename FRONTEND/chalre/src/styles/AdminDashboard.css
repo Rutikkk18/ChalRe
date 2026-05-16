@@ -5,9 +5,7 @@
 /* ---------- MAIN WRAPPER ---------- */
 .admin-dashboard {
   padding: clamp(20px, 4vw, 40px);
-  padding-top: clamp(80px, 10vw, 100px); /* clears fixed navbar on all screen sizes */
   max-width: 100%;
-  margin-top: 0; /* removed margin-top — padding-top handles navbar clearance */
 }
 
 .admin-dashboard h1 {
@@ -72,7 +70,6 @@
 @media (max-width: 768px) {
   .admin-dashboard {
     padding: clamp(16px, 3vw, 24px);
-    padding-top: clamp(70px, 10vw, 90px); /* slightly reduced for tablet but still clears navbar */
   }
 
   .admin-grid {
@@ -85,7 +82,6 @@
 @media (max-width: 480px) {
   .admin-dashboard {
     padding: 16px;
-    padding-top: 70px; /* fixed value for small screens — reliable navbar clearance */
   }
 
   .admin-card {
@@ -101,7 +97,6 @@
 @media (max-width: 360px) {
   .admin-dashboard {
     padding: 12px;
-    padding-top: 65px;
   }
 
   .admin-card {

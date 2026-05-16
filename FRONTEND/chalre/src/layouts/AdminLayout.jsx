@@ -36,7 +36,8 @@ export default function AdminLayout() {
             <style>{`
         .admin-container {
           display: flex;
-          min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+          min-height: 100vh;
+          padding-top: 82px;
           background-color: #f8f9fa;
         }
 
@@ -84,14 +85,33 @@ export default function AdminLayout() {
           overflow-y: auto;
         }
         
+        @media (max-width: 1024px) {
+          .admin-container {
+            padding-top: 82px;
+          }
+        }
+        
         @media (max-width: 768px) {
           .admin-container {
             flex-direction: column;
+            padding-top: 75px;
           }
           .admin-sidebar {
             width: 100%;
             border-right: none;
             border-bottom: 1px solid #e0e0e0;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .admin-container {
+            padding-top: 70px;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .admin-container {
+            padding-top: 68px;
           }
         }
       `}</style>

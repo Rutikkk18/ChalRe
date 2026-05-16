@@ -561,13 +561,19 @@ export default function RideDetails() {
                   </label>
                 </div>
 
-                <button
-                  className="rd__book-btn"
-                  disabled={bookingLoading || noSeatsLeft || priceLoading}
-                  onClick={handleBookRide}
-                >
-                  {bookingLoading ? "Processing..." : priceLoading ? "Calculating price..." : "Proceed to Pay"}
-                </button>
+                {user?.id === ride?.driver?.id ? (
+                  <div style={{ textAlign: "center", padding: "12px", background: "#f3f4f6", borderRadius: "8px", color: "#4b5563", fontWeight: 600, fontSize: "14px", marginTop: "12px" }}>
+                    This is your ride.
+                  </div>
+                ) : (
+                  <button
+                    className="rd__book-btn"
+                    disabled={bookingLoading || noSeatsLeft || priceLoading}
+                    onClick={handleBookRide}
+                  >
+                    {bookingLoading ? "Processing..." : priceLoading ? "Calculating price..." : "Proceed to Pay"}
+                  </button>
+                )}
 
                 {err && <div className="rd__error-msg">{err}</div>}
               </div>

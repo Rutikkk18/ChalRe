@@ -51,10 +51,14 @@ public class RazorpayPaymentService {
     // STEP 1: Create order (no money charged yet)
     public Map<String, Object> createOrder(Long userId, Long rideId, Long amountPaise) {
         try {
-            rideRepository.findById(rideId)
+            Ride ride = rideRepository.findById(rideId)
                     .orElseThrow(() -> new RuntimeException("Ride not found"));
             userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
+
+            if (ride.getDriver().getId().equals(userId)) {
+                throw new RuntimeException("You cannot book your own ride.");
+            }
 
             if (amountPaise == null || amountPaise <= 0) {
                 throw new RuntimeException("Invalid amount: " + amountPaise);
