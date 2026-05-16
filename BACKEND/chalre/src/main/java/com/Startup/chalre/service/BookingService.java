@@ -5,7 +5,9 @@ import com.Startup.chalre.entity.Booking;
 import com.Startup.chalre.entity.Ride;
 import com.Startup.chalre.entity.User;
 import com.Startup.chalre.repository.BookingRepository;
+import com.Startup.chalre.repository.PaymentRepository;
 import com.Startup.chalre.repository.RideRepository;
+import com.Startup.chalre.entity.Payment;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class BookingService {
     private final RideRepository rideRepository;
     private final BookingRepository bookingRepository;
     private final NotificationService notificationService;
+    private final PaymentRepository paymentRepository;
 
     /**
      * ATOMIC BOOKING WITH CONCURRENCY SAFE LOCKING
@@ -135,6 +138,13 @@ public class BookingService {
 
         if ("PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
             booking.setPaymentStatus("REFUNDED");
+            if (booking.getTxnId() != null && !booking.getTxnId().isEmpty()) {
+                paymentRepository.findByRazorpayPaymentId(booking.getTxnId())
+                        .ifPresent(payment -> {
+                            payment.setStatus(Payment.PaymentStatus.REFUNDED);
+                            paymentRepository.save(payment);
+                        });
+            }
         }
 
         bookingRepository.save(booking);

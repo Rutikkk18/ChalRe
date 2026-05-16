@@ -121,4 +121,105 @@ public class AdminPayoutController {
                 "paidAt", payment.getDriverPaidAt().toString()
         ));
     }
+
+    // Get all pending refunds (passenger cancelled paid booking)
+    @GetMapping("/refunds/pending")
+    public ResponseEntity<?> getPendingRefunds() {
+        List<Payment> payments = paymentRepository.findAll()
+                .stream()
+                .filter(p -> Payment.PaymentStatus.REFUNDED.equals(p.getStatus()))
+                .filter(p -> p.getRefundProcessed() == null || !p.getRefundProcessed())
+                .collect(Collectors.toList());
+
+        List<Map<String, Object>> result = payments.stream().map(p -> {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("paymentId", p.getId());
+            map.put("amount", p.getAmount());
+            map.put("amountRupees", p.getAmount() / 100.0);
+            map.put("createdAt", p.getCreatedAt());
+            map.put("razorpayPaymentId", p.getRazorpayPaymentId());
+
+            // Passenger info
+            if (p.getUser() != null) {
+                map.put("passengerName", p.getUser().getName());
+                map.put("passengerPhone", p.getUser().getPhone());
+                map.put("passengerUpiId", p.getUser().getUpiId());
+            }
+
+            // Ride info
+            if (p.getRide() != null) {
+                map.put("rideId", p.getRide().getId());
+                map.put("from", p.getRide().getStartLocation());
+                map.put("to", p.getRide().getEndLocation());
+                map.put("rideDate", p.getRide().getDate());
+            }
+
+            return map;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
+    }
+
+    // Get all completed refunds
+    @GetMapping("/refunds/completed")
+    public ResponseEntity<?> getCompletedRefunds() {
+        List<Payment> payments = paymentRepository.findAll()
+                .stream()
+                .filter(p -> Payment.PaymentStatus.REFUNDED.equals(p.getStatus()))
+                .filter(p -> p.getRefundProcessed() != null && p.getRefundProcessed())
+                .collect(Collectors.toList());
+
+        List<Map<String, Object>> result = payments.stream().map(p -> {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("paymentId", p.getId());
+            map.put("amountRupees", p.getAmount() / 100.0);
+            map.put("refundProcessedAt", p.getRefundProcessedAt());
+            map.put("refundNote", p.getRefundNote());
+            map.put("razorpayPaymentId", p.getRazorpayPaymentId());
+
+            if (p.getUser() != null) {
+                map.put("passengerName", p.getUser().getName());
+                map.put("passengerUpiId", p.getUser().getUpiId());
+            }
+
+            if (p.getRide() != null) {
+                map.put("rideDate", p.getRide().getDate());
+                map.put("from", p.getRide().getStartLocation());
+                map.put("to", p.getRide().getEndLocation());
+            }
+
+            return map;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
+    }
+
+    // Mark refund as processed
+    @PostMapping("/mark-refunded/{paymentId}")
+    public ResponseEntity<?> markRefundProcessed(
+            @PathVariable Long paymentId,
+            @RequestBody Map<String, String> body) {
+
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new RuntimeException("Payment not found"));
+
+        if (!Payment.PaymentStatus.REFUNDED.equals(payment.getStatus())) {
+            return ResponseEntity.badRequest().body("Payment is not eligible for refund");
+        }
+
+        if (payment.getRefundProcessed() != null && payment.getRefundProcessed()) {
+            return ResponseEntity.badRequest().body("Refund already marked as processed");
+        }
+
+        payment.setRefundProcessed(true);
+        payment.setRefundProcessedAt(LocalDateTime.now());
+        payment.setRefundNote(body.getOrDefault("note", ""));
+        paymentRepository.save(payment);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Refund marked as processed successfully",
+                "paymentId", paymentId,
+                "refundProcessedAt", payment.getRefundProcessedAt().toString()
+        ));
+    }
 }

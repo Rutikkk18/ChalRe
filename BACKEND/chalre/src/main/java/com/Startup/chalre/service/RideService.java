@@ -17,7 +17,9 @@ import com.Startup.chalre.entity.User;
 import com.Startup.chalre.model.LatLng;
 import com.Startup.chalre.model.RouteResponse;
 import com.Startup.chalre.repository.BookingRepository;
+import com.Startup.chalre.repository.PaymentRepository;
 import com.Startup.chalre.repository.RideRepository;
+import com.Startup.chalre.entity.Payment;
 import com.Startup.chalre.utils.PolylineUtils;
 
 import jakarta.transaction.Transactional;
@@ -32,6 +34,7 @@ public class RideService {
     private final BookingRepository bookingRepository;
     private final MapService mapService;
     private final RouteService routeService;
+    private final PaymentRepository paymentRepository;
 
     // ── CREATE RIDE ──────────────────────────────────────────
     public Ride createRide(RideDTO dto, User driver) {
@@ -322,6 +325,13 @@ public class RideService {
                 booking.setStatus("CANCELLED");
                 if ("PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
                     booking.setPaymentStatus("REFUNDED");
+                    if (booking.getTxnId() != null && !booking.getTxnId().isEmpty()) {
+                        paymentRepository.findByRazorpayPaymentId(booking.getTxnId())
+                                .ifPresent(payment -> {
+                                    payment.setStatus(Payment.PaymentStatus.REFUNDED);
+                                    paymentRepository.save(payment);
+                                });
+                    }
                     refundedCount++;
                 }
                 notificationService.sendNotification(

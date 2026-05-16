@@ -63,6 +63,15 @@ public class Payment {
     @Column(length = 200)
     private String driverPayoutNote;
 
+    // Track if admin has refunded the passenger manually
+    private Boolean refundProcessed = false;
+
+    private LocalDateTime refundProcessedAt;
+
+    // Admin note when marking refunded (e.g., UPI ref number)
+    @Column(length = 200)
+    private String refundNote;
+
     public enum PaymentStatus {
         PENDING,
         SUCCESS,

@@ -5,6 +5,8 @@ import api from "../../api/axios";
 export default function PayoutTracker() {
     const [pendingPayouts, setPendingPayouts] = useState([]);
     const [completedPayouts, setCompletedPayouts] = useState([]);
+    const [pendingRefunds, setPendingRefunds] = useState([]);
+    const [completedRefunds, setCompletedRefunds] = useState([]);
     const [activeTab, setActiveTab] = useState("pending");
     const [loading, setLoading] = useState(true);
     const [processingId, setProcessingId] = useState(null);
@@ -17,12 +19,16 @@ export default function PayoutTracker() {
     const fetchPayouts = async () => {
         setLoading(true);
         try {
-            const [pendingRes, completedRes] = await Promise.all([
+            const [pendingRes, completedRes, pendingRef, completedRef] = await Promise.all([
                 api.get("/admin/payouts/pending"),
-                api.get("/admin/payouts/completed")
+                api.get("/admin/payouts/completed"),
+                api.get("/admin/payouts/refunds/pending"),
+                api.get("/admin/payouts/refunds/completed")
             ]);
             setPendingPayouts(pendingRes.data || []);
             setCompletedPayouts(completedRes.data || []);
+            setPendingRefunds(pendingRef.data || []);
+            setCompletedRefunds(completedRef.data || []);
         } catch (err) {
             console.error("Failed to fetch payouts", err);
             alert("Failed to load payout data.");
@@ -46,6 +52,27 @@ export default function PayoutTracker() {
             fetchPayouts();
         } catch (err) {
             const msg = err.response?.data || "Failed to mark as paid.";
+            alert(typeof msg === "string" ? msg : JSON.stringify(msg));
+        } finally {
+            setProcessingId(null);
+        }
+    };
+
+    const handleMarkRefunded = async (paymentId) => {
+        const note = noteInputs[paymentId] || "";
+        if (!note.trim()) {
+            alert("Please enter UPI reference number or refund note before marking as refunded.");
+            return;
+        }
+        if (!window.confirm(`Mark this refund as processed? Note: ${note}`)) return;
+
+        setProcessingId(paymentId);
+        try {
+            await api.post(`/admin/payouts/mark-refunded/${paymentId}`, { note });
+            alert("Refund marked as processed successfully!");
+            fetchPayouts();
+        } catch (err) {
+            const msg = err.response?.data || "Failed to mark as refunded.";
             alert(typeof msg === "string" ? msg : JSON.stringify(msg));
         } finally {
             setProcessingId(null);
@@ -186,10 +213,16 @@ export default function PayoutTracker() {
             {/* Tabs */}
             <div style={styles.tabs}>
                 <button style={styles.tab(activeTab === "pending")} onClick={() => setActiveTab("pending")}>
-                    Pending ({pendingPayouts.length})
+                    Pending Payouts ({pendingPayouts.length})
                 </button>
                 <button style={styles.tab(activeTab === "completed")} onClick={() => setActiveTab("completed")}>
-                    Completed ({completedPayouts.length})
+                    Completed Payouts ({completedPayouts.length})
+                </button>
+                <button style={styles.tab(activeTab === "pending-refunds")} onClick={() => setActiveTab("pending-refunds")}>
+                    Pending Refunds ({pendingRefunds.length})
+                </button>
+                <button style={styles.tab(activeTab === "completed-refunds")} onClick={() => setActiveTab("completed-refunds")}>
+                    Completed Refunds ({completedRefunds.length})
                 </button>
             </div>
 
@@ -260,6 +293,72 @@ export default function PayoutTracker() {
                                 </div>
                                 <div style={{ display: "flex", alignItems: "flex-start" }}>
                                     <span style={styles.paidBadge}>✓ Paid</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )
+            ) : activeTab === "pending-refunds" ? (
+                pendingRefunds.length === 0 ? (
+                    <div style={styles.empty}>✅ No pending refunds!</div>
+                ) : (
+                    pendingRefunds.map((p) => (
+                        <div key={p.paymentId} style={styles.card}>
+                            <div style={styles.row}>
+                                <div style={styles.left}>
+                                    <div style={styles.route}>{p.from} → {p.to}</div>
+                                    <div style={styles.meta}>📅 Ride: {p.rideDate}</div>
+                                    <div style={styles.meta}>🧑 Passenger: <strong>{p.passengerName}</strong></div>
+                                    <div style={styles.meta}>📞 Phone: {p.passengerPhone || "—"}</div>
+                                    <div style={styles.meta}>🆔 Razorpay ID: {p.razorpayPaymentId}</div>
+                                    <div style={styles.meta}>📅 Payment Date: {new Date(p.createdAt).toLocaleString()}</div>
+                                </div>
+                                <div style={styles.right}>
+                                    <div style={{ ...styles.upiBox, background: "#fee2e2", borderColor: "#fca5a5", color: "#991b1b" }}>
+                                        💸 Pass UPI: {p.passengerUpiId || "⚠️ Passenger has no UPI ID"}
+                                    </div>
+                                    <div style={{ ...styles.amountBox, background: "#fef2f2", borderColor: "#fecaca", color: "#b91c1c" }}>
+                                        💰 Refund amount: ₹{p.amountRupees?.toFixed(2)}
+                                    </div>
+                                    <input
+                                        style={styles.noteInput}
+                                        placeholder="Enter refund ref / note"
+                                        value={noteInputs[p.paymentId] || ""}
+                                        onChange={(e) => setNoteInputs(prev => ({
+                                            ...prev,
+                                            [p.paymentId]: e.target.value
+                                        }))}
+                                    />
+                                    <button
+                                        style={styles.markPaidBtn(processingId === p.paymentId)}
+                                        onClick={() => handleMarkRefunded(p.paymentId)}
+                                        disabled={processingId === p.paymentId}
+                                    >
+                                        {processingId === p.paymentId ? "Processing..." : "✓ Mark Refunded"}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )
+            ) : (
+                completedRefunds.length === 0 ? (
+                    <div style={styles.empty}>No completed refunds yet.</div>
+                ) : (
+                    completedRefunds.map((p) => (
+                        <div key={p.paymentId} style={styles.card}>
+                            <div style={styles.row}>
+                                <div style={styles.left}>
+                                    <div style={styles.route}>{p.from} → {p.to}</div>
+                                    <div style={styles.meta}>📅 Ride: {p.rideDate}</div>
+                                    <div style={styles.meta}>🧑 Passenger: <strong>{p.passengerName}</strong></div>
+                                    <div style={styles.meta}>💸 UPI: {p.passengerUpiId || "—"}</div>
+                                    <div style={styles.meta}>💰 Refunded: ₹{p.amountRupees?.toFixed(2)}</div>
+                                    <div style={styles.meta}>🕐 Refunded at: {p.refundProcessedAt ? new Date(p.refundProcessedAt).toLocaleString() : "—"}</div>
+                                    <div style={styles.meta}>📝 Note: {p.refundNote || "—"}</div>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "flex-start" }}>
+                                    <span style={{ ...styles.paidBadge, background: "#fef2f2", borderColor: "#fecaca", color: "#991b1b" }}>✓ Refunded</span>
                                 </div>
                             </div>
                         </div>
