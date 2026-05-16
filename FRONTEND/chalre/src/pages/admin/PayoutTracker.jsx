@@ -180,6 +180,153 @@ export default function PayoutTracker() {
     const totalPending = pendingPayouts.reduce((sum, p) => sum + (p.driverAmount || 0), 0);
     const totalCompleted = completedPayouts.reduce((sum, p) => sum + (p.driverAmount || 0), 0);
 
+    const renderTabContent = () => {
+        if (loading) {
+            return <div style={styles.empty}>Loading payouts...</div>;
+        }
+
+        switch (activeTab) {
+            case "pending":
+                if (pendingPayouts.length === 0) {
+                    return <div style={styles.empty}>✅ No pending payouts! All drivers are paid.</div>;
+                }
+                return pendingPayouts.map((p) => (
+                    <div key={p.paymentId} style={styles.card}>
+                        <div style={styles.row}>
+                            <div style={styles.left}>
+                                <div style={styles.route}>{p.from} → {p.to}</div>
+                                <div style={styles.meta}>📅 Ride: {p.rideDate}</div>
+                                <div style={styles.meta}>👤 Driver: <strong>{p.driverName}</strong></div>
+                                <div style={styles.meta}>📞 Phone: {p.driverPhone || "—"}</div>
+                                <div style={styles.meta}>🧑 Passenger: {p.passengerName}</div>
+                                <div style={styles.meta}>🆔 Razorpay ID: {p.razorpayPaymentId}</div>
+                                <div style={styles.meta}>✅ Confirmed at: {p.releasedAt ? new Date(p.releasedAt).toLocaleString() : "—"}</div>
+                            </div>
+                            <div style={styles.right}>
+                                <div style={styles.upiBox}>
+                                    💸 UPI: {p.driverUpiId || "⚠️ Driver has no UPI ID"}
+                                </div>
+                                <div style={styles.amountBox}>
+                                    💰 Pay driver: ₹{p.driverAmount?.toFixed(2)}<br />
+                                    <span style={{ fontSize: "11px", color: "#6b7280" }}>
+                                        Total: ₹{p.amountRupees} | Chalre: ₹{p.chalreCut?.toFixed(2)}
+                                    </span>
+                                </div>
+                                <input
+                                    style={styles.noteInput}
+                                    placeholder="Enter UPI ref / transaction note"
+                                    value={noteInputs[p.paymentId] || ""}
+                                    onChange={(e) => setNoteInputs(prev => ({
+                                        ...prev,
+                                        [p.paymentId]: e.target.value
+                                    }))}
+                                />
+                                <button
+                                    style={styles.markPaidBtn(processingId === p.paymentId)}
+                                    onClick={() => handleMarkPaid(p.paymentId)}
+                                    disabled={processingId === p.paymentId}
+                                >
+                                    {processingId === p.paymentId ? "Processing..." : "✓ Mark Driver Paid"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ));
+            
+            case "completed":
+                if (completedPayouts.length === 0) {
+                    return <div style={styles.empty}>No completed payouts yet.</div>;
+                }
+                return completedPayouts.map((p) => (
+                    <div key={p.paymentId} style={styles.card}>
+                        <div style={styles.row}>
+                            <div style={styles.left}>
+                                <div style={styles.route}>{p.from} → {p.to}</div>
+                                <div style={styles.meta}>📅 Ride: {p.rideDate}</div>
+                                <div style={styles.meta}>👤 Driver: <strong>{p.driverName}</strong></div>
+                                <div style={styles.meta}>💸 UPI: {p.driverUpiId || "—"}</div>
+                                <div style={styles.meta}>💰 Paid: ₹{p.driverAmount?.toFixed(2)}</div>
+                                <div style={styles.meta}>🕐 Paid at: {p.driverPaidAt ? new Date(p.driverPaidAt).toLocaleString() : "—"}</div>
+                                <div style={styles.meta}>📝 Note: {p.driverPayoutNote || "—"}</div>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "flex-start" }}>
+                                <span style={styles.paidBadge}>✓ Paid</span>
+                            </div>
+                        </div>
+                    </div>
+                ));
+            
+            case "pending-refunds":
+                if (pendingRefunds.length === 0) {
+                    return <div style={styles.empty}>✅ No pending refunds!</div>;
+                }
+                return pendingRefunds.map((p) => (
+                    <div key={p.paymentId} style={styles.card}>
+                        <div style={styles.row}>
+                            <div style={styles.left}>
+                                <div style={styles.route}>{p.from} → {p.to}</div>
+                                <div style={styles.meta}>📅 Ride: {p.rideDate}</div>
+                                <div style={styles.meta}>🧑 Passenger: <strong>{p.passengerName}</strong></div>
+                                <div style={styles.meta}>📞 Phone: {p.passengerPhone || "—"}</div>
+                                <div style={styles.meta}>🆔 Razorpay ID: {p.razorpayPaymentId}</div>
+                                <div style={styles.meta}>📅 Payment Date: {new Date(p.createdAt).toLocaleString()}</div>
+                            </div>
+                            <div style={styles.right}>
+                                <div style={{ ...styles.upiBox, background: "#fee2e2", borderColor: "#fca5a5", color: "#991b1b" }}>
+                                    💸 Pass UPI: {p.passengerUpiId || "⚠️ Passenger has no UPI ID"}
+                                </div>
+                                <div style={{ ...styles.amountBox, background: "#fef2f2", borderColor: "#fecaca", color: "#b91c1c" }}>
+                                    💰 Refund amount: ₹{p.amountRupees?.toFixed(2)}
+                                </div>
+                                <input
+                                    style={styles.noteInput}
+                                    placeholder="Enter refund ref / note"
+                                    value={noteInputs[p.paymentId] || ""}
+                                    onChange={(e) => setNoteInputs(prev => ({
+                                        ...prev,
+                                        [p.paymentId]: e.target.value
+                                    }))}
+                                />
+                                <button
+                                    style={styles.markPaidBtn(processingId === p.paymentId)}
+                                    onClick={() => handleMarkRefunded(p.paymentId)}
+                                    disabled={processingId === p.paymentId}
+                                >
+                                    {processingId === p.paymentId ? "Processing..." : "✓ Mark Refunded"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ));
+            
+            case "completed-refunds":
+                if (completedRefunds.length === 0) {
+                    return <div style={styles.empty}>No completed refunds yet.</div>;
+                }
+                return completedRefunds.map((p) => (
+                    <div key={p.paymentId} style={styles.card}>
+                        <div style={styles.row}>
+                            <div style={styles.left}>
+                                <div style={styles.route}>{p.from} → {p.to}</div>
+                                <div style={styles.meta}>📅 Ride: {p.rideDate}</div>
+                                <div style={styles.meta}>🧑 Passenger: <strong>{p.passengerName}</strong></div>
+                                <div style={styles.meta}>💸 UPI: {p.passengerUpiId || "—"}</div>
+                                <div style={styles.meta}>💰 Refunded: ₹{p.amountRupees?.toFixed(2)}</div>
+                                <div style={styles.meta}>🕐 Refunded at: {p.refundProcessedAt ? new Date(p.refundProcessedAt).toLocaleString() : "—"}</div>
+                                <div style={styles.meta}>📝 Note: {p.refundNote || "—"}</div>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "flex-start" }}>
+                                <span style={{ ...styles.paidBadge, background: "#fef2f2", borderColor: "#fecaca", color: "#991b1b" }}>✓ Refunded</span>
+                            </div>
+                        </div>
+                    </div>
+                ));
+                
+            default:
+                return null;
+        }
+    };
+
     return (
         <div style={styles.wrapper}>
             <h1 style={styles.title}>Payout Tracker</h1>
@@ -226,145 +373,7 @@ export default function PayoutTracker() {
                 </button>
             </div>
 
-            {loading ? (
-                <div style={styles.empty}>Loading payouts...</div>
-            ) : activeTab === "pending" ? (
-                pendingPayouts.length === 0 ? (
-                    <div style={styles.empty}>✅ No pending payouts! All drivers are paid.</div>
-                ) : (
-                    pendingPayouts.map((p) => (
-                        <div key={p.paymentId} style={styles.card}>
-                            <div style={styles.row}>
-                                <div style={styles.left}>
-                                    <div style={styles.route}>{p.from} → {p.to}</div>
-                                    <div style={styles.meta}>📅 Ride: {p.rideDate}</div>
-                                    <div style={styles.meta}>👤 Driver: <strong>{p.driverName}</strong></div>
-                                    <div style={styles.meta}>📞 Phone: {p.driverPhone || "—"}</div>
-                                    <div style={styles.meta}>🧑 Passenger: {p.passengerName}</div>
-                                    <div style={styles.meta}>🆔 Razorpay ID: {p.razorpayPaymentId}</div>
-                                    <div style={styles.meta}>✅ Confirmed at: {p.releasedAt ? new Date(p.releasedAt).toLocaleString() : "—"}</div>
-                                </div>
-                                <div style={styles.right}>
-                                    <div style={styles.upiBox}>
-                                        💸 UPI: {p.driverUpiId || "⚠️ Driver has no UPI ID"}
-                                    </div>
-                                    <div style={styles.amountBox}>
-                                        💰 Pay driver: ₹{p.driverAmount?.toFixed(2)}<br />
-                                        <span style={{ fontSize: "11px", color: "#6b7280" }}>
-                                            Total: ₹{p.amountRupees} | Chalre: ₹{p.chalreCut?.toFixed(2)}
-                                        </span>
-                                    </div>
-                                    <input
-                                        style={styles.noteInput}
-                                        placeholder="Enter UPI ref / transaction note"
-                                        value={noteInputs[p.paymentId] || ""}
-                                        onChange={(e) => setNoteInputs(prev => ({
-                                            ...prev,
-                                            [p.paymentId]: e.target.value
-                                        }))}
-                                    />
-                                    <button
-                                        style={styles.markPaidBtn(processingId === p.paymentId)}
-                                        onClick={() => handleMarkPaid(p.paymentId)}
-                                        disabled={processingId === p.paymentId}
-                                    >
-                                        {processingId === p.paymentId ? "Processing..." : "✓ Mark Driver Paid"}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                )
-            ) : (
-                completedPayouts.length === 0 ? (
-                    <div style={styles.empty}>No completed payouts yet.</div>
-                ) : (
-                    completedPayouts.map((p) => (
-                        <div key={p.paymentId} style={styles.card}>
-                            <div style={styles.row}>
-                                <div style={styles.left}>
-                                    <div style={styles.route}>{p.from} → {p.to}</div>
-                                    <div style={styles.meta}>📅 Ride: {p.rideDate}</div>
-                                    <div style={styles.meta}>👤 Driver: <strong>{p.driverName}</strong></div>
-                                    <div style={styles.meta}>💸 UPI: {p.driverUpiId || "—"}</div>
-                                    <div style={styles.meta}>💰 Paid: ₹{p.driverAmount?.toFixed(2)}</div>
-                                    <div style={styles.meta}>🕐 Paid at: {p.driverPaidAt ? new Date(p.driverPaidAt).toLocaleString() : "—"}</div>
-                                    <div style={styles.meta}>📝 Note: {p.driverPayoutNote || "—"}</div>
-                                </div>
-                                <div style={{ display: "flex", alignItems: "flex-start" }}>
-                                    <span style={styles.paidBadge}>✓ Paid</span>
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                )
-            ) : activeTab === "pending-refunds" ? (
-                pendingRefunds.length === 0 ? (
-                    <div style={styles.empty}>✅ No pending refunds!</div>
-                ) : (
-                    pendingRefunds.map((p) => (
-                        <div key={p.paymentId} style={styles.card}>
-                            <div style={styles.row}>
-                                <div style={styles.left}>
-                                    <div style={styles.route}>{p.from} → {p.to}</div>
-                                    <div style={styles.meta}>📅 Ride: {p.rideDate}</div>
-                                    <div style={styles.meta}>🧑 Passenger: <strong>{p.passengerName}</strong></div>
-                                    <div style={styles.meta}>📞 Phone: {p.passengerPhone || "—"}</div>
-                                    <div style={styles.meta}>🆔 Razorpay ID: {p.razorpayPaymentId}</div>
-                                    <div style={styles.meta}>📅 Payment Date: {new Date(p.createdAt).toLocaleString()}</div>
-                                </div>
-                                <div style={styles.right}>
-                                    <div style={{ ...styles.upiBox, background: "#fee2e2", borderColor: "#fca5a5", color: "#991b1b" }}>
-                                        💸 Pass UPI: {p.passengerUpiId || "⚠️ Passenger has no UPI ID"}
-                                    </div>
-                                    <div style={{ ...styles.amountBox, background: "#fef2f2", borderColor: "#fecaca", color: "#b91c1c" }}>
-                                        💰 Refund amount: ₹{p.amountRupees?.toFixed(2)}
-                                    </div>
-                                    <input
-                                        style={styles.noteInput}
-                                        placeholder="Enter refund ref / note"
-                                        value={noteInputs[p.paymentId] || ""}
-                                        onChange={(e) => setNoteInputs(prev => ({
-                                            ...prev,
-                                            [p.paymentId]: e.target.value
-                                        }))}
-                                    />
-                                    <button
-                                        style={styles.markPaidBtn(processingId === p.paymentId)}
-                                        onClick={() => handleMarkRefunded(p.paymentId)}
-                                        disabled={processingId === p.paymentId}
-                                    >
-                                        {processingId === p.paymentId ? "Processing..." : "✓ Mark Refunded"}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                )
-            ) : (
-                completedRefunds.length === 0 ? (
-                    <div style={styles.empty}>No completed refunds yet.</div>
-                ) : (
-                    completedRefunds.map((p) => (
-                        <div key={p.paymentId} style={styles.card}>
-                            <div style={styles.row}>
-                                <div style={styles.left}>
-                                    <div style={styles.route}>{p.from} → {p.to}</div>
-                                    <div style={styles.meta}>📅 Ride: {p.rideDate}</div>
-                                    <div style={styles.meta}>🧑 Passenger: <strong>{p.passengerName}</strong></div>
-                                    <div style={styles.meta}>💸 UPI: {p.passengerUpiId || "—"}</div>
-                                    <div style={styles.meta}>💰 Refunded: ₹{p.amountRupees?.toFixed(2)}</div>
-                                    <div style={styles.meta}>🕐 Refunded at: {p.refundProcessedAt ? new Date(p.refundProcessedAt).toLocaleString() : "—"}</div>
-                                    <div style={styles.meta}>📝 Note: {p.refundNote || "—"}</div>
-                                </div>
-                                <div style={{ display: "flex", alignItems: "flex-start" }}>
-                                    <span style={{ ...styles.paidBadge, background: "#fef2f2", borderColor: "#fecaca", color: "#991b1b" }}>✓ Refunded</span>
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                )
-            )}
+            {renderTabContent()}
         </div>
     );
 }
