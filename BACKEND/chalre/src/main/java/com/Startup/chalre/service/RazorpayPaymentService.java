@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import org.springframework.scheduling.annotation.Scheduled;
 
 @Service
 public class RazorpayPaymentService {
@@ -150,9 +152,9 @@ public class RazorpayPaymentService {
     // STEP 3: Passenger confirms ride done → release to driver
     @Transactional
     public String confirmRideAndRelease(Long rideId, User passenger) {
-        // Use latest successful payment — handles duplicate test payments gracefully
-        Payment payment = paymentRepository.findLatestSuccessfulPaymentByRideId(rideId)
-                .orElseThrow(() -> new RuntimeException("Payment not found for this ride"));
+        // Use latest successful payment for the passenger
+        Payment payment = paymentRepository.findFirstByRideIdAndUserIdAndStatusOrderByCreatedAtDesc(rideId, passenger.getId(), Payment.PaymentStatus.SUCCESS)
+                .orElseThrow(() -> new RuntimeException("Payment not found for this ride and user"));
 
         if (payment.getReleasedAt() != null) {
             return "Payment already released to driver";
@@ -191,5 +193,36 @@ public class RazorpayPaymentService {
     public Payment getPaymentByOrderId(String orderId) {
         return paymentRepository.findByRazorpayOrderId(orderId)
                 .orElseThrow(() -> new RuntimeException("Payment not found: " + orderId));
+    }
+
+    // Scheduled job to auto-release payments 1 hour after ride ends
+    @Scheduled(cron = "0 0/15 * * * *") // Runs every 15 minutes
+    @Transactional
+    public void autoReleasePayments() {
+        List<Payment> pendingPayments = paymentRepository.findPendingReleasePayments();
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Payment payment : pendingPayments) {
+            if (payment.getRide() == null) continue;
+
+            try {
+                LocalDateTime rideDateTime = payment.getRide().getRideDateTime();
+                if (rideDateTime.plusHours(1).isBefore(now)) {
+                    payment.setReleasedAt(now);
+                    paymentRepository.save(payment);
+
+                    notificationService.sendNotification(
+                            payment.getRide().getDriver(),
+                            "Payment Auto-Released",
+                            "₹" + (payment.getAmount() / 100.0) + " released automatically for your ride.",
+                            "PAYMENT_RELEASED",
+                            Map.of("rideId", payment.getRide().getId().toString())
+                    );
+                    logger.info("Payment auto-released - PaymentId: {}", payment.getId());
+                }
+            } catch (Exception e) {
+                logger.error("Error processing auto-release for payment: {}", payment.getId(), e);
+            }
+        }
     }
 }
