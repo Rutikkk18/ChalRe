@@ -30,6 +30,8 @@ export default function RideDetails() {
   const [bookingLoading, setBookingLoading]= useState(false);
   const [driverRatings,  setDriverRatings] = useState([]);
   const [priceInfo,      setPriceInfo]     = useState(null);
+  const [hasBooked,      setHasBooked]     = useState(false);
+  const isOwner = user?.id === ride?.driver?.id;
 
   // ✅ Start as true only when we expect a partial price calculation
   const [priceLoading, setPriceLoading] = useState(
@@ -48,8 +50,29 @@ export default function RideDetails() {
   useEffect(() => { fetchRide(); }, [rideId]);
 
   useEffect(() => {
-    if (ride?.driver?.id) fetchDriverRatings();
-  }, [ride]);
+    if (ride?.driver?.id) {
+      fetchDriverRatings();
+      if (ride.driver.id !== user?.id) {
+        checkBookingStatus();
+      }
+    }
+  }, [ride, user?.id]);
+
+  const checkBookingStatus = async () => {
+    if (!user) return;
+    try {
+      const res = await api.get('/bookings/my');
+      const myBookings = res.data || [];
+      const booked = myBookings.some(b => 
+        b.ride?.id === Number(rideId) && 
+        ["BOOKED", "COMPLETED"].includes(b.status)
+      );
+      setHasBooked(booked);
+    } catch (error) {
+      console.error("Error checking booking status:", error);
+      setHasBooked(false);
+    }
+  };
 
   useEffect(() => {
     if (ride && pickupCoords?.lat && dropCoords?.lat) {
@@ -367,12 +390,23 @@ export default function RideDetails() {
               </div>
 
               {/* Contact button */}
-              {ride.driver?.phone && (
+              {!isOwner && (
                 <div className="rd__card rd__contact-card">
-                  <a className="rd__contact-btn" href={`tel:${ride.driver.phone}`}>
-                    <Phone size={16} />
-                    Contact {ride.driver?.name || "driver"}
-                  </a>
+                  {hasBooked ? (
+                    ride.driver?.phone && (
+                      <a className="rd__contact-btn" href={`tel:${ride.driver.phone}`}>
+                        <Phone size={16} />
+                        Contact {ride.driver?.name || "driver"}
+                      </a>
+                    )
+                  ) : (
+                    <div style={{ padding: "12px", background: "#f3f4f6", borderRadius: "8px", display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                      <span style={{ fontSize: "16px", marginTop: "2px" }}>🔒</span>
+                      <span style={{ fontSize: "13px", color: "#6b7280", lineHeight: "1.4" }}>
+                        You will get the phone number after booking for further chat and coordination.
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
 
