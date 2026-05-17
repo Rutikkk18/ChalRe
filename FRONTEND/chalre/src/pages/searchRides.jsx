@@ -42,6 +42,7 @@ export default function SearchRides() {
   const [error,       setError]       = useState("");
 
   const [hasSearched, setHasSearched] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [pickupCoords, setPickupCoords] = useState(null);
   const [dropCoords,   setDropCoords]   = useState(null);
@@ -475,7 +476,7 @@ export default function SearchRides() {
       <div className="search-body">
         <div className="search-content-layout">
 
-          <aside className="filters-sidebar">
+          <aside className={`filters-sidebar ${!isFilterOpen ? 'hidden-mobile' : ''}`}>
             <h3>{t("srFilters")}</h3>
             <div className="filters-section">
               <div className="filters-grid">
@@ -565,6 +566,19 @@ export default function SearchRides() {
           </aside>
 
           <div className="results-container">
+            <div className="results-header mobile-filter-toggle" style={{ width: '100%', justifyContent: 'flex-end', marginBottom: '16px' }}>
+              <button 
+                type="button"
+                className="btn filter-btn" 
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                {isFilterOpen ? t("srCloseFilters") || "Close Filters" : t("srFilters") || "Filters"}
+              </button>
+            </div>
+
             {error && <div className="error">{error}</div>}
 
             {!loading && results.length === 0 && (
