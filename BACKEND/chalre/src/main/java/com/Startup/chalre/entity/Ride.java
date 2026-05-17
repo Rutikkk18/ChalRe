@@ -28,6 +28,7 @@ public class Ride {
     private double price;
     private String carModel;
     private String carType;
+    private String vehicleType;
     private String genderPreference;
     private String note;
 

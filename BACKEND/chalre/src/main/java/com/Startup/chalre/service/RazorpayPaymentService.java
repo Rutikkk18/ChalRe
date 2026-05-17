@@ -10,6 +10,8 @@ import com.Startup.chalre.entity.User;
 import com.Startup.chalre.repository.PaymentRepository;
 import com.Startup.chalre.repository.RideRepository;
 import com.Startup.chalre.repository.UserRepository;
+import com.Startup.chalre.entity.Booking;
+import com.Startup.chalre.repository.BookingRepository;
 import jakarta.transaction.Transactional;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -34,6 +36,7 @@ public class RazorpayPaymentService {
     private final RideRepository rideRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final BookingRepository bookingRepository;
 
     public RazorpayPaymentService(
             RazorpayClient razorpayClient,
@@ -41,13 +44,15 @@ public class RazorpayPaymentService {
             PaymentRepository paymentRepository,
             RideRepository rideRepository,
             UserRepository userRepository,
-            NotificationService notificationService) {
+            NotificationService notificationService,
+            BookingRepository bookingRepository) {
         this.razorpayClient = razorpayClient;
         this.razorpaySecret = razorpaySecret;
         this.paymentRepository = paymentRepository;
         this.rideRepository = rideRepository;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.bookingRepository = bookingRepository;
     }
 
     // STEP 1: Create order (no money charged yet)
@@ -152,6 +157,13 @@ public class RazorpayPaymentService {
     // STEP 3: Passenger confirms ride done → release to driver
     @Transactional
     public String confirmRideAndRelease(Long rideId, User passenger) {
+        // Find BOOKED booking to prevent duplicates
+        List<Booking> bookings = bookingRepository.findByRideIdAndUserIdAndStatus(rideId, passenger.getId(), "BOOKED");
+        if (bookings.isEmpty()) {
+            throw new RuntimeException("No active booking found or already confirmed");
+        }
+        Booking booking = bookings.get(0);
+
         // Use latest successful payment for the passenger
         Payment payment = paymentRepository.findFirstByRideIdAndUserIdAndStatusOrderByCreatedAtDesc(rideId, passenger.getId(), Payment.PaymentStatus.SUCCESS)
                 .orElseThrow(() -> new RuntimeException("Payment not found for this ride and user"));
@@ -162,6 +174,9 @@ public class RazorpayPaymentService {
 
         payment.setReleasedAt(LocalDateTime.now());
         paymentRepository.save(payment);
+
+        booking.setStatus("COMPLETED");
+        bookingRepository.save(booking);
 
         notificationService.sendNotification(
                 payment.getRide().getDriver(),
@@ -208,6 +223,17 @@ public class RazorpayPaymentService {
             try {
                 LocalDateTime rideDateTime = payment.getRide().getRideDateTime();
                 if (rideDateTime.plusHours(1).isBefore(now)) {
+                    // Update booking status
+                    List<Booking> bookings = bookingRepository.findByRideIdAndUserIdAndStatus(
+                            payment.getRide().getId(), payment.getUser().getId(), "BOOKED");
+                    
+                    if (!bookings.isEmpty()) {
+                        for (Booking booking : bookings) {
+                            booking.setStatus("COMPLETED");
+                            bookingRepository.save(booking);
+                        }
+                    }
+
                     payment.setReleasedAt(now);
                     paymentRepository.save(payment);
 

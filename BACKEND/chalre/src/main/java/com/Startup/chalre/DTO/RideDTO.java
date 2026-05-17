@@ -32,6 +32,7 @@ public class RideDTO {
     
     private String carModel;  // Optional
     private String carType;  // Optional: SEDAN, SUV, HATCHBACK, etc.
+    private String vehicleType; // Optional: car, bike
     private String genderPreference;  // Optional: MALE_ONLY, FEMALE_ONLY
     private String note;  // Optional
     private String endTime;

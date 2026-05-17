@@ -192,7 +192,7 @@ export default function MyBookings() {
 
   // Check if chat is still available (within 48h after ride time)
   const isChatAvailable = (b) => {
-    if (b.status !== "BOOKED") return false;
+    if (b.status !== "BOOKED" && b.status !== "COMPLETED") return false;
     try {
       const rideDateTime = new Date(`${b.ride.date}T${b.ride.time}:00`);
       const now = new Date();
@@ -371,9 +371,11 @@ export default function MyBookings() {
               </div>
 
               <div className="mb-badges">
-                <span className={`mb-badge mb-badge--booking ${b.status === "BOOKED" ? "mb-badge--green" : "mb-badge--red"}`}>
+                <span className={`mb-badge mb-badge--booking ${b.status === "BOOKED" || b.status === "COMPLETED" ? "mb-badge--green" : "mb-badge--red"}`}>
                   {b.status === "BOOKED"
                     ? <><CheckCircle size={12} /> Confirmed</>
+                    : b.status === "COMPLETED"
+                    ? <><CheckCircle size={12} /> Completed</>
                     : <><AlertCircle size={12} /> Cancelled</>
                   }
                 </span>

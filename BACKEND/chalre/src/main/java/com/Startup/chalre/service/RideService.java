@@ -84,6 +84,7 @@ public class RideService {
         ride.setPrice(dto.getPrice());
         ride.setCarModel(dto.getCarModel());
         ride.setCarType(dto.getCarType());
+        ride.setVehicleType(dto.getVehicleType());
         ride.setGenderPreference(dto.getGenderPreference());
         ride.setNote(dto.getNote());
         ride.setDriver(driver);
@@ -292,6 +293,7 @@ public class RideService {
         if (dto.getPrice() != null) ride.setPrice(dto.getPrice());
         if (dto.getCarModel() != null) ride.setCarModel(dto.getCarModel());
         if (dto.getCarType() != null) ride.setCarType(dto.getCarType());
+        if (dto.getVehicleType() != null) ride.setVehicleType(dto.getVehicleType());
         if (dto.getGenderPreference() != null) ride.setGenderPreference(dto.getGenderPreference());
         if (dto.getNote() != null) ride.setNote(dto.getNote());
 
@@ -395,7 +397,7 @@ public class RideService {
 
     // ── Geo-based search (text input → backend geocodes) ────
     // 🔥 NOW returns List<Map> with calculatedPrice + isPartial embedded — NO extra API calls needed
-    public List<Map<String, Object>> searchRidesByRoute(String pickup, String drop, String date) {
+    public List<Map<String, Object>> searchRidesByRoute(String pickup, String drop, String date, Integer seats) {
         LatLng pickupCoords = mapService.getCoordinates(pickup);
         LatLng dropCoords = mapService.getCoordinates(drop);
 
@@ -404,17 +406,17 @@ public class RideService {
             return List.of();
         }
 
-        List<Ride> rides = matchRides(pickupCoords, dropCoords, date);
+        List<Ride> rides = matchRides(pickupCoords, dropCoords, date, seats);
         return attachPriceToRides(rides, pickupCoords, dropCoords);
     }
 
     // ── Geo search with direct coords (from frontend) ───────
     // 🔥 NOW returns List<Map> with calculatedPrice + isPartial embedded — NO extra API calls needed
     public List<Map<String, Object>> searchRidesByCoords(double pickupLat, double pickupLng,
-                                                         double dropLat, double dropLng, String date) {
+                                                         double dropLat, double dropLng, String date, Integer seats) {
         LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
         LatLng dropCoords = new LatLng(dropLat, dropLng);
-        List<Ride> rides = matchRides(pickupCoords, dropCoords, date);
+        List<Ride> rides = matchRides(pickupCoords, dropCoords, date, seats);
         return attachPriceToRides(rides, pickupCoords, dropCoords);
     }
 
@@ -434,6 +436,7 @@ public class RideService {
             rideMap.put("price", ride.getPrice());
             rideMap.put("carModel", ride.getCarModel());
             rideMap.put("carType", ride.getCarType());
+            rideMap.put("vehicleType", ride.getVehicleType());
             rideMap.put("genderPreference", ride.getGenderPreference());
             rideMap.put("note", ride.getNote());
             rideMap.put("status", ride.getStatus());
@@ -476,7 +479,7 @@ public class RideService {
     }
 
     // ── CORE matching logic — PostGIS handles proximity + order ──
-    private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords, String date) {
+    private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords, String date, Integer seats) {
         LocalDate today = LocalDate.now();
 
         List<Ride> candidates = rideRepository.findValidRidesForRoute(
@@ -490,6 +493,7 @@ public class RideService {
 
             // basic filters
             if (r.getAvailableSeats() <= 0) continue;
+            if (seats != null && r.getAvailableSeats() < seats) continue;
 
             try {
                 LocalDate rideDate = LocalDate.parse(r.getDate());
@@ -589,6 +593,7 @@ public class RideService {
 
         partial.setAvailableSeats(r.getAvailableSeats());
         partial.setCarType(r.getCarType());
+        partial.setVehicleType(r.getVehicleType());
         partial.setCarModel(r.getCarModel());
         partial.setGenderPreference(r.getGenderPreference());
         partial.setNote(r.getNote());

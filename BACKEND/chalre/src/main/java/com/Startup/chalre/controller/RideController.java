@@ -71,7 +71,7 @@ public class RideController {
             if (pickupLat != null && pickupLng != null
                     && dropLat != null && dropLng != null) {
                 List<Map<String, Object>> results = rideService.searchRidesByCoords(
-                        pickupLat, pickupLng, dropLat, dropLng, date
+                        pickupLat, pickupLng, dropLat, dropLng, date, seats
                 );
                 return ResponseEntity.ok(results);
             }
@@ -81,7 +81,7 @@ public class RideController {
             if (pickup != null && !pickup.isBlank()
                     && drop != null && !drop.isBlank()) {
                 List<Map<String, Object>> geoResults = rideService.searchRidesByRoute(
-                        pickup, drop, date
+                        pickup, drop, date, seats
                 );
                 return ResponseEntity.ok(geoResults);
             }

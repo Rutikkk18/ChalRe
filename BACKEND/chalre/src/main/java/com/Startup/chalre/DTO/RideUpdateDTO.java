@@ -12,6 +12,7 @@ public class RideUpdateDTO {
     private Double price;
     private String carModel;  // Optional
     private String carType;  // Optional
+    private String vehicleType; // Optional
     private String genderPreference;  // Optional
     private String note;  // Optional
     private String endTime;

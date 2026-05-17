@@ -33,7 +33,6 @@ export default function SearchRides() {
   const [carType,          setCarType]          = useState("");
   const [genderPreference, setGenderPreference] = useState("");
   const [seatsAvailable,   setSeatsAvailable]   = useState("");
-  const [rideType,         setRideType]         = useState([]);
   const [driverRating,     setDriverRating]     = useState([]);
   const [timePreference,   setTimePreference]   = useState([]);
 
@@ -66,7 +65,6 @@ export default function SearchRides() {
       vehicleCategory: fVehicleCategory = vehicleCategory,
       carType:         fCarType         = carType,
       seatsAvailable:  fSeatsAvailable  = seatsAvailable,
-      rideType:        fRideType        = rideType,
       driverRating:    fDriverRating    = driverRating,
       timePreference:  fTimePreference  = timePreference,
     } = filters;
@@ -97,20 +95,10 @@ export default function SearchRides() {
       else if (fSeatsAvailable === "2")  filtered = filtered.filter((r) => Number(r.availableSeats) >= 2);
       else if (fSeatsAvailable === "3+") filtered = filtered.filter((r) => Number(r.availableSeats) >= 3);
     }
-    if (fRideType.length > 0) {
-      filtered = filtered.filter((r) => {
-        if (r.bookingType) {
-          if (fRideType.includes("instant") && r.bookingType === "INSTANT") return true;
-          if (fRideType.includes("request") && r.bookingType === "REQUEST") return true;
-          return false;
-        }
-        return true;
-      });
-    }
     if (fDriverRating.length > 0) {
       filtered = filtered.filter((r) => {
-        if (r.driver?.rating || r.driver?.averageRating) {
-          const rating = Number(r.driver.rating || r.driver.averageRating);
+        if (r.driver?.avgRating !== undefined && r.driver?.avgRating !== null) {
+          const rating = Number(r.driver.avgRating);
           if (fDriverRating.includes("4") && rating >= 4) return true;
           if (fDriverRating.includes("3") && rating >= 3 && rating < 4) return true;
           return false;
@@ -280,7 +268,7 @@ export default function SearchRides() {
 
       applyClientFilters(fetchedRides, {
         minPrice, maxPrice, vehicleCategory, carType,
-        seatsAvailable, rideType, driverRating, timePreference,
+        seatsAvailable, driverRating, timePreference,
       });
     } catch (err) {
       console.error(err);
@@ -344,11 +332,11 @@ export default function SearchRides() {
     if (allRides.length > 0) {
       applyClientFilters(allRides, {
         minPrice, maxPrice, vehicleCategory, carType,
-        seatsAvailable, rideType, driverRating, timePreference,
+        seatsAvailable, driverRating, timePreference,
       });
     }
   // eslint-disable-next-line
-  }, [seatsAvailable, rideType, driverRating, timePreference, minPrice, maxPrice, vehicleCategory, carType]);
+  }, [seatsAvailable, driverRating, timePreference, minPrice, maxPrice, vehicleCategory, carType]);
 
   const handleVehicleCategoryChange = (category) => {
     setVehicleCategory(category);
@@ -468,7 +456,6 @@ export default function SearchRides() {
                 setCarType("");
                 setGenderPreference("");
                 setSeatsAvailable("");
-                setRideType([]);
                 setDriverRating([]);
                 setTimePreference([]);
                 setPickupCoords(null);
