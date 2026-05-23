@@ -1,6 +1,7 @@
 package com.Startup.chalre.controller;
 
 import com.Startup.chalre.DTO.BookingDTO;
+import com.Startup.chalre.entity.Booking;
 import com.Startup.chalre.entity.Payment;
 import com.Startup.chalre.entity.User;
 import com.Startup.chalre.service.BookingService;
@@ -76,12 +77,13 @@ public class PaymentController {
             dto.setSeats(seats);
             dto.setPaymentMethod("ONLINE");
             dto.setTxnId(razorpayPaymentId);
-            bookingService.bookRide(dto, user);
+            Booking savedBooking = bookingService.bookRide(dto, user);
 
             return ResponseEntity.ok(Map.of(
-                    "message", "Payment verified. Booking confirmed!",
+                    "message",   "Payment verified. Booking confirmed!",
                     "paymentId", payment.getId(),
-                    "status", "SUCCESS"
+                    "bookingId", savedBooking.getId(),
+                    "status",    "SUCCESS"
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
