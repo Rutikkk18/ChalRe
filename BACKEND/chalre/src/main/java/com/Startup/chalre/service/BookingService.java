@@ -98,13 +98,27 @@ public class BookingService {
 
         Booking savedBooking = bookingRepository.save(booking);
 
-        // 🔔 Booking Confirmed
+        // 🔔 Notify passenger — booking confirmed
         notificationService.sendNotification(
                 user,
                 "Booking Confirmed",
                 "Your booking for ride from " + ride.getStartLocation() +
                         " to " + ride.getEndLocation() + " is confirmed.",
                 "BOOKING_CONFIRMED",
+                Map.of(
+                        "bookingId", savedBooking.getId().toString(),
+                        "rideId", ride.getId().toString()
+                )
+        );
+
+        // 🔔 Notify driver — new booking received
+        notificationService.sendNotification(
+                ride.getDriver(),
+                "New Booking Received",
+                (user.getName() != null ? user.getName() : "A passenger") +
+                        " booked " + dto.getSeats() + " seat(s) on your ride from " +
+                        ride.getStartLocation() + " to " + ride.getEndLocation() + ".",
+                "NEW_BOOKING",
                 Map.of(
                         "bookingId", savedBooking.getId().toString(),
                         "rideId", ride.getId().toString()
@@ -149,12 +163,27 @@ public class BookingService {
 
         bookingRepository.save(booking);
 
+        // 🔔 Notify passenger — their booking was cancelled
         notificationService.sendNotification(
                 user,
                 "Booking Cancelled",
                 "Your booking has been cancelled.",
                 "BOOKING_CANCELLED",
                 Map.of("bookingId", booking.getId().toString())
+        );
+
+        // 🔔 Notify driver — a passenger cancelled
+        notificationService.sendNotification(
+                ride.getDriver(),
+                "Booking Cancelled by Passenger",
+                (user.getName() != null ? user.getName() : "A passenger") +
+                        " cancelled their booking on your ride from " +
+                        ride.getStartLocation() + " to " + ride.getEndLocation() + ".",
+                "BOOKING_CANCELLED_BY_PASSENGER",
+                Map.of(
+                        "bookingId", booking.getId().toString(),
+                        "rideId", ride.getId().toString()
+                )
         );
 
         return "Booking cancelled successfully";
