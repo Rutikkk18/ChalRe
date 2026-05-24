@@ -32,7 +32,8 @@ public class RatingService {
 
         boolean hasBooking = bookingRepository.findByUser(rater)
                 .stream()
-                .anyMatch(b -> b.getRide().getId().equals(rideId) && "BOOKED".equals(b.getStatus()));
+                .anyMatch(b -> b.getRide().getId().equals(rideId) && 
+                        ("BOOKED".equals(b.getStatus()) || "COMPLETED".equals(b.getStatus())));
 
         if (!hasBooking) throw new RuntimeException("You must book the ride before rating");
 
