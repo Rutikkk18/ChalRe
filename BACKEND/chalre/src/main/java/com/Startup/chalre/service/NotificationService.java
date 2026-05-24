@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class NotificationService {
         if (existing != null) {
             // update timestamp & platform
             existing.setPlatform(dto.getPlatform());
-            existing.setCreatedAt(LocalDateTime.now());
+            existing.setCreatedAt(Instant.now());
             tokenRepo.save(existing);
             return;
         }
@@ -44,7 +44,7 @@ public class NotificationService {
         t.setUser(user);
         t.setToken(dto.getToken());
         t.setPlatform(dto.getPlatform());
-        t.setCreatedAt(LocalDateTime.now());
+        t.setCreatedAt(Instant.now());
         tokenRepo.save(t);
     }
 
@@ -60,7 +60,7 @@ public class NotificationService {
         n.setBody(body);
         n.setType(type);
         n.setReadFlag(false);
-        n.setCreatedAt(LocalDateTime.now());
+        n.setCreatedAt(Instant.now());
         notificationRepo.save(n);
 
         // send push

@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Data
@@ -23,7 +23,7 @@ public class DeviceToken {
 
     private String token;     // FCM token
     private String platform;  // ANDROID / IOS / WEB
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
 
 }

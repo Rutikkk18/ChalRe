@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Data
@@ -25,6 +25,6 @@ public class NotificationEntity {
     private String body;
     private String type; // BOOKING_CONFIRMED, RIDE_CANCELLED, WALLET_TOPUP
     private boolean readFlag;
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -19,7 +19,7 @@ public class ConversationDTO {
     private String otherUserName;     // their name
     private String otherUserImage;    // their profileImage (for avatar in inbox)
     private String lastMessage;       // text of the most recent message
-    private LocalDateTime lastMessageTime;  // when it was sent
+    private Instant lastMessageTime;  // when it was sent
     private long unreadCount;         // messages FROM otherUser TO you that are unread
     private boolean chatLocked;       // true if ride is > 48h ago
 }
