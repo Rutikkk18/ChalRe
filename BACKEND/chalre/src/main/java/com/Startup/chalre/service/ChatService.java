@@ -57,7 +57,7 @@ public class ChatService {
         // 48-hour post-ride chat window check
         try {
             java.time.LocalDateTime rideDateTime = ride.getRideDateTime();
-            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            java.time.LocalDateTime now = java.time.ZonedDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).toLocalDateTime();
             if (now.isAfter(rideDateTime.plusHours(48))) {
                 throw new RuntimeException("Chat locked — ride ended more than 48 hours ago");
             }
@@ -160,7 +160,7 @@ public class ChatService {
             boolean chatLocked = false;
             try {
                 LocalDateTime rideDateTime = ride.getRideDateTime();
-                chatLocked = LocalDateTime.now().isAfter(rideDateTime.plusHours(48));
+                chatLocked = java.time.ZonedDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).toLocalDateTime().isAfter(rideDateTime.plusHours(48));
             } catch (Exception e) {
                 // If date parsing fails, don't lock
             }

@@ -41,14 +41,14 @@ public class RideService {
 
         try {
             LocalDate rideDate = LocalDate.parse(dto.getDate());
-            LocalDate today = LocalDate.now();
+            LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
             if (rideDate.isBefore(today)) {
                 throw new RuntimeException("Cannot create a ride in the past");
             }
             if (rideDate.equals(today) && dto.getTime() != null && !dto.getTime().isEmpty()) {
                 try {
                     LocalTime rideTime = LocalTime.parse(dto.getTime());
-                    if (rideTime.isBefore(LocalTime.now())) {
+                    if (rideTime.isBefore(LocalTime.now(java.time.ZoneId.of("Asia/Kolkata")))) {
                         throw new RuntimeException("Cannot create a ride with past time for today");
                     }
                 } catch (Exception e) {
@@ -126,7 +126,7 @@ public class RideService {
 
     // ── GET ALL RIDES ────────────────────────────────────────
     public List<Ride> getallRides() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
         return rideRepository.findAll().stream()
                 .filter(ride -> ride.getAvailableSeats() > 0)
                 .filter(ride -> {
@@ -151,7 +151,7 @@ public class RideService {
                 .filter(ride -> ride.getAvailableSeats() > 0)
                 .toList();
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
         rides = rides.stream()
                 .filter(ride -> {
                     try {
@@ -211,7 +211,7 @@ public class RideService {
 
     public Map<String, List<Ride>> getMyRidesSeparated(User driver) {
         List<Ride> allRides = rideRepository.findByDriver(driver);
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
         List<Ride> upcoming = new ArrayList<>();
         List<Ride> past = new ArrayList<>();
 
@@ -266,14 +266,14 @@ public class RideService {
 
         try {
             LocalDate rideDate = LocalDate.parse(newDate);
-            LocalDate today = LocalDate.now();
+            LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
             if (rideDate.isBefore(today)) {
                 throw new RuntimeException("Cannot update ride to a past date");
             }
             if (rideDate.equals(today) && newTime != null && !newTime.isEmpty()) {
                 try {
                     LocalTime rideTime = LocalTime.parse(newTime);
-                    if (rideTime.isBefore(LocalTime.now())) {
+                    if (rideTime.isBefore(LocalTime.now(java.time.ZoneId.of("Asia/Kolkata")))) {
                         throw new RuntimeException("Cannot update ride to a past time for today");
                     }
                 } catch (Exception e) {
@@ -480,7 +480,7 @@ public class RideService {
 
     // ── CORE matching logic — PostGIS handles proximity + order ──
     private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords, String date, Integer seats) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
 
         List<Ride> candidates = rideRepository.findValidRidesForRoute(
                 pickupCoords.getLat(), pickupCoords.getLng(),

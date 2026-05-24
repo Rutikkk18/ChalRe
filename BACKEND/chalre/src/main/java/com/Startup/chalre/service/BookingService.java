@@ -42,7 +42,7 @@ public class BookingService {
         // Validate ride date
         try {
             LocalDate rideDate = LocalDate.parse(ride.getDate());
-            if (rideDate.isBefore(LocalDate.now())) {
+            if (rideDate.isBefore(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")))) {
                 throw new RuntimeException("Cannot book a ride that has already passed");
             }
         } catch (Exception ignored) {}
@@ -198,7 +198,7 @@ public class BookingService {
     public Map<String, List<Booking>> getMyBookingsSeparated(User user) {
 
     List<Booking> allBookings = bookingRepository.findByUser(user);
-    LocalDate today = LocalDate.now();
+    LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
 
     List<Booking> upcoming = new ArrayList<>();
     List<Booking> past = new ArrayList<>();

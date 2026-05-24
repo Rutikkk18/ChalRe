@@ -215,7 +215,7 @@ public class RazorpayPaymentService {
     @Transactional
     public void autoReleasePayments() {
         List<Payment> pendingPayments = paymentRepository.findPendingReleasePayments();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = java.time.ZonedDateTime.now(java.time.ZoneId.of("Asia/Kolkata")).toLocalDateTime();
 
         for (Payment payment : pendingPayments) {
             if (payment.getRide() == null) continue;
