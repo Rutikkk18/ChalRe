@@ -225,10 +225,30 @@ public class RideService {
             }
         }
 
+        // Sort upcoming ascending (closest first)
+        upcoming.sort((r1, r2) -> compareRides(r1, r2));
+        // Sort past descending (most recent first)
+        past.sort((r1, r2) -> compareRides(r2, r1));
+
         Map<String, List<Ride>> result = new HashMap<>();
         result.put("upcoming", upcoming);
         result.put("past", past);
         return result;
+    }
+
+    private int compareRides(Ride r1, Ride r2) {
+        if (r1 == null && r2 == null) return 0;
+        if (r1 == null) return 1;
+        if (r2 == null) return -1;
+        String date1 = r1.getDate() != null ? r1.getDate() : "";
+        String date2 = r2.getDate() != null ? r2.getDate() : "";
+        int dateComp = date1.compareTo(date2);
+        if (dateComp != 0) {
+            return dateComp;
+        }
+        String time1 = r1.getTime() != null ? r1.getTime() : "";
+        String time2 = r2.getTime() != null ? r2.getTime() : "";
+        return time1.compareTo(time2);
     }
 
     public Map<String, Object> getRideBookings(Long rideId, User driver) {
