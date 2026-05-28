@@ -52,14 +52,12 @@ public class MapService {
 
         try {
             String encoded = URLEncoder.encode(place.trim(), StandardCharsets.UTF_8);
-            String url = "https://nominatim.openstreetmap.org/search?q="
+            String url = "https://api.locationiq.com/v1/search?key=pk.902213fbf559ab93b6f1b9fa744ddbfa&q="
                     + encoded
                     + "&format=json&limit=1&countrycodes=in";
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
-                    .header("User-Agent", "ChalreApp/1.0 (chalreofficial@gmail.com)")
-                    .header("Accept-Language", "en")
                     .GET()
                     .build();
 
@@ -69,7 +67,7 @@ public class MapService {
 
             // ── Check HTTP status ──
             if (response.statusCode() != 200) {
-                System.err.println("Nominatim returned status "
+                System.err.println("LocationIQ returned status "
                         + response.statusCode() + " for: " + place);
                 return null; // return null instead of throwing
             }
@@ -85,7 +83,7 @@ public class MapService {
                 return result;
             }
 
-            System.err.println("Nominatim: no results for: " + place);
+            System.err.println("LocationIQ: no results for: " + place);
             return null; // return null instead of throwing
 
         } catch (Exception e) {

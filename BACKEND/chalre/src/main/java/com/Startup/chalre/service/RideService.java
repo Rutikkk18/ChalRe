@@ -66,6 +66,17 @@ public class RideService {
         try {
             fromCoords = mapService.getCoordinates(dto.getStartLocation());
             toCoords = mapService.getCoordinates(dto.getEndLocation());
+        } catch (Exception e) {
+            System.err.println("Geocoding failed: " + e.getMessage());
+        }
+
+        if (fromCoords == null || toCoords == null ||
+                (fromCoords.getLat() == 0.0 && fromCoords.getLng() == 0.0) ||
+                (toCoords.getLat() == 0.0 && toCoords.getLng() == 0.0)) {
+            throw new RuntimeException("Could not resolve starting or destination coordinates. Please select valid locations.");
+        }
+
+        try {
             route = routeService.getRoute(
                     fromCoords.getLng(), fromCoords.getLat(),
                     toCoords.getLng(), toCoords.getLat()
