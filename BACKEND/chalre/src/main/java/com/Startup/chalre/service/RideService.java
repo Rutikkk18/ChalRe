@@ -63,11 +63,25 @@ public class RideService {
         LatLng toCoords = null;
         RouteResponse route = null;
 
-        try {
-            fromCoords = mapService.getCoordinates(dto.getStartLocation());
-            toCoords = mapService.getCoordinates(dto.getEndLocation());
-        } catch (Exception e) {
-            System.err.println("Geocoding failed: " + e.getMessage());
+        // Use coordinates from DTO directly if provided, fallback to geocoding
+        if (dto.getFromLat() != null && dto.getFromLng() != null) {
+            fromCoords = new LatLng(dto.getFromLat(), dto.getFromLng());
+        } else {
+            try {
+                fromCoords = mapService.getCoordinates(dto.getStartLocation());
+            } catch (Exception e) {
+                System.err.println("Geocoding from-location failed: " + e.getMessage());
+            }
+        }
+
+        if (dto.getToLat() != null && dto.getToLng() != null) {
+            toCoords = new LatLng(dto.getToLat(), dto.getToLng());
+        } else {
+            try {
+                toCoords = mapService.getCoordinates(dto.getEndLocation());
+            } catch (Exception e) {
+                System.err.println("Geocoding to-location failed: " + e.getMessage());
+            }
         }
 
         if (fromCoords == null || toCoords == null ||
@@ -75,6 +89,7 @@ public class RideService {
                 (toCoords.getLat() == 0.0 && toCoords.getLng() == 0.0)) {
             throw new RuntimeException("Could not resolve starting or destination coordinates. Please select valid locations.");
         }
+
 
         try {
             route = routeService.getRoute(

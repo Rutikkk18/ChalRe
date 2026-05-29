@@ -59,3 +59,4 @@ class ChalreApplicationTests {
         assertTrue(exception.getMessage().contains("Could not resolve starting or destination coordinates"));
     }
 }
+

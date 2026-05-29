@@ -1,5 +1,5 @@
 // src/pages/OfferRide.jsx
-import { useState } from "react";
+import { useState, useRef } from "react";
 import api from "../api/axios";
 import "../styles/offerRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
@@ -67,6 +67,10 @@ export default function OfferRide() {
   const [error, setError] = useState("");
   const [btnHovered, setBtnHovered] = useState(false);
 
+  // Coords refs to capture coordinates from autocomplete
+  const fromCoordsRef = useRef(null);
+  const toCoordsRef   = useRef(null);
+
   const updateField = (field, value) => {
     setForm((prev) => {
       const updated = { ...prev, [field]: value };
@@ -98,19 +102,29 @@ export default function OfferRide() {
 
     setLoading(true); setError(""); setSuccess("");
     try {
+      const fromCoords = fromCoordsRef.current;
+      const toCoords   = toCoordsRef.current;
+
       const response = await api.post("/rides/create", {
         startLocation: form.from, endLocation: form.to,
         date: form.date, time: form.time, endTime: form.endTime || null,
         availableSeats: form.seats, price: form.price,
         vehicleType: vehicleCategory || null, carType: form.carType || null,
         genderPreference: form.genderPreference || null, note: form.note || null,
+        fromLat: fromCoords ? fromCoords.lat : null,
+        fromLng: fromCoords ? fromCoords.lng : null,
+        toLat: toCoords ? toCoords.lat : null,
+        toLng: toCoords ? toCoords.lng : null,
       });
       if (response.status === 200) {
         setSuccess(t("orSuccess"));
         setForm({ from:"",to:"",date:"",time:"",endTime:"",seats:1,price:"",carType:"",genderPreference:"",note:"" });
         setVehicleCategory("");
+        fromCoordsRef.current = null;
+        toCoordsRef.current = null;
         setTimeout(() => { window.location.href = "/myrides"; }, 2000);
       }
+
     } catch (err) {
       console.error(err);
       setError(t("orErrorFailed"));
@@ -163,7 +177,18 @@ export default function OfferRide() {
               </label>
               <LocationAutocomplete
                 value={form.from}
-                onChange={(v) => updateField("from", v)}
+                onChange={(v) => {
+                  updateField("from", v);
+                  fromCoordsRef.current = null;
+                }}
+                onSelect={(place) => {
+                  updateField("from", place.name || place.display_name || "");
+                  if (place.lat && place.lng) {
+                    fromCoordsRef.current = { lat: place.lat, lng: place.lng };
+                  } else {
+                    fromCoordsRef.current = null;
+                  }
+                }}
                 placeholder={t("orPickupPlaceholder")}
               />
             </div>
@@ -177,7 +202,18 @@ export default function OfferRide() {
               </label>
               <LocationAutocomplete
                 value={form.to}
-                onChange={(v) => updateField("to", v)}
+                onChange={(v) => {
+                  updateField("to", v);
+                  toCoordsRef.current = null;
+                }}
+                onSelect={(place) => {
+                  updateField("to", place.name || place.display_name || "");
+                  if (place.lat && place.lng) {
+                    toCoordsRef.current = { lat: place.lat, lng: place.lng };
+                  } else {
+                    toCoordsRef.current = null;
+                  }
+                }}
                 placeholder={t("orDropPlaceholder")}
               />
             </div>

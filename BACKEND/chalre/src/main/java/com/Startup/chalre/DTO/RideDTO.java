@@ -36,5 +36,12 @@ public class RideDTO {
     private String genderPreference;  // Optional: MALE_ONLY, FEMALE_ONLY
     private String note;  // Optional
     private String endTime;
+
+    // Optional coordinate fields passed from frontend autocomplete
+    private Double fromLat;
+    private Double fromLng;
+    private Double toLat;
+    private Double toLng;
 }
+
 
