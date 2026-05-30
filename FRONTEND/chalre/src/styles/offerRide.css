@@ -53,8 +53,11 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
 .offer-page--split {
   display: flex;
   align-items: stretch;
-  background-image: none;
-  background-color: #ffffff;
+  background-image: url('../assets/ride-sharing-scene.png') !important;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
 }
 
 /* Leaflet z-index guard */
@@ -73,7 +76,7 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   width: 100%;
   max-width: 100%;
   margin: 0;
-  background: #ffffff;
+  background: transparent; /* transparent to show background image */
   align-items: stretch; /* Aligns left and right baselines perfectly */
   min-height: calc(100vh - 82px);
 }
@@ -85,8 +88,9 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
-  border-right: 1px solid rgba(16, 185, 129, 0.1);
+  background: rgba(255, 255, 255, 0.94); /* elegant semi-transparent white */
+  backdrop-filter: blur(10px); /* blends beautifully with the background image seat */
+  border-right: 1px solid rgba(16, 185, 129, 0.12);
 }
 
 /* Right-side route preview panel (desktop only) */
@@ -96,7 +100,7 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   display: flex;
   flex-direction: column;
   position: relative;
-  background: #f9fbf9;
+  background: transparent; /* transparent to show background image */
 }
 
 /* Inline route preview (shown on mobile, hidden on desktop) */
@@ -396,30 +400,7 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   padding: 24px;
 }
 
-/* ── Hero image container for desktop right panel ── */
-.rp-hero-container {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-  opacity: 1;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  pointer-events: auto;
-}
-
-.rp-hero-container--hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(0.98);
-}
-
-.rp-hero-img-desktop {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-}
+/* ── Hero image container for desktop right panel (legacy/not used, background is on page) ── */
 
 /* ── Loading and hint overlays on top of hero ── */
 .rp-hero-loading-overlay {
