@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.Startup.chalre.DTO.RideDTO;
 import com.Startup.chalre.DTO.RideUpdateDTO;
+import com.Startup.chalre.DTO.RouteOptionDTO;
 import com.Startup.chalre.entity.Booking;
 import com.Startup.chalre.entity.Ride;
 import com.Startup.chalre.entity.User;
@@ -91,13 +92,23 @@ public class RideService {
         }
 
 
-        try {
-            route = routeService.getRoute(
-                    fromCoords.getLng(), fromCoords.getLat(),
-                    toCoords.getLng(), toCoords.getLat()
+        // ── If driver pre-selected a route from /preview, use it directly ──
+        if (dto.getSelectedPolyline() != null && !dto.getSelectedPolyline().isBlank()) {
+            route = new RouteResponse(
+                    dto.getSelectedDistance() != null ? dto.getSelectedDistance() : 0.0,
+                    dto.getSelectedDuration() != null ? dto.getSelectedDuration() * 60.0 : 0.0,
+                    dto.getSelectedPolyline(),
+                    false
             );
-        } catch (Exception e) {
-            System.err.println("Geo/Route failed, ride will save without polyline: " + e.getMessage());
+        } else {
+            try {
+                route = routeService.getRoute(
+                        fromCoords.getLng(), fromCoords.getLat(),
+                        toCoords.getLng(), toCoords.getLat()
+                );
+            } catch (Exception e) {
+                System.err.println("Geo/Route failed, ride will save without polyline: " + e.getMessage());
+            }
         }
 
         Ride ride = new Ride();
@@ -148,6 +159,12 @@ public class RideService {
         );
 
         return saved;
+    }
+
+    // ── ROUTE PREVIEW (for /api/rides/preview) ──────────────
+    public List<RouteOptionDTO> getRoutePreview(double startLat, double startLng,
+                                                 double endLat, double endLng) {
+        return routeService.getRouteOptions(startLng, startLat, endLng, endLat);
     }
 
     // ── GET ALL RIDES ────────────────────────────────────────

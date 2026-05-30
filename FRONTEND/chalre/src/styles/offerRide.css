@@ -48,6 +48,19 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   padding-top: 82px;
 }
 
+/* Two-column split layout (desktop) */
+.offer-page--split {
+  display: flex;
+  align-items: flex-start;
+  background-image: none;
+  background-color: #f0fdf4;
+}
+
+/* Leaflet z-index guard */
+.leaflet-container { z-index: 1 !important; }
+.leaflet-pane      { z-index: 1 !important; }
+.leaflet-top, .leaflet-bottom { z-index: 2 !important; }
+
 @keyframes pageIn {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -55,7 +68,6 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
 
 .offer-zone {
   padding-top: 16px;
-  /* FIX: removed 420px hardcoded min — use 100% with max-width instead */
   width: 100%;
   max-width: clamp(320px, 52vw, 720px);
   padding-left: clamp(32px, 4.5vw, 64px);
@@ -64,7 +76,25 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(4px);
 }
+
+/* Right-side route preview panel (desktop only) */
+.offer-right-panel {
+  flex: 1;
+  min-width: 0;
+  min-height: calc(100vh - 82px);
+  position: sticky;
+  top: 82px;
+  height: calc(100vh - 82px);
+  padding: 24px 24px 24px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Inline route preview (shown on mobile, hidden on desktop) */
+.rp-inline-wrapper { display: none; }
 
 .offer-heading {
   display: flex;
@@ -346,6 +376,163 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
 
 .form-footer { margin-top: 4px; }
 
+/* ===================================================
+   ROUTE PREVIEW PANEL
+=================================================== */
+
+.rp-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.rp-map-wrapper {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  flex: 1;
+  min-height: 260px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  background: #e8f5e9;
+}
+
+.rp-map {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+}
+
+/* Map loading / empty overlay */
+.rp-map-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(240, 253, 244, 0.88);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  color: #4b5563;
+  font-size: 0.8rem;
+  font-family: 'Times New Roman', Times, serif;
+  text-align: center;
+  padding: 16px;
+}
+.rp-map-empty svg { color: #10b981; opacity: 0.6; }
+.rp-map-empty p { margin: 0; max-width: 180px; line-height: 1.5; }
+
+.rp-spinner {
+  width: 26px;
+  height: 26px;
+  border: 3px solid rgba(16,185,129,0.2);
+  border-top-color: #10b981;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* Route cards list */
+.rp-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.rp-card {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.9);
+  border: 1.5px solid rgba(16,185,129,0.18);
+  cursor: pointer;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  font-family: 'Times New Roman', Times, serif;
+}
+.rp-card:hover { border-color: rgba(16,185,129,0.5); box-shadow: 0 2px 12px rgba(16,185,129,0.1); background: rgba(240,253,244,0.97); }
+.rp-card--selected {
+  border-color: var(--route-color, #10b981) !important;
+  box-shadow: 0 2px 14px rgba(16,185,129,0.18) !important;
+  background: rgba(240,253,244,0.99) !important;
+}
+
+.rp-card-swatch {
+  flex-shrink: 0;
+  width: 10px;
+  height: 32px;
+  border-radius: 4px;
+}
+
+.rp-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.rp-card-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rp-card-route-num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #374151;
+}
+
+.rp-card-selected-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #059669;
+}
+
+.rp-card-fallback-tag {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.rp-card-stats {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+.rp-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.rp-stat-sep { color: #d1d5db; }
+
+.rp-card-via {
+  font-size: 0.68rem;
+  color: #9ca3af;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
 .btn-spinner {
   display: inline-block !important;
   width: 13px !important;
@@ -379,16 +566,22 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   }
 }
 
-/* Tablet (max 900px) */
+/* Tablet (max 900px) — collapse to single column */
 @media (max-width: 900px) {
-  .offer-page { background-position: 70% center; }
+  .offer-page--split { flex-direction: column; background-image: url('../assets/ride-sharing-scene.png'); background-size: cover; background-position: 70% center; }
+  .offer-right-panel { display: none; }
+  .rp-inline-wrapper { display: block; }
   .offer-zone {
-    max-width: 640px;
+    max-width: 100%;
     padding-left: clamp(20px, 5vw, 40px);
     padding-right: clamp(20px, 5vw, 40px);
     padding-top: 16px;
   }
   .form-row { grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* Inline map size on tablet */
+  .rp-inline-wrapper .rp-map-wrapper,
+  .rp-inline-wrapper .rp-map { min-height: 220px; }
 }
 
 /* Tablet (max 768px) */

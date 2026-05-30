@@ -2,6 +2,8 @@ package com.Startup.chalre.controller;
 
 import com.Startup.chalre.DTO.RideDTO;
 import com.Startup.chalre.DTO.RideUpdateDTO;
+import com.Startup.chalre.DTO.RouteOptionDTO;
+import com.Startup.chalre.DTO.RoutePreviewRequest;
 import com.Startup.chalre.entity.User;
 import com.Startup.chalre.service.RideService;
 import jakarta.validation.Valid;
@@ -35,6 +37,30 @@ public class RideController {
         }
 
         return ResponseEntity.ok(rideService.createRide(dto, user));
+    }
+
+    /**
+     * POST /api/rides/preview
+     * Returns up to 3 alternative route options from ORS for the given coordinate pair.
+     * The driver selects one; the chosen polyline/distance/duration are sent back on ride creation.
+     */
+    @PostMapping("/preview")
+    public ResponseEntity<?> previewRoutes(
+            @RequestBody RoutePreviewRequest req,
+            @AuthenticationPrincipal User user) {
+        try {
+            if (req.getStartLat() == null || req.getStartLng() == null
+                    || req.getEndLat() == null || req.getEndLng() == null) {
+                return ResponseEntity.badRequest().body("startLat, startLng, endLat, endLng are required");
+            }
+            List<RouteOptionDTO> options = rideService.getRoutePreview(
+                    req.getStartLat(), req.getStartLng(),
+                    req.getEndLat(), req.getEndLng());
+            return ResponseEntity.ok(options);
+        } catch (Exception e) {
+            System.err.println("Preview route error: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(Map.of("error", "Route preview failed"));
+        }
     }
 
     @GetMapping

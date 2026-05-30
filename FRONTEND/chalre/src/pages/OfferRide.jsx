@@ -1,8 +1,9 @@
 // src/pages/OfferRide.jsx
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import api from "../api/axios";
 import "../styles/offerRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
+import RoutePreviewPanel from "../components/RoutePreviewPanel";
 import { useLanguage } from "../context/LanguageContext";
 
 function suggestEndTime(startTime) {
@@ -15,43 +16,23 @@ function suggestEndTime(startTime) {
   return `${hh}:${mm}`;
 }
 
+/** Haversine distance in km */
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 const vehicleModels = {
   car: ["SEDAN", "SUV", "HATCHBACK"],
   bike: ["Bullet", "Splendor", "Shine"],
-};
-
-const btnStyle = {
-  all: "unset",
-  display: "inline-flex",
-  alignItems: "center",
-  gap: "8px",
-  padding: "10px 28px",
-  background: "#024110",
-  backgroundColor: "#024110",
-  color: "#ffffff",
-  fontFamily: "'Times New Roman', Times, serif",
-  fontSize: "0.9rem",
-  fontWeight: "700",
-  letterSpacing: "0.04em",
-  border: "none",
-  borderRadius: "8px",
-  cursor: "pointer",
-  boxShadow: "0 3px 14px rgba(2, 65, 16, 0.30)",
-  textDecoration: "none",
-  outline: "none",
-  WebkitAppearance: "none",
-  appearance: "none",
-  lineHeight: "1",
-  whiteSpace: "nowrap",
-};
-
-const btnDisabledStyle = {
-  ...btnStyle,
-  opacity: "0.5",
-  cursor: "not-allowed",
-  background: "#9ca3af",
-  backgroundColor: "#9ca3af",
-  boxShadow: "none",
 };
 
 export default function OfferRide() {
@@ -65,11 +46,47 @@ export default function OfferRide() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [btnHovered, setBtnHovered] = useState(false);
+
+  // ── Route preview state ────────────────────────────────────────────────
+  const [routeOptions, setRouteOptions] = useState([]);
+  const [routeLoading, setRouteLoading] = useState(false);
+  const [selectedRouteIdx, setSelectedRouteIdx] = useState(0);
 
   // Coords refs to capture coordinates from autocomplete
   const fromCoordsRef = useRef(null);
-  const toCoordsRef   = useRef(null);
+  const toCoordsRef = useRef(null);
+
+  // ── Fetch route options when both coords are set ───────────────────────
+  const fetchPreview = useCallback(async (fromCoords, toCoords) => {
+    if (!fromCoords || !toCoords) return;
+    setRouteLoading(true);
+    setRouteOptions([]);
+    setSelectedRouteIdx(0);
+    try {
+      const res = await api.post("/rides/preview", {
+        startLat: fromCoords.lat,
+        startLng: fromCoords.lng,
+        endLat: toCoords.lat,
+        endLng: toCoords.lng,
+      });
+      setRouteOptions(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Route preview failed", err);
+      setRouteOptions([]);
+    } finally {
+      setRouteLoading(false);
+    }
+  }, []);
+
+  // Re-fetch preview when either location changes
+  useEffect(() => {
+    if (fromCoordsRef.current && toCoordsRef.current) {
+      fetchPreview(fromCoordsRef.current, toCoordsRef.current);
+    } else {
+      setRouteOptions([]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.from, form.to]);
 
   const updateField = (field, value) => {
     setForm((prev) => {
@@ -103,7 +120,10 @@ export default function OfferRide() {
     setLoading(true); setError(""); setSuccess("");
     try {
       const fromCoords = fromCoordsRef.current;
-      const toCoords   = toCoordsRef.current;
+      const toCoords = toCoordsRef.current;
+
+      // Attach selected route if a preview was fetched
+      const selectedRoute = routeOptions[selectedRouteIdx] || null;
 
       const response = await api.post("/rides/create", {
         startLocation: form.from, endLocation: form.to,
@@ -115,11 +135,18 @@ export default function OfferRide() {
         fromLng: fromCoords ? fromCoords.lng : null,
         toLat: toCoords ? toCoords.lat : null,
         toLng: toCoords ? toCoords.lng : null,
+        // Pre-selected route (null if no preview was loaded)
+        selectedPolyline: selectedRoute ? selectedRoute.polyline : null,
+        selectedDistance: selectedRoute ? selectedRoute.distanceKm : null,
+        selectedDuration: selectedRoute ? selectedRoute.durationMins : null,
       });
+
       if (response.status === 200) {
         setSuccess(t("orSuccess"));
         setForm({ from:"",to:"",date:"",time:"",endTime:"",seats:1,price:"",carType:"",genderPreference:"",note:"" });
         setVehicleCategory("");
+        setRouteOptions([]);
+        setSelectedRouteIdx(0);
         fromCoordsRef.current = null;
         toCoordsRef.current = null;
         setTimeout(() => { window.location.href = "/myrides"; }, 2000);
@@ -133,14 +160,10 @@ export default function OfferRide() {
     }
   };
 
-  const computedBtnStyle = loading
-    ? btnDisabledStyle
-    : btnHovered
-      ? { ...btnStyle, background: "#149349", backgroundColor: "#149349", transform: "translateY(-1px)", boxShadow: "0 6px 20px rgba(20, 147, 73, 0.35)" }
-      : btnStyle;
-
   return (
-    <div className="offer-page">
+    <div className="offer-page offer-page--split">
+
+      {/* ─── LEFT PANEL: Form ──────────────────────────────────── */}
       <div className="offer-zone">
 
         {/* Page heading */}
@@ -188,6 +211,10 @@ export default function OfferRide() {
                   } else {
                     fromCoordsRef.current = null;
                   }
+                  // Trigger preview if both coords ready
+                  if (fromCoordsRef.current && toCoordsRef.current) {
+                    fetchPreview(fromCoordsRef.current, toCoordsRef.current);
+                  }
                 }}
                 placeholder={t("orPickupPlaceholder")}
               />
@@ -213,10 +240,26 @@ export default function OfferRide() {
                   } else {
                     toCoordsRef.current = null;
                   }
+                  // Trigger preview if both coords ready
+                  if (fromCoordsRef.current && toCoordsRef.current) {
+                    fetchPreview(fromCoordsRef.current, toCoordsRef.current);
+                  }
                 }}
                 placeholder={t("orDropPlaceholder")}
               />
             </div>
+          </div>
+
+          {/* ── Inline route panel (mobile/narrow: between locations and date) */}
+          <div className="rp-inline-wrapper">
+            <RoutePreviewPanel
+              routes={routeOptions}
+              selectedIdx={selectedRouteIdx}
+              onSelect={setSelectedRouteIdx}
+              loading={routeLoading}
+              fromCoords={fromCoordsRef.current}
+              toCoords={toCoordsRef.current}
+            />
           </div>
 
           {/* ROW 2: Departure | Arrival */}
@@ -357,11 +400,10 @@ export default function OfferRide() {
           {/* Submit */}
           <div className="form-footer">
             <button
+              id="offer-ride-submit"
               className="btn-submit"
+              type="submit"
               disabled={loading}
-              style={computedBtnStyle}
-              onMouseEnter={() => setBtnHovered(true)}
-              onMouseLeave={() => setBtnHovered(false)}
             >
               {loading ? (
                 <><span className="btn-spinner" /> {t("orPosting")}</>
@@ -379,6 +421,19 @@ export default function OfferRide() {
 
         </form>
       </div>
+
+      {/* ─── RIGHT PANEL: Route Preview (desktop) ─────────────── */}
+      <div className="offer-right-panel">
+        <RoutePreviewPanel
+          routes={routeOptions}
+          selectedIdx={selectedRouteIdx}
+          onSelect={setSelectedRouteIdx}
+          loading={routeLoading}
+          fromCoords={fromCoordsRef.current}
+          toCoords={toCoordsRef.current}
+        />
+      </div>
+
     </div>
   );
 }

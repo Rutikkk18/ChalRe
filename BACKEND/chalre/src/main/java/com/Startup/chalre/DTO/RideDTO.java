@@ -42,6 +42,12 @@ public class RideDTO {
     private Double fromLng;
     private Double toLat;
     private Double toLng;
+
+    // Optional: pre-selected route from /api/rides/preview
+    // When provided, RideService skips ORS call and uses these directly
+    private String selectedPolyline;
+    private Double selectedDistance;   // km
+    private Double selectedDuration;   // seconds
 }
 
 
