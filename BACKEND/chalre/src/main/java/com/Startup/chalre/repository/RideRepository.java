@@ -41,7 +41,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
                       CASE\s
                           WHEN ST_Length(CAST(ST_SetSRID(r.route, 4326) AS geography)) > 120000
                           THEN 30000   -- 🔥 30 km for long routes
-                          ELSE LEAST(15000, GREATEST(5000, ST_Length(CAST(ST_SetSRID(r.route, 4326) AS geography)) / 20))
+                          ELSE LEAST(15000, GREATEST(3000, ST_Length(CAST(ST_SetSRID(r.route, 4326) AS geography)) / 20))
                       END
                   )
 
@@ -52,7 +52,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
                       CASE\s
                           WHEN ST_Length(CAST(ST_SetSRID(r.route, 4326) AS geography)) > 120000
                           THEN 30000   -- 🔥 30 km for long routes
-                          ELSE LEAST(15000, GREATEST(5000, ST_Length(CAST(ST_SetSRID(r.route, 4326) AS geography)) / 20))
+                          ELSE LEAST(15000, GREATEST(3000, ST_Length(CAST(ST_SetSRID(r.route, 4326) AS geography)) / 20))
                       END
                   )
 

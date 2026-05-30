@@ -11,7 +11,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 public class PolylineUtils {
 
     public static double getDynamicRadiusKm(double routeLengthKm) {
-        return Math.min(25.0, Math.max(5.0, routeLengthKm / 15.0));
+        return Math.min(25.0, Math.max(3.0, routeLengthKm / 15.0));
     }
 
 

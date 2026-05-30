@@ -5,6 +5,7 @@ import "../styles/offerRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import RoutePreviewPanel from "../components/RoutePreviewPanel";
 import { useLanguage } from "../context/LanguageContext";
+import heroImage from "../assets/ride-sharing-scene.png";
 
 function suggestEndTime(startTime) {
   if (!startTime) return "";
@@ -252,14 +253,22 @@ export default function OfferRide() {
 
           {/* ── Inline route panel (mobile/narrow: between locations and date) */}
           <div className="rp-inline-wrapper">
-            <RoutePreviewPanel
-              routes={routeOptions}
-              selectedIdx={selectedRouteIdx}
-              onSelect={setSelectedRouteIdx}
-              loading={routeLoading}
-              fromCoords={fromCoordsRef.current}
-              toCoords={toCoordsRef.current}
-            />
+            {routeLoading && (
+              <div className="rp-inline-loading">
+                <span className="btn-spinner" />
+                <span>Finding best routes…</span>
+              </div>
+            )}
+            {!routeLoading && routeOptions.length > 0 && (
+              <RoutePreviewPanel
+                routes={routeOptions}
+                selectedIdx={selectedRouteIdx}
+                onSelect={setSelectedRouteIdx}
+                loading={routeLoading}
+                fromCoords={fromCoordsRef.current}
+                toCoords={toCoordsRef.current}
+              />
+            )}
           </div>
 
           {/* ROW 2: Departure | Arrival */}
@@ -424,14 +433,43 @@ export default function OfferRide() {
 
       {/* ─── RIGHT PANEL: Route Preview (desktop) ─────────────── */}
       <div className="offer-right-panel">
-        <RoutePreviewPanel
-          routes={routeOptions}
-          selectedIdx={selectedRouteIdx}
-          onSelect={setSelectedRouteIdx}
-          loading={routeLoading}
-          fromCoords={fromCoordsRef.current}
-          toCoords={toCoordsRef.current}
-        />
+        {/* Hero image layer — visible when idle or loading */}
+        <div className={`rp-hero-container${routeOptions.length > 0 ? " rp-hero-container--hidden" : ""}`}>
+          <img src={heroImage} alt="Offer a ride" className="rp-hero-img-desktop" />
+
+          {/* Loading overlay */}
+          {routeLoading && (
+            <div className="rp-hero-loading-overlay">
+              <div className="rp-hero-spinner" />
+              <span className="rp-hero-spinner-label">Finding best routes…</span>
+            </div>
+          )}
+
+          {/* Idle hint (no loading, no routes) */}
+          {!routeLoading && routeOptions.length === 0 && (
+            <div className="rp-hero-hint-desktop">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              Select pickup &amp; drop to see route options
+            </div>
+          )}
+        </div>
+
+        {/* Route Preview Panel — mounts and slides/fades in once routes arrive */}
+        {routeOptions.length > 0 && (
+          <div className="rp-map-container-desktop">
+            <RoutePreviewPanel
+              routes={routeOptions}
+              selectedIdx={selectedRouteIdx}
+              onSelect={setSelectedRouteIdx}
+              loading={routeLoading}
+              fromCoords={fromCoordsRef.current}
+              toCoords={toCoordsRef.current}
+            />
+          </div>
+        )}
       </div>
 
     </div>
