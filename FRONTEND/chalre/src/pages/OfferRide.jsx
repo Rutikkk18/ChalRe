@@ -163,9 +163,10 @@ export default function OfferRide() {
 
   return (
     <div className="offer-page offer-page--split">
+      <div className="offer-container-unified">
 
-      {/* ─── LEFT PANEL: Form ──────────────────────────────────── */}
-      <div className="offer-zone">
+        {/* ─── LEFT PANEL: Form ──────────────────────────────────── */}
+        <div className="offer-zone">
 
         {/* Page heading */}
         <div className="offer-heading">
@@ -470,6 +471,7 @@ export default function OfferRide() {
             />
           </div>
         )}
+      </div>
       </div>
 
     </div>

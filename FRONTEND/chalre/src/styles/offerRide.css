@@ -48,10 +48,12 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   padding-top: 82px;
 }
 
+
 /* Two-column split layout (desktop) */
 .offer-page--split {
   display: flex;
   align-items: flex-start;
+  justify-content: center;
   background-image: none;
   background-color: #f0fdf4;
 }
@@ -66,32 +68,38 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Unified container centering the layout under the navbar */
+.offer-container-unified {
+  display: flex;
+  width: 92%;
+  max-width: 1140px;
+  margin: 16px auto 32px; /* Moves container closer to the navbar (16px spacing) */
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  border: 1px solid rgba(16, 185, 129, 0.12);
+  align-items: stretch; /* Aligns left and right baselines perfectly */
+}
+
 .offer-zone {
-  padding-top: 16px;
-  width: 100%;
-  max-width: clamp(320px, 52vw, 720px);
-  padding-left: clamp(32px, 4.5vw, 64px);
-  padding-right: clamp(32px, 4vw, 64px);
-  padding-bottom: 60px;
-  min-height: 100vh;
+  padding: 32px clamp(32px, 4vw, 48px);
+  width: 48%;
+  max-width: 520px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(4px);
+  background: #ffffff;
 }
 
 /* Right-side route preview panel (desktop only) */
 .offer-right-panel {
   flex: 1;
   min-width: 0;
-  min-height: calc(100vh - 82px);
-  position: sticky;
-  top: 82px;
-  height: calc(100vh - 82px);
-  padding: 24px 24px 24px 0;
   display: flex;
   flex-direction: column;
   position: relative;
+  background: #f9fbf9;
 }
 
 /* Inline route preview (shown on mobile, hidden on desktop) */
@@ -387,19 +395,16 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  border-radius: 16px;
-  box-shadow: 0 6px 32px rgba(0,0,0,0.13);
-  background: white;
+  background: #ffffff;
+  padding: 24px;
 }
 
 /* ── Hero image container for desktop right panel ── */
 .rp-hero-container {
   position: absolute;
-  inset: 24px 24px 24px 0;
+  inset: 0;
   z-index: 1;
   overflow: hidden;
-  border-radius: 16px;
-  box-shadow: 0 6px 32px rgba(0,0,0,0.13);
   opacity: 1;
   transition: opacity 0.4s ease, transform 0.4s ease;
   pointer-events: auto;
@@ -480,7 +485,7 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
 /* ── Desktop Map & Cards container ── */
 .rp-map-container-desktop {
   position: absolute;
-  inset: 24px 24px 24px 0;
+  inset: 0;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -665,15 +670,36 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
 /* Tablet (max 900px) — collapse to single column */
 @media (max-width: 900px) {
   .offer-page--split { flex-direction: column; background-image: url('../assets/ride-sharing-scene.png'); background-size: cover; background-position: 70% center; }
+  .offer-container-unified {
+    display: block;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+  }
   .offer-right-panel { display: none; }
   .rp-inline-wrapper { display: block; }
   .offer-zone {
+    width: 100%;
     max-width: 100%;
     padding-left: clamp(20px, 5vw, 40px);
     padding-right: clamp(20px, 5vw, 40px);
     padding-top: 16px;
+    padding-bottom: 60px;
+    min-height: 100vh;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(4px);
   }
   .form-row { grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .rp-panel {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+  }
 
   /* Inline map size on tablet */
   .rp-inline-wrapper .rp-map-wrapper,
