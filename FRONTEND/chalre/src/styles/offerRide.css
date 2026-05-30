@@ -52,10 +52,9 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
 /* Two-column split layout (desktop) */
 .offer-page--split {
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  align-items: stretch;
   background-image: none;
-  background-color: #f0fdf4;
+  background-color: #ffffff;
 }
 
 /* Leaflet z-index guard */
@@ -68,28 +67,26 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Unified container centering the layout under the navbar */
+/* Unified container taking up full width and height below the navbar */
 .offer-container-unified {
   display: flex;
-  width: 92%;
-  max-width: 1140px;
-  margin: 16px auto 32px; /* Moves container closer to the navbar (16px spacing) */
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
-  overflow: hidden;
-  border: 1px solid rgba(16, 185, 129, 0.12);
   align-items: stretch; /* Aligns left and right baselines perfectly */
+  min-height: calc(100vh - 82px);
 }
 
 .offer-zone {
-  padding: 32px clamp(32px, 4vw, 48px);
+  padding: 40px clamp(32px, 4vw, 64px) 60px;
   width: 48%;
-  max-width: 520px;
+  max-width: 680px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   background: #ffffff;
+  border-right: 1px solid rgba(16, 185, 129, 0.1);
 }
 
 /* Right-side route preview panel (desktop only) */
