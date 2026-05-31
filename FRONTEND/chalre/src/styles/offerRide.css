@@ -88,9 +88,19 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  position: relative;
+  background: transparent;
+}
+
+.offer-zone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   background: rgba(255, 255, 255, 0.94); /* elegant semi-transparent white */
   backdrop-filter: blur(10px); /* blends beautifully with the background image seat */
-  border-right: 1px solid rgba(16, 185, 129, 0.12);
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 88%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,1) 88%, rgba(0,0,0,0) 100%);
 }
 
 /* Right-side route preview panel (desktop only) */
@@ -670,6 +680,9 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
     min-height: 100vh;
     background: rgba(255,255,255,0.92);
     backdrop-filter: blur(4px);
+  }
+  .offer-zone::before {
+    display: none;
   }
   .form-row { grid-template-columns: 1fr 1fr; gap: 16px; }
 
