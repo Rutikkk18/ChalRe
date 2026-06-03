@@ -4,6 +4,7 @@ import com.Startup.chalre.model.LatLng;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -17,6 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @RequiredArgsConstructor
 public class MapService {
+
+    @Value("${LOCATIONIQ_API_KEY}")
+    private String locationIqApiKey;
 
     private final ConcurrentHashMap<String, LatLng> cache = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -52,7 +56,7 @@ public class MapService {
 
         try {
             String encoded = URLEncoder.encode(place.trim(), StandardCharsets.UTF_8);
-            String url = "https://api.locationiq.com/v1/search?key=pk.902213fbf559ab93b6f1b9fa744ddbfa&q="
+            String url = "https://api.locationiq.com/v1/search?key=" + locationIqApiKey + "&q="
                     + encoded
                     + "&format=json&limit=1&countrycodes=in";
 

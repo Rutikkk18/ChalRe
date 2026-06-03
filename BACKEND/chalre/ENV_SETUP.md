@@ -20,6 +20,7 @@ This project uses environment variables to store sensitive configuration data. F
    $env:CLOUDINARY_CLOUD_NAME="your_cloud_name"
    $env:CLOUDINARY_API_KEY="your_api_key"
    $env:CLOUDINARY_API_SECRET="your_api_secret"
+   $env:LOCATIONIQ_API_KEY="your_locationiq_key"
    ```
 
 4. **For Windows (Command Prompt):**
@@ -31,6 +32,7 @@ This project uses environment variables to store sensitive configuration data. F
    set CLOUDINARY_CLOUD_NAME=your_cloud_name
    set CLOUDINARY_API_KEY=your_api_key
    set CLOUDINARY_API_SECRET=your_api_secret
+   set LOCATIONIQ_API_KEY=your_locationiq_key
    ```
 
 5. **For Linux/Mac:**
@@ -42,6 +44,7 @@ This project uses environment variables to store sensitive configuration data. F
    export CLOUDINARY_CLOUD_NAME="your_cloud_name"
    export CLOUDINARY_API_KEY="your_api_key"
    export CLOUDINARY_API_SECRET="your_api_secret"
+   export LOCATIONIQ_API_KEY="your_locationiq_key"
    ```
 
 ## Required Environment Variables
@@ -62,6 +65,9 @@ This project uses environment variables to store sensitive configuration data. F
 - `CLOUDINARY_CLOUD_NAME` - Cloudinary cloud name (**REQUIRED**)
 - `CLOUDINARY_API_KEY` - Cloudinary API key (**REQUIRED**)
 - `CLOUDINARY_API_SECRET` - Cloudinary API secret (**REQUIRED**)
+
+### LocationIQ Autocomplete and Geocoding
+- `LOCATIONIQ_API_KEY` - LocationIQ API key (**REQUIRED**)
 
 ## Important Security Notes
 

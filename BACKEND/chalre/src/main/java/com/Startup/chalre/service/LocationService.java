@@ -5,6 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -14,6 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class LocationService {
+
+    @Value("${LOCATIONIQ_API_KEY}")
+    private String locationIqApiKey;
 
     private final RestTemplate restTemplate;
 
@@ -48,7 +52,7 @@ public class LocationService {
 
         String url = UriComponentsBuilder
                 .fromHttpUrl("https://api.locationiq.com/v1/autocomplete")
-                .queryParam("key", "pk.902213fbf559ab93b6f1b9fa744ddbfa")
+                .queryParam("key", locationIqApiKey)
                 .queryParam("q", query.trim())
                 .queryParam("limit", 5)
                 .queryParam("countrycodes", "in")
