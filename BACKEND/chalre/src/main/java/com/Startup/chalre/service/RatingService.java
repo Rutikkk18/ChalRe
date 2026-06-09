@@ -8,6 +8,7 @@ import com.Startup.chalre.repository.BookingRepository;
 import com.Startup.chalre.repository.RatingRepository;
 import com.Startup.chalre.repository.RideRepository;
 import com.Startup.chalre.repository.UserRepository;
+import com.Startup.chalre.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class RatingService {
     private final BookingRepository bookingRepository;
     private final RideRepository rideRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public Rating rateRide(Long rideId, int stars, String comment, User rater) {
@@ -58,6 +60,19 @@ public class RatingService {
         driver.setAvgRating(newAvg);
         driver.setRatingCount(oldCount + 1);
         userRepository.save(driver);
+
+        // Send push/in-app notification to driver
+        try {
+            notificationService.sendNotification(
+                driver,
+                "New Rating Received",
+                rater.getName() + " rated you " + stars + " star(s)",
+                "RATING_RECEIVED",
+                java.util.Map.of("rideId", ride.getId().toString())
+            );
+        } catch (Exception e) {
+            System.err.println("⚠️ Error sending rating notification: " + e.getMessage());
+        }
 
         return saved;
 

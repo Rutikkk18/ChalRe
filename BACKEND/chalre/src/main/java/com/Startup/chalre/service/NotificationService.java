@@ -67,10 +67,14 @@ public class NotificationService {
         List<DeviceToken> tokens = tokenRepo.findByUser(user);
 
         for (DeviceToken t : tokens) {
-            boolean ok = fcmService.sendPush(t.getToken(), title, body, data);
-            if (!ok) {
-                // delete invalid token
-                tokenRepo.delete(t);
+            try {
+                boolean ok = fcmService.sendPush(t.getToken(), title, body, data);
+                if (!ok) {
+                    tokenRepo.delete(t);
+                    System.out.println("🗑️ Stale/invalid device token removed from database: " + t.getToken());
+                }
+            } catch (Exception e) {
+                System.err.println("⚠️ Exception occurred while sending push to token: " + t.getToken() + " - " + e.getMessage());
             }
         }
     }

@@ -169,13 +169,13 @@ public class RideService {
 
     // ── GET ALL RIDES ────────────────────────────────────────
     public List<Ride> getallRides() {
-        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
+        java.time.LocalDateTime currentIstTime = java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         return rideRepository.findAll().stream()
                 .filter(ride -> ride.getAvailableSeats() > 0)
                 .filter(ride -> {
                     try {
-                        LocalDate rideDate = LocalDate.parse(ride.getDate());
-                        return !rideDate.isBefore(today);
+                        java.time.LocalDateTime expiryDateTime = calculateRideEndDateTime(ride).plusMinutes(30);
+                        return !currentIstTime.isAfter(expiryDateTime);
                     } catch (Exception e) {
                         return false;
                     }
@@ -194,12 +194,12 @@ public class RideService {
                 .filter(ride -> ride.getAvailableSeats() > 0)
                 .toList();
 
-        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
+        java.time.LocalDateTime currentIstTime = java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         rides = rides.stream()
                 .filter(ride -> {
                     try {
-                        LocalDate rideDate = LocalDate.parse(ride.getDate());
-                        return !rideDate.isBefore(today);
+                        java.time.LocalDateTime expiryDateTime = calculateRideEndDateTime(ride).plusMinutes(30);
+                        return !currentIstTime.isAfter(expiryDateTime);
                     } catch (Exception e) {
                         return false;
                     }
@@ -543,7 +543,7 @@ public class RideService {
 
     // ── CORE matching logic — PostGIS handles proximity + order ──
     private List<Ride> matchRides(LatLng pickupCoords, LatLng dropCoords, String date, Integer seats) {
-        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
+        java.time.LocalDateTime currentIstTime = java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
 
         List<Ride> candidates = rideRepository.findValidRidesForRoute(
                 pickupCoords.getLat(), pickupCoords.getLng(),
@@ -559,13 +559,14 @@ public class RideService {
             if (seats != null && r.getAvailableSeats() < seats) continue;
 
             try {
-                LocalDate rideDate = LocalDate.parse(r.getDate());
+                java.time.LocalDateTime expiryDateTime = calculateRideEndDateTime(r).plusMinutes(30);
 
                 // ❌ skip past rides
-                if (rideDate.isBefore(today)) continue;
+                if (currentIstTime.isAfter(expiryDateTime)) continue;
 
                 // 🔥 STRICT DATE MATCH (FIX)
                 if (date != null && !date.isEmpty()) {
+                    LocalDate rideDate = LocalDate.parse(r.getDate());
                     LocalDate searchDate = LocalDate.parse(date);
                     if (!rideDate.equals(searchDate)) continue;
                 }
@@ -744,5 +745,45 @@ public class RideService {
                 "fullDistance", Math.round(fullDistance * 10.0) / 10.0,
                 "isPartial", true
         );
+    }
+
+    public java.time.LocalDateTime calculateRideEndDateTime(Ride ride) {
+        if (ride == null || ride.getDate() == null || ride.getTime() == null) {
+            return java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
+        }
+
+        try {
+            java.time.LocalDate rideDate = java.time.LocalDate.parse(ride.getDate(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            java.time.LocalTime departureTime = java.time.LocalTime.parse(ride.getTime(), java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
+            java.time.LocalDateTime departureDateTime = java.time.LocalDateTime.of(rideDate, departureTime);
+
+            java.time.LocalTime endTime = null;
+            if (ride.getEndTime() != null && !ride.getEndTime().trim().isEmpty()) {
+                try {
+                    endTime = java.time.LocalTime.parse(ride.getEndTime().trim(), java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
+                } catch (Exception ignored) {}
+            }
+
+            if (endTime == null) {
+                // Fallback: departure + 2 hours
+                return departureDateTime.plusHours(2);
+            }
+
+            // Midnight crossing check: if end time is chronologically before departure time, treat as next-day arrival
+            java.time.LocalDate arrivalDate = rideDate;
+            if (endTime.isBefore(departureTime)) {
+                arrivalDate = rideDate.plusDays(1);
+            }
+
+            return java.time.LocalDateTime.of(arrivalDate, endTime);
+        } catch (Exception e) {
+            // Defensive fallback on parsing failure
+            try {
+                java.time.LocalDate rideDate = java.time.LocalDate.parse(ride.getDate(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                java.time.LocalTime departureTime = java.time.LocalTime.parse(ride.getTime(), java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
+                return java.time.LocalDateTime.of(rideDate, departureTime).plusHours(2);
+            } catch (Exception ignored) {}
+            return java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
+        }
     }
 }

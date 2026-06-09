@@ -12,21 +12,26 @@ public class FcmService {
 
     public boolean sendPush(String token, String title, String body, Map<String, String> data) {
         try {
+            System.out.println("📤 Attempting to send FCM push to token: " + token);
 
-            Message message = Message.builder()
+            Message.Builder messageBuilder = Message.builder()
                     .setToken(token)
                     .setNotification(Notification.builder()
                             .setTitle(title)
                             .setBody(body)
-                            .build())
-                    .putAllData(data)
-                    .build();
+                            .build());
 
+            if (data != null && !data.isEmpty()) {
+                messageBuilder.putAllData(data);
+            }
+
+            Message message = messageBuilder.build();
             FirebaseMessaging.getInstance().send(message);
+            System.out.println("✅ FCM push sent successfully to token: " + token);
             return true;
 
         } catch (Exception e) {
-            System.out.println("❌ Invalid FCM token: " + token);
+            System.err.println("❌ Failed to send FCM push to token: " + token + ", Error: " + e.getMessage());
             return false;
         }
     }
