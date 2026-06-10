@@ -2,6 +2,7 @@
 import { Bike, CalendarRange, Car, CheckCircle, IndianRupee, Star, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "../styles/ridecard.css";
+import { formatTime12h } from "../utils/timeFormatter";
 
 export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, dropName }) {
   const navigate = useNavigate();
@@ -83,10 +84,10 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
 
         <div className="route-arrow">
           <div className="route-times">
-            <span className="route-time">{ride.time || "—"}</span>
+            <span className="route-time">{formatTime12h(ride.time)}</span>
             {duration && <span className="route-duration">{duration}</span>}
             {ride.endTime
-              ? <span className="route-time">{ride.endTime}</span>
+              ? <span className="route-time">{formatTime12h(ride.endTime)}</span>
               : <span className="route-time route-time--none">No arrival</span>
             }
           </div>

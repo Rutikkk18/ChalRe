@@ -5,6 +5,7 @@ import api from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/rideDetails.css";
 import { Users, IndianRupee, Phone, CheckCircle, Star, CreditCard, Car, Bike } from "lucide-react";
+import { formatTime12h } from "../utils/timeFormatter";
 
 export default function RideDetails() {
 
@@ -275,10 +276,10 @@ export default function RideDetails() {
                   <div className="rd__timeline">
                     <div className="rd__timeline-row">
                       <div className="rd__timeline-time">
-                        <span className="rd__time">{ride.time}</span>
-                        {isPartialRoute && <span className="rd__time" style={{ color: "#024110", fontWeight: 700 }}>{ride.time}</span>}
+                        <span className="rd__time">{formatTime12h(ride.time)}</span>
+                        {isPartialRoute && <span className="rd__time" style={{ color: "#024110", fontWeight: 700 }}>{formatTime12h(ride.time)}</span>}
                         {ride.endTime
-                          ? <span className="rd__time">{ride.endTime}</span>
+                          ? <span className="rd__time">{formatTime12h(ride.endTime)}</span>
                           : <span className="rd__time rd__time--none"> </span>
                         }
                       </div>
@@ -480,7 +481,7 @@ export default function RideDetails() {
                     <div className="rd__booking-places">
                       <div className="rd__booking-place">
                         <span className="rd__booking-time" style={{ color: isPartialRoute ? "#9ca3af" : undefined }}>
-                          {ride.time}
+                          {formatTime12h(ride.time)}
                         </span>
                         <span className="rd__booking-place-name"
                           style={{ color: isPartialRoute ? "#9ca3af" : undefined, fontSize: isPartialRoute ? "0.78rem" : undefined }}>
@@ -502,7 +503,7 @@ export default function RideDetails() {
 
                       <div className="rd__booking-place">
                         {ride.endTime && (
-                          <span className="rd__booking-time">{ride.endTime}</span>
+                          <span className="rd__booking-time">{formatTime12h(ride.endTime)}</span>
                         )}
                         <span className="rd__booking-place-name">{endCity || ride.endLocation}</span>
                       </div>

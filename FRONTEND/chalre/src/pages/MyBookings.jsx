@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/mybookings.css";
+import { formatTime12h } from "../utils/timeFormatter";
 import {
   Calendar,
   Users,
@@ -354,7 +355,7 @@ export default function MyBookings() {
               <div className="mb-meta">
                 <div className="mb-meta-item">
                   <Calendar size={14} className="mb-meta-icon" />
-                  <span>{b.ride.date} · {b.ride.time}</span>
+                  <span>{b.ride.date} · {formatTime12h(b.ride.time)}</span>
                 </div>
                 <div className="mb-meta-item">
                   <Users size={14} className="mb-meta-icon" />

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/myrides.css";
+import { formatTime12h } from "../utils/timeFormatter";
 import {
   MapPin, Calendar, Users, IndianRupee,
   Trash2, Eye, XCircle, UserCheck,
@@ -188,7 +189,7 @@ export default function MyRides() {
               <div className="mr-card-meta">
                 <div className="mr-meta-item">
                   <Calendar size={14} className="mr-meta-icon" />
-                  <span>{ride.date} · {ride.time}</span>
+                  <span>{ride.date} · {formatTime12h(ride.time)}</span>
                 </div>
                 <div className="mr-meta-item">
                   <Users size={14} className="mr-meta-icon" />

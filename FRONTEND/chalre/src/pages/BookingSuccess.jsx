@@ -4,6 +4,7 @@ import { CheckCircle, MapPin, Calendar, Users, IndianRupee, User, Phone } from "
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/bookingSuccess.css";
+import { formatTime12h } from "../utils/timeFormatter";
 
 export default function BookingSuccess() {
   const navigate = useNavigate();
@@ -94,7 +95,7 @@ export default function BookingSuccess() {
                   <Calendar size={18} />
                   <div>
                     <span className="label">Date &amp; Time</span>
-                    <span className="value">{booking.ride.date} • {booking.ride.time}</span>
+                    <span className="value">{booking.ride.date} • {formatTime12h(booking.ride.time)}</span>
                   </div>
                 </div>
 
