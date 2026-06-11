@@ -112,6 +112,7 @@ export default function Footer() {
 
       <div className="footer-bottom">
         <span onClick={() => navigate("/terms")}>{t("terms")}</span>
+        <span onClick={() => navigate("/privacy-policy")}>Privacy Policy</span>
         <span>{t("copyright")}</span>
       </div>
     </footer>

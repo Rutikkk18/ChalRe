@@ -19,6 +19,7 @@ import ProfilePage from "./pages/ProfilePage";
 import MainLayout from "./layouts/MainLayout";
 import Scamm from "./pages/Scamm";
 import TermsAndConditions from "./pages/TermsAndConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import HelpCenter from "./pages/HelpCenter";
 import AboutChalRe from "./pages/AboutChalRe";
 import JoinOurTeam from "./pages/JoinOurTeam";
@@ -116,6 +117,7 @@ export default function App() {
           />
           <Route path="scam" element={<Scamm />} />
           <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/help-center" element={<HelpCenter />} />
           <Route path="/about" element={<AboutChalRe />} />
           <Route path="/careers" element={<JoinOurTeam />} />
