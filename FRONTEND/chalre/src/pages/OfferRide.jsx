@@ -47,6 +47,31 @@ export default function OfferRide() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [confirmedLongDuration, setConfirmedLongDuration] = useState(false);
+
+  const getDurationMinutes = () => {
+    if (!form.time || !form.endTime) return 0;
+    const [sh, sm] = form.time.split(":").map(Number);
+    const [eh, em] = form.endTime.split(":").map(Number);
+    let mins = (eh * 60 + em) - (sh * 60 + sm);
+    if (mins < 0) mins += 24 * 60; // Next-day arrival
+    return mins;
+  };
+
+  const getCalculatedDurationText = () => {
+    const mins = getDurationMinutes();
+    if (mins === 0) return "";
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${h}h ${m}m`;
+  };
+
+  const isOvernightRide = () => {
+    if (!form.time || !form.endTime) return false;
+    const [sh, sm] = form.time.split(":").map(Number);
+    const [eh, em] = form.endTime.split(":").map(Number);
+    return (eh * 60 + em) < (sh * 60 + sm);
+  };
 
   // ── Route preview state ────────────────────────────────────────────────
   const [routeOptions, setRouteOptions] = useState([]);
@@ -95,6 +120,9 @@ export default function OfferRide() {
       if (field === "time" && value) updated.endTime = suggestEndTime(value);
       return updated;
     });
+    if (field === "time" || field === "endTime") {
+      setConfirmedLongDuration(false);
+    }
   };
 
   const handleVehicleCategoryChange = (category) => {
@@ -112,8 +140,22 @@ export default function OfferRide() {
       const rt = new Date(); rt.setHours(+h, +m, 0, 0);
       if (rt <= now) { setError(t("orErrorPastTime")); return; }
     }
-    if (form.endTime && form.time && form.endTime <= form.time) {
-      setError(t("orErrorEndTime")); return;
+    if (form.endTime && form.time) {
+      if (form.endTime === form.time) {
+        setError(t("orErrorEndTimeEqual") || "Arrival time cannot be equal to departure time.");
+        return;
+      }
+      const durationMins = getDurationMinutes();
+      if (durationMins > 16 * 60 && !confirmedLongDuration) {
+        const hours = (durationMins / 60).toFixed(1);
+        const userConfirm = window.confirm(
+          `This ride duration is ${hours} hours. Are you sure the arrival time is correct?`
+        );
+        if (!userConfirm) {
+          return;
+        }
+        setConfirmedLongDuration(true);
+      }
     }
     if (form.price <= 0) { setError(t("orErrorPrice")); return; }
     if (form.seats < 1 || form.seats > 10) { setError(t("orErrorSeats")); return; }
@@ -301,6 +343,18 @@ export default function OfferRide() {
               <input type="time" className="field-input"
                 value={form.endTime}
                 onChange={(e) => updateField("endTime", e.target.value)} />
+              {form.endTime && form.time && (
+                <div style={{ marginTop: "6px", display: "flex", flexDirection: "column", gap: "2px" }}>
+                  {isOvernightRide() && (
+                    <span className="overnight-warning-badge" style={{ color: "#d97706", fontSize: "0.78rem", fontWeight: "600" }}>
+                      ⚠️ Arrives next day (+1 day)
+                    </span>
+                  )}
+                  <span className="duration-helper-text" style={{ color: "#6b7280", fontSize: "0.78rem" }}>
+                    Duration: {getCalculatedDurationText()}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
