@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/dashboard.css";
 
-import { CheckCircle, CreditCard, Search, Plus, Car, Calendar, User, Bell, AlertCircle, MessageCircle } from "lucide-react";
+import { CheckCircle, CreditCard, Search, Plus, Car, Calendar, User, Bell, AlertCircle, MessageCircle, Trash2 } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 
 export default function Dashboard() {
@@ -174,6 +174,29 @@ export default function Dashboard() {
             <button className="dash-sec-btn" onClick={() => navigate("/notifications")}>
               <Bell size={17} />
               <span>Notifications</span>
+            </button>
+          </div>
+
+          {/* Account Deletion Button */}
+          <div className="dash-sep" />
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "12px" }}>
+            <button 
+              className="dash-sec-btn" 
+              onClick={() => navigate("/account-deletion")}
+              style={{ 
+                color: "#dc3545", 
+                borderColor: "transparent", 
+                background: "none", 
+                display: "flex", 
+                alignItems: "center", 
+                gap: "8px", 
+                cursor: "pointer",
+                padding: "8px 12px",
+                borderRadius: "6px"
+              }}
+            >
+              <Trash2 size={16} />
+              <span>Request Account Deletion</span>
             </button>
           </div>
 

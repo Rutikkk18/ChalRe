@@ -24,6 +24,9 @@ export default function AdminLayout() {
                         <Link to="/admin/verifications" className={isActive("/admin/verifications") || location.pathname.startsWith("/admin/verifications") ? "admin-link active" : "admin-link"}>
                             Driver Verifications
                         </Link>
+                        <Link to="/admin/deletion-requests" className={isActive("/admin/deletion-requests") || location.pathname.startsWith("/admin/deletion-requests") ? "admin-link active" : "admin-link"}>
+                            Deletion Requests
+                        </Link>
                     </nav>
                 </aside>
 

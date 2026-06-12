@@ -77,10 +77,11 @@ const sections = [
   {
     id: 9,
     icon: "✅",
-    title: "9. User Rights",
+    title: "9. User Rights / Account Deletion",
     content: [
-      `Users may access their account information, update profile information, request correction of inaccurate information, and request account deletion, subject to applicable legal and operational requirements.`,
-      `Certain records may be retained where required by law, fraud prevention obligations, dispute resolution, or legitimate business purposes.`,
+      `Users may request deletion of their ChalRe account through the in-app Account Deletion option, through the website dashboard, or by emailing <strong>chalreofficial@gmail.com</strong>.`,
+      `Requests are reviewed manually by the ChalRe team and typically processed within <strong>30 days</strong>.`,
+      `Certain records may be retained where required by law or operational obligations.`,
     ],
   },
   {

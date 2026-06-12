@@ -30,6 +30,15 @@ export default function AdminDashboard() {
                     <h3>💸 Payout Tracker</h3>
                     <p>Track confirmed rides and manage driver payments manually.</p>
                 </div>
+
+                <div
+                    className="admin-card"
+                    onClick={() => navigate("/admin/deletion-requests")}
+                    style={{ cursor: "pointer" }}
+                >
+                    <h3>🗑️ Deletion Requests</h3>
+                    <p>Review and mark completed user account deletion requests.</p>
+                </div>
             </div>
         </div>
     );

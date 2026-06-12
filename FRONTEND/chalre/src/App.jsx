@@ -32,6 +32,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import VerificationList from "./pages/admin/VerificationList";
 import VerificationDetail from "./pages/admin/VerificationDetail";
 import PayoutTracker from "./pages/admin/PayoutTracker";
+import AccountDeletion from "./pages/AccountDeletion";
+import DeletionRequests from "./pages/admin/DeletionRequests";
 
 export default function App() {
   return (
@@ -115,6 +117,14 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/account-deletion"
+            element={
+              <ProtectedRoute>
+                <AccountDeletion />
+              </ProtectedRoute>
+            }
+          />
           <Route path="scam" element={<Scamm />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -137,6 +147,7 @@ export default function App() {
           <Route path="verifications" element={<VerificationList />} />
           <Route path="verifications/:userId" element={<VerificationDetail />} />
           <Route path="payouts" element={<PayoutTracker />} />
+          <Route path="deletion-requests" element={<DeletionRequests />} />
         </Route>
 
         <Route path="/login" element={<Login />} />
