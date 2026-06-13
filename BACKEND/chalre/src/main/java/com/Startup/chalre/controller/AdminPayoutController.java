@@ -1,7 +1,9 @@
 package com.Startup.chalre.controller;
 
 import com.Startup.chalre.entity.Payment;
+import com.Startup.chalre.entity.User;
 import com.Startup.chalre.repository.PaymentRepository;
+import com.Startup.chalre.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class AdminPayoutController {
 
     private final PaymentRepository paymentRepository;
+    private final NotificationService notificationService;
 
     // Get all payments where passenger confirmed but driver not paid yet
     @GetMapping("/pending")
@@ -112,8 +115,34 @@ public class AdminPayoutController {
 
         payment.setDriverPaid(true);
         payment.setDriverPaidAt(LocalDateTime.now());
-        payment.setDriverPayoutNote(body.getOrDefault("note", ""));
+        String note = body.getOrDefault("note", "");
+        payment.setDriverPayoutNote(note);
         paymentRepository.save(payment);
+
+        // Send push notification to the driver
+        if (payment.getRide() != null && payment.getRide().getDriver() != null) {
+            User driver = payment.getRide().getDriver();
+            double rupees = payment.getAmount() / 100.0;
+            String notificationBody = "Payout of ₹" + rupees + " has been transferred to your bank account.";
+            if (note != null && !note.trim().isEmpty()) {
+                notificationBody += " (Note: " + note + ")";
+            }
+            try {
+                notificationService.sendNotification(
+                        driver,
+                        "Payout Transferred",
+                        notificationBody,
+                        "PAYMENT_TRANSFERRED",
+                        Map.of(
+                                "paymentId", payment.getId().toString(),
+                                "rideId", payment.getRide().getId().toString()
+                        )
+                );
+            } catch (Exception e) {
+                // Log and continue so the transaction succeeds even if notification fails
+                System.err.println("⚠️ Failed to send payout notification to driver: " + e.getMessage());
+            }
+        }
 
         return ResponseEntity.ok(Map.of(
                 "message", "Driver marked as paid successfully",
@@ -213,8 +242,34 @@ public class AdminPayoutController {
 
         payment.setRefundProcessed(true);
         payment.setRefundProcessedAt(LocalDateTime.now());
-        payment.setRefundNote(body.getOrDefault("note", ""));
+        String note = body.getOrDefault("note", "");
+        payment.setRefundNote(note);
         paymentRepository.save(payment);
+
+        // Send push notification to the passenger
+        if (payment.getUser() != null) {
+            User passenger = payment.getUser();
+            double rupees = payment.getAmount() / 100.0;
+            String notificationBody = "Refund of ₹" + rupees + " has been processed to your account.";
+            if (note != null && !note.trim().isEmpty()) {
+                notificationBody += " (Note: " + note + ")";
+            }
+            try {
+                notificationService.sendNotification(
+                        passenger,
+                        "Refund Processed",
+                        notificationBody,
+                        "REFUND_PROCESSED",
+                        Map.of(
+                                "paymentId", payment.getId().toString(),
+                                "rideId", payment.getRide() != null ? payment.getRide().getId().toString() : ""
+                        )
+                );
+            } catch (Exception e) {
+                // Log and continue so the transaction succeeds even if notification fails
+                System.err.println("⚠️ Failed to send refund notification to passenger: " + e.getMessage());
+            }
+        }
 
         return ResponseEntity.ok(Map.of(
                 "message", "Refund marked as processed successfully",
