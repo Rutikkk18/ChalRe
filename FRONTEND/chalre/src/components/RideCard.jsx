@@ -41,11 +41,14 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
   const isBike     = ["bullet", "splendor", "shine"].includes(carType);
   const hasVehicle = !!ride?.carType;
 
+  const displayTime = isPartial && ride.estimatedPickupTime ? ride.estimatedPickupTime : ride.time;
+  const displayEndTime = isPartial && ride.estimatedDropTime ? ride.estimatedDropTime : ride.endTime;
+
   const getDuration = () => {
-    if (!ride.time || !ride.endTime) return null;
+    if (!displayTime || !displayEndTime) return null;
     try {
-      const [sh, sm] = ride.time.split(":").map(Number);
-      const [eh, em] = ride.endTime.split(":").map(Number);
+      const [sh, sm] = displayTime.split(":").map(Number);
+      const [eh, em] = displayEndTime.split(":").map(Number);
       let totalMins = (eh * 60 + em) - (sh * 60 + sm);
       if (totalMins < 0) totalMins += 24 * 60;
       const h = Math.floor(totalMins / 60);
@@ -84,10 +87,10 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
 
         <div className="route-arrow">
           <div className="route-times">
-            <span className="route-time">{formatTime12h(ride.time)}</span>
+            <span className="route-time">{formatTime12h(displayTime)}</span>
             {duration && <span className="route-duration">{duration}</span>}
-            {ride.endTime
-              ? <span className="route-time">{formatTime12h(ride.endTime)}</span>
+            {displayEndTime
+              ? <span className="route-time">{formatTime12h(displayEndTime)}</span>
               : <span className="route-time route-time--none">No arrival</span>
             }
           </div>

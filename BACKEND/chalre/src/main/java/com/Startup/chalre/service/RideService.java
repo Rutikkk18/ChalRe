@@ -527,6 +527,10 @@ public class RideService {
                 rideMap.put("isPartial", priceData.get("isPartial"));
                 rideMap.put("partialDistance", priceData.get("partialDistance"));
                 rideMap.put("fullDistance", priceData.get("fullDistance"));
+                rideMap.put("estimatedPickupTime", priceData.get("estimatedPickupTime"));
+                rideMap.put("estimatedPickupDate", priceData.get("estimatedPickupDate"));
+                rideMap.put("estimatedDropTime", priceData.get("estimatedDropTime"));
+                rideMap.put("estimatedDropDate", priceData.get("estimatedDropDate"));
             } catch (Exception e) {
                 // Fallback: use ride's full price if price calc fails
                 rideMap.put("calculatedPrice", ride.getPrice());
@@ -534,6 +538,10 @@ public class RideService {
                 rideMap.put("isPartial", false);
                 rideMap.put("partialDistance", ride.getDistance());
                 rideMap.put("fullDistance", ride.getDistance());
+                rideMap.put("estimatedPickupTime", ride.getTime());
+                rideMap.put("estimatedPickupDate", ride.getDate());
+                rideMap.put("estimatedDropTime", ride.getEndTime());
+                rideMap.put("estimatedDropDate", ride.getDate());
                 System.err.println("Price calc failed for ride " + ride.getId() + ": " + e.getMessage());
             }
 
@@ -695,15 +703,20 @@ public class RideService {
         double fullPrice = ride.getPrice();
         double fullDistance = ride.getDistance();
 
+        Map<String, Object> result = new HashMap<>();
+        result.put("fullPrice", fullPrice);
+        result.put("calculatedPrice", fullPrice);
+        result.put("partialDistance", 0.0);
+        result.put("fullDistance", fullDistance);
+        result.put("isPartial", false);
+        result.put("estimatedPickupTime", ride.getTime());
+        result.put("estimatedPickupDate", ride.getDate());
+        result.put("estimatedDropTime", ride.getEndTime());
+        result.put("estimatedDropDate", ride.getDate());
+
         if (fullDistance <= 0 || pickupLat == null || pickupLng == null
                 || dropLat == null || dropLng == null) {
-            return Map.of(
-                    "fullPrice", fullPrice,
-                    "calculatedPrice", fullPrice,
-                    "partialDistance", 0.0,
-                    "fullDistance", fullDistance,
-                    "isPartial", false
-            );
+            return result;
         }
 
         LatLng pickupCoords = new LatLng(pickupLat, pickupLng);
@@ -716,13 +729,8 @@ public class RideService {
         double dropFromEnd = PolylineUtils.haversineKm(dropCoords, rideTo);
 
         if (pickupFromStart <= 3.0 && dropFromEnd <= 3.0) {
-            return Map.of(
-                    "fullPrice", fullPrice,
-                    "calculatedPrice", fullPrice,
-                    "partialDistance", fullDistance,
-                    "fullDistance", fullDistance,
-                    "isPartial", false
-            );
+            result.put("partialDistance", fullDistance);
+            return result;
         }
 
         double partialDistance = PolylineUtils.haversineKm(pickupCoords, dropCoords);
@@ -738,13 +746,49 @@ public class RideService {
         double minFare = Math.round(fullPrice * 0.20);
         calculatedPrice = Math.max(calculatedPrice, minFare);
 
-        return Map.of(
-                "fullPrice", fullPrice,
-                "calculatedPrice", calculatedPrice,
-                "partialDistance", Math.round(partialDistance * 10.0) / 10.0,
-                "fullDistance", Math.round(fullDistance * 10.0) / 10.0,
-                "isPartial", true
-        );
+        result.put("calculatedPrice", calculatedPrice);
+        result.put("partialDistance", Math.round(partialDistance * 10.0) / 10.0);
+        result.put("fullDistance", Math.round(fullDistance * 10.0) / 10.0);
+        result.put("isPartial", true);
+
+        // Calculate estimated times using polyline projections
+        if (ride.getPolyline() != null && !ride.getPolyline().trim().isEmpty()) {
+            try {
+                List<LatLng> routePoints = PolylineUtils.decode(ride.getPolyline());
+                if (routePoints.size() >= 2) {
+                    double pickupProg = PolylineUtils.projectOntoRoute(routePoints, pickupCoords);
+                    double dropProg = PolylineUtils.projectOntoRoute(routePoints, dropCoords);
+
+                    pickupProg = Math.max(0.0, Math.min(1.0, pickupProg));
+                    dropProg = Math.max(0.0, Math.min(1.0, dropProg));
+
+                    java.time.LocalDate rideDate = java.time.LocalDate.parse(ride.getDate(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    java.time.LocalTime departureTime = java.time.LocalTime.parse(ride.getTime(), java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
+                    java.time.LocalDateTime startDateTime = java.time.LocalDateTime.of(rideDate, departureTime);
+
+                    java.time.LocalDateTime endDateTime = calculateRideEndDateTime(ride);
+                    long totalDurationMinutes = java.time.Duration.between(startDateTime, endDateTime).toMinutes();
+
+                    long pickupOffset = Math.round(pickupProg * totalDurationMinutes);
+                    long dropOffset = Math.round(dropProg * totalDurationMinutes);
+
+                    java.time.LocalDateTime pickupDateTime = startDateTime.plusMinutes(pickupOffset);
+                    java.time.LocalDateTime dropDateTime = startDateTime.plusMinutes(dropOffset);
+
+                    java.time.format.DateTimeFormatter timeFormatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm");
+                    java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+                    result.put("estimatedPickupTime", pickupDateTime.toLocalTime().format(timeFormatter));
+                    result.put("estimatedPickupDate", pickupDateTime.toLocalDate().format(dateFormatter));
+                    result.put("estimatedDropTime", dropDateTime.toLocalTime().format(timeFormatter));
+                    result.put("estimatedDropDate", dropDateTime.toLocalDate().format(dateFormatter));
+                }
+            } catch (Exception e) {
+                System.err.println("⚠️ Error calculating partial times for ride " + ride.getId() + ": " + e.getMessage());
+            }
+        }
+
+        return result;
     }
 
     public java.time.LocalDateTime calculateRideEndDateTime(Ride ride) {

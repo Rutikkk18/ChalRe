@@ -277,9 +277,9 @@ export default function RideDetails() {
                     <div className="rd__timeline-row">
                       <div className="rd__timeline-time">
                         <span className="rd__time">{formatTime12h(ride.time)}</span>
-                        {isPartialRoute && <span className="rd__time" style={{ color: "#024110", fontWeight: 700 }}>{formatTime12h(ride.time)}</span>}
+                        {isPartialRoute && <span className="rd__time" style={{ color: "#024110", fontWeight: 700 }}>{formatTime12h(priceInfo?.estimatedPickupTime || ride.time)}</span>}
                         {ride.endTime
-                          ? <span className="rd__time">{formatTime12h(ride.endTime)}</span>
+                          ? <span className="rd__time">{formatTime12h(isPartialRoute && priceInfo?.estimatedDropTime ? priceInfo.estimatedDropTime : ride.endTime)}</span>
                           : <span className="rd__time rd__time--none"> </span>
                         }
                       </div>
@@ -492,7 +492,7 @@ export default function RideDetails() {
                       {isPartialRoute && (
                         <div className="rd__booking-place" style={{ margin: "6px 0" }}>
                           <span className="rd__booking-time" style={{ color: "#024110", fontWeight: 700 }}>
-                            Board here
+                            {priceInfo?.estimatedPickupTime ? formatTime12h(priceInfo.estimatedPickupTime) : "Board here"}
                           </span>
                           <span className="rd__booking-place-name" style={{ color: "#024110", fontWeight: 600 }}>
                             {pickupCity}
@@ -503,7 +503,7 @@ export default function RideDetails() {
 
                       <div className="rd__booking-place">
                         {ride.endTime && (
-                          <span className="rd__booking-time">{formatTime12h(ride.endTime)}</span>
+                          <span className="rd__booking-time">{formatTime12h(isPartialRoute && priceInfo?.estimatedDropTime ? priceInfo.estimatedDropTime : ride.endTime)}</span>
                         )}
                         <span className="rd__booking-place-name">{endCity || ride.endLocation}</span>
                       </div>

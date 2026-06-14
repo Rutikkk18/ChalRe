@@ -238,7 +238,7 @@ export default function BookingPage() {
                   marginBottom: "3px",
                   textTransform: "uppercase"
                 }}>
-                  🟢 Your boarding point
+                  🟢 Your boarding point {priceInfo?.estimatedPickupTime ? `· Approx ${formatTime12h(priceInfo.estimatedPickupTime)}` : ""}
                 </div>
                 <div className="booking-route-city" style={{ fontSize: "1.25rem" }}>
                   {pickupCity}
@@ -268,11 +268,15 @@ export default function BookingPage() {
           <div className="booking-meta-grid">
             <div className="booking-meta-pill">
               <div className="booking-meta-pill-label">Date</div>
-              <div className="booking-meta-pill-val">{ride.date}</div>
+              <div className="booking-meta-pill-val">
+                {isPartialRoute && priceInfo?.estimatedPickupDate ? priceInfo.estimatedPickupDate : ride.date}
+              </div>
             </div>
             <div className="booking-meta-pill">
               <div className="booking-meta-pill-label">Departure</div>
-              <div className="booking-meta-pill-val">{ride.time}</div>
+              <div className="booking-meta-pill-val">
+                {isPartialRoute && priceInfo?.estimatedPickupTime ? formatTime12h(priceInfo.estimatedPickupTime) : formatTime12h(ride.time)}
+              </div>
             </div>
             <div className="booking-meta-pill">
               <div className="booking-meta-pill-label">Seats Left</div>
