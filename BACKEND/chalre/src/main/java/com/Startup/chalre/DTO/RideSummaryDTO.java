@@ -25,6 +25,7 @@ public class RideSummaryDTO {
     private String time;
     private int    availableSeats;
     private double price;
+    private String vehicleType;
 
     /**
      * Number of bookings whose status = 'BOOKED' for this ride.

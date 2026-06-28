@@ -294,6 +294,7 @@ public class RideService {
                     ride.getTime(),
                     ride.getAvailableSeats(),
                     ride.getPrice(),
+                    ride.getVehicleType(),
                     counts[0],   // activeBookingsCount
                     counts[1]    // totalBookings
             );
