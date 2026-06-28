@@ -367,7 +367,7 @@ export default function MyBookings() {
                 </div>
                 <div className="mb-meta-item">
                   <CreditCard size={14} className="mb-meta-icon" />
-                  <span>{b.paymentMode}</span>
+                  <span>{b.paymentMethod}</span>
                 </div>
               </div>
 

@@ -11,6 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "booking", indexes = {
+    @Index(name = "idx_booking_user_id",  columnList = "user_id"),
+    @Index(name = "idx_booking_ride_id",  columnList = "ride_id")
+})
 public class Booking {
 
     @Id

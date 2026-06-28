@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.Startup.chalre.DTO.RideDTO;
 import com.Startup.chalre.DTO.RideUpdateDTO;
 import com.Startup.chalre.DTO.RouteOptionDTO;
+import com.Startup.chalre.DTO.RideSummaryDTO;
+import java.util.stream.Collectors;
 import com.Startup.chalre.entity.Booking;
 import com.Startup.chalre.entity.Ride;
 import com.Startup.chalre.entity.User;
@@ -252,47 +254,76 @@ public class RideService {
         return rideRepository.findByDriver(driver);
     }
 
-    public Map<String, List<Ride>> getMyRidesSeparated(User driver) {
+    public Map<String, List<RideSummaryDTO>> getMyRidesSeparated(User driver) {
         List<Ride> allRides = rideRepository.findByDriver(driver);
+
+        // Early-exit: no rides at all
+        if (allRides.isEmpty()) {
+            Map<String, List<RideSummaryDTO>> empty = new HashMap<>();
+            empty.put("upcoming", new ArrayList<>());
+            empty.put("past",     new ArrayList<>());
+            return empty;
+        }
+
+        // ── ONE batch query for booking counts (replaces N+1 frontend loop) ──────
+        List<Long> rideIds = allRides.stream()
+                .map(Ride::getId)
+                .collect(Collectors.toList());
+        List<Object[]> countRows = bookingRepository.findBookingCountsByRideIds(rideIds);
+
+        // Build rideId → [activeCount, totalCount] lookup map
+        Map<Long, long[]> countsMap = new HashMap<>();
+        for (Object[] row : countRows) {
+            Long rideId     = ((Number) row[0]).longValue();
+            long activeCount = row[1] != null ? ((Number) row[1]).longValue() : 0L;
+            long totalCount  = row[2] != null ? ((Number) row[2]).longValue() : 0L;
+            countsMap.put(rideId, new long[]{activeCount, totalCount});
+        }
+
         LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
-        List<Ride> upcoming = new ArrayList<>();
-        List<Ride> past = new ArrayList<>();
+        List<RideSummaryDTO> upcoming = new ArrayList<>();
+        List<RideSummaryDTO> past     = new ArrayList<>();
 
         for (Ride ride : allRides) {
+            long[] counts = countsMap.getOrDefault(ride.getId(), new long[]{0L, 0L});
+            RideSummaryDTO dto = new RideSummaryDTO(
+                    ride.getId(),
+                    ride.getStartLocation(),
+                    ride.getEndLocation(),
+                    ride.getDate(),
+                    ride.getTime(),
+                    ride.getAvailableSeats(),
+                    ride.getPrice(),
+                    counts[0],   // activeBookingsCount
+                    counts[1]    // totalBookings
+            );
             try {
                 LocalDate rideDate = LocalDate.parse(ride.getDate());
-                if (rideDate.isBefore(today)) past.add(ride);
-                else upcoming.add(ride);
+                if (rideDate.isBefore(today)) past.add(dto);
+                else                          upcoming.add(dto);
             } catch (Exception e) {
-                upcoming.add(ride);
+                upcoming.add(dto);
             }
         }
 
-        // Sort upcoming ascending (closest first)
-        upcoming.sort((r1, r2) -> compareRides(r1, r2));
-        // Sort past descending (most recent first)
-        past.sort((r1, r2) -> compareRides(r2, r1));
+        // Sort upcoming ascending (closest first), past descending (most recent first)
+        upcoming.sort((a, b) -> {
+            int d = (a.getDate() != null ? a.getDate() : "").compareTo(b.getDate() != null ? b.getDate() : "");
+            if (d != 0) return d;
+            return (a.getTime() != null ? a.getTime() : "").compareTo(b.getTime() != null ? b.getTime() : "");
+        });
+        past.sort((a, b) -> {
+            int d = (b.getDate() != null ? b.getDate() : "").compareTo(a.getDate() != null ? a.getDate() : "");
+            if (d != 0) return d;
+            return (b.getTime() != null ? b.getTime() : "").compareTo(a.getTime() != null ? a.getTime() : "");
+        });
 
-        Map<String, List<Ride>> result = new HashMap<>();
+        Map<String, List<RideSummaryDTO>> result = new HashMap<>();
         result.put("upcoming", upcoming);
-        result.put("past", past);
+        result.put("past",     past);
         return result;
     }
 
-    private int compareRides(Ride r1, Ride r2) {
-        if (r1 == null && r2 == null) return 0;
-        if (r1 == null) return 1;
-        if (r2 == null) return -1;
-        String date1 = r1.getDate() != null ? r1.getDate() : "";
-        String date2 = r2.getDate() != null ? r2.getDate() : "";
-        int dateComp = date1.compareTo(date2);
-        if (dateComp != 0) {
-            return dateComp;
-        }
-        String time1 = r1.getTime() != null ? r1.getTime() : "";
-        String time2 = r2.getTime() != null ? r2.getTime() : "";
-        return time1.compareTo(time2);
-    }
 
     public Map<String, Object> getRideBookings(Long rideId, User driver) {
         Ride ride = rideRepository.findById(rideId)

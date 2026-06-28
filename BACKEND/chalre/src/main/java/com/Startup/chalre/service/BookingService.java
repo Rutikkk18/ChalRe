@@ -1,6 +1,7 @@
 package com.Startup.chalre.service;
 
 import com.Startup.chalre.DTO.BookingDTO;
+import com.Startup.chalre.DTO.BookingSummaryDTO;
 import com.Startup.chalre.entity.Booking;
 import com.Startup.chalre.entity.Ride;
 import com.Startup.chalre.entity.User;
@@ -195,63 +196,93 @@ public class BookingService {
         return bookingRepository.findByUser(user);
     }
 
-    public Map<String, List<Booking>> getMyBookingsSeparated(User user) {
+    public Map<String, List<BookingSummaryDTO>> getMyBookingsSeparated(User user) {
 
         List<Booking> allBookings = bookingRepository.findByUser(user);
         LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
 
-        List<Booking> upcoming = new ArrayList<>();
-        List<Booking> past = new ArrayList<>();
+        List<BookingSummaryDTO> upcoming = new ArrayList<>();
+        List<BookingSummaryDTO> past     = new ArrayList<>();
 
         for (Booking booking : allBookings) {
-            // CANCELLED bookings always go to PAST
+            // Skip orphaned bookings (ride was deleted)
+            if (booking.getRide() == null) continue;
+
+            BookingSummaryDTO dto = toBookingSummaryDTO(booking);
+
+            // CANCELLED / COMPLETED bookings always go to PAST
             if (!"BOOKED".equals(booking.getStatus())) {
-                past.add(booking);
+                past.add(dto);
                 continue;
             }
 
             try {
                 LocalDate rideDate = LocalDate.parse(booking.getRide().getDate());
-
                 // If ride date is before today → PAST
-                if (rideDate.isBefore(today)) {
-                    past.add(booking);
-                } 
+                if (rideDate.isBefore(today)) past.add(dto);
                 // If ride date is today or future → UPCOMING
-                else {
-                    upcoming.add(booking);
-                }
+                else                          upcoming.add(dto);
             } catch (Exception e) {
                 // If date parsing fails, consider it upcoming (safer default)
-                upcoming.add(booking);
+                upcoming.add(dto);
             }
         }
 
         // Sort upcoming ascending (closest first)
-        upcoming.sort((b1, b2) -> compareBookings(b1, b2));
+        upcoming.sort((b1, b2) -> compareSummaryBookings(b1, b2));
         // Sort past descending (most recent first)
-        past.sort((b1, b2) -> compareBookings(b2, b1));
+        past.sort((b1, b2)     -> compareSummaryBookings(b2, b1));
 
-        Map<String, List<Booking>> result = new HashMap<>();
+        Map<String, List<BookingSummaryDTO>> result = new HashMap<>();
         result.put("upcoming", upcoming);
-        result.put("past", past);
+        result.put("past",     past);
         return result;
     }
 
-    private int compareBookings(Booking b1, Booking b2) {
-        Ride r1 = b1.getRide();
-        Ride r2 = b2.getRide();
-        if (r1 == null && r2 == null) return 0;
-        if (r1 == null) return 1;
-        if (r2 == null) return -1;
-        String date1 = r1.getDate() != null ? r1.getDate() : "";
-        String date2 = r2.getDate() != null ? r2.getDate() : "";
-        int dateComp = date1.compareTo(date2);
-        if (dateComp != 0) {
-            return dateComp;
+    /** Maps a full Booking entity to the lightweight BookingSummaryDTO. */
+    private BookingSummaryDTO toBookingSummaryDTO(Booking booking) {
+        Ride ride = booking.getRide();
+
+        BookingSummaryDTO.DriverInfo driverInfo = null;
+        if (ride.getDriver() != null) {
+            driverInfo = new BookingSummaryDTO.DriverInfo(
+                    ride.getDriver().getId(),
+                    ride.getDriver().getName(),
+                    ride.getDriver().getPhone()  // required by BookingSuccess.jsx click-to-call
+            );
         }
-        String time1 = r1.getTime() != null ? r1.getTime() : "";
-        String time2 = r2.getTime() != null ? r2.getTime() : "";
+
+        BookingSummaryDTO.RideInfo rideInfo = new BookingSummaryDTO.RideInfo(
+                ride.getId(),
+                ride.getStartLocation(),
+                ride.getEndLocation(),
+                ride.getDate(),
+                ride.getTime(),
+                ride.getPrice(),
+                driverInfo
+        );
+
+        return new BookingSummaryDTO(
+                booking.getId(),
+                booking.getStatus(),
+                booking.getPaymentStatus(),
+                booking.getPaymentMethod(),
+                booking.getSeatsBooked(),
+                rideInfo
+        );
+    }
+
+    /** Comparator for BookingSummaryDTO by ride date + time (ascending). */
+    private int compareSummaryBookings(BookingSummaryDTO b1, BookingSummaryDTO b2) {
+        if (b1.getRide() == null && b2.getRide() == null) return 0;
+        if (b1.getRide() == null) return 1;
+        if (b2.getRide() == null) return -1;
+        String date1 = b1.getRide().getDate() != null ? b1.getRide().getDate() : "";
+        String date2 = b2.getRide().getDate() != null ? b2.getRide().getDate() : "";
+        int d = date1.compareTo(date2);
+        if (d != 0) return d;
+        String time1 = b1.getRide().getTime() != null ? b1.getRide().getTime() : "";
+        String time2 = b2.getRide().getTime() != null ? b2.getRide().getTime() : "";
         return time1.compareTo(time2);
     }
 }

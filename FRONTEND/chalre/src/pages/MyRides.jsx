@@ -5,7 +5,7 @@ import api from "../api/axios";
 import "../styles/myrides.css";
 import { formatTime12h } from "../utils/timeFormatter";
 import {
-  MapPin, Calendar, Users, IndianRupee,
+  Calendar, Users, IndianRupee,
   Trash2, Eye, XCircle, UserCheck,
   ChevronDown, ChevronUp, Clock, History, MessageCircle, Plus
 } from "lucide-react";
@@ -34,17 +34,8 @@ export default function MyRides() {
       setUpcomingRides(upcoming);
       setPastRides(past);
       setRides(activeTab === "upcoming" ? upcoming : past);
-
-      const bookingsData = {};
-      for (const ride of [...upcoming, ...past]) {
-        try {
-          const b = await api.get(`/rides/${ride.id}/bookings`);
-          bookingsData[ride.id] = b.data;
-        } catch {
-          bookingsData[ride.id] = { activeBookings: [], totalBookings: 0 };
-        }
-      }
-      setBookingsMap(bookingsData);
+      // activeBookingsCount and totalBookings are now embedded in each ride
+      // by the backend — no per-ride API calls needed here.
     } catch (err) {
       console.error(err);
       setError("Failed to load rides");
@@ -57,7 +48,16 @@ export default function MyRides() {
     setRides(activeTab === "upcoming" ? upcomingRides : pastRides);
   }, [activeTab, upcomingRides, pastRides]);
 
-  const toggleBookings = (rideId) => {
+  const toggleBookings = async (rideId) => {
+    // Lazy-load passenger list only on first expand — not upfront for all rides
+    if (!bookingsMap[rideId]) {
+      try {
+        const b = await api.get(`/rides/${rideId}/bookings`);
+        setBookingsMap(prev => ({ ...prev, [rideId]: b.data }));
+      } catch {
+        setBookingsMap(prev => ({ ...prev, [rideId]: { activeBookings: [], totalBookings: 0 } }));
+      }
+    }
     setExpandedRides(prev => ({ ...prev, [rideId]: !prev[rideId] }));
   };
 
@@ -199,35 +199,36 @@ export default function MyRides() {
                   <IndianRupee size={14} className="mr-meta-icon" />
                   <span>₹{ride.price} per seat</span>
                 </div>
-                {bookingsMap[ride.id] && (
+                {/* Booking counts — now embedded in ride DTO, no extra API call */}
+                {(ride.activeBookingsCount > 0 || ride.totalBookings > 0) && (
                   <div className="mr-meta-item mr-meta-item--bookings">
                     <UserCheck size={14} className="mr-meta-icon" />
                     <span>
-                      {bookingsMap[ride.id].activeBookingsCount || 0} active · {bookingsMap[ride.id].totalBookings || 0} total bookings
+                      {ride.activeBookingsCount || 0} active · {ride.totalBookings || 0} total bookings
                     </span>
                   </div>
                 )}
               </div>
 
-              {/* Expand bookings */}
-              {bookingsMap[ride.id]?.activeBookings?.length > 0 && (
+              {/* Expand bookings — lazy-fetched on first click */}
+              {ride.activeBookingsCount > 0 && (
                 <div className="mr-bookings">
                   <button className="mr-bookings-toggle" onClick={() => toggleBookings(ride.id)}>
                     {expandedRides[ride.id]
                       ? <><ChevronUp size={15} /> Hide Passengers</>
-                      : <><ChevronDown size={15} /> Show Passengers ({bookingsMap[ride.id].activeBookings.length})</>
+                      : <><ChevronDown size={15} /> Show Passengers ({bookingsMap[ride.id]?.activeBookings?.length ?? ride.activeBookingsCount})</>
                     }
                   </button>
 
                   {expandedRides[ride.id] && (
                     <div className="mr-bookings-list">
-                      {bookingsMap[ride.id].activeBookings.map((booking) => (
+                      {(bookingsMap[ride.id]?.activeBookings || []).map((booking) => (
                         <div key={booking.id} className="mr-booking-item">
                           <div className="mr-booking-passenger">
                             <UserCheck size={15} className="mr-booking-icon" />
                             <div>
                               <strong>{booking.user?.name || "Passenger"}</strong>
-                              <span>{booking.seatsBooked} seat(s) · ₹{(ride.price * booking.seatsBooked).toFixed(0)} · {booking.paymentMode}</span>
+                              <span>{booking.seatsBooked} seat(s) · ₹{(ride.price * booking.seatsBooked).toFixed(0)} · {booking.paymentMethod}</span>
                             </div>
                           </div>
                           <div className="mr-booking-actions">

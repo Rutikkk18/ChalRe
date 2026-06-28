@@ -10,6 +10,10 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 @Entity
+@Table(name = "ride", indexes = {
+    @Index(name = "idx_ride_driver_id",      columnList = "driver_id"),
+    @Index(name = "idx_ride_driver_date",    columnList = "driver_id, date")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
