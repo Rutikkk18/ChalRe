@@ -165,27 +165,6 @@ export default function SearchRides() {
     dropCoordsRef.current = coords;
   };
 
-  const fetchAllRides = async () => {
-    // ── Never overwrite search results with all rides ──
-    if (hasAutoSearched.current) return;
-    setLoading(true);
-    setError("");
-    try {
-      const res = await api.get("/rides");
-      // ── Check again after await — search may have started while fetching ──
-      if (hasAutoSearched.current) return;
-      const fetchedRides = (res.data || []).filter(
-        (ride) => Number(ride.availableSeats) > 0
-      );
-      setAllRides(fetchedRides);
-      setResults(fetchedRides);
-    } catch (err) {
-      console.error(err);
-      setError(t("srErrorFetch"));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const forceGeocode = async (text) => {
     try {
@@ -279,11 +258,10 @@ export default function SearchRides() {
     }
   };
 
-  // ── Only fetch all rides on mount if NOT coming from Home with search state ──
+  // ── On mount with no nav state: show the empty search-prompt. No API call needed. ──
   useEffect(() => {
-    if (!location.state?.from) {
-      fetchAllRides();
-    }
+    // If navigated from Home without search params, stay in prompt state.
+    // Auto-search fires in the separate useEffect below when location.state has from+to.
   // eslint-disable-next-line
   }, []);
 
@@ -463,8 +441,10 @@ export default function SearchRides() {
                 setDropCoords(null);
                 pickupCoordsRef.current = null;
                 dropCoordsRef.current   = null;
+                setAllRides([]);
+                setResults([]);
                 setHasSearched(false);
-                fetchAllRides();
+                setError("");
               }}
             >
               {t("srReset")}
@@ -581,10 +561,18 @@ export default function SearchRides() {
 
             {error && <div className="error">{error}</div>}
 
-            {!loading && results.length === 0 && (
+            {!loading && !hasSearched && (
+              <div className="empty sr-prompt">
+                <div className="sr-prompt-icon">🔍</div>
+                <p className="sr-prompt-title">{t("srPromptTitle") || "Find your ride"}</p>
+                <p className="sr-prompt-desc">{t("srPromptDesc") || "Enter your departure and destination above to search for available rides."}</p>
+              </div>
+            )}
+
+            {!loading && hasSearched && results.length === 0 && (
               <div className="empty">
-                {t("srNoRides")}{" "}
-                <a href="/offer">{t("srOfferRideLink")}</a>.
+                <p>{t("srNoRides") || "No rides found for this route."}</p>
+                <a href="/offer">{t("srOfferRideLink") || "Offer a ride"}</a>.
               </div>
             )}
 

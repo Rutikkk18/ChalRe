@@ -443,6 +443,37 @@
 .empty a { color: var(--green-main) !important; font-weight: 600; text-decoration: none; }
 .empty a:hover { text-decoration: underline; color: var(--green-dark) !important; }
 
+/* ── Search-prompt state (before any search is performed) ── */
+.sr-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 56px 24px;
+  text-align: center;
+  background: transparent;
+  border: none;
+}
+.sr-prompt-icon {
+  font-size: 52px;
+  opacity: 0.45;
+  line-height: 1;
+}
+.sr-prompt-title {
+  font-size: clamp(17px, 2vw, 20px);
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+.sr-prompt-desc {
+  font-size: clamp(13px, 1.6vw, 15px);
+  color: #6b7280;
+  max-width: 340px;
+  line-height: 1.6;
+  margin: 0;
+}
+
 .btn.filter-btn {
   background: #ffffff !important;
   color: var(--text-dark) !important;
