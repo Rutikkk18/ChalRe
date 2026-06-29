@@ -32,9 +32,11 @@ public class ChatController {
     @GetMapping("/ride/{rideId}")
     public ResponseEntity<?> getChatMessages(
             @PathVariable Long rideId,
+            @RequestParam(required = false) Integer limit,
+            @RequestParam(name = "before", required = false) Long beforeMessageId,
             @AuthenticationPrincipal User user
     ) {
-        List<ChatMessage> messages = chatService.getChatMessages(rideId, user);
+        List<ChatMessage> messages = chatService.getChatMessages(rideId, user, limit, beforeMessageId);
         return ResponseEntity.ok(messages);
     }
 

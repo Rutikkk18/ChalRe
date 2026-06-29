@@ -8,6 +8,13 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 
 @Entity
+@Table(name = "chat_message", indexes = {
+    @Index(name = "idx_chat_sender_id", columnList = "sender_id"),
+    @Index(name = "idx_chat_receiver_id", columnList = "receiver_id"),
+    @Index(name = "idx_chat_ride_id", columnList = "ride_id"),
+    @Index(name = "idx_chat_receiver_is_read", columnList = "receiver_id, is_read"),
+    @Index(name = "idx_chat_ride_created_at", columnList = "ride_id, created_at")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

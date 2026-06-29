@@ -18,8 +18,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -95,11 +97,30 @@ public class ChatService {
     }
 
     public List<ChatMessage> getChatMessages(Long rideId, User user) {
+        return getChatMessages(rideId, user, null, null);
+    }
+
+    public List<ChatMessage> getChatMessages(Long rideId, User user, Integer limit, Long beforeMessageId) {
         Ride ride = rideRepository.findById(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
-        // Get all messages for this ride where user is sender or receiver
-        return chatMessageRepository.findByRideAndUser(ride, user);
+        if (limit == null && beforeMessageId == null) {
+            // Get all messages for this ride where user is sender or receiver
+            return chatMessageRepository.findByRideAndUser(ride, user);
+        }
+
+        int pageSize = limit != null ? limit : 50;
+
+        List<ChatMessage> messages;
+        if (beforeMessageId != null) {
+            messages = chatMessageRepository.findByRideAndUserAndIdLessThanOrderByIdDesc(ride, user, beforeMessageId, PageRequest.of(0, pageSize));
+        } else {
+            messages = chatMessageRepository.findByRideAndUserOrderByIdDesc(ride, user, PageRequest.of(0, pageSize));
+        }
+
+        List<ChatMessage> chronological = new ArrayList<>(messages);
+        java.util.Collections.reverse(chronological);
+        return chronological;
     }
 
     @Transactional
@@ -107,15 +128,7 @@ public class ChatService {
         Ride ride = rideRepository.findById(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
-        List<ChatMessage> unreadMessages = chatMessageRepository.findByRideAndUser(ride, user)
-                .stream()
-                .filter(m -> !m.getIsRead() && m.getReceiver().getId().equals(user.getId()))
-                .toList();
-
-        unreadMessages.forEach(m -> {
-            m.setIsRead(true);
-            chatMessageRepository.save(m);
-        });
+        chatMessageRepository.markAllAsReadForRideAndReceiver(ride, user);
     }
 
     public long getUnreadCount(Long rideId, User user) {
@@ -132,31 +145,64 @@ public class ChatService {
      */
     public List<ConversationDTO> getConversations(User user) {
         List<Object[]> conversationPairs = chatMessageRepository.findDistinctConversationIds(user.getId());
-        List<ConversationDTO> conversations = new ArrayList<>();
+        if (conversationPairs.isEmpty()) {
+            return new ArrayList<>();
+        }
 
+        // Collect all distinct ride IDs and user IDs to fetch in batch
+        List<Long> rideIds = new ArrayList<>();
+        List<Long> otherUserIds = new ArrayList<>();
+        for (Object[] pair : conversationPairs) {
+            if (pair[0] != null) rideIds.add((Long) pair[0]);
+            if (pair[1] != null) otherUserIds.add((Long) pair[1]);
+        }
+
+        // Fetch Rides and Users in batch
+        Map<Long, Ride> ridesMap = rideRepository.findAllById(rideIds).stream()
+                .collect(Collectors.toMap(Ride::getId, r -> r, (r1, r2) -> r1));
+        Map<Long, User> usersMap = userRepository.findAllById(otherUserIds).stream()
+                .collect(Collectors.toMap(User::getId, u -> u, (u1, u2) -> u1));
+
+        // Fetch latest messages in batch
+        List<ChatMessage> latestMessages = chatMessageRepository.findLatestMessagesForUserConversations(user.getId());
+        Map<String, ChatMessage> latestMsgMap = new HashMap<>();
+        for (ChatMessage m : latestMessages) {
+            if (m.getRide() != null && m.getSender() != null && m.getReceiver() != null) {
+                Long rId = m.getRide().getId();
+                Long otherId = m.getSender().getId().equals(user.getId()) ? m.getReceiver().getId() : m.getSender().getId();
+                latestMsgMap.put(rId + "-" + otherId, m);
+            }
+        }
+
+        // Fetch unread counts in batch
+        List<Object[]> unreadCounts = chatMessageRepository.countUnreadByRideAndSenderForReceiver(user.getId());
+        Map<String, Long> unreadMap = new HashMap<>();
+        for (Object[] row : unreadCounts) {
+            if (row[0] != null && row[1] != null && row[2] != null) {
+                Long rId = (Long) row[0];
+                Long sId = (Long) row[1];
+                Long count = (Long) row[2];
+                unreadMap.put(rId + "-" + sId, count);
+            }
+        }
+
+        List<ConversationDTO> conversations = new ArrayList<>();
         for (Object[] pair : conversationPairs) {
             Long rideId = (Long) pair[0];
             Long otherUserId = (Long) pair[1];
 
             if (rideId == null || otherUserId == null) continue;
 
-            Ride ride = rideRepository.findById(rideId).orElse(null);
-            User otherUser = userRepository.findById(otherUserId).orElse(null);
+            Ride ride = ridesMap.get(rideId);
+            User otherUser = usersMap.get(otherUserId);
 
-            // Skip if either is null (shouldn't happen, but safety)
             if (ride == null || otherUser == null) continue;
 
-            // Get latest message in this conversation using Pageable
-            List<ChatMessage> latestMsgs = chatMessageRepository.findLatestMessageBetweenUsers(
-                    ride, user, otherUser, PageRequest.of(0, 1));
-            
-            if (latestMsgs.isEmpty()) continue;
-            ChatMessage latestMsg = latestMsgs.get(0);
+            ChatMessage latestMsg = latestMsgMap.get(rideId + "-" + otherUserId);
+            if (latestMsg == null) continue;
 
-            // Count unread messages FROM otherUser TO me
-            long unread = chatMessageRepository.countByRideAndSenderAndReceiverAndIsReadFalse(ride, otherUser, user);
+            long unread = unreadMap.getOrDefault(rideId + "-" + otherUserId, 0L);
 
-            // Compute chat lock status (48h after ride)
             boolean chatLocked = false;
             try {
                 LocalDateTime rideDateTime = ride.getRideDateTime();
@@ -183,7 +229,6 @@ public class ChatService {
             conversations.add(dto);
         }
 
-        // Sort by latest message time descending (most recent first)
         conversations.sort(Comparator.comparing(ConversationDTO::getLastMessageTime,
                 Comparator.nullsLast(Comparator.reverseOrder())));
 
