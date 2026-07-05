@@ -34,7 +34,7 @@ export default function ChatModal({ rideId, otherUser, onClose }) {
 
   const fetchMessages = async () => {
     try {
-      const res = await api.get(`/chat/ride/${rideId}`);
+      const res = await api.get(`/chat/ride/${rideId}?limit=50`);
       setMessages(res.data || []);
     } catch (err) {
       console.error("Failed to fetch messages:", err);
