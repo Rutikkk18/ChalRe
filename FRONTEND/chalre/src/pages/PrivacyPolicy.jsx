@@ -208,24 +208,7 @@ const PrivacyPolicy = () => {
             </span>
           </div>
 
-          {/* Table of Contents */}
-          <nav className="tc-toc" aria-label="Table of contents">
-            <p className="tc-toc-heading">Quick Navigation</p>
-            <div className="tc-toc-grid">
-              {sections.map((s) => (
-                <button
-                  key={s.id}
-                  className="tc-toc-btn"
-                  onClick={() => {
-                    document.getElementById(`pp-section-${s.id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
-                >
-                  <span className="tc-toc-icon">{s.icon}</span>
-                  <span>{s.title.replace(/^\d+\.\s/, "")}</span>
-                </button>
-              ))}
-            </div>
-          </nav>
+
         </header>
 
         {/* ── SECTIONS ── */}

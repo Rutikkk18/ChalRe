@@ -1,5 +1,6 @@
 // src/pages/SearchRides.jsx
 import { useEffect, useRef, useState } from "react";
+import { Search } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import api from "../api/axios";
 import CustomDatePicker from "../components/CustomDatePicker";
@@ -563,7 +564,7 @@ export default function SearchRides() {
 
             {!loading && !hasSearched && (
               <div className="empty sr-prompt">
-                <div className="sr-prompt-icon">🔍</div>
+                <div className="sr-prompt-icon"><Search size={48} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
                 <p className="sr-prompt-title">{t("srPromptTitle") || "Find your ride"}</p>
                 <p className="sr-prompt-desc">{t("srPromptDesc") || "Enter your departure and destination above to search for available rides."}</p>
               </div>

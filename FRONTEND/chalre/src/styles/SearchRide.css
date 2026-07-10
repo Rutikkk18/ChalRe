@@ -469,7 +469,7 @@
 .sr-prompt-desc {
   font-size: clamp(13px, 1.6vw, 15px);
   color: #6b7280;
-  max-width: 340px;
+  max-width: none;
   line-height: 1.6;
   margin: 0;
 }
