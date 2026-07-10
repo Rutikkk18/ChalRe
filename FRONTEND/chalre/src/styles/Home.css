@@ -274,7 +274,7 @@ html, body {
 }
 
 .seat-label::before {
-  content: "👤";
+  content: "";
   font-size: 16px;
 }
 

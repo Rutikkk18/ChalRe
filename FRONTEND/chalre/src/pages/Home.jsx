@@ -4,6 +4,7 @@ import LocationAutocomplete from "../components/LocationAutocomplete";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import Footer from "../components/Footer";
+import { ShieldCheck, Compass, Lock, Car, MapPin, Route, ArrowRight, User } from "lucide-react";
 import CustomDatePicker from "../components/CustomDatePicker";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -109,7 +110,7 @@ export default function Home() {
 
           <div className="search-item seats-input">
             <div className="seat-input">
-              <span className="seat-label">{t("seats")}</span>
+              <span className="seat-label" style={{ display: 'inline-flex', alignItems: 'center' }}><User size={16} style={{ marginRight: '6px', color: '#6b7280' }} />{t("seats")}</span>
               <input
                 type="number"
                 min="1"
@@ -151,17 +152,17 @@ export default function Home() {
       {/* ── FEATURES ── */}
       <section className="features">
         <div className="feature-card">
-          <div className="feature-icon">✔</div>
+          <div className="feature-icon"><ShieldCheck size={48} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
           <h3>{t("verifiedUsers")}</h3>
           <p>{t("verifiedUsersDesc")}</p>
         </div>
         <div className="feature-card">
-          <div className="feature-icon">🤖</div>
+          <div className="feature-icon"><Compass size={48} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
           <h3>{t("smartMatching")}</h3>
           <p>{t("smartMatchingDesc")}</p>
         </div>
         <div className="feature-card">
-          <div className="feature-icon">🛡️</div>
+          <div className="feature-icon"><Lock size={48} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
           <h3>{t("securePayments")}</h3>
           <p>{t("securePaymentsDesc")}</p>
         </div>
@@ -188,7 +189,7 @@ export default function Home() {
           <p>{t("fraudDesc")}</p>
           <button className="fraud-btn" onClick={() => navigate("/scam")}>
             {t("learnMoreBtn")}
-            <span className="btn-icon">→</span>
+            <span className="btn-icon"><ArrowRight size={16} /></span>
           </button>
         </div>
       </div>
@@ -203,17 +204,17 @@ export default function Home() {
         </div>
         <div className="why-grid">
           <div className="why-card">
-            <span className="why-icon">🚗 🏍️</span>
+            <span className="why-icon"><Car size={32} strokeWidth={1.5} style={{ color: '#024110' }} /></span>
             <h3>{t("bikeCarOptions")}</h3>
             <p>{t("bikeCarOptionsDesc")}</p>
           </div>
           <div className="why-card">
-            <span className="why-icon">📍</span>
+            <span className="why-icon"><MapPin size={32} strokeWidth={1.5} style={{ color: '#024110' }} /></span>
             <h3>{t("localFocus")}</h3>
             <p>{t("localFocusDesc")}</p>
           </div>
           <div className="why-card">
-            <span className="why-icon">🛣️</span>
+            <span className="why-icon"><Route size={32} strokeWidth={1.5} style={{ color: '#024110' }} /></span>
             <h3>{t("longDistance")}</h3>
             <p>{t("longDistanceDesc")}</p>
           </div>
