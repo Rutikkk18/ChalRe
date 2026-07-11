@@ -24,7 +24,7 @@ const translations = {
     shareYourRide: "Share your ride", fraudImgAlt: "Stay safe from scams",
     fraudTitle: "Your safety matters to us.",
     fraudDesc: "At ChalRe, we continuously work to keep our platform safe and secure. If scams occur, we make sure you know how to identify, avoid, and report them.",
-    learnMoreBtn: "Learn more", whyChalRe: "Why ChalRe?", whyChalReSubtitle: "What we do differently for you",
+    learnMoreBtn: "Learn more", whyChalRe: "Why ChalRe?", whyChalReSubtitle: "Built for local travel, designed for everyday riders.",
     bikeCarOptions: "Bike & Car Options", bikeCarOptionsDesc: "Choose between bike and car rides for faster, flexible, and comfortable travel.",
     localFocus: "Strong Local Focus", localFocusDesc: "From small villages to narrow lanes and nearby towns, ChalRe makes booking or offering local rides simple.",
     longDistance: "Long-Distance Sharing", longDistanceDesc: "We also support long-route ride sharing, helping you travel farther together at a lower cost.",

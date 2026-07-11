@@ -335,29 +335,65 @@ export default function Home() {
       <div className="divider gradient" />
 
       {/* ── WHY CHALRE ── */}
-      <section className="why-chalre">
-        <div className="why-header">
+      <motion.section
+        className="why-chalre"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
+      >
+        {/* Section header fades in first */}
+        <motion.div
+          className="why-header"
+          variants={{
+            hidden: { opacity: 0, y: 24 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0, 0, 0.2, 1] } },
+          }}
+        >
           <h2>{t("whyChalRe")}</h2>
           <p>{t("whyChalReSubtitle")}</p>
-        </div>
+          <div className="why-accent-line" />
+        </motion.div>
+
+        {/* Cards grid — each card staggers in */}
         <div className="why-grid">
-          <div className="why-card">
-            <span className="why-icon"><Car size={32} strokeWidth={1.5} style={{ color: '#024110' }} /></span>
+          <motion.div
+            className="why-card"
+            variants={{
+              hidden: { opacity: 0, y: 32 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0, 0, 0.2, 1] } },
+            }}
+          >
+            <div className="why-icon-badge"><Car size={24} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
             <h3>{t("bikeCarOptions")}</h3>
             <p>{t("bikeCarOptionsDesc")}</p>
-          </div>
-          <div className="why-card">
-            <span className="why-icon"><MapPin size={32} strokeWidth={1.5} style={{ color: '#024110' }} /></span>
+          </motion.div>
+
+          <motion.div
+            className="why-card why-card--featured"
+            variants={{
+              hidden: { opacity: 0, y: 32 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0, 0, 0.2, 1] } },
+            }}
+          >
+            <div className="why-icon-badge"><MapPin size={24} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
             <h3>{t("localFocus")}</h3>
             <p>{t("localFocusDesc")}</p>
-          </div>
-          <div className="why-card">
-            <span className="why-icon"><Route size={32} strokeWidth={1.5} style={{ color: '#024110' }} /></span>
+          </motion.div>
+
+          <motion.div
+            className="why-card"
+            variants={{
+              hidden: { opacity: 0, y: 32 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0, 0, 0.2, 1] } },
+            }}
+          >
+            <div className="why-icon-badge"><Route size={24} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
             <h3>{t("longDistance")}</h3>
             <p>{t("longDistanceDesc")}</p>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       <div className="divider gradient" />
 
