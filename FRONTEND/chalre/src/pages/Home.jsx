@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import Footer from "../components/Footer";
 import { ShieldCheck, Compass, Lock, Car, MapPin, Route, ArrowRight, User } from "lucide-react";
 import CustomDatePicker from "../components/CustomDatePicker";
+import { motion } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
 
 export default function Home() {
@@ -150,24 +151,59 @@ export default function Home() {
       </header>
 
       {/* ── FEATURES ── */}
-      <section className="features">
-        <div className="feature-card">
-          <div className="feature-icon"><ShieldCheck size={48} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
+      <motion.section
+        className="features"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.1 } },
+        }}
+      >
+        <motion.div
+          className="feature-card"
+          variants={{
+            hidden: { opacity: 0, y: 24 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+          }}
+        >
+          <div className="feature-icon-badge">
+            <ShieldCheck size={26} strokeWidth={1.5} style={{ color: '#024110' }} />
+          </div>
           <h3>{t("verifiedUsers")}</h3>
           <p>{t("verifiedUsersDesc")}</p>
-        </div>
-        <div className="feature-card">
-          <div className="feature-icon"><Compass size={48} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
+        </motion.div>
+
+        <motion.div
+          className="feature-card"
+          variants={{
+            hidden: { opacity: 0, y: 24 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+          }}
+        >
+          <div className="feature-icon-badge">
+            <Compass size={26} strokeWidth={1.5} style={{ color: '#024110' }} />
+          </div>
           <h3>{t("smartMatching")}</h3>
           <p>{t("smartMatchingDesc")}</p>
-        </div>
-        <div className="feature-card">
-          <div className="feature-icon"><Lock size={48} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
+        </motion.div>
+
+        <motion.div
+          className="feature-card"
+          variants={{
+            hidden: { opacity: 0, y: 24 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+          }}
+        >
+          <div className="feature-icon-badge">
+            <Lock size={26} strokeWidth={1.5} style={{ color: '#024110' }} />
+          </div>
           <h3>{t("securePayments")}</h3>
           <p>{t("securePaymentsDesc")}</p>
-        </div>
+        </motion.div>
         <div className="divider gradient" />
-      </section>
+      </motion.section>
 
       {/* ── SHARE RIDE ── */}
       <div className="ride-sharehome">
