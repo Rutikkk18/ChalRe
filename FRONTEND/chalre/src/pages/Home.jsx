@@ -206,29 +206,131 @@ export default function Home() {
       </motion.section>
 
       {/* ── SHARE RIDE ── */}
-      <div className="ride-sharehome">
-        <h2 className="h2hr">{t("shareRideTitle")}</h2>
-        <p className="phr">{t("shareRideDesc")}</p>
-        <button className="btn-hssr" onClick={() => navigate("/offer")}>
-          {t("shareYourRide")}
-        </button>
-      </div>
+      <motion.div
+        className="ride-sharehome"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.12 } },
+        }}
+      >
+        <motion.div
+          className="driver-pill"
+          variants={{
+            hidden: { opacity: 0, y: 40, scale: 0.97 },
+            visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0, 0, 0.2, 1] } },
+          }}
+        >
+          <Car size={14} strokeWidth={2} />
+          <span>Driver Benefits</span>
+        </motion.div>
+
+        <motion.h2
+          className="h2hr"
+          variants={{
+            hidden: { opacity: 0, y: 40, scale: 0.97 },
+            visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0, 0, 0.2, 1] } },
+          }}
+        >
+          {t("shareRideTitle")}
+        </motion.h2>
+
+        <motion.p
+          className="phr"
+          variants={{
+            hidden: { opacity: 0, y: 40, scale: 0.97 },
+            visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0, 0, 0.2, 1] } },
+          }}
+        >
+          {t("shareRideDesc")}
+        </motion.p>
+
+        <motion.button
+          className="btn-hssr"
+          onClick={() => navigate("/offer")}
+          variants={{
+            hidden: { opacity: 0, y: 40, scale: 0.97 },
+            visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0, 0, 0.2, 1] } },
+          }}
+        >
+          <span>{t("shareYourRide")}</span>
+          <ArrowRight size={16} className="btn-hssr-arrow" />
+        </motion.button>
+      </motion.div>
       <div className="divider gradient" />
 
-      {/* ── FRAUD ── */}
-      <div className="fraud-div">
-        <div className="fraud-image">
+      {/* ── FRAUD / SAFETY ── */}
+      <motion.div
+        className="fraud-div"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        variants={{ hidden: {}, visible: { transition: { staggerChildren: 0 } } }}
+      >
+        {/* Illustration — slides from left */}
+        <motion.div
+          className="fraud-image"
+          variants={{
+            hidden: { opacity: 0, x: -40 },
+            visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0, 0, 0.2, 1] } },
+          }}
+        >
           <img src="/fraud.png" alt={t("fraudImgAlt")} />
-        </div>
-        <div className="fraud-content">
-          <h2>{t("fraudTitle")}</h2>
-          <p>{t("fraudDesc")}</p>
-          <button className="fraud-btn" onClick={() => navigate("/scam")}>
+        </motion.div>
+
+        {/* Text block — slides from right, children stagger inside */}
+        <motion.div
+          className="fraud-content"
+          variants={{
+            hidden: { opacity: 0, x: 40 },
+            visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0, 0, 0.2, 1], staggerChildren: 0.12, delayChildren: 0.15 } },
+          }}
+        >
+          {/* Safety First pill */}
+          <motion.div
+            className="safety-pill"
+            variants={{
+              hidden: { opacity: 0, y: 16 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0, 0, 0.2, 1] } },
+            }}
+          >
+            <ShieldCheck size={13} strokeWidth={2} />
+            <span>Safety First</span>
+          </motion.div>
+
+          <motion.h2
+            variants={{
+              hidden: { opacity: 0, y: 16 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0, 0, 0.2, 1] } },
+            }}
+          >
+            {t("fraudTitle")}
+          </motion.h2>
+
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 16 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0, 0, 0.2, 1] } },
+            }}
+          >
+            {t("fraudDesc")}
+          </motion.p>
+
+          <motion.button
+            className="fraud-btn"
+            onClick={() => navigate("/scam")}
+            variants={{
+              hidden: { opacity: 0, y: 16 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0, 0, 0.2, 1] } },
+            }}
+          >
             {t("learnMoreBtn")}
             <span className="btn-icon"><ArrowRight size={16} /></span>
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
 
       <div className="divider gradient" />
 
