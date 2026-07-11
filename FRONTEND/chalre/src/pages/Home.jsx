@@ -155,17 +155,17 @@ export default function Home() {
         className="features"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
+        viewport={{ once: true, amount: 0.5 }}
         variants={{
           hidden: {},
-          visible: { transition: { staggerChildren: 0.1 } },
+          visible: { transition: { staggerChildren: 0.12, delayChildren: 0 } },
         }}
       >
         <motion.div
           className="feature-card"
           variants={{
-            hidden: { opacity: 0, y: 24 },
-            visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+            hidden: { opacity: 0, y: 40, scale: 0.97 },
+            visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0, 0, 0.2, 1] } },
           }}
         >
           <div className="feature-icon-badge">
@@ -178,8 +178,8 @@ export default function Home() {
         <motion.div
           className="feature-card"
           variants={{
-            hidden: { opacity: 0, y: 24 },
-            visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+            hidden: { opacity: 0, y: 40, scale: 0.97 },
+            visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0, 0, 0.2, 1] } },
           }}
         >
           <div className="feature-icon-badge">
@@ -192,8 +192,8 @@ export default function Home() {
         <motion.div
           className="feature-card"
           variants={{
-            hidden: { opacity: 0, y: 24 },
-            visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+            hidden: { opacity: 0, y: 40, scale: 0.97 },
+            visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0, 0, 0.2, 1] } },
           }}
         >
           <div className="feature-icon-badge">
