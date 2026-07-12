@@ -33,6 +33,8 @@ const translations = {
     helpQ2: "Can I cancel a booked ride?", helpA2: "Plans changed? No worries. You can cancel your ride anytime from the 'Your rides' section in the app.",
     helpQ3: "How do I offer a ChalRe ride?", helpA3: "Posting a ride is easy. Use the app or website to enter your start and end points, travel date and time, available seats, and price per seat.",
     helpQ4: "Why choose ChalRe?", helpA4: "Ride sharing saves money, reduces traffic, and lowers pollution. With ChalRe, you can choose both car and bike rides.",
+    helpQ5: "How does a driver get paid?", helpA5: "To receive payments, you must first add your UPI ID in your Dashboard. Once a passenger books and pays online, the payment is securely held until the ride is completed. After the ride ends, the passenger should tap \"Confirm Ride End\" to release the payment. If the passenger does not confirm, the ride will be automatically completed after a short period, and the payment will be transferred to your registered UPI account automatically.",
+    helpQ6: "How do I get my refund?", helpA6: "To receive refunds, you must first add your UPI ID in your Dashboard. If you cancel an eligible online booking, your refund will be processed and sent directly to your registered UPI account as soon as possible. Processing times may vary slightly depending on payment verification.",
     readHelpCentre: "Read our Help Centre",
     navHome: "Home", navSearchRides: "Search Rides", navOfferRide: "Offer Ride",
     navLogin: "Login", navDashboard: "Dashboard", navAdminDashboard: "Admin Dashboard",

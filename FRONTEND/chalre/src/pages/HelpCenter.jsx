@@ -41,9 +41,14 @@ export default function HelpCenter() {
     },
 
     {
-      id: 7,
-      question: "who do I get started with ChalRe?",
-      answer: "Getting started is free and easy. Create an account, add a few basic details, and you're ready to book or publish rides. Everything can be managed directly through our app or website."
+      id: 8,
+      question: "How does a driver get paid?",
+      answer: "To receive payments, you must first add your UPI ID in your Dashboard. Once a passenger books and pays online, the payment is securely held until the ride is completed. After the ride ends, the passenger should tap \"Confirm Ride End\" to release the payment. If the passenger does not confirm, the ride will be automatically completed after a short period, and the payment will be transferred automatically to your registered UPI account."
+    },
+    {
+      id: 9,
+      question: "How do I get my refund?",
+      answer: "To receive refunds, you must first add your UPI ID in your Dashboard. If you cancel an eligible online booking, your refund will be processed and sent directly to your registered UPI account as soon as possible. Processing times may vary slightly depending on payment verification."
     }
   ];
 

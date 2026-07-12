@@ -405,7 +405,6 @@ export default function Home() {
         <div className="faq-accordion">
           {[
             { q: t("helpQ1"), a: t("helpA1") },
-            { q: t("helpQ2"), a: t("helpA2") },
             { q: t("helpQ3"), a: t("helpA3") },
             { q: t("helpQ4"), a: t("helpA4") },
           ].map((item, i) => {
