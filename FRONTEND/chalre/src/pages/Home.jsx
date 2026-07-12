@@ -4,9 +4,9 @@ import LocationAutocomplete from "../components/LocationAutocomplete";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import Footer from "../components/Footer";
-import { ShieldCheck, Compass, Lock, Car, MapPin, Route, ArrowRight, User } from "lucide-react";
+import { ShieldCheck, Compass, Lock, Car, MapPin, Route, ArrowRight, User, Plus, Minus } from "lucide-react";
 import CustomDatePicker from "../components/CustomDatePicker";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
 
 export default function Home() {
@@ -31,6 +31,7 @@ export default function Home() {
   };
 
   const [scrolled, setScrolled] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 120);
@@ -397,31 +398,51 @@ export default function Home() {
 
       <div className="divider gradient" />
 
-      {/* ── HELP CENTRE ── */}
+      {/* ── HELP CENTRE (FAQ ACCORDION) ── */}
       <div className="help-centre">
         <h2 className="help-title">{t("helpCentreTitle")}</h2>
-        <div className="help-grid">
-          <div className="help-col">
-            <div className="help-item">
-              <h4>{t("helpQ1")}</h4>
-              <p>{t("helpA1")}</p>
-            </div>
-            <div className="help-item">
-              <h4>{t("helpQ2")}</h4>
-              <p>{t("helpA2")}</p>
-            </div>
-          </div>
-          <div className="help-col">
-            <div className="help-item">
-              <h4>{t("helpQ3")}</h4>
-              <p>{t("helpA3")}</p>
-            </div>
-            <div className="help-item">
-              <h4>{t("helpQ4")}</h4>
-              <p>{t("helpA4")}</p>
-            </div>
-          </div>
+
+        <div className="faq-accordion">
+          {[
+            { q: t("helpQ1"), a: t("helpA1") },
+            { q: t("helpQ2"), a: t("helpA2") },
+            { q: t("helpQ3"), a: t("helpA3") },
+            { q: t("helpQ4"), a: t("helpA4") },
+          ].map((item, i) => {
+            const isOpen = activeIndex === i;
+            return (
+              <div key={i} className="faq-item">
+                <button
+                  className={`faq-question${isOpen ? " faq-question--open" : ""}`}
+                  onClick={() => setActiveIndex(isOpen ? null : i)}
+                  aria-expanded={isOpen}
+                >
+                  <span>{item.q}</span>
+                  <span className="faq-icon">
+                    {isOpen ? <Minus size={16} strokeWidth={2} /> : <Plus size={16} strokeWidth={2} />}
+                  </span>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      className="faq-answer"
+                      key="answer"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.32, ease: [0, 0, 0.2, 1] }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <p>{item.a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
+
         <div className="help-btn-wrap">
           <button className="help-btn" onClick={() => navigate("/help-center")}>
             {t("readHelpCentre")}
