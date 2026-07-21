@@ -600,3 +600,117 @@
   .results-container { box-shadow: none; border: none; }
   .search-content-layout { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   ADAPTIVE RIDE LISTING — Auto List Mode additions
+   All tokens reuse existing :root variables defined above.
+============================================================ */
+
+/* ── Section header ───────────────────────────────────────── */
+.auto-list-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0 16px;
+  border-bottom: 1.5px solid var(--border-soft);
+  margin-bottom: 8px;
+}
+
+.auto-list-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.auto-list-subtitle {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ── Loading skeleton ─────────────────────────────────────── */
+.auto-list-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 0;
+}
+
+.auto-skeleton-card {
+  width: 100%;
+  height: 120px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    #f0f4f1 25%,
+    #e2ece5 50%,
+    #f0f4f1 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Load More button ─────────────────────────────────────── */
+.load-more-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 8px;
+}
+
+.btn-load-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 28px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--green-main);
+  background: #ffffff;
+  color: var(--green-dark);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease,
+              transform 0.15s ease;
+  letter-spacing: 0.01em;
+}
+
+.btn-load-more:hover {
+  background: var(--green-soft);
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-1px);
+}
+
+.btn-load-more:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ── Mobile adjustments ───────────────────────────────────── */
+@media (max-width: 640px) {
+  .auto-list-header {
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+  }
+
+  .auto-list-title {
+    font-size: 0.97rem;
+  }
+
+  .auto-skeleton-card {
+    height: 100px;
+  }
+
+  .btn-load-more {
+    width: 100%;
+    padding: 12px 20px;
+  }
+}

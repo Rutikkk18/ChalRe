@@ -8,6 +8,7 @@ import LocationAutocomplete from "../components/LocationAutocomplete";
 import RideCard from "../components/RideCard";
 import { useLanguage } from "../context/LanguageContext";
 import "../styles/SearchRide.css";
+import { ACTIVE_RIDE_THRESHOLD, INITIAL_LOAD, LOAD_MORE_BATCH } from "../constants";
 
 const vehicleModels = {
   car: ["SEDAN", "SUV", "HATCHBACK"],
@@ -44,6 +45,12 @@ export default function SearchRides() {
 
   const [hasSearched, setHasSearched] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // ── Adaptive Ride Listing state ──────────────────────────────
+  const [isAutoListMode, setIsAutoListMode] = useState(false);
+  const [allAutoRides,   setAllAutoRides]   = useState([]);
+  const [visibleCount,   setVisibleCount]   = useState(INITIAL_LOAD);
+  const [autoLoading,    setAutoLoading]    = useState(false);
 
   const [pickupCoords, setPickupCoords] = useState(null);
   const [dropCoords,   setDropCoords]   = useState(null);
@@ -259,10 +266,40 @@ export default function SearchRides() {
     }
   };
 
-  // ── On mount with no nav state: show the empty search-prompt. No API call needed. ──
+  // ── On mount: auto-fetch rides if count ≤ ACTIVE_RIDE_THRESHOLD ──
   useEffect(() => {
-    // If navigated from Home without search params, stay in prompt state.
-    // Auto-search fires in the separate useEffect below when location.state has from+to.
+    let cancelled = false;
+
+    // If navigated from Home with search params, skip — search fires in the next useEffect.
+    if (location.state?.from && location.state?.to) return;
+
+    const fetchAutoRides = async () => {
+      setAutoLoading(true);
+      try {
+        const res   = await api.get("/rides");
+        if (cancelled) return;
+
+        const rides = (res.data || []).filter(
+          (ride) => Number(ride.availableSeats) > 0
+        );
+
+        if (rides.length <= ACTIVE_RIDE_THRESHOLD) {
+          setIsAutoListMode(true);
+          setAllAutoRides(rides);
+          // Populate results with the full list (filters are at defaults on mount)
+          setResults(rides);
+        }
+        // If rides > threshold: stay in search-only mode, nothing changes
+      } catch (err) {
+        console.error("Auto-fetch failed:", err);
+        // Fail silently — user can still search manually
+      } finally {
+        if (!cancelled) setAutoLoading(false);
+      }
+    };
+
+    fetchAutoRides();
+    return () => { cancelled = true; };
   // eslint-disable-next-line
   }, []);
 
@@ -309,11 +346,17 @@ export default function SearchRides() {
   };
 
   useEffect(() => {
-    if (allRides.length > 0) {
-      applyClientFilters(allRides, {
-        minPrice, maxPrice, vehicleCategory, carType,
-        seatsAvailable, driverRating, timePreference,
-      });
+    const filterParams = {
+      minPrice, maxPrice, vehicleCategory, carType,
+      seatsAvailable, driverRating, timePreference,
+    };
+    if (hasSearched && allRides.length > 0) {
+      // Search Mode: filter search results
+      applyClientFilters(allRides, filterParams);
+    } else if (!hasSearched && allAutoRides.length > 0) {
+      // Auto List Mode: filter auto-fetched rides + reset visible window
+      applyClientFilters(allAutoRides, filterParams);
+      setVisibleCount(INITIAL_LOAD);
     }
   // eslint-disable-next-line
   }, [seatsAvailable, driverRating, timePreference, minPrice, maxPrice, vehicleCategory, carType]);
@@ -446,6 +489,11 @@ export default function SearchRides() {
                 setResults([]);
                 setHasSearched(false);
                 setError("");
+                // Restore auto list results when resetting from a search
+                if (isAutoListMode && allAutoRides.length > 0) {
+                  setResults(allAutoRides);
+                }
+                setVisibleCount(INITIAL_LOAD);
               }}
             >
               {t("srReset")}
@@ -562,7 +610,29 @@ export default function SearchRides() {
 
             {error && <div className="error">{error}</div>}
 
-            {!loading && !hasSearched && (
+            {/* ── Auto List Mode: section header ── */}
+            {!loading && !hasSearched && isAutoListMode && (
+              <div className="auto-list-header">
+                <h3 className="auto-list-title">
+                  {t("srAvailableRides") || "Available Rides"}
+                </h3>
+                <p className="auto-list-subtitle">
+                  {t("srAvailableRidesDesc") || "Browse active rides or search for a specific route."}
+                </p>
+              </div>
+            )}
+
+            {/* ── Auto List Mode: loading skeleton ── */}
+            {autoLoading && (
+              <div className="auto-list-skeleton">
+                {Array.from({ length: INITIAL_LOAD }).map((_, i) => (
+                  <div key={i} className="auto-skeleton-card" />
+                ))}
+              </div>
+            )}
+
+            {/* ── Search Mode: prompt (only when NOT in auto list mode) ── */}
+            {!loading && !hasSearched && !isAutoListMode && !autoLoading && (
               <div className="empty sr-prompt">
                 <div className="sr-prompt-icon"><Search size={48} strokeWidth={1.5} style={{ color: '#024110' }} /></div>
                 <p className="sr-prompt-title">{t("srPromptTitle") || "Find your ride"}</p>
@@ -570,6 +640,7 @@ export default function SearchRides() {
               </div>
             )}
 
+            {/* ── No results after search ── */}
             {!loading && hasSearched && results.length === 0 && (
               <div className="empty">
                 <p>{t("srNoRides") || "No rides found for this route."}</p>
@@ -577,11 +648,25 @@ export default function SearchRides() {
               </div>
             )}
 
-            {!loading && (
+            {/* ── No rides yet in Auto List Mode ── */}
+            {!loading && !hasSearched && isAutoListMode && !autoLoading && results.length === 0 && (
+              <div className="empty">
+                <p>{t("srNoAutoRides") || "No rides available right now."}</p>
+                <a href="/offer">{t("srOfferRideLink") || "Offer a ride"}</a>.
+              </div>
+            )}
+
+            {/* ── Ride cards ── */}
+            {!loading && !autoLoading && (
               <div className="cards-grid">
-                {/* 🔥 ride objects already have calculatedPrice + isPartial flat on them —
-                    RideCard reads ride.calculatedPrice directly, no extra API calls */}
-                {results.map((ride) => (
+                {/* 🔥 Auto List Mode: paginate via visibleCount slice.
+                    Search Mode: show all filtered results as before.
+                    RideCard reads ride.calculatedPrice directly from search results;
+                    in auto list mode it falls back to ride.price (full route price). */}
+                {(!hasSearched && isAutoListMode
+                  ? results.slice(0, visibleCount)
+                  : results
+                ).map((ride) => (
                   <RideCard
                     key={`${ride.id}-${cardPickupCoords?.lat}-${cardDropCoords?.lat}`}
                     ride={ride}
@@ -591,6 +676,19 @@ export default function SearchRides() {
                     dropName={cardDropName || null}
                   />
                 ))}
+              </div>
+            )}
+
+            {/* ── Load More (Auto List Mode only) ── */}
+            {!loading && !autoLoading && !hasSearched && isAutoListMode && results.length > visibleCount && (
+              <div className="load-more-wrap">
+                <button
+                  type="button"
+                  className="btn-load-more"
+                  onClick={() => setVisibleCount((prev) => prev + LOAD_MORE_BATCH)}
+                >
+                  {t("srLoadMore") || "Load More"}
+                </button>
               </div>
             )}
           </div>
