@@ -41,7 +41,7 @@ public class ChatService {
         // Validate: sender must be driver or a passenger who booked this ride
         boolean isDriver = ride.getDriver().getId().equals(sender.getId());
         boolean isPassenger = bookingRepository.findByRide(ride).stream()
-                .anyMatch(b -> b.getUser().getId().equals(sender.getId()) && "BOOKED".equals(b.getStatus()));
+                .anyMatch(b -> b.getUser().getId().equals(sender.getId()) && isChatEligibleBookingStatus(b.getStatus()));
 
         if (!isDriver && !isPassenger) {
             throw new RuntimeException("You can only chat about rides you're involved in");
@@ -51,7 +51,7 @@ public class ChatService {
         User receiver = ride.getDriver().getId().equals(dto.getReceiverId()) 
             ? ride.getDriver() 
             : bookingRepository.findByRide(ride).stream()
-                .filter(b -> b.getUser().getId().equals(dto.getReceiverId()) && "BOOKED".equals(b.getStatus()))
+                .filter(b -> b.getUser().getId().equals(dto.getReceiverId()) && isChatEligibleBookingStatus(b.getStatus()))
                 .map(Booking::getUser)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Invalid receiver"));
@@ -241,6 +241,10 @@ public class ChatService {
      */
     public long getTotalUnreadCount(User user) {
         return chatMessageRepository.countByReceiverAndIsReadFalse(user);
+    }
+
+    private boolean isChatEligibleBookingStatus(String status) {
+        return "BOOKED".equals(status) || "COMPLETED".equals(status);
     }
 }
 
