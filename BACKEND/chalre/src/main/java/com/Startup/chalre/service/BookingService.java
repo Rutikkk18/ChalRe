@@ -93,6 +93,15 @@ public class BookingService {
             booking.setPaymentStatus("PENDING");
         }
 
+        // Save passenger partial route details (default to ride origin/dest if null)
+        booking.setPassengerPickup(dto.getPassengerPickup() != null ? dto.getPassengerPickup() : ride.getStartLocation());
+        booking.setPassengerDrop(dto.getPassengerDrop() != null ? dto.getPassengerDrop() : ride.getEndLocation());
+        booking.setPickupLat(dto.getPickupLat());
+        booking.setPickupLng(dto.getPickupLng());
+        booking.setDropLat(dto.getDropLat());
+        booking.setDropLng(dto.getDropLng());
+        booking.setBookedPrice(dto.getBookedPrice() != null ? dto.getBookedPrice() : ride.getPrice());
+
         // Reduce seats
         ride.setAvailableSeats(ride.getAvailableSeats() - dto.getSeats());
         rideRepository.save(ride);
@@ -252,13 +261,17 @@ public class BookingService {
             );
         }
 
+        String pickup = booking.getPassengerPickup() != null ? booking.getPassengerPickup() : ride.getStartLocation();
+        String drop   = booking.getPassengerDrop()   != null ? booking.getPassengerDrop()   : ride.getEndLocation();
+        double price  = booking.getBookedPrice()      != null ? booking.getBookedPrice()      : ride.getPrice();
+
         BookingSummaryDTO.RideInfo rideInfo = new BookingSummaryDTO.RideInfo(
                 ride.getId(),
-                ride.getStartLocation(),
-                ride.getEndLocation(),
+                pickup,
+                drop,
                 ride.getDate(),
                 ride.getTime(),
-                ride.getPrice(),
+                price,
                 driverInfo
         );
 
@@ -268,6 +281,13 @@ public class BookingService {
                 booking.getPaymentStatus(),
                 booking.getPaymentMethod(),
                 booking.getSeatsBooked(),
+                booking.getPassengerPickup(),
+                booking.getPassengerDrop(),
+                booking.getPickupLat(),
+                booking.getPickupLng(),
+                booking.getDropLat(),
+                booking.getDropLng(),
+                booking.getBookedPrice(),
                 rideInfo
         );
     }

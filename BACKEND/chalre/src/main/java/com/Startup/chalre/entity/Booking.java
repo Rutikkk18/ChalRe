@@ -48,4 +48,12 @@ public class Booking {
     // Note: Payment status is separate from booking status
     private String paymentStatus;
 
+    // Passenger partial route details (null if booked full route)
+    private String passengerPickup;
+    private String passengerDrop;
+    private Double pickupLat;
+    private Double pickupLng;
+    private Double dropLat;
+    private Double dropLng;
+    private Double bookedPrice;
 }

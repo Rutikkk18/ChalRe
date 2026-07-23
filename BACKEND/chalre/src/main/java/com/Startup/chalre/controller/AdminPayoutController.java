@@ -82,7 +82,7 @@ public class AdminPayoutController {
             Map<String, Object> map = new java.util.HashMap<>();
             map.put("paymentId", p.getId());
             map.put("amountRupees", p.getAmount() / 100.0);
-            map.put("driverAmount", Math.round(p.getAmount() * 0.85) / 100.0);
+            map.put("driverAmount", p.getAmount() / 100.0);
             map.put("driverPaidAt", p.getDriverPaidAt());
             map.put("driverPayoutNote", p.getDriverPayoutNote());
 

@@ -26,6 +26,14 @@ public class BookingSummaryDTO {
     private String paymentMethod;
     private int    seatsBooked;
 
+    private String passengerPickup;
+    private String passengerDrop;
+    private Double pickupLat;
+    private Double pickupLng;
+    private Double dropLat;
+    private Double dropLng;
+    private Double bookedPrice;
+
     private RideInfo ride;
 
     // ── Nested ride summary (fields used by list screens) ──────────────────────

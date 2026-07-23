@@ -77,6 +77,15 @@ public class PaymentController {
             dto.setSeats(seats);
             dto.setPaymentMethod("ONLINE");
             dto.setTxnId(razorpayPaymentId);
+
+            if (body.get("passengerPickup") != null) dto.setPassengerPickup(body.get("passengerPickup").toString());
+            if (body.get("passengerDrop") != null) dto.setPassengerDrop(body.get("passengerDrop").toString());
+            if (body.get("pickupLat") != null) dto.setPickupLat(Double.valueOf(body.get("pickupLat").toString()));
+            if (body.get("pickupLng") != null) dto.setPickupLng(Double.valueOf(body.get("pickupLng").toString()));
+            if (body.get("dropLat") != null) dto.setDropLat(Double.valueOf(body.get("dropLat").toString()));
+            if (body.get("dropLng") != null) dto.setDropLng(Double.valueOf(body.get("dropLng").toString()));
+            if (body.get("bookedPrice") != null) dto.setBookedPrice(Double.valueOf(body.get("bookedPrice").toString()));
+
             Booking savedBooking = bookingService.bookRide(dto, user);
 
             return ResponseEntity.ok(Map.of(

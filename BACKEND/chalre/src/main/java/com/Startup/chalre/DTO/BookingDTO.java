@@ -19,4 +19,13 @@ public class BookingDTO {
 
     // 🔥 UPI Transaction ID (ONLY for ONLINE)
     private String txnId;
+
+    // Passenger partial route details
+    private String passengerPickup;
+    private String passengerDrop;
+    private Double pickupLat;
+    private Double pickupLng;
+    private Double dropLat;
+    private Double dropLng;
+    private Double bookedPrice;
 }
