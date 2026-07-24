@@ -208,6 +208,7 @@ public class BookingService {
     public Map<String, List<BookingSummaryDTO>> getMyBookingsSeparated(User user) {
 
         List<Booking> allBookings = bookingRepository.findByUser(user);
+        java.time.LocalDateTime currentIstTime = java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
 
         List<BookingSummaryDTO> upcoming = new ArrayList<>();
@@ -226,14 +227,21 @@ public class BookingService {
             }
 
             try {
-                LocalDate rideDate = LocalDate.parse(booking.getRide().getDate());
-                // If ride date is before today → PAST
-                if (rideDate.isBefore(today)) past.add(dto);
-                // If ride date is today or future → UPCOMING
-                else                          upcoming.add(dto);
+                java.time.LocalDateTime endDateTime = RideService.calculateRideEndDateTime(booking.getRide());
+                if (currentIstTime.isAfter(endDateTime)) {
+                    past.add(dto);
+                } else {
+                    upcoming.add(dto);
+                }
             } catch (Exception e) {
-                // If date parsing fails, consider it upcoming (safer default)
-                upcoming.add(dto);
+                // If date/time parsing fails, fallback to date-only check
+                try {
+                    LocalDate rideDate = LocalDate.parse(booking.getRide().getDate());
+                    if (rideDate.isBefore(today)) past.add(dto);
+                    else                          upcoming.add(dto);
+                } catch (Exception ex) {
+                    upcoming.add(dto);
+                }
             }
         }
 

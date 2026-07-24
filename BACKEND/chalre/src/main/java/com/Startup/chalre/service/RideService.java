@@ -280,6 +280,7 @@ public class RideService {
             countsMap.put(rideId, new long[]{activeCount, totalCount});
         }
 
+        java.time.LocalDateTime currentIstTime = java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
         List<RideSummaryDTO> upcoming = new ArrayList<>();
         List<RideSummaryDTO> past     = new ArrayList<>();
@@ -299,11 +300,20 @@ public class RideService {
                     counts[1]    // totalBookings
             );
             try {
-                LocalDate rideDate = LocalDate.parse(ride.getDate());
-                if (rideDate.isBefore(today)) past.add(dto);
-                else                          upcoming.add(dto);
+                java.time.LocalDateTime endDateTime = calculateRideEndDateTime(ride);
+                if (currentIstTime.isAfter(endDateTime)) {
+                    past.add(dto);
+                } else {
+                    upcoming.add(dto);
+                }
             } catch (Exception e) {
-                upcoming.add(dto);
+                try {
+                    LocalDate rideDate = LocalDate.parse(ride.getDate());
+                    if (rideDate.isBefore(today)) past.add(dto);
+                    else                          upcoming.add(dto);
+                } catch (Exception ex) {
+                    upcoming.add(dto);
+                }
             }
         }
 
@@ -823,21 +833,54 @@ public class RideService {
         return result;
     }
 
-    public java.time.LocalDateTime calculateRideEndDateTime(Ride ride) {
+    public static java.time.LocalTime parseTimeRobust(String timeStr) {
+        if (timeStr == null || timeStr.trim().isEmpty()) return null;
+        String cleaned = timeStr.trim();
+
+        // 1. Try HH:mm (24-hour e.g. "11:15" or "13:25")
+        try {
+            return java.time.LocalTime.parse(cleaned, java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
+        } catch (Exception ignored) {}
+
+        // 2. Try H:mm (e.g. "9:15" or "8:00")
+        try {
+            return java.time.LocalTime.parse(cleaned, java.time.format.DateTimeFormatter.ofPattern("H:mm"));
+        } catch (Exception ignored) {}
+
+        // 3. Try hh:mm a (12-hour with AM/PM e.g. "11:15 AM" or "01:25 PM")
+        try {
+            return java.time.LocalTime.parse(cleaned, java.time.format.DateTimeFormatter.ofPattern("hh:mm a", java.util.Locale.ENGLISH));
+        } catch (Exception ignored) {}
+
+        // 4. Try h:mm a (12-hour with AM/PM e.g. "9:15 AM")
+        try {
+            return java.time.LocalTime.parse(cleaned, java.time.format.DateTimeFormatter.ofPattern("h:mm a", java.util.Locale.ENGLISH));
+        } catch (Exception ignored) {}
+
+        // 5. Try HH:mm:ss
+        try {
+            return java.time.LocalTime.parse(cleaned, java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss"));
+        } catch (Exception ignored) {}
+
+        return null;
+    }
+
+    public static java.time.LocalDateTime calculateRideEndDateTime(Ride ride) {
         if (ride == null || ride.getDate() == null || ride.getTime() == null) {
             return java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         }
 
         try {
-            java.time.LocalDate rideDate = java.time.LocalDate.parse(ride.getDate(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            java.time.LocalTime departureTime = java.time.LocalTime.parse(ride.getTime(), java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
+            java.time.LocalDate rideDate = java.time.LocalDate.parse(ride.getDate().trim(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            java.time.LocalTime departureTime = parseTimeRobust(ride.getTime());
+            if (departureTime == null) {
+                departureTime = java.time.LocalTime.of(0, 0);
+            }
             java.time.LocalDateTime departureDateTime = java.time.LocalDateTime.of(rideDate, departureTime);
 
             java.time.LocalTime endTime = null;
             if (ride.getEndTime() != null && !ride.getEndTime().trim().isEmpty()) {
-                try {
-                    endTime = java.time.LocalTime.parse(ride.getEndTime().trim(), java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
-                } catch (Exception ignored) {}
+                endTime = parseTimeRobust(ride.getEndTime());
             }
 
             if (endTime == null) {
@@ -855,9 +898,11 @@ public class RideService {
         } catch (Exception e) {
             // Defensive fallback on parsing failure
             try {
-                java.time.LocalDate rideDate = java.time.LocalDate.parse(ride.getDate(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                java.time.LocalTime departureTime = java.time.LocalTime.parse(ride.getTime(), java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
-                return java.time.LocalDateTime.of(rideDate, departureTime).plusHours(2);
+                java.time.LocalDate rideDate = java.time.LocalDate.parse(ride.getDate().trim(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                java.time.LocalTime departureTime = parseTimeRobust(ride.getTime());
+                if (departureTime != null) {
+                    return java.time.LocalDateTime.of(rideDate, departureTime).plusHours(2);
+                }
             } catch (Exception ignored) {}
             return java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         }
