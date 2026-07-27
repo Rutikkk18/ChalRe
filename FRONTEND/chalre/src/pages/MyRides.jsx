@@ -213,45 +213,88 @@ export default function MyRides() {
               {/* Expand bookings — lazy-fetched on first click */}
               {ride.activeBookingsCount > 0 && (
                 <div className="mr-bookings">
-                  <button className="mr-bookings-toggle" onClick={() => toggleBookings(ride.id)}>
-                    {expandedRides[ride.id]
-                      ? <><ChevronUp size={15} /> Hide Passengers</>
-                      : <><ChevronDown size={15} /> Show Passengers ({bookingsMap[ride.id]?.activeBookings?.length ?? ride.activeBookingsCount})</>
-                    }
-                  </button>
+                  {(() => {
+                    const activeList = bookingsMap[ride.id]?.activeBookings || [];
+                    const count = activeList.length || ride.activeBookingsCount;
+                    const getCity = (addr) => addr ? addr.split(",")[0].trim() : "";
+                    const pickupCities = activeList
+                      .map((b) => getCity(b.passengerPickup || ride.startLocation || ride.from))
+                      .filter(Boolean);
+                    const uniquePickups = Array.from(new Set(pickupCities));
+                    const summaryText = uniquePickups.length > 0 ? `from ${uniquePickups.join(", ")}` : "";
+                    const toggleTitle = count === 1
+                      ? `1 booking ${summaryText}`.trim()
+                      : `${count} bookings ${summaryText}`.trim();
 
-                  {expandedRides[ride.id] && (
-                    <div className="mr-bookings-list">
-                      {(bookingsMap[ride.id]?.activeBookings || []).map((booking) => (
-                        <div key={booking.id} className="mr-booking-item">
-                          <div className="mr-booking-passenger">
-                            <UserCheck size={15} className="mr-booking-icon" />
-                            <div>
-                              <strong>{booking.user?.name || "Passenger"}</strong>
-                              <span>{booking.seatsBooked} seat(s) · ₹{(ride.price * booking.seatsBooked).toFixed(0)} · {booking.paymentMethod}</span>
-                            </div>
+                    return (
+                      <>
+                        <button className="mr-bookings-toggle" onClick={() => toggleBookings(ride.id)}>
+                          {expandedRides[ride.id]
+                            ? <><ChevronUp size={15} /> Hide Passengers ({toggleTitle})</>
+                            : <><ChevronDown size={15} /> Show Passengers ({toggleTitle})</>
+                          }
+                        </button>
+
+                        {expandedRides[ride.id] && (
+                          <div className="mr-bookings-list">
+                            {(bookingsMap[ride.id]?.activeBookings || []).map((booking) => {
+                              const pPickup = booking.passengerPickup || ride.startLocation || ride.from || "";
+                              const pDrop   = booking.passengerDrop   || ride.endLocation   || ride.to   || "";
+                              const itemPrice = ((booking.bookedPrice ?? ride.price) * booking.seatsBooked).toFixed(0);
+                              return (
+                                <div key={booking.id} className="mr-booking-item" style={{ flexDirection: "column", alignItems: "stretch", gap: "0.5rem" }}>
+                                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <div className="mr-booking-passenger">
+                                      <UserCheck size={15} className="mr-booking-icon" />
+                                      <div>
+                                        <strong>{booking.user?.name || "Passenger"}</strong>
+                                        <span>{booking.seatsBooked} seat(s) · ₹{itemPrice} · {booking.paymentMethod}</span>
+                                      </div>
+                                    </div>
+                                    <div className="mr-booking-actions">
+                                      {booking.user?.phone && (
+                                        <a className="mr-btn-call" href={`tel:${booking.user.phone}`}>Call</a>
+                                      )}
+                                      {isChatAvailable(ride) && (
+                                        <button
+                                          className="mr-btn-chat"
+                                          onClick={() => setChatModal({ rideId: ride.id, otherUser: booking.user })}
+                                        >
+                                          <MessageCircle size={13} />
+                                          {new Date() > new Date(`${ride.date}T${ride.time}:00`)
+                                            ? ` Chat (${getChatHoursLeft(ride)}h left)`
+                                            : " Chat"
+                                          }
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  <div style={{
+                                    background: "#f8fafc",
+                                    border: "1px solid #e2e8f0",
+                                    borderRadius: "6px",
+                                    padding: "0.4rem 0.6rem",
+                                    fontSize: "0.75rem",
+                                    color: "#334155"
+                                  }}>
+                                    <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#1c7c31", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "2px" }}>
+                                      Passenger Route
+                                    </div>
+                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                      <span><strong>{getCity(pPickup)}</strong> <span style={{ color: "#94a3b8", fontSize: "0.7rem" }}>({pPickup})</span></span>
+                                      <span style={{ color: "#1c7c31", fontWeight: "bold", margin: "0 6px" }}>→</span>
+                                      <span><strong>{getCity(pDrop)}</strong> <span style={{ color: "#94a3b8", fontSize: "0.7rem" }}>({pDrop})</span></span>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
-                          <div className="mr-booking-actions">
-                            {booking.user?.phone && (
-                              <a className="mr-btn-call" href={`tel:${booking.user.phone}`}>Call</a>
-                            )}
-                            {isChatAvailable(ride) && (
-                              <button
-                                className="mr-btn-chat"
-                                onClick={() => setChatModal({ rideId: ride.id, otherUser: booking.user })}
-                              >
-                                <MessageCircle size={13} />
-                                {new Date() > new Date(`${ride.date}T${ride.time}:00`)
-                                  ? ` Chat (${getChatHoursLeft(ride)}h left)`
-                                  : " Chat"
-                                }
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               )}
 

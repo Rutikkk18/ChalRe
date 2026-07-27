@@ -84,9 +84,9 @@ export default function BookingSuccess() {
                 <div className="detail-item">
                   <MapPin size={18} />
                   <div>
-                    <span className="label">Route</span>
+                    <span className="label">Booked Route</span>
                     <span className="value">
-                      {booking.ride.startLocation} → {booking.ride.endLocation}
+                      {booking.passengerPickup || booking.ride.startLocation} → {booking.passengerDrop || booking.ride.endLocation}
                     </span>
                   </div>
                 </div>
@@ -112,7 +112,7 @@ export default function BookingSuccess() {
                   <div>
                     <span className="label">Total Amount</span>
                     <span className="value">
-                      ₹{(booking.ride.price * booking.seatsBooked).toFixed(2)}
+                      ₹{((booking.bookedPrice ?? booking.ride.price) * booking.seatsBooked).toFixed(2)}
                     </span>
                   </div>
                 </div>

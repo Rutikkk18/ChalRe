@@ -133,13 +133,21 @@ export default function BookingPage() {
         order_id:    orderId,
         handler: async function (response) {
           try {
+            const basePrice = priceInfo?.calculatedPrice ?? ride.price;
             await api.post("/payments/verify", {
               rideId:            Number(ride.id),
               amount:            totalPaise,
               seats:             Number(seats),
               razorpayOrderId:   response.razorpay_order_id,
               razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature
+              razorpaySignature: response.razorpay_signature,
+              passengerPickup:   pickupName || null,
+              passengerDrop:     dropName || null,
+              pickupLat:         pickupCoords?.lat ? Number(pickupCoords.lat) : null,
+              pickupLng:         pickupCoords?.lng ? Number(pickupCoords.lng) : null,
+              dropLat:           dropCoords?.lat ? Number(dropCoords.lat) : null,
+              dropLng:           dropCoords?.lng ? Number(dropCoords.lng) : null,
+              bookedPrice:       basePrice ? Number(basePrice) : null,
             });
             navigate(`/booking/success/online`);
           } catch (err) {

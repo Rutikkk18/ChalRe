@@ -41,12 +41,24 @@ export default function RideDetails() {
 
   const noSeatsLeft = ride && Number(ride.availableSeats) <= 0;
 
-  const isPartialRoute = priceInfo?.isPartial && pickupName && dropName;
+  const firstPassengerPickup = isOwner && driverBookings.length > 0 ? driverBookings[0].passengerPickup : null;
+  const firstPassengerDrop   = isOwner && driverBookings.length > 0 ? driverBookings[0].passengerDrop   : null;
 
-  const pickupCity = pickupName?.split(",")[0]?.trim() || "";
-  const dropCity   = dropName?.split(",")[0]?.trim()   || "";
+  const effectivePickup = pickupName || firstPassengerPickup;
+  const effectiveDrop   = dropName   || firstPassengerDrop;
+
+  const isPartialRoute = !!(effectivePickup && effectiveDrop && (
+    priceInfo?.isPartial ||
+    (effectivePickup.trim() !== ride?.startLocation?.trim()) ||
+    (effectiveDrop.trim() !== ride?.endLocation?.trim())
+  ));
+
+  const pickupCity = effectivePickup?.split(",")[0]?.trim() || "";
+  const dropCity   = effectiveDrop?.split(",")[0]?.trim()   || "";
   const startCity  = ride?.startLocation?.split(",")[0]?.trim() || "";
   const endCity    = ride?.endLocation?.split(",")[0]?.trim()   || "";
+
+  const isOwner = ride?.driver?.id === user?.id;
 
   useEffect(() => { fetchRide(); }, [rideId]);
 
@@ -55,9 +67,20 @@ export default function RideDetails() {
       fetchDriverRatings();
       if (ride.driver.id !== user?.id) {
         checkBookingStatus();
+      } else {
+        fetchDriverBookings();
       }
     }
   }, [ride, user?.id]);
+
+  const fetchDriverBookings = async () => {
+    try {
+      const res = await api.get(`/rides/${rideId}/bookings`);
+      setDriverBookings(res.data?.activeBookings || []);
+    } catch (e) {
+      console.error("Failed to fetch driver bookings:", e);
+    }
+  };
 
   const checkBookingStatus = async () => {
     if (!user) return;
@@ -310,10 +333,10 @@ export default function RideDetails() {
                               background: "#f0fdf4", padding: "2px 8px",
                               borderRadius: "999px", display: "inline-block", marginBottom: "2px"
                             }}>
-                              🟢 Your boarding point
+                              🟢 {isOwner ? "Passenger Boarding Point" : "Your boarding point"}
                             </span>
                             <br />
-                            <span className="rd__place-name">{pickupName}</span>
+                            <span className="rd__place-name">{effectivePickup}</span>
                           </div>
                         )}
 
@@ -351,6 +374,69 @@ export default function RideDetails() {
                   <div className="rd__driver-chevron">›</div>
                 </div>
               </div>
+
+              {/* Driver View: Booked Passengers List */}
+              {isOwner && driverBookings.length > 0 && (
+                <div className="rd__card" style={{ marginTop: "1rem" }}>
+                  <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#1e293b", marginBottom: "0.75rem" }}>
+                    Booked Passengers ({driverBookings.length})
+                  </div>
+                  {driverBookings.map((b, idx) => {
+                    const pPickup = b.passengerPickup || ride.startLocation || "";
+                    const pDrop   = b.passengerDrop   || ride.endLocation   || "";
+                    const getCity = (addr) => addr ? addr.split(",")[0].trim() : "";
+                    return (
+                      <div key={b.id || idx} style={{
+                        background: "#f8fafc",
+                        border: "1px solid #e2e8f0",
+                        borderRadius: "8px",
+                        padding: "0.75rem",
+                        marginBottom: "0.5rem"
+                      }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.4rem" }}>
+                          <div>
+                            <strong style={{ color: "#0f172a", fontSize: "0.9rem" }}>{b.user?.name || "Passenger"}</strong>
+                            <div style={{ fontSize: "0.78rem", color: "#64748b" }}>
+                              {b.seatsBooked} {b.seatsBooked === 1 ? "seat" : "seats"} · {b.paymentMethod === "ONLINE" ? "ONLINE" : "CASH"}
+                            </div>
+                          </div>
+                          {b.user?.phone && (
+                            <a href={`tel:${b.user.phone}`} style={{
+                              padding: "4px 10px",
+                              borderRadius: "6px",
+                              background: "#f0fdf4",
+                              border: "1px solid #86efac",
+                              color: "#166534",
+                              fontSize: "0.78rem",
+                              textDecoration: "none",
+                              fontWeight: 600
+                            }}>
+                              Call
+                            </a>
+                          )}
+                        </div>
+                        <div style={{
+                          background: "#ffffff",
+                          border: "1px solid #cbd5e1",
+                          borderRadius: "6px",
+                          padding: "0.4rem 0.6rem",
+                          fontSize: "0.75rem",
+                          marginTop: "0.4rem"
+                        }}>
+                          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "#1c7c31", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "2px" }}>
+                            Passenger Route
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <span><strong>{getCity(pPickup)}</strong> <span style={{ color: "#94a3b8", fontSize: "0.7rem" }}>({pPickup})</span></span>
+                            <span style={{ color: "#1c7c31", fontWeight: "bold", margin: "0 6px" }}>→</span>
+                            <span><strong>{getCity(pDrop)}</strong> <span style={{ color: "#94a3b8", fontSize: "0.7rem" }}>({pDrop})</span></span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
 
               {/* Ride info */}
               <div className="rd__card rd__info-card">

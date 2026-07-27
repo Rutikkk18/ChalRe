@@ -335,8 +335,8 @@ export default function MyBookings() {
                   <span className="mb-dot mb-dot--from" />
                   <div className="mb-place-text">
                     <span className="mb-place-label">From</span>
-                    <span className="mb-place-name">{getLocationName(b.ride.startLocation)}</span>
-                    <span className="mb-place-sub">{getLocationSub(b.ride.startLocation)}</span>
+                    <span className="mb-place-name">{getLocationName(b.passengerPickup || b.ride.startLocation)}</span>
+                    <span className="mb-place-sub">{getLocationSub(b.passengerPickup || b.ride.startLocation)}</span>
                   </div>
                 </div>
                 <div className="mb-route-line" />
@@ -344,8 +344,8 @@ export default function MyBookings() {
                   <span className="mb-dot mb-dot--to" />
                   <div className="mb-place-text">
                     <span className="mb-place-label">To</span>
-                    <span className="mb-place-name">{getLocationName(b.ride.endLocation)}</span>
-                    <span className="mb-place-sub">{getLocationSub(b.ride.endLocation)}</span>
+                    <span className="mb-place-name">{getLocationName(b.passengerDrop || b.ride.endLocation)}</span>
+                    <span className="mb-place-sub">{getLocationSub(b.passengerDrop || b.ride.endLocation)}</span>
                   </div>
                 </div>
               </div>
@@ -363,7 +363,7 @@ export default function MyBookings() {
                 </div>
                 <div className="mb-meta-item mb-meta-item--price">
                   <IndianRupee size={14} className="mb-meta-icon" />
-                  <span>₹{(b.ride.price * b.seatsBooked).toFixed(0)} total</span>
+                  <span>₹{((b.bookedPrice ?? b.ride.price) * b.seatsBooked).toFixed(0)} total</span>
                 </div>
                 <div className="mb-meta-item">
                   <CreditCard size={14} className="mb-meta-icon" />
@@ -389,14 +389,14 @@ export default function MyBookings() {
                 </span>
               </div>
 
-              {/* Confirm banner — appears only after ride time passes */}
+              {/* Slider Section ONLY FOR UNCONFIRMED RIDES THAT ARE DUE */}
               {shouldShowConfirmButton(b) && (
                 <div style={{
                   margin: "0.75rem 0 0",
                   padding: "0.75rem",
                   background: "#f0fdf4",
-                  border: "1px solid #86efac",
-                  borderRadius: "8px",
+                  border: "1px solid #bbf7d0",
+                  borderRadius: "12px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
@@ -435,7 +435,14 @@ export default function MyBookings() {
               <div className="mb-divider" />
 
               <div className="mb-actions">
-                <button className="mb-btn mb-btn--view" onClick={() => navigate(`/ridedetails/${b.ride.id}`)}>
+                <button className="mb-btn mb-btn--view" onClick={() => navigate(`/ridedetails/${b.ride.id}`, {
+                  state: {
+                    pickupName: b.passengerPickup || b.ride.startLocation,
+                    dropName: b.passengerDrop || b.ride.endLocation,
+                    pickupCoords: b.pickupLat && b.pickupLng ? { lat: b.pickupLat, lng: b.pickupLng } : null,
+                    dropCoords: b.dropLat && b.dropLng ? { lat: b.dropLat, lng: b.dropLng } : null,
+                  }
+                })}>
                   <Eye size={14} /> View Ride
                 </button>
 
