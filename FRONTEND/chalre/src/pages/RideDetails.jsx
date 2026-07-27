@@ -58,8 +58,6 @@ export default function RideDetails() {
   const startCity  = ride?.startLocation?.split(",")[0]?.trim() || "";
   const endCity    = ride?.endLocation?.split(",")[0]?.trim()   || "";
 
-  const isOwner = ride?.driver?.id === user?.id;
-
   useEffect(() => { fetchRide(); }, [rideId]);
 
   useEffect(() => {
