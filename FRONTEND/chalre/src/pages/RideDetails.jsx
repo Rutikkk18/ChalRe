@@ -32,6 +32,7 @@ export default function RideDetails() {
   const [driverRatings,  setDriverRatings] = useState([]);
   const [priceInfo,      setPriceInfo]     = useState(null);
   const [hasBooked,      setHasBooked]     = useState(false);
+  const [driverBookings, setDriverBookings]= useState([]);
   const isOwner = user?.id === ride?.driver?.id;
 
   // ✅ Start as true only when we expect a partial price calculation

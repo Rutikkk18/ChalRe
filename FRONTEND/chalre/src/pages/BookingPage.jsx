@@ -3,6 +3,7 @@ import { CreditCard, IndianRupee } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import api from "../api/axios";
+import { formatTime12h } from "../utils/timeFormatter";
 import "../styles/booking.css";
 
 function loadRazorpayScript() {
