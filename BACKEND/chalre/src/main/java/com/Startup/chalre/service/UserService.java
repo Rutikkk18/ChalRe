@@ -68,6 +68,16 @@ public class UserService {
         return jwtUtil.generateToken(user);
     }
 
+    // =========================
+    // GOOGLE-ONLY ACCOUNT CHECK
+    // =========================
+    public boolean isGoogleOnlyAccount(String email) {
+        return userRepository.findByEmail(email)
+                .map(user -> user.getUid() != null && !user.getUid().isBlank()
+                        && (user.getPassword() == null || user.getPassword().isBlank()))
+                .orElse(false);
+    }
+
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));

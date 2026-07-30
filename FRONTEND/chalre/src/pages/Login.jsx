@@ -70,6 +70,21 @@ export default function Login() {
       }
 
     } catch (err) {
+      // Special case: Firebase says "invalid-credential" — the email might belong
+      // to a Google-only account that has never set a password.
+      if (err?.code === "auth/invalid-credential") {
+        try {
+          const res = await api.get(`/auth/check-login-method?email=${encodeURIComponent(email)}`);
+          if (res.data?.googleOnly === true) {
+            setError(
+              "This account was created using Google Sign-In. Please continue with Google or use Forgot Password to create a password."
+            );
+            return;
+          }
+        } catch (_checkErr) {
+          // If the check call fails, fall through to the generic message below
+        }
+      }
       const errorMessage =
         handleError(err, { showAlert: false }) ||
         "Login failed. Please try again.";

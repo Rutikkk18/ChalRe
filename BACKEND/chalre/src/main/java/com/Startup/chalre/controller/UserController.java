@@ -49,6 +49,12 @@ public class UserController {
         return ResponseEntity.ok(Collections.singletonMap("token", token));
     }
 
+    @GetMapping("/check-login-method")
+    public ResponseEntity<?> checkLoginMethod(@RequestParam String email) {
+        boolean googleOnly = userService.isGoogleOnlyAccount(email);
+        return ResponseEntity.ok(Collections.singletonMap("googleOnly", googleOnly));
+    }
+
     @PostMapping("/firebase-login")
     public ResponseEntity<?> firebaseLogin(@RequestBody FirebaseLoginRequest request) {
         try {
