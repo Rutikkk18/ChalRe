@@ -33,6 +33,27 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // ── Banner rotation state ──
+  const [bannerIndex, setBannerIndex] = useState(0);
+  const [bannerVisible, setBannerVisible] = useState(true);
+
+  const bannerMessages = [
+    "🚀 Launching Soon on Google Play — Be among the first to experience ChalRe.",
+    "💚 Zero Platform Fee – Launch Phase — Drivers keep 100% of every ride they earn.",
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Fade out, swap message, fade in
+      setBannerVisible(false);
+      setTimeout(() => {
+        setBannerIndex((prev) => (prev + 1) % bannerMessages.length);
+        setBannerVisible(true);
+      }, 400);
+    }, 6500);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 120);
     window.addEventListener("scroll", onScroll);
@@ -47,29 +68,17 @@ export default function Home() {
 
         <div className="launch-banner">
           <div className="launch-banner-inner">
-            <div className="launch-banner-text">
-              <span className="launch-banner-title">{t("launchBannerTitle")}</span>
-              <span className="launch-banner-desc">{t("launchBannerDesc")}</span>
-            </div>
+            <span
+              className="launch-banner-message"
+              style={{ opacity: bannerVisible ? 1 : 0 }}
+            >
+              {bannerMessages[bannerIndex]}
+            </span>
           </div>
         </div>
 
         <h1>{t("heroTitle")}</h1>
         <p>{t("heroSubtitle")}</p>
-
-        {/* ── PLAY STORE LAUNCH CARD ── */}
-        <div className="play-launch-card">
-          <div className="play-launch-icon">📱</div>
-          <div className="play-launch-title">Launching Soon</div>
-          <div className="play-launch-platform">Google Play</div>
-          <p className="play-launch-desc">
-            Join us on launch day and be among the first to experience ChalRe.
-          </p>
-          <button className="play-launch-btn" disabled>
-            <span className="play-launch-btn-icon">▶</span>
-            Coming Soon
-          </button>
-        </div>
 
         <div className={`home-search-bar ${scrolled ? "search-sticky" : ""}`}>
           <div className="search-item location-from">
