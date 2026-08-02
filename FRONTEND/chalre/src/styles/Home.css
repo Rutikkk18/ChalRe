@@ -174,6 +174,146 @@ html, body {
 }
 
 /* ================================
+   PLAY STORE LAUNCH CARD
+================================ */
+.play-launch-card {
+  position: absolute;
+  top: 108px;
+  right: clamp(20px, 3%, 48px);
+  width: 230px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 18px;
+  padding: 22px 20px 18px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.13), 0 1.5px 6px rgba(2, 65, 16, 0.08);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 10;
+  cursor: default;
+}
+
+.play-launch-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.18), 0 3px 10px rgba(2, 65, 16, 0.12);
+}
+
+.play-launch-icon {
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.play-launch-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #024110;
+  font-family: 'Times New Roman', Times, serif;
+  line-height: 1.2;
+  margin-bottom: 3px;
+  letter-spacing: -0.01em;
+}
+
+.play-launch-platform {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1c7c31;
+  font-family: 'Times New Roman', Times, serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.play-launch-desc {
+  font-size: 12.5px;
+  color: rgba(0, 0, 0, 0.72);
+  font-family: 'Times New Roman', Times, serif;
+  line-height: 1.55;
+  margin: 0 0 16px;
+  padding: 0;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.play-launch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #024110;
+  color: #ffffff;
+  border: none;
+  border-radius: 30px;
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Times New Roman', Times, serif;
+  cursor: default;
+  opacity: 0.88;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(2, 65, 16, 0.22);
+}
+
+.play-launch-btn-icon {
+  font-size: 11px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ── Tablet: shrink card slightly ── */
+@media (max-width: 900px) {
+  .play-launch-card {
+    width: 200px;
+    top: 96px;
+    right: clamp(12px, 2%, 24px);
+    padding: 18px 16px 14px;
+  }
+
+  .play-launch-title {
+    font-size: 15px;
+  }
+
+  .play-launch-icon {
+    font-size: 28px;
+  }
+
+  .play-launch-desc {
+    font-size: 11.5px;
+  }
+}
+
+/* ── Mobile: remove absolute, flow between subtitle and search bar ── */
+@media (max-width: 600px) {
+  .play-launch-card {
+    position: static;
+    width: 90%;
+    max-width: 340px;
+    margin: 0 auto 28px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .play-launch-title {
+    font-size: 16px;
+  }
+
+  .play-launch-icon {
+    font-size: 30px;
+  }
+
+  .play-launch-desc {
+    font-size: 12.5px;
+  }
+}
+
+/* ================================
    SEARCH BAR - FULLY RESPONSIVE
 ================================ */
 .home-search-bar {

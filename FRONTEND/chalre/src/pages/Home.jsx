@@ -57,6 +57,20 @@ export default function Home() {
         <h1>{t("heroTitle")}</h1>
         <p>{t("heroSubtitle")}</p>
 
+        {/* ── PLAY STORE LAUNCH CARD ── */}
+        <div className="play-launch-card">
+          <div className="play-launch-icon">📱</div>
+          <div className="play-launch-title">Launching Soon</div>
+          <div className="play-launch-platform">Google Play</div>
+          <p className="play-launch-desc">
+            Join us on launch day and be among the first to experience ChalRe.
+          </p>
+          <button className="play-launch-btn" disabled>
+            <span className="play-launch-btn-icon">▶</span>
+            Coming Soon
+          </button>
+        </div>
+
         <div className={`home-search-bar ${scrolled ? "search-sticky" : ""}`}>
           <div className="search-item location-from">
             <LocationAutocomplete
