@@ -38,8 +38,8 @@ export default function Home() {
   const [bannerVisible, setBannerVisible] = useState(true);
 
   const bannerMessages = [
-    " Launching Soon on Google Play — Be among the first to experience ChalRe.",
-    "💚 Zero Platform Fee – Launch Phase — Drivers keep 100% of every ride they earn.",
+    "Launching Soon on Google Play — Be among the first to experience ChalRe.",
+    "Zero Platform Fee – Launch Phase — Drivers keep 100% of every ride they earn.",
   ];
 
   useEffect(() => {
