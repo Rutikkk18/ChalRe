@@ -1040,14 +1040,19 @@ html, body {
 
 .launch-banner-message {
   font-family: 'Times New Roman', Times, serif;
-  font-size: clamp(13px, 1.6vw, 15px);
+  font-size: clamp(13px, 1.6vw, 14.5px);
   font-weight: 600;
-  color: #0b7923;
+  /* Maintenance notice colour — swap back to #0b7923 when rotating banner is restored */
+  color: #7a4f00;
   letter-spacing: 0.02em;
   text-align: center;
   transition: opacity 0.4s ease;
   display: inline-block;
-  line-height: 1.4;
+  line-height: 1.5;
+  background: rgba(255, 200, 80, 0.18);
+  border: 1px solid rgba(200, 140, 0, 0.25);
+  border-radius: 30px;
+  padding: 5px 18px;
 }
 
 /* ================================
@@ -1115,3 +1120,98 @@ html, body {
     font-size: 11.5px;
   }
 }
+
+/* ================================
+   HOMEPAGE BLOG PREVIEW SECTION
+================================ */
+.home-blog-preview {
+  padding: clamp(56px, 8vw, 88px) clamp(16px, 5vw, 40px);
+  background: #f9fdf9;
+  border-top: 1.5px solid rgba(28, 124, 49, 0.1);
+  border-bottom: 1.5px solid rgba(28, 124, 49, 0.1);
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.home-blog-preview__header {
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto clamp(32px, 5vw, 52px);
+}
+
+.home-blog-preview__title {
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 700;
+  color: #1f3b1f;
+  margin: 0 0 14px;
+  line-height: 1.25;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.home-blog-preview__subtitle {
+  font-size: clamp(15px, 2vw, 17px);
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.home-blog-preview__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(18px, 3vw, 28px);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+  .home-blog-preview__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .home-blog-preview__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.home-blog-preview__cta {
+  text-align: center;
+  margin-top: clamp(32px, 5vw, 48px);
+}
+
+.home-blog-preview__cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #024110;
+  color: #ffffff;
+  border: none;
+  border-radius: 100px;
+  padding: 13px 30px;
+  font-size: clamp(14px, 1.8vw, 15.5px);
+  font-weight: 700;
+  font-family: 'Times New Roman', Times, serif;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(2, 65, 16, 0.22);
+}
+
+.home-blog-preview__cta-btn:hover {
+  background: #149349;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(2, 65, 16, 0.3);
+}
+
+.home-blog-preview__cta-btn:active {
+  transform: translateY(0);
+}
+
+.home-blog-preview__cta-arrow {
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.home-blog-preview__cta-btn:hover .home-blog-preview__cta-arrow {
+  transform: translateX(4px);
+}

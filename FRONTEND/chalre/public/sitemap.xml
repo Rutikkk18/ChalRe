@@ -1,16 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ChalRe Sitemap — https://chalre.in/sitemap.xml
+  ================================================
+  RULES:
+  - Include only public, non-authenticated, non-admin pages.
+  - Do NOT include: /login, /register, /dashboard, /offer, /myrides,
+    /mybookings, /inbox, /profile, /notifications, /verification,
+    /verify-email, /account-deletion, /booking/*, /ridedetails/*, /admin/*.
+  - changefreq: how often content typically changes.
+  - priority: relative importance to crawlers (0.0 – 1.0).
+  - lastmod: update to today's date whenever you publish a new version of a page.
+
+  TO ADD A NEW PAGE:
+  Copy any <url> block below, update <loc>, <lastmod>, <changefreq>,
+  and <priority> as appropriate, then place it in the correct section.
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  <!-- ═══════════════════════════════
+       CORE PAGES
+       ═══════════════════════════════ -->
+
+  <!-- Homepage -->
   <url>
     <loc>https://chalre.in/</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Ride search — public and crawlable -->
+  <url>
+    <loc>https://chalre.in/search</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ═══════════════════════════════
+       INFORMATIONAL PAGES
+       ═══════════════════════════════ -->
+
+  <url>
+    <loc>https://chalre.in/about</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://chalre.in/login</loc>
+    <loc>https://chalre.in/help-center</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://chalre.in/signup</loc>
+    <loc>https://chalre.in/careers</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://chalre.in/scam</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ═══════════════════════════════
+       LEGAL PAGES
+       ═══════════════════════════════ -->
+
+  <url>
+    <loc>https://chalre.in/terms</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://chalre.in/privacy-policy</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- ═══════════════════════════════
+       BLOG — INDEX
+       ═══════════════════════════════ -->
+
+  <url>
+    <loc>https://chalre.in/blog</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- ═══════════════════════════════
+       BLOG — INDIVIDUAL POSTS
+       Add a new <url> block here each time a post is published.
+       ═══════════════════════════════ -->
+
+  <url>
+    <loc>https://chalre.in/blog/cheapest-travel-between-kolhapur-and-gargoti</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://chalre.in/blog/best-ride-sharing-app-in-maharashtra</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://chalre.in/blog/how-students-can-save-money-on-daily-travel</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://chalre.in/blog/why-ride-sharing-is-better-for-daily-commute</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://chalre.in/blog/how-drivers-can-earn-more-by-sharing-empty-seats</loc>
+    <lastmod>2025-08-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 
 </urlset>

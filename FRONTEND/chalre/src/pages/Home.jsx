@@ -8,10 +8,18 @@ import { ShieldCheck, Compass, Lock, Car, MapPin, Route, ArrowRight, User, Plus,
 import CustomDatePicker from "../components/CustomDatePicker";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
+import { getBlogPosts } from "../data/blogs";
+import BlogCard from "../components/BlogCard";
 
 export default function Home() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+
+  const [latestPosts, setLatestPosts] = useState([]);
+
+  useEffect(() => {
+    getBlogPosts().then((posts) => setLatestPosts(posts.slice(0, 3)));
+  }, []);
 
   const [search, setSearch] = useState({
     from: "",
@@ -33,26 +41,26 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // ── Banner rotation state ──
-  const [bannerIndex, setBannerIndex] = useState(0);
-  const [bannerVisible, setBannerVisible] = useState(true);
+  // ── Banner rotation state (temporarily disabled — restore when ready) ──
+  // const [bannerIndex, setBannerIndex] = useState(0);
+  // const [bannerVisible, setBannerVisible] = useState(true);
 
-  const bannerMessages = [
-    "Launching Soon on Google Play — Be among the first to experience ChalRe.",
-    "Zero Platform Fee – Launch Phase — Drivers keep 100% of every ride they earn.",
-  ];
+  // const bannerMessages = [
+  //   "Launching Soon on Google Play — Be among the first to experience ChalRe.",
+  //   "Zero Platform Fee – Launch Phase — Drivers keep 100% of every ride they earn.",
+  // ];
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Fade out, swap message, fade in
-      setBannerVisible(false);
-      setTimeout(() => {
-        setBannerIndex((prev) => (prev + 1) % bannerMessages.length);
-        setBannerVisible(true);
-      }, 400);
-    }, 6500);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     // Fade out, swap message, fade in
+  //     setBannerVisible(false);
+  //     setTimeout(() => {
+  //       setBannerIndex((prev) => (prev + 1) % bannerMessages.length);
+  //       setBannerVisible(true);
+  //     }, 400);
+  //   }, 6500);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 120);
@@ -68,11 +76,9 @@ export default function Home() {
 
         <div className="launch-banner">
           <div className="launch-banner-inner">
-            <span
-              className="launch-banner-message"
-              style={{ opacity: bannerVisible ? 1 : 0 }}
-            >
-              {bannerMessages[bannerIndex]}
+            {/* Static maintenance notice — rotating banner commented out above */}
+            <span className="launch-banner-message">
+              ⚠️  Website under maintenance — Some features may not work as expected. We’ll notify you with the next update.
             </span>
           </div>
         </div>
@@ -472,6 +478,69 @@ export default function Home() {
         </div>
         <div className="divider gradient" />
       </div>
+
+      {/* ── LATEST FROM THE BLOG ── */}
+      {latestPosts.length > 0 && (
+        <motion.section
+          className="home-blog-preview"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.1, delayChildren: 0 } },
+          }}
+        >
+          <motion.div
+            className="home-blog-preview__header"
+            variants={{
+              hidden: { opacity: 0, y: 28 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0, 0, 0.2, 1] } },
+            }}
+          >
+            <h2 className="home-blog-preview__title">Latest from the ChalRe Blog</h2>
+            <p className="home-blog-preview__subtitle">
+              Travel tips, student commuting guides, and ride-sharing insights from the ChalRe team.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="home-blog-preview__grid"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.1 } },
+            }}
+          >
+            {latestPosts.map((post) => (
+              <motion.div
+                key={post.id}
+                variants={{
+                  hidden: { opacity: 0, y: 36, scale: 0.97 },
+                  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.75, ease: [0, 0, 0.2, 1] } },
+                }}
+              >
+                <BlogCard post={post} />
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <motion.div
+            className="home-blog-preview__cta"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0, 0, 0.2, 1] } },
+            }}
+          >
+            <button
+              className="home-blog-preview__cta-btn"
+              onClick={() => navigate("/blog")}
+            >
+              View All Articles
+              <ArrowRight size={16} className="home-blog-preview__cta-arrow" />
+            </button>
+          </motion.div>
+        </motion.section>
+      )}
 
       <Footer />
     </div>

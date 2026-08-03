@@ -23,6 +23,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import HelpCenter from "./pages/HelpCenter";
 import AboutChalRe from "./pages/AboutChalRe";
 import JoinOurTeam from "./pages/JoinOurTeam";
+import BlogList from "./pages/Blog/BlogList";
+import BlogPost from "./pages/Blog/BlogPost";
 import ScrollToTop from "./components/ScrollToTop";
 
 // Admin Imports
@@ -131,6 +133,8 @@ export default function App() {
           <Route path="/help-center" element={<HelpCenter />} />
           <Route path="/about" element={<AboutChalRe />} />
           <Route path="/careers" element={<JoinOurTeam />} />
+          <Route path="/blog" element={<BlogList />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
         </Route>
 
         {/* ADMIN PANEL ROUTES */}

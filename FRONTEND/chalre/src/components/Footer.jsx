@@ -76,6 +76,7 @@ export default function Footer() {
           <div className="footer-links">
             <button onClick={() => navigate("/about")}>{t("aboutChalRe")}</button>
             <button onClick={() => navigate("/about")}>{t("howItWorks")}</button>
+            <button onClick={() => navigate("/blog")}>Blog</button>
             <button onClick={() => navigate("/help-center")}>{t("helpSupport")}</button>
             <button className="footer-highlight" onClick={() => navigate("/careers")}>{t("joinTeam")}</button>
           </div>

@@ -28,6 +28,7 @@ export default function Navbar() {
         {currentPath !== "/search" && <Link to="/search">{t("navSearchRides")}</Link>}
         {currentPath !== "/offer" && <Link to="/offer">{t("navOfferRide")}</Link>}
 
+
         {!user && currentPath !== "/login" && (
           <Link to="/login">{t("navLogin")}</Link>
         )}
