@@ -21,6 +21,21 @@ export default function AdminLayout() {
                         <Link to="/admin/dashboard" className={isActive("/admin/dashboard")}>
                             Dashboard
                         </Link>
+                        <Link to="/admin/analytics" className={location.pathname.startsWith("/admin/analytics") ? "admin-link active" : "admin-link"}>
+                            📊 Analytics
+                        </Link>
+                        {location.pathname.startsWith("/admin/analytics") && (
+                          <div style={{ paddingLeft: "12px", borderLeft: "2px solid #024110", margin: "4px 0 8px 8px" }}>
+                            <Link to="/admin/analytics" className={isActive("/admin/analytics")}>Overview</Link>
+                            <Link to="/admin/analytics/users" className={isActive("/admin/analytics/users")}>Users</Link>
+                            <Link to="/admin/analytics/rides" className={isActive("/admin/analytics/rides")}>Rides</Link>
+                            <Link to="/admin/analytics/bookings" className={isActive("/admin/analytics/bookings")}>Bookings</Link>
+                            <Link to="/admin/analytics/payments" className={isActive("/admin/analytics/payments")}>Payments</Link>
+                            <Link to="/admin/analytics/routes" className={isActive("/admin/analytics/routes")}>Routes</Link>
+                            <Link to="/admin/analytics/website" className={isActive("/admin/analytics/website")}>Website</Link>
+                            <Link to="/admin/analytics/blog" className={isActive("/admin/analytics/blog")}>Blog</Link>
+                          </div>
+                        )}
                         <Link to="/admin/verifications" className={isActive("/admin/verifications") || location.pathname.startsWith("/admin/verifications") ? "admin-link active" : "admin-link"}>
                             Driver Verifications
                         </Link>

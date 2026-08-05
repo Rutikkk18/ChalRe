@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
 import { getBlogPosts } from "../data/blogs";
 import BlogCard from "../components/BlogCard";
+import { logSearch, logOfferRideClicked, logFaqExpanded } from "../analytics/analyticsService"; // ✅ analytics observer
 
 export default function Home() {
   const navigate = useNavigate();
@@ -163,6 +164,7 @@ export default function Home() {
               const fromCoords = fromCoordsRef.current;
               const toCoords   = toCoordsRef.current;
               console.log("Home search coords:", { fromCoords, toCoords });
+              logSearch(search.from, search.to, search.date, search.passengers); // ✅ analytics search event
               navigate("/search", {
                 state: {
                   from:       search.from,
@@ -279,7 +281,10 @@ export default function Home() {
 
         <motion.button
           className="btn-hssr"
-          onClick={() => navigate("/offer")}
+          onClick={() => {
+            logOfferRideClicked("home_cta"); // ✅ CTA click event
+            navigate("/offer");
+          }}
           variants={{
             hidden: { opacity: 0, y: 40, scale: 0.97 },
             visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0, 0, 0.2, 1] } },
@@ -442,7 +447,10 @@ export default function Home() {
               <div key={i} className="faq-item">
                 <button
                   className={`faq-question${isOpen ? " faq-question--open" : ""}`}
-                  onClick={() => setActiveIndex(isOpen ? null : i)}
+                  onClick={() => {
+                    if (!isOpen) logFaqExpanded(item.q); // ✅ FAQ expansion event
+                    setActiveIndex(isOpen ? null : i);
+                  }}
                   aria-expanded={isOpen}
                 >
                   <span>{item.q}</span>

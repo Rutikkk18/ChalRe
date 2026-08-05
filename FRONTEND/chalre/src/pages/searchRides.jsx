@@ -9,6 +9,7 @@ import RideCard from "../components/RideCard";
 import { useLanguage } from "../context/LanguageContext";
 import "../styles/SearchRide.css";
 import { ACTIVE_RIDE_THRESHOLD, INITIAL_LOAD, LOAD_MORE_BATCH } from "../constants";
+import { logSearch, logSearchNoResults } from "../analytics/analyticsService"; // ✅ analytics observer
 
 const vehicleModels = {
   car: ["SEDAN", "SUV", "HATCHBACK"],
@@ -253,6 +254,11 @@ export default function SearchRides() {
 
       // ── Strict overwrite — never merge with stale data ──
       setAllRides(fetchedRides);
+
+      logSearch(fromVal, toVal, dateVal, seatsVal); // ✅ search event
+      if (fetchedRides.length === 0) {
+        logSearchNoResults(fromVal, toVal, dateVal, vehicleCategory); // ✅ zero results event
+      }
 
       applyClientFilters(fetchedRides, {
         minPrice, maxPrice, vehicleCategory, carType,

@@ -12,6 +12,7 @@ import "../styles/auth.css";
 import { AuthContext } from "../context/AuthContext";
 import api from "../api/axios";
 import { handleError } from "../utils/errorHandler";
+import { logSignUp } from "../analytics/analyticsService"; // ✅ analytics observer
 
 export default function Register() {
   const { login } = useContext(AuthContext);
@@ -65,6 +66,7 @@ export default function Register() {
       sessionStorage.setItem("pendingPhone", form.phone);
 
       navigate("/verify-email");
+      logSignUp("email"); // ✅ fire-and-forget, placed after navigate, never throws
     } catch (err) {
       const message =
         err?.code === "auth/email-already-in-use"
@@ -96,6 +98,7 @@ export default function Register() {
       const token = res.data.token;
 
       await login(token);
+      logSignUp("google"); // ✅ fire-and-forget, never throws
 
       const storedUser = JSON.parse(localStorage.getItem("user"));
 

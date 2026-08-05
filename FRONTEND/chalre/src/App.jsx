@@ -27,7 +27,6 @@ import BlogList from "./pages/Blog/BlogList";
 import BlogPost from "./pages/Blog/BlogPost";
 import ScrollToTop from "./components/ScrollToTop";
 
-// Admin Imports
 import AdminRoute from "./utils/AdminRoute";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -37,7 +36,19 @@ import PayoutTracker from "./pages/admin/PayoutTracker";
 import AccountDeletion from "./pages/AccountDeletion";
 import DeletionRequests from "./pages/admin/DeletionRequests";
 
+// Analytics — observer only, never affects existing routes
+import { usePageTracking } from "./analytics/usePageTracking";
+import AnalyticsOverview  from "./pages/admin/analytics/AnalyticsOverview";
+import AnalyticsUsers     from "./pages/admin/analytics/AnalyticsUsers";
+import AnalyticsRides     from "./pages/admin/analytics/AnalyticsRides";
+import AnalyticsBookings  from "./pages/admin/analytics/AnalyticsBookings";
+import AnalyticsPayments  from "./pages/admin/analytics/AnalyticsPayments";
+import AnalyticsRoutes    from "./pages/admin/analytics/AnalyticsRoutes";
+import AnalyticsWebsite   from "./pages/admin/analytics/AnalyticsWebsite";
+import AnalyticsBlog      from "./pages/admin/analytics/AnalyticsBlog";
+
 export default function App() {
+  usePageTracking(); // ✅ Analytics observer — passive, fire-and-forget, never throws
   return (
     <>
       <ScrollToTop />
@@ -152,6 +163,16 @@ export default function App() {
           <Route path="verifications/:userId" element={<VerificationDetail />} />
           <Route path="payouts" element={<PayoutTracker />} />
           <Route path="deletion-requests" element={<DeletionRequests />} />
+
+          {/* ANALYTICS — new pages, existing admin routes unchanged */}
+          <Route path="analytics"          element={<AnalyticsOverview />} />
+          <Route path="analytics/users"    element={<AnalyticsUsers />} />
+          <Route path="analytics/rides"    element={<AnalyticsRides />} />
+          <Route path="analytics/bookings" element={<AnalyticsBookings />} />
+          <Route path="analytics/payments" element={<AnalyticsPayments />} />
+          <Route path="analytics/routes"   element={<AnalyticsRoutes />} />
+          <Route path="analytics/website"  element={<AnalyticsWebsite />} />
+          <Route path="analytics/blog"     element={<AnalyticsBlog />} />
         </Route>
 
         <Route path="/login" element={<Login />} />

@@ -5,6 +5,13 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import api from "../api/axios";
 import { formatTime12h } from "../utils/timeFormatter";
 import "../styles/booking.css";
+import {
+  logBeginCheckout,
+  logPaymentInitiated,
+  logPaymentSuccess,
+  logPaymentCancelled,
+  logPaymentFailed,
+} from "../analytics/analyticsService"; // ✅ analytics observer
 
 function loadRazorpayScript() {
   return new Promise((resolve) => {
@@ -51,6 +58,15 @@ export default function BookingPage() {
       if (Number(res.data?.availableSeats) <= 0) {
         setSeats(0);
         setError("No seats available for this ride.");
+      } else {
+        // ✅ Funnel step 1: booking page loaded with ride data
+        logBeginCheckout(
+          id,
+          res.data.startLocation,
+          res.data.endLocation,
+          res.data.price,
+          1
+        );
       }
     } catch (err) {
       console.error(err);
@@ -125,6 +141,9 @@ export default function BookingPage() {
         return;
       }
 
+      // ✅ Funnel step 2: Razorpay order created, modal about to open
+      logPaymentInitiated(id, totalPaise / 100);
+
       const options = {
         key:         razorpayKey,
         amount:      amount,
@@ -151,6 +170,8 @@ export default function BookingPage() {
               bookedPrice:       basePrice ? Number(basePrice) : null,
             });
             navigate(`/booking/success/online`);
+            // ✅ Funnel step 3: payment verified, booking confirmed
+            logPaymentSuccess(id, null, totalPaise / 100, seats);
           } catch (err) {
             const msg = err.response?.data ||
               "Payment verification failed. Contact support if amount was deducted.";
@@ -164,6 +185,7 @@ export default function BookingPage() {
         modal: {
           ondismiss: function () {
             setError("Payment cancelled.");
+            logPaymentCancelled(id, totalPaise / 100); // ✅ funnel drop-off
             setLoading(false);
           }
         }
@@ -179,6 +201,7 @@ export default function BookingPage() {
         typeof msg === "string" ? msg :
         msg?.message || msg?.error || "Payment initiation failed."
       );
+      logPaymentFailed(id, 0, err.message || "initiation_failed"); // ✅ funnel error
       setLoading(false);
     }
   };

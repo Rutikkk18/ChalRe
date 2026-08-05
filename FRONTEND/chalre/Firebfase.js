@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth"; // ✅ ADDED: GoogleAuthProvider
 import { getMessaging } from "firebase/messaging";
+import { getAnalytics, isSupported } from "firebase/analytics"; // ✅ Analytics — safe init
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyTFvOsOkuvuQu_xj4UlmLg8FcdpSKrPA",
@@ -16,3 +17,9 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const messaging = getMessaging(app);
 export const googleProvider = new GoogleAuthProvider(); // ✅ ADDED
+
+// Analytics — resolves to Analytics instance or null — NEVER throws
+// isSupported() returns false in unsupported browsers / SSR environments
+export const analyticsPromise = isSupported()
+  .then((yes) => (yes ? getAnalytics(app) : null))
+  .catch(() => null);

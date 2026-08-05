@@ -5,6 +5,7 @@ import "../styles/offerRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import RoutePreviewPanel from "../components/RoutePreviewPanel";
 import { useLanguage } from "../context/LanguageContext";
+import { logRideCreated } from "../analytics/analyticsService"; // ✅ analytics observer
 import heroImage from "../assets/ride-sharing-scene.png";
 
 function suggestEndTime(startTime) {
@@ -186,6 +187,7 @@ export default function OfferRide() {
 
       if (response.status === 200) {
         setSuccess(t("orSuccess"));
+        logRideCreated(form.from, form.to, form.price, vehicleCategory); // ✅ fire-and-forget
         setForm({ from:"",to:"",date:"",time:"",endTime:"",seats:1,price:"",carType:"",genderPreference:"",note:"" });
         setVehicleCategory("");
         setRouteOptions([]);

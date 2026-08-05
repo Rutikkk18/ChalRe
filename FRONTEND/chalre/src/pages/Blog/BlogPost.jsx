@@ -12,6 +12,7 @@ import BlogMeta from "../../components/BlogMeta";
 import BlogCard from "../../components/BlogCard";
 import Footer from "../../components/Footer";
 import "../../styles/blog.css";
+import { logBlogOpened } from "../../analytics/analyticsService"; // ✅ analytics observer
 
 const SITE_URL = "https://chalre.in";
 
@@ -129,6 +130,7 @@ export default function BlogPost() {
         return;
       }
       setPost(found);
+      logBlogOpened(found.slug, found.title, found.category); // ✅ blog article event
       getRelatedPosts(found.slug, found.category).then(setRelatedPosts);
       setLoading(false);
     });

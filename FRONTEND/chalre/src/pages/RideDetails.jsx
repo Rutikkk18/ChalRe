@@ -6,6 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 import "../styles/rideDetails.css";
 import { Users, IndianRupee, Phone, CheckCircle, Star, CreditCard, Car, Bike } from "lucide-react";
 import { formatTime12h } from "../utils/timeFormatter";
+import { logViewRideDetails } from "../analytics/analyticsService"; // ✅ analytics observer
 
 export default function RideDetails() {
 
@@ -110,6 +111,7 @@ export default function RideDetails() {
     try {
       const res = await api.get(`/rides/${rideId}`);
       setRide(res.data);
+      logViewRideDetails(rideId, res.data?.startLocation, res.data?.endLocation, res.data?.price); // ✅ view ride event
       setSeats(Number(res.data?.availableSeats) > 0 ? 1 : 0);
       if (Number(res.data?.availableSeats) <= 0) setErr("No seats available for this ride.");
     } catch (e) {

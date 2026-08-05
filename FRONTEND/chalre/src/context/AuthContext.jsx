@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import api from "../api/axios";
+import { setAnalyticsUser, clearAnalyticsUser } from "../analytics/analyticsService"; // ✅ analytics observer
 
 export const AuthContext = createContext(null);
 
@@ -20,6 +21,7 @@ export function AuthProvider({ children }) {
       const res = await api.get("/auth/me");
       setUser(res.data);
       localStorage.setItem("user", JSON.stringify(res.data));
+      setAnalyticsUser(res.data.id, res.data.role); // ✅ fire-and-forget, only id+role, no PII
     } catch (err) {
       console.error("Failed to fetch user:", err);
       setUser(null);
@@ -47,6 +49,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    clearAnalyticsUser(); // ✅ fire-and-forget, clears analytics identity
   };
 
   return (

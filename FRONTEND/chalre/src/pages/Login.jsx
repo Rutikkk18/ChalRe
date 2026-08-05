@@ -8,6 +8,7 @@ import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { Eye, EyeOff } from "lucide-react";
 import "../styles/auth.css";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { logLogin } from "../analytics/analyticsService"; // ✅ analytics observer
 
 
 export default function Login() {
@@ -57,6 +58,7 @@ export default function Login() {
       const token = res.data.token;
 
       await login(token);
+      logLogin("email"); // ✅ fire-and-forget, never throws
 
       sessionStorage.removeItem("pendingName");
       sessionStorage.removeItem("pendingPhone");
@@ -134,6 +136,7 @@ export default function Login() {
       const token = res.data.token;
 
       await login(token);
+      logLogin("google"); // ✅ fire-and-forget, never throws
 
       const storedUser = JSON.parse(localStorage.getItem("user"));
 
