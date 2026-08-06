@@ -16,7 +16,7 @@ public class AnalyticsOverviewResponse {
     private long totalBookings;
     private double totalRevenue;   // in rupees
 
-    private long activeRides;
+    private long liveBookableRides; // ✅ Renamed from activeRides (uses RideService.isRideLiveAndBookable)
     private long cancelledRides;
 
     private long confirmedBookings;

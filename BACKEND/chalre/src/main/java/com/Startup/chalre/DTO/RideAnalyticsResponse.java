@@ -15,7 +15,7 @@ import java.util.Map;
 public class RideAnalyticsResponse {
 
     private long totalRides;
-    private long activeRides;
+    private long liveBookableRides; // ✅ Renamed from activeRides (uses RideService.isRideLiveAndBookable)
     private long cancelledRides;
     private double averagePrice;
 

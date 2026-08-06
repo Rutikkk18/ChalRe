@@ -45,8 +45,15 @@ public class AnalyticsService {
         long totalRides    = rideRepository.count();
         long totalBookings = bookingRepository.count();
 
-        long activeRides    = rideRepository.findByStatus("ACTIVE").size();
-        long cancelledRides = rideRepository.findByStatus("CANCELLED").size();
+        LocalDateTime currentIstTime = LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
+        List<com.Startup.chalre.entity.Ride> allRides = rideRepository.findAll();
+
+        long liveBookableRides = allRides.stream()
+                .filter(r -> RideService.isRideLiveAndBookable(r, currentIstTime))
+                .count();
+        long cancelledRides = allRides.stream()
+                .filter(r -> "CANCELLED".equals(r.getStatus()))
+                .count();
 
         long confirmedBookings = bookingRepository.findAll().stream()
                 .filter(b -> "BOOKED".equals(b.getStatus()))
@@ -87,7 +94,7 @@ public class AnalyticsService {
                 .totalRides(totalRides)
                 .totalBookings(totalBookings)
                 .totalRevenue(totalRevenue)
-                .activeRides(activeRides)
+                .liveBookableRides(liveBookableRides)
                 .cancelledRides(cancelledRides)
                 .confirmedBookings(confirmedBookings)
                 .cancelledBookings(cancelledBookings)
@@ -155,9 +162,14 @@ public class AnalyticsService {
 
         List<com.Startup.chalre.entity.Ride> rides = rideRepository.findAll();
 
-        long total     = rides.size();
-        long active    = rides.stream().filter(r -> "ACTIVE".equals(r.getStatus())).count();
-        long cancelled = rides.stream().filter(r -> "CANCELLED".equals(r.getStatus())).count();
+        LocalDateTime currentIstTime = LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
+        long total             = rides.size();
+        long liveBookableRides = rides.stream()
+                .filter(r -> RideService.isRideLiveAndBookable(r, currentIstTime))
+                .count();
+        long cancelled         = rides.stream()
+                .filter(r -> "CANCELLED".equals(r.getStatus()))
+                .count();
 
         double avgPrice = rides.stream()
                 .mapToDouble(com.Startup.chalre.entity.Ride::getPrice)
@@ -195,7 +207,7 @@ public class AnalyticsService {
 
         return RideAnalyticsResponse.builder()
                 .totalRides(total)
-                .activeRides(active)
+                .liveBookableRides(liveBookableRides)
                 .cancelledRides(cancelled)
                 .averagePrice(avgPrice)
                 .vehicleTypeBreakdown(vehicleBreakdown)

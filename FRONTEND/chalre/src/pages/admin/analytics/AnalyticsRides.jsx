@@ -65,7 +65,7 @@ export default function AnalyticsRides() {
   }
 
   const rideStatusData = [
-    { name: "Active", value: data.activeRides },
+    { name: "Live Bookable", value: data.liveBookableRides },
     { name: "Cancelled", value: data.cancelledRides },
   ];
 
@@ -81,7 +81,7 @@ export default function AnalyticsRides() {
 
       <div className="kpi-grid">
         <KPICard label="Total Rides" value={data.totalRides} icon="🚗" />
-        <KPICard label="Active Rides" value={data.activeRides} icon="✅" />
+        <KPICard label="Live Bookable Rides" value={data.liveBookableRides} icon="✅" />
         <KPICard label="Cancelled Rides" value={data.cancelledRides} icon="🚫" />
         <KPICard label="Average Ride Price" value={`₹${Math.round(data.averagePrice || 0)}`} icon="🏷️" />
       </div>

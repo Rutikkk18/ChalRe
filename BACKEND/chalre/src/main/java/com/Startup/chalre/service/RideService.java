@@ -865,6 +865,32 @@ public class RideService {
         return null;
     }
 
+    /**
+     * Helper method to evaluate if a ride is operationally live and open for booking.
+     * Criteria:
+     *   1. Status == "ACTIVE"
+     *   2. Available seats > 0
+     *   3. Current time <= calculateRideEndDateTime(ride) + 30 minutes
+     */
+    public static boolean isRideLiveAndBookable(Ride ride, java.time.LocalDateTime currentIstTime) {
+        if (ride == null || !"ACTIVE".equalsIgnoreCase(ride.getStatus())) {
+            return false;
+        }
+        if (ride.getAvailableSeats() <= 0) {
+            return false;
+        }
+        try {
+            java.time.LocalDateTime expiryDateTime = calculateRideEndDateTime(ride).plusMinutes(30);
+            return !currentIstTime.isAfter(expiryDateTime);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isRideLiveAndBookable(Ride ride) {
+        return isRideLiveAndBookable(ride, java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")));
+    }
+
     public static java.time.LocalDateTime calculateRideEndDateTime(Ride ride) {
         if (ride == null || ride.getDate() == null || ride.getTime() == null) {
             return java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
