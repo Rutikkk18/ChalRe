@@ -178,6 +178,20 @@ public class RazorpayPaymentService {
         booking.setStatus("COMPLETED");
         bookingRepository.save(booking);
 
+        // Fix 1: After this booking is marked COMPLETED, check if ALL bookings
+        // for the same ride are now COMPLETED. Only then mark the ride itself COMPLETED.
+        Ride confirmedRide = payment.getRide();
+        if (confirmedRide != null) {
+            List<Booking> allRideBookings = bookingRepository.findByRide(confirmedRide);
+            boolean allBookingsCompleted = !allRideBookings.isEmpty() &&
+                    allRideBookings.stream().allMatch(b -> "COMPLETED".equals(b.getStatus()));
+            if (allBookingsCompleted) {
+                confirmedRide.setStatus("COMPLETED");
+                rideRepository.save(confirmedRide);
+                logger.info("Ride {} marked COMPLETED — all bookings confirmed.", confirmedRide.getId());
+            }
+        }
+
         notificationService.sendNotification(
                 payment.getRide().getDriver(),
                 "Payment Released",
@@ -187,7 +201,7 @@ public class RazorpayPaymentService {
         );
 
         logger.info("Payment released - PaymentId: {}", payment.getId());
-        return "Ride confirmed. Payment released to driver.";
+        return "Ride confirmed. Payment released to driver";
     }
 
     private boolean verifyPaymentSignature(String razorpayOrderId,
@@ -236,6 +250,18 @@ public class RazorpayPaymentService {
 
                     payment.setReleasedAt(now);
                     paymentRepository.save(payment);
+
+                    // Fix 1: After auto-releasing, check if ALL bookings for this ride
+                    // are now COMPLETED. Only then mark the ride itself COMPLETED.
+                    Ride autoRide = payment.getRide();
+                    List<Booking> allRideBookings = bookingRepository.findByRide(autoRide);
+                    boolean allBookingsCompleted = !allRideBookings.isEmpty() &&
+                            allRideBookings.stream().allMatch(b -> "COMPLETED".equals(b.getStatus()));
+                    if (allBookingsCompleted) {
+                        autoRide.setStatus("COMPLETED");
+                        rideRepository.save(autoRide);
+                        logger.info("Ride {} marked COMPLETED — all bookings auto-released.", autoRide.getId());
+                    }
 
                     notificationService.sendNotification(
                             payment.getRide().getDriver(),

@@ -463,7 +463,7 @@ export default function MyBookings() {
                   </button>
                 )}
 
-                {activeTab === "past" && b.status === "BOOKED" && !ratedRides.has(b.ride.id) && (
+                {activeTab === "past" && (b.status === "BOOKED" || b.status === "COMPLETED") && !ratedRides.has(b.ride.id) && (
                   <button className="mb-btn mb-btn--rate" onClick={() => handleRateClick(b)}>
                     <Star size={14} /> Rate Driver
                   </button>
