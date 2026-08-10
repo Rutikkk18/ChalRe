@@ -122,10 +122,12 @@
     transition: all 0.3s ease;
 }
 
-.jot-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.12);
-    border-color: #28a745;
+@media (hover: hover) {
+    .jot-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(40, 167, 69, 0.12);
+        border-color: #28a745;
+    }
 }
 
 .jot-card h3 {
@@ -162,10 +164,12 @@
     line-height: 1.5;
 }
 
-.jot-tech-list li:hover {
-    transform: translateX(5px);
-    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.1);
-    background: #fff;
+@media (hover: hover) {
+    .jot-tech-list li:hover {
+        transform: translateX(5px);
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.1);
+        background: #fff;
+    }
 }
 
 /* ---------- CULTURE GRID ---------- */
@@ -184,9 +188,11 @@
     transition: all 0.3s ease;
 }
 
-.culture-item:hover {
-    border-color: #28a745;
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.08);
+@media (hover: hover) {
+    .culture-item:hover {
+        border-color: #28a745;
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.08);
+    }
 }
 
 .culture-item h4 {
@@ -213,9 +219,11 @@
     transition: all 0.3s ease;
 }
 
-.jot-hiring-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(40, 167, 69, 0.12);
+@media (hover: hover) {
+    .jot-hiring-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(40, 167, 69, 0.12);
+    }
 }
 
 .jot-lead {
@@ -263,10 +271,12 @@
     cursor: pointer;
 }
 
-.jot-btn:hover {
-    background: linear-gradient(135deg, #20894a 0%, #1a7a3d 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(40, 167, 69, 0.35);
+@media (hover: hover) {
+    .jot-btn:hover {
+        background: linear-gradient(135deg, #20894a 0%, #1a7a3d 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(40, 167, 69, 0.35);
+    }
 }
 
 .jot-btn:active {
@@ -557,6 +567,7 @@
         font-size: 14px;
         border-radius: 18px;
         max-width: 100%;
+        min-height: 44px;
     }
 }
 

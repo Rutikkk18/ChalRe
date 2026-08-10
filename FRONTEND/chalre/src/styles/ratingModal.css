@@ -609,8 +609,11 @@
   }
 
   .star-btn svg {
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 32px;
   }
 
   .stars-container {
@@ -633,7 +636,7 @@
   }
 
   .char-count {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .btn-cancel,
@@ -650,7 +653,7 @@
   }
 
   .rating-description {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 

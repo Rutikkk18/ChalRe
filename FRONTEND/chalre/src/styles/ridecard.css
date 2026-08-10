@@ -375,6 +375,7 @@
 
 .book-btn {
   padding: 10px 22px;
+  min-height: 44px;
   background: var(--green-main);
   color: white;
   border: none;
@@ -472,4 +473,20 @@
 @media print {
   .book-btn { display: none; }
   .ride-card { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+}
+
+@media (max-width: 480px) {
+  .book-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+  .ride-card {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .ride-card {
+    padding: 10px;
+  }
 }

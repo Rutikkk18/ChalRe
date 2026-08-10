@@ -100,7 +100,7 @@
 }
 
 .success-left-tag {
-  font-size: 0.66rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -143,7 +143,7 @@
 }
 
 .success-id-pill-label {
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -216,7 +216,7 @@
 }
 
 .label {
-  font-size: 0.66rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -532,7 +532,7 @@
   }
 
   .success-left-tag {
-    font-size: 0.6rem;
+    font-size: 0.72rem;
   }
 
   .success-icon {
@@ -569,7 +569,7 @@
   }
 
   .label {
-    font-size: 0.62rem;
+    font-size: 0.72rem;
   }
 
   .status-badge {
@@ -637,6 +637,7 @@
   .btn-outline {
     padding: 10px;
     font-size: 0.84rem;
+    min-height: 44px;
   }
 }
 

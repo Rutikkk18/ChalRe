@@ -15,7 +15,7 @@
   cursor: pointer;
   padding: 6px 0;
   user-select: none;
-  min-height: 36px;
+  min-height: 44px;
 }
 
 .cdp-icon {
@@ -153,7 +153,8 @@
 }
 
 .cdp-cell {
-  height: 34px;
+  height: 40px;
+  min-height: 40px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -173,7 +174,8 @@
 
 /* FIX: removed aspect-ratio (caused giant cell) and transform scale on selected */
 .cdp-cell {
-  height: 34px;
+  height: 40px;
+  min-height: 40px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -359,8 +361,6 @@
   border: none !important;
   box-shadow: none !important;
   outline: none !important;
-  height: 0 !important;
-  min-height: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
   visibility: hidden;

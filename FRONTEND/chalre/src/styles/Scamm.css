@@ -579,6 +579,12 @@
     padding: 50px 16px;
   }
 
+  .scam-image,
+  .scam-hero-text {
+    min-width: 0;
+    width: 100%;
+  }
+
   .scam-content {
     padding: 50px 16px;
   }
@@ -660,5 +666,13 @@
     background: #1a4d2e;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+}
+
+@media (max-width: 360px) {
+  .scam-card,
+  .scam-action-section,
+  .security-section {
+    padding: 24px 16px;
   }
 }

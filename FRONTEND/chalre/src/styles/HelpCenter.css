@@ -649,8 +649,8 @@
   }
 
   .faq-toggle {
-    width: 26px;
-    height: 26px;
+    min-width: 36px;
+    min-height: 36px;
     font-size: 18px;
   }
 
@@ -679,12 +679,14 @@
     padding: 9px 14px;
     font-size: 13px;
     border-radius: 18px;
+    min-height: 44px;
   }
 
   .back-btn {
     padding: 9px 16px;
     font-size: 13px;
     border-radius: 9px;
+    min-height: 44px;
   }
 
   .search-input {

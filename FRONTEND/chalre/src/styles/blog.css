@@ -62,7 +62,9 @@
 }
 
 .blog-hero__badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
   background: rgba(255, 255, 255, 0.15);
   color: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -102,6 +104,9 @@
 }
 
 .blog-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   background: rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.9);
   border: 1.5px solid rgba(255, 255, 255, 0.25);
@@ -277,7 +282,9 @@
 
 /* ─── Category Badge ──────────────────────────────────────────── */
 .blog-category-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
   background: var(--blog-green-pale);
   color: var(--blog-green-dark);
   border: 1px solid rgba(2, 65, 16, 0.15);

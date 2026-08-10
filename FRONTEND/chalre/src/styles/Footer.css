@@ -79,7 +79,7 @@
   width: 100%;
   background: none;
   border: none;
-  padding: 0;
+  padding: 8px 0;
   text-align: left;
   cursor: pointer;
   color: #6b7280;
@@ -387,7 +387,7 @@
   }
 
   .footer-bottom {
-    font-size: 11px;
+    font-size: 12px;
     gap: 6px;
   }
 }

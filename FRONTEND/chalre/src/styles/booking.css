@@ -155,7 +155,7 @@
 /* ── Boarding point badge ── */
 .booking-boarding-badge {
   display: inline-block;
-  font-size: 0.64rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: #22c55e;
   letter-spacing: 0.5px;
@@ -467,7 +467,7 @@
   .booking-right { padding: 20px 16px; gap: 16px; }
   .booking-left h2 { font-size: 1.15rem; }
   .booking-route-city { font-size: 1.05rem; }
-  .booking-left-label, .booking-meta-pill-label { font-size: 0.6rem; }
+  .booking-left-label, .booking-meta-pill-label { font-size: 0.72rem; }
   .booking-meta-pill { padding: 10px 12px; }
   .booking-meta-pill-val { font-size: 0.9rem; }
   .booking-price-highlight {

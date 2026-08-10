@@ -19,7 +19,7 @@ html, body {
    LOGIN/AUTH PAGE CONTAINER
 ================================ */
 .auth-login-container {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -143,7 +143,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px !important;
+  padding: 10px !important;
   transition: color 0.2s ease;
   margin: 0 !important;
   width: auto !important;
@@ -346,7 +346,7 @@ html, body {
    REGISTER CONTAINER
 ================================ */
 .auth-register-container {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   display: flex;
   justify-content: center;

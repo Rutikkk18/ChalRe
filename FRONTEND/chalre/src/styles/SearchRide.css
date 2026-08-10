@@ -42,7 +42,7 @@
 }
 
 .search-hero-title {
-  color: #ffffff;
+  color: #1a1a2e;
   font-size: clamp(22px, 4vw, 32px);
   font-weight: 700;
   margin: 0;
@@ -384,7 +384,7 @@
   padding: clamp(16px, 3vw, 20px) 0;
   border: none;
   box-shadow: none;
-  overflow: hidden;
+  overflow: visible;
   align-self: stretch;
   min-height: 200px;
 }

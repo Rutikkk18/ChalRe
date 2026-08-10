@@ -212,7 +212,7 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   background: #d1fae5;
   color: #059669;
   border-radius: 20px;
-  font-size: 0.57rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -804,7 +804,7 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   }
 
   .field-label {
-    font-size: 0.6rem;
+    font-size: 0.75rem;
   }
 
   .field-input {
@@ -879,13 +879,14 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   }
 
   .field-label {
-    font-size: 0.58rem;
+    font-size: 0.75rem;
     letter-spacing: 0.07em;
   }
 
   .vtoggle-btn {
     padding: 5px 8px;
     font-size: 0.72rem;
+    min-height: 36px;
   }
 
   .banner {
@@ -917,3 +918,5 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   .offer-page { background-image: none; background-color: #fff; }
   .btn-submit { display: none !important; }
 }
+
+@media (max-width: 900px) and (min-width: 541px) { .offer-page { margin-top: 0; padding-top: 70px; } }
