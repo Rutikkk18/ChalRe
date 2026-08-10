@@ -29,10 +29,6 @@ export default function Navbar() {
         {currentPath !== "/offer" && <Link to="/offer">{t("navOfferRide")}</Link>}
 
 
-        {!user && currentPath !== "/login" && (
-          <Link to="/login">{t("navLogin")}</Link>
-        )}
-
         {user && currentPath !== "/dashboard" && (
           <Link to="/dashboard">{t("navDashboard")}</Link>
         )}
@@ -44,9 +40,9 @@ export default function Navbar() {
         )}
 
         {!user ? (
-          currentPath !== "/register" && (
-            <Link to="/register" className="register-btn">
-              {t("navRegister")}
+          currentPath !== "/login" && (
+            <Link to="/login" className="register-btn">
+              {t("navLogin")}
             </Link>
           )
         ) : (
