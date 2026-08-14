@@ -39,7 +39,6 @@ export default function Home() {
     setSearch((prev) => ({ ...prev, [field]: value }));
   };
 
-  const [scrolled, setScrolled] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
   // ── Banner rotation state (temporarily disabled — restore when ready) ──
@@ -63,12 +62,6 @@ export default function Home() {
   //   return () => clearInterval(interval);
   // }, []);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 120);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
     <div className="home-wrapper">
 
@@ -87,7 +80,7 @@ export default function Home() {
         <h1>{t("heroTitle")}</h1>
         <p>{t("heroSubtitle")}</p>
 
-        <div className={`home-search-bar ${scrolled ? "search-sticky" : ""}`}>
+        <div className="home-search-bar">
           <div className="search-item location-from">
             <LocationAutocomplete
               value={search.from}

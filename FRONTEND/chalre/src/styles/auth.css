@@ -1,22 +1,153 @@
 /* ================================
-   AUTH PAGE - FULLY RESPONSIVE
+   NEW CHALRE TWO-COLUMN AUTH LAYOUT
 ================================ */
-
-html, body {
+.auth-split-container {
   width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
-::placeholder {
+  min-height: 100vh;
+  display: flex;
+  background-color: #fafbf8;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  color: #adb5bd;
+  box-sizing: border-box;
 }
 
 /* ================================
-   LOGIN/AUTH PAGE CONTAINER
+   LEFT VISUAL PANEL (~45%)
+================================ */
+.auth-visual-panel {
+  flex: 0 0 45%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #0c3d1e;
+}
+
+.auth-visual-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center left;
+  z-index: 1;
+}
+
+.auth-visual-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  background: 
+    linear-gradient(to right, transparent 0%, transparent 80%, rgba(250, 251, 248, 0.5) 93%, #fafbf8 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, transparent 22%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 25%);
+}
+
+.auth-visual-content {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  padding: clamp(28px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+.auth-brand-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.auth-brand-logo-text {
+  font-size: clamp(26px, 3vw, 32px);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.auth-tagline {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 0;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* ================================
+   RIGHT LOGIN FORM PANEL (~55%)
+================================ */
+.auth-form-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(32px, 5vw, 64px) clamp(24px, 4vw, 56px);
+  background-color: #fafbf8;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.auth-form-wrapper {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transform: translateY(-25px);
+}
+
+.auth-form-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.auth-title {
+  font-size: clamp(28px, 3.5vw, 34px);
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+
+.auth-subtitle {
+  font-size: 15px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.auth-form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* ================================
+   LOGIN/AUTH PAGE CONTAINER (LEGACY COMPATIBILITY)
 ================================ */
 .auth-login-container {
   width: 100%;
@@ -25,7 +156,7 @@ html, body {
   justify-content: center;
   align-items: center;
   padding: clamp(20px, 4vw, 40px) clamp(16px, 3vw, 20px);
-  background: linear-gradient(145deg, #b7eebe 0%, #e0f9e0 35%, #e0f9e0 65%, #b7eebe  100%);
+  background: linear-gradient(145deg, #b7eebe 0%, #e0f9e0 35%, #e0f9e0 65%, #b7eebe 100%);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   box-sizing: border-box;
 }
@@ -74,14 +205,14 @@ html, body {
    INPUT CONTAINER
 ================================ */
 .auth-inputForm {
-  border: 1.5px solid #e2e8e4;
-  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
   height: 50px;
   display: flex;
   align-items: center;
   padding-left: 14px;
   padding-right: 10px;
-  transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   position: relative;
   background-color: #ffffff;
   box-sizing: border-box;
@@ -90,7 +221,7 @@ html, body {
 
 .auth-inputForm svg {
   flex-shrink: 0;
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
 .auth-input {
@@ -126,8 +257,8 @@ html, body {
 }
 
 .auth-inputForm:focus-within {
-  border: 1.5px solid #3d8b5e;
-  box-shadow: 0 0 0 3px rgba(61, 139, 94, 0.10);
+  border-color: #024110;
+  box-shadow: 0 0 0 3px rgba(2, 65, 16, 0.12);
 }
 
 /* ================================
@@ -153,7 +284,7 @@ html, body {
 }
 
 .auth-password-toggle-btn:hover {
-  color: #3d8b5e !important;
+  color: #024110 !important;
   transform: none !important;
   box-shadow: none !important;
   background: transparent !important;
@@ -180,6 +311,29 @@ html, body {
   margin-top: 2px;
 }
 
+.social-btns-row {
+  gap: 12px;
+}
+
+.auth-remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-remember-me label {
+  font-size: 14px;
+  color: #475569;
+  cursor: pointer;
+}
+
+.auth-remember-me input[type="checkbox"] {
+  accent-color: #024110;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
 .auth-flex-row > div {
   display: flex;
   align-items: center;
@@ -197,20 +351,20 @@ html, body {
   cursor: pointer;
   width: 16px;
   height: 16px;
-  accent-color: #3d8b5e;
+  accent-color: #024110;
 }
 
 .auth-span {
   font-size: 14px;
   margin-left: 5px;
-  color: #3d8b5e;
-  font-weight: 500;
+  color: #024110;
+  font-weight: 600;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .auth-span:hover {
-  color: #2a6642;
+  color: #0c5129;
   text-decoration: underline;
 }
 
@@ -218,8 +372,8 @@ html, body {
    SUBMIT BUTTON
 ================================ */
 .auth-button-submit {
-  margin: 16px 0 8px 0;
-  background-color: #7ce567 !important;
+  margin: 12px 0 4px 0;
+  background-color: #024110 !important;
   border: none;
   color: white !important;
   font-size: 15px;
@@ -228,15 +382,15 @@ html, body {
   height: 50px;
   width: 100%;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  box-shadow: none !important;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(2, 65, 16, 0.15) !important;
   letter-spacing: 0.3px;
 }
 
 .auth-button-submit:hover:not(:disabled) {
-  background-color: #08890b !important;
+  background-color: #0c5129 !important;
+  box-shadow: 0 4px 14px rgba(2, 65, 16, 0.25) !important;
   transform: none !important;
-  box-shadow: none !important;
 }
 
 .auth-button-submit:active {
@@ -259,15 +413,13 @@ html, body {
 }
 
 /* ================================
-   OR WITH DIVIDER — FIXED
-   Replace <p class="auth-p auth-line"> with:
-   <div class="auth-divider"><span>Or With</span></div>
+   OR WITH DIVIDER
 ================================ */
 .auth-divider {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin: 12px 0 8px 0;
+  margin: 10px 0 6px 0;
 }
 
 .auth-divider::before,
@@ -275,14 +427,14 @@ html, body {
   content: '';
   flex: 1;
   height: 1px;
-  background-color: #e0e4e2;
+  background-color: #e2e8f0;
 }
 
 .auth-divider span {
   font-size: 13px;
-  color: #999;
+  color: #94a3b8;
   white-space: nowrap;
-  font-weight: 400;
+  font-weight: 500;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -292,23 +444,24 @@ html, body {
 .auth-btn {
   width: 100%;
   height: 48px;
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: 500;
   gap: 10px;
-  border: 1.5px solid #e2e8e4;
+  border: 1px solid #cbd5e1;
   background-color: #ffffff;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   color: #151717;
   font-size: 14px;
 }
 
-.auth-btn:hover {
-  border-color: #3d8b5e;
-  box-shadow: 0 0 0 3px rgba(61, 139, 94, 0.08);
+.auth-btn:hover:not(:disabled) {
+  border-color: #024110;
+  background-color: #f8fafc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .auth-btn svg {
@@ -519,5 +672,107 @@ html, body {
   .auth-form,
   .auth-register-box {
     margin: 20px auto;
+  }
+}
+
+/* ================================
+   RESPONSIVE BREAKPOINTS - SPLIT AUTH LAYOUT
+================================ */
+@media (max-width: 960px) {
+  .auth-visual-panel {
+    flex: 0 0 40%;
+  }
+
+  .auth-form-panel {
+    padding: 40px 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-split-container {
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .auth-visual-panel {
+    flex: none;
+    width: 100%;
+    height: 210px;
+  }
+
+  .auth-visual-img {
+    object-position: center 35%;
+  }
+
+  .auth-visual-overlay {
+    background: 
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.75) 100%);
+  }
+
+  .auth-visual-content {
+    padding: 20px 24px;
+  }
+
+  .auth-brand-top {
+    display: flex;
+    gap: 0px;
+  }
+
+  .auth-brand-logo-text {
+    font-size: 24px;
+  }
+
+  .auth-tagline {
+    font-size: 12px;
+  }
+
+  .auth-form-panel {
+    padding: 32px 20px 40px 20px;
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .auth-form-wrapper {
+    max-width: 100%;
+    gap: 20px;
+    transform: translateY(0);
+  }
+
+  .auth-title {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-visual-panel {
+    height: 180px;
+  }
+
+  .auth-form-panel {
+    padding: 24px 16px 36px 16px;
+  }
+
+  .auth-logo-badge {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .auth-title {
+    font-size: 24px;
+  }
+
+  .auth-subtitle {
+    font-size: 14px;
+  }
+
+  .auth-split-container .social-btns-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .auth-split-container .auth-flex-row:not(.social-btns-row) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 }

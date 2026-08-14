@@ -16,7 +16,6 @@ html, body {
   min-height: 100vh;
   color: #1f3b1f;
 }
-
 /* ================================
    NAVBAR - FIXED & PROFESSIONAL
    Logo LEFT | Nav Links + Button RIGHT
@@ -38,12 +37,6 @@ html, body {
   border-radius: 14px;
   box-shadow: 0 8px 30px rgba(0, 100, 0, 0.15);
   border: 1.8px solid rgba(28, 124, 49, 0.15);
-}
-.navbar-expanded {
-  backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.98);
-  height: 6.7rem;
-  box-shadow: 0 12px 40px rgba(0, 100, 0, 0.2);
 }
 
 .logo {
@@ -328,19 +321,6 @@ html, body {
   border-style: groove;
   border-color: #024110;
   border-width: 1.5px;
-}
-
-.home-search-bar:not(.search-sticky) {
-  position: relative;
-}
-
-.search-sticky {
-  position: fixed;
-  top: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 90;
-  width: min(1100px, 95%);
 }
 
 .search-item {
@@ -1051,7 +1031,6 @@ html, body {
     margin: 4px auto 0 auto !important; padding: 0 28px !important;
     border-radius: 25px !important; height: 44px !important; display: block !important; font-size: 15px !important;
   }
-  .search-sticky { position: relative; top: auto; transform: none; width: 95%; }
   .fraud-div { flex-direction: column; text-align: center; }
   .fraud-content h2, .fraud-content p { margin-left: 0; }
   .fraud-div .fraud-btn { margin-left: 0; }
