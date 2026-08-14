@@ -128,13 +128,6 @@ export default function Register() {
           className="auth-visual-img"
         />
         <div className="auth-visual-overlay" />
-
-        <div className="auth-visual-content">
-          <div className="auth-brand-top">
-            <span className="auth-brand-logo-text">ChalRe</span>
-            <p className="auth-tagline">Miles Better Together</p>
-          </div>
-        </div>
       </div>
 
       {/* Right Registration Form Column */}

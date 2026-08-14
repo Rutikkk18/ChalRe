@@ -83,7 +83,7 @@ export default function Login() {
             );
             return;
           }
-        } catch (_checkErr) {
+        } catch {
           // If the check call fails, fall through to the generic message below
         }
       }
