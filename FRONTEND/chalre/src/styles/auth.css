@@ -47,6 +47,14 @@
     linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 25%);
 }
 
+.register-visual-panel {
+  background-color: #fafbf8;
+}
+
+.register-visual-overlay {
+  background: linear-gradient(to right, transparent 0%, transparent 80%, rgba(250, 251, 248, 0.5) 93%, #fafbf8 100%);
+}
+
 .auth-visual-content {
   position: relative;
   z-index: 3;
@@ -707,6 +715,10 @@
   .auth-visual-overlay {
     background: 
       linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.75) 100%);
+  }
+
+  .register-visual-overlay {
+    background: linear-gradient(to bottom, transparent 0%, transparent 70%, #fafbf8 100%);
   }
 
   .auth-visual-content {

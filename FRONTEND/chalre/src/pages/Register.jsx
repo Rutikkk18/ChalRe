@@ -121,13 +121,13 @@ export default function Register() {
   return (
     <div className="auth-split-container">
       {/* Left Visual Column */}
-      <div className="auth-visual-panel">
+      <div className="auth-visual-panel register-visual-panel">
         <img
           src="/register.png"
           alt="ChalRe Registration Illustration"
           className="auth-visual-img"
         />
-        <div className="auth-visual-overlay" />
+        <div className="auth-visual-overlay register-visual-overlay" />
       </div>
 
       {/* Right Registration Form Column */}
