@@ -20,17 +20,18 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #0c3d1e;
+  background-color: #fafbf8;
 }
 
 .auth-visual-img {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center left;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  object-position: center;
   z-index: 1;
 }
 
@@ -41,10 +42,8 @@
   right: 0;
   bottom: 0;
   z-index: 2;
-  background: 
-    linear-gradient(to right, transparent 0%, transparent 80%, rgba(250, 251, 248, 0.5) 93%, #fafbf8 100%),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, transparent 22%),
-    linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 25%);
+  pointer-events: none;
+  background: linear-gradient(to right, transparent 85%, #fafbf8 100%);
 }
 
 .register-visual-panel {
@@ -52,7 +51,7 @@
 }
 
 .register-visual-overlay {
-  background: linear-gradient(to right, transparent 0%, transparent 80%, rgba(250, 251, 248, 0.5) 93%, #fafbf8 100%);
+  background: linear-gradient(to right, transparent 80%, rgba(250, 251, 248, 0.5) 93%, #fafbf8 100%);
 }
 
 .auth-visual-content {
@@ -76,18 +75,16 @@
 .auth-brand-logo-text {
   font-size: clamp(26px, 3vw, 32px);
   font-weight: 800;
-  color: #ffffff;
+  color: #024110;
   letter-spacing: -0.5px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .auth-tagline {
   font-size: 13px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.88);
+  font-weight: 600;
+  color: #000000;
   margin: 0;
   letter-spacing: 0.3px;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
 }
 
 /* ================================
@@ -709,12 +706,11 @@
   }
 
   .auth-visual-img {
-    object-position: center 35%;
+    object-position: center;
   }
 
   .auth-visual-overlay {
-    background: 
-      linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.75) 100%);
+    background: linear-gradient(to bottom, transparent 75%, #fafbf8 100%);
   }
 
   .register-visual-overlay {
