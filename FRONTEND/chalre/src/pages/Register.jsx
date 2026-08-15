@@ -125,7 +125,7 @@ export default function Register() {
         <img
           src="/register.png"
           alt="ChalRe Registration Illustration"
-          className="auth-visual-img"
+          className="auth-visual-img register-visual-img"
         />
         <div className="auth-visual-overlay register-visual-overlay" />
       </div>

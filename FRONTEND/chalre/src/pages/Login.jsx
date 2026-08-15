@@ -159,13 +159,13 @@ export default function Login() {
   return (
     <div className="auth-split-container">
       {/* Left Visual Column */}
-      <div className="auth-visual-panel">
+      <div className="auth-visual-panel login-visual-panel">
         <img
           src="/login.png"
           alt="ChalRe Journey Illustration"
-          className="auth-visual-img"
+          className="auth-visual-img login-visual-img"
         />
-        <div className="auth-visual-overlay" />
+        <div className="auth-visual-overlay login-visual-overlay" />
 
         <div className="auth-visual-content">
           <div className="auth-brand-top">
