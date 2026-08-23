@@ -45,8 +45,19 @@ public class PaymentController {
         try {
             Long rideId = Long.valueOf(body.get("rideId").toString());
             Long amountPaise = Long.valueOf(body.get("amount").toString());
+            Integer seats = body.get("seats") != null
+                    ? Integer.valueOf(body.get("seats").toString()) : 1;
+            Double pickupLat = body.get("pickupLat") != null
+                    ? Double.valueOf(body.get("pickupLat").toString()) : null;
+            Double pickupLng = body.get("pickupLng") != null
+                    ? Double.valueOf(body.get("pickupLng").toString()) : null;
+            Double dropLat = body.get("dropLat") != null
+                    ? Double.valueOf(body.get("dropLat").toString()) : null;
+            Double dropLng = body.get("dropLng") != null
+                    ? Double.valueOf(body.get("dropLng").toString()) : null;
             Map<String, Object> order = razorpayPaymentService.createOrder(
-                    user.getId(), rideId, amountPaise);
+                    user.getId(), rideId, amountPaise, seats,
+                    pickupLat, pickupLng, dropLat, dropLng);
             return ResponseEntity.ok(order);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -84,8 +95,8 @@ public class PaymentController {
             if (body.get("pickupLng") != null) dto.setPickupLng(Double.valueOf(body.get("pickupLng").toString()));
             if (body.get("dropLat") != null) dto.setDropLat(Double.valueOf(body.get("dropLat").toString()));
             if (body.get("dropLng") != null) dto.setDropLng(Double.valueOf(body.get("dropLng").toString()));
-            if (body.get("bookedPrice") != null) dto.setBookedPrice(Double.valueOf(body.get("bookedPrice").toString()));
-
+            // Derive bookedPrice from the verified payment amount (per-seat price in rupees)
+            dto.setBookedPrice(amountPaise / (100.0 * seats));
             Booking savedBooking = bookingService.bookRide(dto, user);
 
             return ResponseEntity.ok(Map.of(

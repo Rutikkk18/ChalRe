@@ -202,7 +202,12 @@ export default function RideDetails() {
 
       const orderRes = await api.post("/payments/create-order", {
         rideId: Number(ride.id),
-        amount: totalCostPaise
+        amount: totalCostPaise,
+        seats:  Number(seats),
+        pickupLat: pickupCoords?.lat ? Number(pickupCoords.lat) : null,
+        pickupLng: pickupCoords?.lng ? Number(pickupCoords.lng) : null,
+        dropLat:   dropCoords?.lat   ? Number(dropCoords.lat)   : null,
+        dropLng:   dropCoords?.lng   ? Number(dropCoords.lng)   : null,
       });
 
       if (!orderRes.data || !orderRes.data.orderId) {

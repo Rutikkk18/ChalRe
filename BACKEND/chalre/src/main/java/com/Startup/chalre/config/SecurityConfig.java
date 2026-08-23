@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.Startup.chalre.Auth.JwtAuthFilter;
+import com.Startup.chalre.Auth.RateLimitFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final RateLimitFilter rateLimitFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -53,7 +55,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/locations/**").permitAll()
                         .requestMatchers(
                                 "/uploads/**",
-                                "/api/upload/**",
                                 "/auth/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/rides/**").permitAll()
@@ -66,8 +67,9 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // ✅ JWT Filter — UNCHANGED
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                // ✅ JWT Filter & Rate Limit Filter
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(rateLimitFilter, JwtAuthFilter.class);
 
         return http.build();
     }

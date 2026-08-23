@@ -42,11 +42,7 @@ public class UserService {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
-        user.setRole(
-                dto.getRole() != null && !dto.getRole().isEmpty()
-                        ? dto.getRole()
-                        : "USER"
-        );
+        user.setRole("USER");
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         return userRepository.save(user);
     }

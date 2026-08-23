@@ -129,7 +129,12 @@ export default function BookingPage() {
 
       const orderRes = await api.post("/payments/create-order", {
         rideId: Number(ride.id),
-        amount: totalPaise
+        amount: totalPaise,
+        seats:  Number(seats),
+        pickupLat: pickupCoords?.lat ? Number(pickupCoords.lat) : null,
+        pickupLng: pickupCoords?.lng ? Number(pickupCoords.lng) : null,
+        dropLat:   dropCoords?.lat   ? Number(dropCoords.lat)   : null,
+        dropLng:   dropCoords?.lng   ? Number(dropCoords.lng)   : null,
       });
 
       const { orderId, amount, currency } = orderRes.data;

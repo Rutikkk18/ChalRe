@@ -32,6 +32,17 @@ public class VerificationService {
             throw new RuntimeException("Invalid verification request");
         }
 
+        if (files.isEmpty()) {
+            throw new RuntimeException("At least one document is required");
+        }
+
+        if (files.size() > 5) {
+            throw new RuntimeException("Maximum 5 documents allowed per verification submission");
+        }
+
+        // Allowed document types supported by the application
+        java.util.Set<String> allowedDocTypes = java.util.Set.of("ID_CARD", "LICENSE", "PROFILE_PHOTO", "OTHER");
+
         // 🔥 Delete old documents
         List<VerificationDoc> oldDocs = docRepo.findByUser(user);
         docRepo.deleteAll(oldDocs);
@@ -42,15 +53,23 @@ public class VerificationService {
 
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
+            String docType = types.get(i);
 
-            if (file.isEmpty()) {
+            if (docType == null || !allowedDocTypes.contains(docType.toUpperCase())) {
+                throw new RuntimeException("Invalid document type: " + docType);
+            }
+
+            if (file == null || file.isEmpty()) {
                 throw new RuntimeException("Uploaded file is empty");
             }
 
-            // Basic validation
-            if (!file.getContentType().startsWith("image/")
-                    && !file.getContentType().equals("application/pdf")) {
-                throw new RuntimeException("Invalid file type");
+            // MIME type validation
+            String contentType = file.getContentType();
+            if (contentType == null || (!contentType.equalsIgnoreCase("image/jpeg")
+                    && !contentType.equalsIgnoreCase("image/png")
+                    && !contentType.equalsIgnoreCase("image/webp")
+                    && !contentType.equalsIgnoreCase("application/pdf"))) {
+                throw new RuntimeException("Invalid file type. Allowed formats: JPEG, PNG, WebP, PDF.");
             }
 
             // Upload to Cloudinary

@@ -32,6 +32,13 @@ public class UploadController {
             return ResponseEntity.badRequest().body("Image file is required");
         }
 
+        String contentType = file.getContentType();
+        if (contentType == null || (!contentType.equalsIgnoreCase("image/jpeg")
+                && !contentType.equalsIgnoreCase("image/png")
+                && !contentType.equalsIgnoreCase("image/webp"))) {
+            return ResponseEntity.badRequest().body("Invalid file type. Allowed formats: JPEG, PNG, WebP.");
+        }
+
         String imageUrl = uploadService.uploadProfileImage(file);
 
         user.setProfileImage(imageUrl);

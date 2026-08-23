@@ -21,7 +21,5 @@ public class UserRegisterDTO {
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^\\d{10}$", message = "Phone number must be 10 digits")
     private String phone;
-    
-    private String role;  // Optional, defaults to USER
 
 }
