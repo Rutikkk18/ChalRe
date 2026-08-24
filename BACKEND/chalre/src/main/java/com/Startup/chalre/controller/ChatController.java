@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/chat")
 @RequiredArgsConstructor
@@ -22,9 +26,16 @@ public class ChatController {
 
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(
-            @RequestBody ChatMessageDTO dto,
+            @Valid @RequestBody ChatMessageDTO dto,
+            BindingResult bindingResult,
             @AuthenticationPrincipal User user
     ) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining(", "));
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
         ChatMessage message = chatService.sendMessage(dto, user);
         return ResponseEntity.ok(message);
     }

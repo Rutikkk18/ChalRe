@@ -97,11 +97,19 @@ public class UserController {
 
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(
-            @RequestBody UserUpdateDTO dto,
+            @Valid @RequestBody UserUpdateDTO dto,
+            BindingResult bindingResult,
             @AuthenticationPrincipal User user) {
 
         if (user == null) {
             return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining(", "));
+            return ResponseEntity.badRequest().body(errorMessage);
         }
 
         User updated = userService.updateProfile(user.getId(), dto);
