@@ -52,7 +52,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: inherit;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   appearance: none;
   -webkit-appearance: none;
   white-space: nowrap;

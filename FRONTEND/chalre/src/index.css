@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+
+:root {
+  --font-display: "EB Garamond", Garamond, Georgia, serif;
+  --font-body: "Helvetica Neue", Helvetica, Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: var(--font-body);
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-display);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Functional UI elements default to clean, readable Helvetica Neue */
+button, input, select, textarea, p, span, div, a, label, table, th, td, ul, ol, li, small, strong, em {
+  font-family: var(--font-body);
+}
+
+/* Functional UI headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-body);
+}
+
+/* Expressive brand, hero & display typography accents */
+.font-display,
+.hero-headline,
+.brand-display,
+.display-title,
+.hero h1,
+.h2hr,
+.about-hero h1,
+.vision-section h2,
+.blog-hero h1,
+.blog-post-title {
+  font-family: var(--font-display);
+}
+

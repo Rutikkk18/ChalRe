@@ -80,8 +80,8 @@ export default function PayoutTracker() {
     };
 
     const styles = {
-        wrapper: { padding: "24px", maxWidth: "1000px", margin: "0 auto", fontFamily: "Times New Roman, serif" },
-        title: { fontSize: "24px", fontWeight: "800", color: "#0a2614", marginBottom: "8px" },
+        wrapper: { padding: "24px", maxWidth: "1000px", margin: "0 auto", fontFamily: "var(--font-body)" },
+        title: { fontSize: "24px", fontWeight: "800", color: "#0a2614", marginBottom: "8px", fontFamily: "var(--font-body)" },
         subtitle: { color: "#6b7280", fontSize: "14px", marginBottom: "24px" },
         tabs: { display: "flex", gap: "0", borderBottom: "2px solid #e5e7eb", marginBottom: "24px" },
         tab: (active) => ({
@@ -94,7 +94,7 @@ export default function PayoutTracker() {
             cursor: "pointer",
             color: active ? "#024110" : "#6b7280",
             marginBottom: "-2px",
-            fontFamily: "Times New Roman, serif"
+            fontFamily: "var(--font-body)"
         }),
         card: {
             background: "#fff",
@@ -131,7 +131,7 @@ export default function PayoutTracker() {
             borderRadius: "6px",
             border: "1px solid #d1d5db",
             fontSize: "13px",
-            fontFamily: "Times New Roman, serif"
+            fontFamily: "var(--font-body)"
         },
         markPaidBtn: (disabled) => ({
             background: disabled ? "#9ca3af" : "#16a34a",
@@ -142,7 +142,7 @@ export default function PayoutTracker() {
             fontSize: "13px",
             fontWeight: "700",
             cursor: disabled ? "not-allowed" : "pointer",
-            fontFamily: "Times New Roman, serif"
+            fontFamily: "var(--font-body)"
         }),
         paidBadge: {
             background: "#dcfce7",

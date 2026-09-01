@@ -11,7 +11,7 @@ html, body {
    GLOBAL WRAPPER
 ================================ */
 .home-wrapper {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   background: #ffffff !important;
   min-height: 100vh;
   color: #1f3b1f;
@@ -108,7 +108,7 @@ html, body {
   font-weight: 600;
   font-size: clamp(14px, 1.6vw, 15px);
   transition: all 0.3s ease;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   appearance: none;
   -webkit-appearance: none;
   display: inline-flex;
@@ -287,7 +287,7 @@ html, body {
   font-size: clamp(28px, 6vw, 46px);
   font-weight: 700;
   margin-top: 0;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-display, "EB Garamond", Garamond, Georgia, serif);
   line-height: 1.2;
   margin-bottom: 12px;
 }
@@ -297,7 +297,7 @@ html, body {
   margin-bottom: 40px;
   font-size: clamp(16px, 2.5vw, 19px);
   opacity: 0.95;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
@@ -364,7 +364,7 @@ html, body {
 .search-item label {
   font-size: clamp(12px, 1.5vw, 14px);
   font-weight: 600;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   color: #6b7280;
   margin-bottom: 4px;
   line-height: 1.2;
@@ -380,7 +380,7 @@ html, body {
 
 .seat-label {
   color: #6b7280;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(14px, 2vw, 16px);
   font-weight: 500;
   display: flex;
@@ -400,7 +400,7 @@ html, body {
   outline: none;
   background: transparent;
   font-size: clamp(14px, 2vw, 16px);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   line-height: 1;
   padding: 0;
   width: 36px;
@@ -432,7 +432,7 @@ html, body {
   color: #687869;
   font-size: clamp(14px, 2vw, 16px);
   font-weight: 500;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   opacity: 1;
 }
 
@@ -455,7 +455,7 @@ html, body {
   min-width: 90px;
   padding: 0 clamp(10px, 2vw, 20px);
   margin-right: clamp(10px, 3vw, 60px);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   flex-shrink: 0;
   outline: none;
 }
@@ -489,7 +489,7 @@ html, body {
   border-radius: 14px;
   text-align: center;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   border: 1px solid #f1f3f5;
   position: relative;
@@ -523,7 +523,7 @@ html, body {
   color: #0e511c;
   font-size: clamp(19px, 2.2vw, 22px);
   margin-bottom: 12px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-weight: 700;
   line-height: 1.2;
 }
@@ -577,7 +577,7 @@ html, body {
 
 .h2hr {
   color: white;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-display, "EB Garamond", Garamond, Georgia, serif);
   text-align: center;
   font-size: clamp(24px, 4vw, 34px);
   margin: 0 0 14px;
@@ -591,7 +591,7 @@ html, body {
   font-size: clamp(15px, 2vw, 17px);
   line-height: 1.7;
   padding: 0 clamp(0px, 5vw, 32px);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .btn-hssr {
@@ -603,7 +603,7 @@ html, body {
   padding: 13px 26px;
   border: none;
   border-radius: 12px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(14px, 1.8vw, 15.5px);
   font-weight: 600;
   cursor: pointer;
@@ -669,7 +669,7 @@ html, body {
   color: #0f3d2e;
   margin-bottom: 16px;
   margin-left: 0;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .fraud-content p {
@@ -679,7 +679,7 @@ html, body {
   margin-bottom: 24px;
   width: 100%;
   max-width: 550px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .fraud-div .fraud-btn {
@@ -698,7 +698,7 @@ html, body {
   align-items: center;
   gap: 8px;
   box-shadow: 0 4px 16px rgba(2, 65, 16, 0.2);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .fraud-btn .btn-icon {
@@ -744,7 +744,7 @@ html, body {
 .why-chalre {
   background: #ffffff;
   padding: clamp(56px, 10vw, 96px) 20px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 /* Accent underline below subtitle */
@@ -767,7 +767,7 @@ html, body {
   font-weight: 700;
   color: #0f5132;
   margin-bottom: 12px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   line-height: 1.2;
 }
 
@@ -775,7 +775,7 @@ html, body {
   font-size: clamp(15px, 2vw, 17px);
   color: #6c757d;
   line-height: 1.65;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .why-grid {
@@ -837,7 +837,7 @@ html, body {
   font-weight: 600;
   color: #0f5132;
   margin-bottom: 10px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   line-height: 1.3;
 }
 
@@ -845,7 +845,7 @@ html, body {
   font-size: clamp(14px, 1.7vw, 15px);
   line-height: 1.7;
   color: #6b7280;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   margin: 0;
 }
 
@@ -864,7 +864,7 @@ html, body {
   font-weight: 700;
   color: #003b44;
   margin-bottom: clamp(30px, 6vw, 50px);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .faq-accordion {
@@ -888,7 +888,7 @@ html, body {
   border: none;
   cursor: pointer;
   text-align: left;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(14.5px, 1.9vw, 16px);
   font-weight: 600;
   color: #1a2e1a;
@@ -922,7 +922,7 @@ html, body {
 
 .faq-answer p {
   padding: 2px 4px 20px;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(14px, 1.7vw, 15px);
   line-height: 1.7;
   color: #6b7280;
@@ -945,7 +945,7 @@ html, body {
   border-radius: 24px;
   cursor: pointer;
   transition: background 0.3s ease;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .help-btn:hover {
@@ -962,7 +962,7 @@ html, body {
   font-size: clamp(14px, 2vw, 16px);
   width: 100%;
   line-height: 1.4;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 /* ================================
@@ -1156,7 +1156,7 @@ html, body {
 }
 
 .launch-banner-message {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(13px, 1.6vw, 14.5px);
   font-weight: 600;
   /* Maintenance notice colour — swap back to #0b7923 when rotating banner is restored */
@@ -1246,7 +1246,7 @@ html, body {
   background: #f9fdf9;
   border-top: 1.5px solid rgba(28, 124, 49, 0.1);
   border-bottom: 1.5px solid rgba(28, 124, 49, 0.1);
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .home-blog-preview__header {
@@ -1261,7 +1261,7 @@ html, body {
   color: #1f3b1f;
   margin: 0 0 14px;
   line-height: 1.25;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .home-blog-preview__subtitle {
@@ -1269,7 +1269,7 @@ html, body {
   color: #6b7280;
   line-height: 1.6;
   margin: 0;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .home-blog-preview__grid {
@@ -1308,7 +1308,7 @@ html, body {
   padding: 13px 30px;
   font-size: clamp(14px, 1.8vw, 15.5px);
   font-weight: 700;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   cursor: pointer;
   transition: all 0.28s cubic-bezier(0, 0, 0.2, 1);
   box-shadow: 0 4px 16px rgba(2, 65, 16, 0.22);

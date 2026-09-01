@@ -4,7 +4,7 @@
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
-  font-family: inherit;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   color: #1f2937;
 }
 

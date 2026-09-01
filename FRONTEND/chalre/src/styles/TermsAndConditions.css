@@ -25,9 +25,9 @@
   --border:   #d1fae5;
   --border-md:#a7f3d0;
 
-    --font-display: 'Times New Roman', Times, serif;
-  --font-serif:   'Times New Roman', Times, serif;
-  --font-sans:    'Times New Roman', Times, serif;
+    --font-display: "EB Garamond", Garamond, Georgia, serif;
+  --font-serif:   var(--font-display, "EB Garamond", Garamond, Georgia, serif);
+  --font-sans:    var(--font-body);
 
   --radius-sm:   6px;
   --radius-card: 8px;
@@ -71,7 +71,7 @@ button {
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   color: var(--text-800);
   background: var(--bg-page);
   animation: tc-rise .5s var(--ease) both;
@@ -101,7 +101,7 @@ button {
   background: white;
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-pill);
-  font-family: var(--font-sans);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: .68rem;
   font-weight: 600;
   letter-spacing: .14em;
@@ -125,7 +125,7 @@ button {
 
 /* ── Title ── */
 .tc-title {
-  font-family: var(--font-display);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(2.4rem, 6vw, 3.8rem);
   font-weight: 500;
   line-height: 1.08;
@@ -136,7 +136,7 @@ button {
 
 /* ── Subtitle ── */
 .tc-subtitle {
-  font-family: var(--font-serif);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(.9rem, 2vw, 1.05rem);
   font-weight: 300;
   font-style: italic;
@@ -159,7 +159,7 @@ button {
   align-items: center;
   gap: 6px;
   padding: 5px 13px;
-  font-family: var(--font-sans);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: .73rem;
   font-weight: 500;
   color: var(--text-500);
@@ -179,7 +179,7 @@ button {
 }
 
 .tc-toc-heading {
-  font-family: var(--font-sans);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: .65rem;
   font-weight: 700;
   letter-spacing: .16em;
@@ -199,7 +199,7 @@ button {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  font-family: var(--font-sans);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: .78rem;
   font-weight: 500;
   color: var(--text-600);
@@ -331,7 +331,7 @@ button {
 
 /* Number label */
 .tc-section-num-label {
-  font-family: var(--font-sans);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: .62rem;
   font-weight: 600;
   letter-spacing: .1em;
@@ -349,7 +349,7 @@ button {
 /* Section title */
 .tc-section-title {
   flex: 1;
-  font-family: var(--font-sans);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(.85rem, 2.2vw, .96rem);
   font-weight: 600;
   color: var(--text-800);
@@ -398,7 +398,7 @@ button {
 }
 
 .tc-section-body-inner p {
-  font-family: var(--font-serif);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(.875rem, 2vw, .95rem);
   font-weight: 300;
   line-height: 1.85;
@@ -431,7 +431,7 @@ button {
 }
 
 .tc-section-body-inner li {
-  font-family: var(--font-serif);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(.875rem, 2vw, .95rem);
   font-weight: 300;
   line-height: 1.8;
@@ -464,7 +464,7 @@ button {
 }
 
 .tc-footer-text p {
-  font-family: var(--font-serif);
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(.85rem, 2vw, .925rem);
   font-weight: 300;
   line-height: 1.75;

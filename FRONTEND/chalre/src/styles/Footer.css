@@ -7,7 +7,7 @@
   font-size: clamp(13px, 1.5vw, 14px);
   color: #374151;
   margin-top: auto;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   border-top: 1px solid #eef2f4;
 }
 
@@ -34,7 +34,7 @@
   color: #0c5129;
   letter-spacing: -0.02em;
   margin-bottom: 10px;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .footer-tagline {
@@ -42,7 +42,7 @@
   font-weight: 600;
   color: #374151;
   margin: 0 0 10px;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .footer-desc {
@@ -50,7 +50,7 @@
   line-height: 1.7;
   color: #9ca3af;
   margin: 0;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 /* ================================
@@ -63,7 +63,7 @@
   color: #111827;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .footer-links {
@@ -84,7 +84,7 @@
   cursor: pointer;
   color: #6b7280;
   font-size: clamp(13px, 1.5vw, 14px);
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   line-height: 1.4;
   word-break: break-word;
   transition: color 0.2s ease, transform 0.2s ease;
@@ -120,7 +120,7 @@
   justify-content: space-between;
   align-items: center;
   transition: border-color 0.2s ease;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   color: #374151;
 }
 
@@ -170,7 +170,7 @@
   font-size: clamp(12px, 1.4vw, 13px);
   transition: background 0.15s ease;
   border-bottom: 1px solid #f3f4f6;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   color: #374151;
 }
 
@@ -241,7 +241,7 @@
   cursor: pointer;
   flex-wrap: wrap;
   gap: 10px;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .footer-bottom span:hover {

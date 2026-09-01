@@ -4,7 +4,7 @@
    Clean · Classic · Responsive
 ================================ */
 
-/* Google Fonts import removed — Times New Roman used throughout */
+/* Google Fonts import removed — Apple Garamond / Inter used throughout */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,7 +27,7 @@ html, body {
   flex-direction: column;
   align-items: flex-start;
   padding: 16px clamp(18px, 5vw, 64px) clamp(40px, 5vw, 60px);
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   overflow: hidden;
   animation: dashIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -158,7 +158,7 @@ html, body {
 }
 
 .dash-name {
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   font-size: clamp(15px, 3.5vw, 17px);
   font-weight: 700;
   color: #0a2614;
@@ -173,7 +173,7 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .dash-bell-wrap {
@@ -217,14 +217,14 @@ html, body {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .dash-status-text strong {
   font-size: 14px;
   color: #0a2614;
   font-weight: 700;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .dash-inline-btn {
@@ -234,7 +234,7 @@ html, body {
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   background: #024110;
   color: #fff;
   transition: background 0.2s;
@@ -255,7 +255,7 @@ html, body {
   font-weight: 700;
   color: #0a2614;
   margin-bottom: 4px;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .dash-upi-title svg { color: #024110; }
@@ -265,7 +265,7 @@ html, body {
   color: #9ca3af;
   margin-bottom: 12px;
   line-height: 1.5;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .dash-upi-row {
@@ -281,7 +281,7 @@ html, body {
   border-radius: 9px;
   border: 1.5px solid #d1d5db;
   font-size: 13px;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   background: #fff;
   color: #0a2614;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -289,7 +289,7 @@ html, body {
 
 .dash-upi-input::placeholder {
   color: #b0b8c0;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .dash-upi-input:focus {
@@ -305,7 +305,7 @@ html, body {
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   background: #024110;
   color: #fff;
   transition: background 0.2s;
@@ -321,7 +321,7 @@ html, body {
   color: #b91c1c;
   margin-top: 6px;
   font-weight: 500;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 /* ── PRIMARY ACTIONS ── */
@@ -343,7 +343,7 @@ html, body {
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
 }
 
@@ -394,7 +394,7 @@ html, body {
   font-size: 12px;
   font-weight: 600;
   color: #1a3d25;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   transition: background 0.2s, border-color 0.2s, transform 0.15s;
   line-height: 1.2;
   text-align: center;
@@ -669,7 +669,7 @@ html, body {
   font-weight: 700;
   color: #92400e;
   line-height: 1.3;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .dash-incomplete-sub {
@@ -680,7 +680,7 @@ html, body {
   white-space: normal;
   overflow: visible;
   text-overflow: unset;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
 }
 
 .dash-incomplete-btn {
@@ -690,7 +690,7 @@ html, body {
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
   background: #f59e0b;
   color: #fff;
   transition: background 0.2s, transform 0.15s;

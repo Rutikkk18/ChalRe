@@ -3,7 +3,6 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import api from "../api/axios";
 import "../styles/offerRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
-import RoutePreviewPanel from "../components/RoutePreviewPanel";
 import { useLanguage } from "../context/LanguageContext";
 import { logRideCreated } from "../analytics/analyticsService"; // ✅ analytics observer
 import heroImage from "../assets/ride-sharing-scene.png";
@@ -74,46 +73,9 @@ export default function OfferRide() {
     return (eh * 60 + em) < (sh * 60 + sm);
   };
 
-  // ── Route preview state ────────────────────────────────────────────────
-  const [routeOptions, setRouteOptions] = useState([]);
-  const [routeLoading, setRouteLoading] = useState(false);
-  const [selectedRouteIdx, setSelectedRouteIdx] = useState(0);
-
   // Coords refs to capture coordinates from autocomplete
   const fromCoordsRef = useRef(null);
   const toCoordsRef = useRef(null);
-
-  // ── Fetch route options when both coords are set ───────────────────────
-  const fetchPreview = useCallback(async (fromCoords, toCoords) => {
-    if (!fromCoords || !toCoords) return;
-    setRouteLoading(true);
-    setRouteOptions([]);
-    setSelectedRouteIdx(0);
-    try {
-      const res = await api.post("/rides/preview", {
-        startLat: fromCoords.lat,
-        startLng: fromCoords.lng,
-        endLat: toCoords.lat,
-        endLng: toCoords.lng,
-      });
-      setRouteOptions(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
-      console.error("Route preview failed", err);
-      setRouteOptions([]);
-    } finally {
-      setRouteLoading(false);
-    }
-  }, []);
-
-  // Re-fetch preview when either location changes
-  useEffect(() => {
-    if (fromCoordsRef.current && toCoordsRef.current) {
-      fetchPreview(fromCoordsRef.current, toCoordsRef.current);
-    } else {
-      setRouteOptions([]);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.from, form.to]);
 
   const updateField = (field, value) => {
     setForm((prev) => {
@@ -166,9 +128,6 @@ export default function OfferRide() {
       const fromCoords = fromCoordsRef.current;
       const toCoords = toCoordsRef.current;
 
-      // Attach selected route if a preview was fetched
-      const selectedRoute = routeOptions[selectedRouteIdx] || null;
-
       const response = await api.post("/rides/create", {
         startLocation: form.from, endLocation: form.to,
         date: form.date, time: form.time, endTime: form.endTime || null,
@@ -179,10 +138,9 @@ export default function OfferRide() {
         fromLng: fromCoords ? fromCoords.lng : null,
         toLat: toCoords ? toCoords.lat : null,
         toLng: toCoords ? toCoords.lng : null,
-        // Pre-selected route (null if no preview was loaded)
-        selectedPolyline: selectedRoute ? selectedRoute.polyline : null,
-        selectedDistance: selectedRoute ? selectedRoute.distanceKm : null,
-        selectedDuration: selectedRoute ? selectedRoute.durationMins : null,
+        selectedPolyline: null,
+        selectedDistance: null,
+        selectedDuration: null,
       });
 
       if (response.status === 200) {
@@ -190,8 +148,6 @@ export default function OfferRide() {
         logRideCreated(form.from, form.to, form.price, vehicleCategory); // ✅ fire-and-forget
         setForm({ from:"",to:"",date:"",time:"",endTime:"",seats:1,price:"",carType:"",genderPreference:"",note:"" });
         setVehicleCategory("");
-        setRouteOptions([]);
-        setSelectedRouteIdx(0);
         fromCoordsRef.current = null;
         toCoordsRef.current = null;
         setTimeout(() => { window.location.href = "/myrides"; }, 2000);
@@ -257,10 +213,6 @@ export default function OfferRide() {
                   } else {
                     fromCoordsRef.current = null;
                   }
-                  // Trigger preview if both coords ready
-                  if (fromCoordsRef.current && toCoordsRef.current) {
-                    fetchPreview(fromCoordsRef.current, toCoordsRef.current);
-                  }
                 }}
                 placeholder={t("orPickupPlaceholder")}
               />
@@ -286,34 +238,10 @@ export default function OfferRide() {
                   } else {
                     toCoordsRef.current = null;
                   }
-                  // Trigger preview if both coords ready
-                  if (fromCoordsRef.current && toCoordsRef.current) {
-                    fetchPreview(fromCoordsRef.current, toCoordsRef.current);
-                  }
                 }}
                 placeholder={t("orDropPlaceholder")}
               />
             </div>
-          </div>
-
-          {/* ── Inline route panel (mobile/narrow: between locations and date) */}
-          <div className="rp-inline-wrapper">
-            {routeLoading && (
-              <div className="rp-inline-loading">
-                <span className="btn-spinner" />
-                <span>Finding best routes…</span>
-              </div>
-            )}
-            {!routeLoading && routeOptions.length > 0 && (
-              <RoutePreviewPanel
-                routes={routeOptions}
-                selectedIdx={selectedRouteIdx}
-                onSelect={setSelectedRouteIdx}
-                loading={routeLoading}
-                fromCoords={fromCoordsRef.current}
-                toCoords={toCoordsRef.current}
-              />
-            )}
           </div>
 
           {/* ROW 2: Departure | Arrival */}
@@ -486,42 +414,6 @@ export default function OfferRide() {
           </div>
 
         </form>
-      </div>
-
-      {/* ─── RIGHT PANEL: Route Preview (desktop) ─────────────── */}
-      <div className="offer-right-panel">
-        {/* Loading overlay */}
-        {routeLoading && (
-          <div className="rp-hero-loading-overlay">
-            <div className="rp-hero-spinner" />
-            <span className="rp-hero-spinner-label">Finding best routes…</span>
-          </div>
-        )}
-
-        {/* Idle hint (no loading, no routes) */}
-        {!routeLoading && routeOptions.length === 0 && (
-          <div className="rp-hero-hint-desktop">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18">
-              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            Select pickup &amp; drop to see route options
-          </div>
-        )}
-
-        {/* Route Preview Panel — mounts and slides/fades in once routes arrive */}
-        {routeOptions.length > 0 && (
-          <div className="rp-map-container-desktop">
-            <RoutePreviewPanel
-              routes={routeOptions}
-              selectedIdx={selectedRouteIdx}
-              onSelect={setSelectedRouteIdx}
-              loading={routeLoading}
-              fromCoords={fromCoordsRef.current}
-              toCoords={toCoordsRef.current}
-            />
-          </div>
-        )}
       </div>
       </div>
 
