@@ -139,7 +139,7 @@
   padding: clamp(4px, 1vw, 5px) clamp(6px, 1.5vw, 8px);
   border-radius: clamp(4px, 1vw, 6px);
   transition: all 0.2s ease;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   appearance: none;
   -webkit-appearance: none;
   white-space: nowrap;
@@ -328,7 +328,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   appearance: none;
   -webkit-appearance: none;
 }

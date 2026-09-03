@@ -1,6 +1,6 @@
 /* ================================
    BOOKING SUCCESS PAGE
-   Apple Garamond / Inter throughout
+   Canela Deck / Neue Montreal throughout
 ================================ */
 
 :root {
@@ -19,8 +19,8 @@
   --bg:        #f8fafc;
   --radius:    16px;
   --radius-sm: 10px;
-  --serif:     var(--font-display, "EB Garamond", Garamond, Georgia, serif);
-  --sans:      var(--font-body);
+  --serif:     var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
+  --sans:      var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   --shadow-lg: 0 12px 40px rgba(11,61,34,0.12), 0 4px 12px rgba(0,0,0,0.06);
 }
 
@@ -33,7 +33,7 @@
   align-items: flex-start;
   justify-content: center;
   padding: 80px 20px 60px;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   animation: fadeUp 0.5s ease both;
 }
 
@@ -108,11 +108,11 @@
   opacity: 0.8;
   position: relative;
   z-index: 1;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .success-left h2 {
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
   font-size: 1.7rem;
   font-weight: 700;
   color: #ffffff;
@@ -128,7 +128,7 @@
   position: relative;
   z-index: 1;
   max-width: 220px;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .success-id-pill {
@@ -149,11 +149,11 @@
   text-transform: uppercase;
   color: rgba(255,255,255,0.45);
   margin-bottom: 4px;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .success-id-pill-val {
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--g-light);
@@ -166,11 +166,11 @@
   flex-direction: column;
   gap: 0;
   overflow-y: auto;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .success-right-title {
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--ink);
@@ -221,7 +221,7 @@
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .value {
@@ -230,7 +230,7 @@
   color: var(--ink);
   word-break: break-word;
   line-height: 1.4;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .driver-phone {
@@ -242,7 +242,7 @@
   text-decoration: none;
   font-size: 0.82rem;
   font-weight: 600;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   transition: color 0.2s;
 }
 .driver-phone:hover { text-decoration: underline; color: #1d4ed8; }
@@ -265,7 +265,7 @@
   font-weight: 700;
   letter-spacing: 0.2px;
   white-space: nowrap;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .status-badge.booked   { background: var(--g-pale); color: var(--g-dark); }
@@ -290,7 +290,7 @@
   border-radius: var(--radius-sm);
   background: var(--g-main);
   color: #ffffff;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   font-size: 0.92rem;
   font-weight: 700;
   cursor: pointer;
@@ -314,7 +314,7 @@
   border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--g-main);
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   font-size: 0.92rem;
   font-weight: 700;
   cursor: pointer;
@@ -331,7 +331,7 @@
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--muted);
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;

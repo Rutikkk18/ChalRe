@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 :root {
-  --font-display: "EB Garamond", Garamond, Georgia, serif;
-  --font-body: "Helvetica Neue", Helvetica, Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-heading: var(--font-body);
+  --font-display: "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif;
+  --font-body: "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: var(--font-display);
   --font-sans: var(--font-body);
   --font-serif: var(--font-display);
 }
@@ -16,31 +16,53 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: var(--font-body);
+  color: #1f2937;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Functional UI elements default to clean, readable Helvetica Neue */
+/* Base functional UI elements use Neue Montreal */
 button, input, select, textarea, p, span, div, a, label, table, th, td, ul, ol, li, small, strong, em {
   font-family: var(--font-body);
 }
 
-/* Functional UI headings */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-body);
-}
-
-/* Expressive brand, hero & display typography accents */
+/* Headers, headlines and display typography use Canela Deck */
+h1, h2, h3, h4, h5, h6,
 .font-display,
+.font-heading,
+.font-canela,
 .hero-headline,
 .brand-display,
 .display-title,
+.logo,
+.navbar .logo,
+.footer-logo,
 .hero h1,
 .h2hr,
 .about-hero h1,
+.about-section h2,
 .vision-section h2,
 .blog-hero h1,
-.blog-post-title {
+.blog-post-title,
+.feature-card h3,
+.step-card h3,
+.admin-card h3 {
   font-family: var(--font-display);
 }
+
+/* Navigation, buttons and interactive controls explicitly use Neue Montreal */
+.nav-links,
+.nav-links a,
+.register-btn,
+.logout-btn,
+.btn,
+.search-item,
+.ride-card,
+.footer-tagline,
+.footer-desc,
+.footer-col h4,
+.footer-links > * {
+  font-family: var(--font-body);
+}
+
 

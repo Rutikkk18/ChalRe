@@ -14,7 +14,7 @@
   color: #1f2937;
   margin: 0 0 clamp(10px, 2vw, 12px) 0;
   line-height: 1.2;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
 }
 
 .admin-subtitle {
@@ -23,7 +23,7 @@
   font-size: clamp(14px, 2vw, 16px);
   line-height: 1.5;
   margin-bottom: 0;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
 }
 
 /* ---------- GRID ---------- */
@@ -55,7 +55,7 @@
   color: #1f2937;
   margin: 0 0 clamp(8px, 2vw, 10px) 0;
   line-height: 1.3;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
 }
 
 .admin-card p {
@@ -63,7 +63,7 @@
   color: #6b7280;
   margin: 0;
   line-height: 1.5;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 /* ---------- TABLET RESPONSIVE ---------- */

@@ -1,6 +1,6 @@
 /* ============================================================
    blog.css — ChalRe Blog System Styles
-   Matches existing brand: green palette, Apple Garamond / Inter,
+   Matches existing brand: green palette, Canela Deck / Neue Montreal,
    card shadow pattern, framer-motion-compatible transitions.
    ============================================================ */
 
@@ -20,7 +20,7 @@
   --blog-shadow-hover: 0 16px 48px rgba(0, 100, 0, 0.18);
   --blog-radius:       16px;
   --blog-radius-sm:    10px;
-  --blog-font:         var(--font-body);
+  --blog-font:         var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   --blog-transition:   all 0.28s cubic-bezier(0, 0, 0.2, 1);
 }
 
@@ -28,7 +28,7 @@
 .blog-page-wrapper {
   background: var(--blog-bg);
   min-height: 100vh;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   color: var(--blog-text-dark);
 }
 
@@ -83,7 +83,7 @@
   color: #ffffff;
   margin: 0 0 16px;
   line-height: 1.2;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
 }
 
 .blog-hero__subtitle {
@@ -91,7 +91,7 @@
   color: rgba(255, 255, 255, 0.85);
   margin: 0 0 36px;
   line-height: 1.6;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
 }
 
 /* ─── Category Filter Pills ───────────────────────────────────── */
@@ -116,7 +116,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: var(--blog-transition);
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   white-space: nowrap;
 }
 
@@ -173,7 +173,7 @@
   padding: 80px 20px;
   color: var(--blog-text-muted);
   font-size: 17px;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 /* ─── Blog Card ───────────────────────────────────────────────── */
@@ -231,7 +231,7 @@
   color: var(--blog-text-dark);
   line-height: 1.35;
   margin: 0;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
 }
 
 .blog-card__title-link {
@@ -254,7 +254,7 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .blog-card__footer {
@@ -273,7 +273,7 @@
   font-size: 14px;
   white-space: nowrap;
   transition: color 0.2s ease;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .blog-card__read-more:hover {
@@ -294,7 +294,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -312,7 +312,7 @@
   flex-wrap: wrap;
   font-size: 13.5px;
   color: var(--blog-text-muted);
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .blog-meta--compact {
@@ -343,7 +343,7 @@
   min-height: 60vh;
   gap: 16px;
   color: var(--blog-text-muted);
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .blog-loading__spinner {
@@ -363,7 +363,7 @@
 .blog-post-page {
   background: var(--blog-bg);
   min-height: 100vh;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   color: var(--blog-text-dark);
 }
 
@@ -394,7 +394,7 @@
   font-size: 13.5px;
   font-weight: 500;
   transition: color 0.2s ease;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .blog-breadcrumb__link:hover {
@@ -410,7 +410,7 @@
 .blog-breadcrumb__current {
   font-size: 13.5px;
   color: var(--blog-text-muted);
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   /* Clamp long titles in breadcrumb */
   max-width: 240px;
   white-space: nowrap;
@@ -433,7 +433,7 @@
   color: var(--blog-text-dark);
   line-height: 1.25;
   margin: 0 0 20px;
-  font-family: var(--font-display, "EB Garamond", Garamond, Georgia, serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
 }
 
 /* ─── Cover Image ─────────────────────────────────────────────── */
@@ -464,7 +464,7 @@
   line-height: 1.8;
   color: var(--blog-text-dark);
   margin: 0 0 22px;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .blog-content__h2 {
@@ -473,7 +473,7 @@
   color: var(--blog-text-dark);
   margin: 40px 0 16px;
   line-height: 1.3;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
   padding-bottom: 8px;
   border-bottom: 2px solid var(--blog-green-pale);
 }
@@ -484,7 +484,7 @@
   color: var(--blog-green-dark);
   margin: 28px 0 12px;
   line-height: 1.35;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
 }
 
 .blog-content__list {
@@ -503,7 +503,7 @@
   font-size: clamp(15px, 2vw, 17px);
   line-height: 1.65;
   color: var(--blog-text-dark);
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .blog-content__list-item::before {
@@ -546,7 +546,7 @@
   font-weight: 700;
   color: #ffffff;
   margin: 0 0 10px;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
   position: relative;
   z-index: 1;
 }
@@ -556,7 +556,7 @@
   color: rgba(255, 255, 255, 0.85);
   margin: 0 0 28px;
   line-height: 1.6;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   max-width: 480px;
   margin-left: auto;
   margin-right: auto;
@@ -579,7 +579,7 @@
   padding: 12px 28px;
   font-weight: 700;
   font-size: 15px;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   transition: var(--blog-transition);
   white-space: nowrap;
   display: inline-flex;
@@ -622,7 +622,7 @@
   color: var(--blog-green-mid);
   font-weight: 600;
   font-size: 15px;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   transition: color 0.2s ease;
 }
 
@@ -648,7 +648,7 @@
   font-weight: 700;
   color: var(--blog-text-dark);
   margin: 0 0 32px;
-  font-family: var(--font-body, "Helvetica Neue", Helvetica, Arial, sans-serif);
+  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
   text-align: center;
 }
 
