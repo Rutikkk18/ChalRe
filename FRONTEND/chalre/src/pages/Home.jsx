@@ -68,12 +68,11 @@ export default function Home() {
       {/* ── HERO ── */}
       <header className="hero">
 
-        <div className="launch-banner">
-          <div className="launch-banner-inner">
-            {/* Static maintenance notice — rotating banner commented out above */}
-            <span className="launch-banner-message">
-              ⚠️  Website under maintenance — Some features may not work as expected. We’ll notify you with the next update.
-            </span>
+        {/* ── LAUNCH OFFER BADGE ── */}
+        <div className="launch-banner-container">
+          <div className="launch-offer-badge animated-travel">
+            <span className="badge-pulse-dot"></span>
+            Launch Special: <strong>Drivers keep 100% earnings</strong> (0% Platform Fee)
           </div>
         </div>
 
