@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 
 :root {
-  --font-display: "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif;
-  --font-body: "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display: "Merriweather", Georgia, "Times New Roman", serif;
+  --font-body: "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-heading: var(--font-display);
   --font-sans: var(--font-body);
   --font-serif: var(--font-display);
@@ -21,16 +21,16 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Base functional UI elements use Neue Montreal */
+/* Base functional UI elements use Ubuntu */
 button, input, select, textarea, p, span, div, a, label, table, th, td, ul, ol, li, small, strong, em {
   font-family: var(--font-body);
 }
 
-/* Headers, headlines and display typography use Canela Deck */
+/* Headers, headlines and display typography use Merriweather */
 h1, h2, h3, h4, h5, h6,
 .font-display,
 .font-heading,
-.font-canela,
+.font-merriweather,
 .hero-headline,
 .brand-display,
 .display-title,
@@ -50,7 +50,7 @@ h1, h2, h3, h4, h5, h6,
   font-family: var(--font-display);
 }
 
-/* Navigation, buttons and interactive controls explicitly use Neue Montreal */
+/* Navigation, buttons and interactive controls explicitly use Ubuntu */
 .nav-links,
 .nav-links a,
 .register-btn,
@@ -64,5 +64,3 @@ h1, h2, h3, h4, h5, h6,
 .footer-links > * {
   font-family: var(--font-body);
 }
-
-

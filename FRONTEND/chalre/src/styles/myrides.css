@@ -12,7 +12,7 @@
   margin: 16px auto 40px;
   padding: clamp(20px, 3vw, 32px) clamp(16px, 4vw, 24px) 0;
   animation: mr-fade 0.4s ease;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 @keyframes mr-fade {
@@ -25,7 +25,7 @@
   padding: 60px 20px;
   color: #6b7280;
   font-size: 15px;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 /* ── HEADER ── */
@@ -44,7 +44,7 @@
   color: #0a2614;
   margin: 0;
   letter-spacing: -0.3px;
-  font-family: var(--font-display, "Canela Deck", "Canela", "Playfair Display", "EB Garamond", Garamond, Georgia, serif);
+  font-family: var(--font-display, "Merriweather", Georgia, "Times New Roman", serif);
 }
 
 .mr-new-btn {
@@ -59,7 +59,7 @@
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   transition: background 0.2s, transform 0.15s;
   white-space: nowrap;
 }
@@ -95,7 +95,7 @@
   font-weight: 600;
   color: #9ca3af;
   cursor: pointer;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   transition: color 0.2s, border-color 0.2s;
   white-space: nowrap;
 }
@@ -118,7 +118,7 @@
   border-radius: 20px;
   line-height: 1.4;
   transition: background 0.2s, color 0.2s;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .mr-tab--active .mr-tab-count {
@@ -136,7 +136,7 @@
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 20px;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 /* ── EMPTY STATE ── */
@@ -158,7 +158,7 @@
   font-size: 16px;
   color: #6b7280;
   margin: 0;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 /* ── GRID: 2 columns ── */
@@ -248,7 +248,7 @@
   color: #9ca3af;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .mr-route-place {
@@ -257,7 +257,7 @@
   color: #0a2614;
   line-height: 1.4;
   word-break: break-word;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 /* ── META INFO ── */
@@ -273,7 +273,7 @@
   gap: 8px;
   font-size: 13px;
   color: #4b5563;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .mr-meta-icon {
@@ -325,7 +325,7 @@
   font-weight: 600;
   color: #374151;
   cursor: pointer;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   transition: background 0.2s;
 }
 
@@ -375,13 +375,13 @@
 .mr-booking-passenger strong {
   font-size: 13px;
   color: #0a2614;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .mr-booking-passenger span {
   font-size: 11px;
   color: #6b7280;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .mr-booking-actions {
@@ -400,7 +400,7 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   border: none;
   text-decoration: none;
   transition: background 0.2s;
@@ -442,7 +442,7 @@
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  font-family: var(--font-body, "Neue Montreal", "PP Neue Montreal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   transition: all 0.2s;
 }
 
