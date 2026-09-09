@@ -77,24 +77,26 @@ html, body {
   display: inline-flex !important;
   align-items: center !important;
   gap: 7px !important;
-  background: #000000 !important;
-  color: #ffffff !important;
-  padding: 8px 15px !important;
+  background: rgba(28, 124, 49, 0.1) !important;
+  color: #075017 !important;
+  border: 1px solid rgba(28, 124, 49, 0.25) !important;
+  padding: 7px 15px !important;
   border-radius: 20px !important;
   text-decoration: none !important;
   font-size: clamp(12.5px, 1.4vw, 13.5px) !important;
   font-weight: 600 !important;
   white-space: nowrap !important;
   transition: all 0.25s ease !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(28, 124, 49, 0.08);
   margin-right: 4px;
 }
 
 .nav-playstore-btn:hover {
-  background: #1c7c31 !important;
+  background: #000000 !important;
   color: #ffffff !important;
+  border-color: #000000 !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(28, 124, 49, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .nav-playstore-icon {
@@ -107,8 +109,9 @@ html, body {
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
-  background: #000000 !important;
-  color: #ffffff !important;
+  background: rgba(28, 124, 49, 0.1) !important;
+  color: #075017 !important;
+  border: 1px solid rgba(28, 124, 49, 0.25) !important;
   padding: 12px 20px !important;
   margin: 10px 16px !important;
   border-radius: 12px !important;
