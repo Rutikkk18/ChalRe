@@ -944,6 +944,13 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   line-height: 1.2;
 }
 
+@media (min-width: 541px) {
+  /* Desktop: browser already shows dd-mm-yyyy natively for date inputs */
+  .date-field-wrap .native-placeholder {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .native-placeholder {
     font-size: 0.78rem;

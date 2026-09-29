@@ -306,7 +306,7 @@ export default function OfferRide() {
                 </svg>
                 {t("date")}
               </label>
-              <div className="time-field-wrap">
+              <div className="time-field-wrap date-field-wrap">
                 {!form.date && <span className="native-placeholder">Select date</span>}
                 <input type="date" className="field-input"
                   value={form.date}
