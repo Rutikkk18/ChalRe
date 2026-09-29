@@ -1,7 +1,9 @@
 package com.Startup.chalre.controller;
 
+import com.Startup.chalre.entity.Booking;
 import com.Startup.chalre.entity.Payment;
 import com.Startup.chalre.entity.User;
+import com.Startup.chalre.repository.BookingRepository;
 import com.Startup.chalre.repository.PaymentRepository;
 import com.Startup.chalre.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class AdminPayoutController {
 
     private final PaymentRepository paymentRepository;
     private final NotificationService notificationService;
+    private final BookingRepository bookingRepository;
 
     // Get all payments where passenger confirmed but driver not paid yet
     @GetMapping("/pending")
@@ -277,4 +280,65 @@ public class AdminPayoutController {
                 "refundProcessedAt", payment.getRefundProcessedAt().toString()
         ));
     }
-}
+
+    // Get recent paid bookings for admin dashboard feed
+    @GetMapping("/recent-bookings")
+    public ResponseEntity<?> getRecentBookings() {
+        List<Booking> allBookings = bookingRepository.findAll();
+
+        List<Map<String, Object>> result = allBookings.stream()
+                .filter(b -> "PAID".equalsIgnoreCase(b.getPaymentStatus()))
+                .filter(b -> !"CANCELLED".equalsIgnoreCase(b.getStatus()))
+                .sorted((a, b2) -> {
+                    String t1 = a.getBookingTime() != null ? a.getBookingTime() : "";
+                    String t2 = b2.getBookingTime() != null ? b2.getBookingTime() : "";
+                    return t2.compareTo(t1); // newest first
+                })
+                .limit(20)
+                .map(b -> {
+                    Map<String, Object> map = new java.util.HashMap<>();
+                    map.put("bookingId", b.getId());
+                    map.put("bookingTime", b.getBookingTime());
+                    map.put("seatsBooked", b.getSeatsBooked());
+                    map.put("paymentMethod", b.getPaymentMethod());
+                    map.put("paymentStatus", b.getPaymentStatus());
+                    map.put("bookingStatus", b.getStatus());
+                    map.put("txnId", b.getTxnId());
+
+                    // Passenger
+                    if (b.getUser() != null) {
+                        map.put("passengerName", b.getUser().getName());
+                        map.put("passengerPhone", b.getUser().getPhone());
+                        map.put("passengerId", b.getUser().getId());
+                    }
+
+                    // Route
+                    map.put("passengerPickup", b.getPassengerPickup());
+                    map.put("passengerDrop", b.getPassengerDrop());
+
+                    // Ride + Driver + Amount
+                    if (b.getRide() != null) {
+                        map.put("rideId", b.getRide().getId());
+                        map.put("from", b.getRide().getStartLocation());
+                        map.put("to", b.getRide().getEndLocation());
+                        map.put("rideDate", b.getRide().getDate());
+                        map.put("rideTime", b.getRide().getTime());
+
+                        double pricePerSeat = b.getBookedPrice() != null ? b.getBookedPrice() : b.getRide().getPrice();
+                        double totalAmount = pricePerSeat * b.getSeatsBooked();
+                        map.put("amountRupees", totalAmount);
+
+                        if (b.getRide().getDriver() != null) {
+                            map.put("driverName", b.getRide().getDriver().getName());
+                            map.put("driverPhone", b.getRide().getDriver().getPhone());
+                            map.put("driverId", b.getRide().getDriver().getId());
+                        }
+                    }
+
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
+    }
+}
