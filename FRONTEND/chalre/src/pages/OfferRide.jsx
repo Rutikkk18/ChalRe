@@ -1,11 +1,13 @@
 // src/pages/OfferRide.jsx
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useContext } from "react";
 import api from "../api/axios";
 import "../styles/offerRide.css";
 import LocationAutocomplete from "../components/LocationAutocomplete";
 import { useLanguage } from "../context/LanguageContext";
 import { logRideCreated } from "../analytics/analyticsService"; // ✅ analytics observer
 import heroImage from "../assets/ride-sharing-scene.png";
+import { AuthContext } from "../context/AuthContext";
+import VerificationPopup from "../components/VerificationPopup";
 
 function suggestEndTime(startTime) {
   if (!startTime) return "";
@@ -38,6 +40,7 @@ const vehicleModels = {
 
 export default function OfferRide() {
   const { t } = useLanguage();
+  const { user } = useContext(AuthContext);
 
   const [form, setForm] = useState({
     from: "", to: "", date: "", time: "", endTime: "",
@@ -48,6 +51,7 @@ export default function OfferRide() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [confirmedLongDuration, setConfirmedLongDuration] = useState(false);
+  const [showVerificationPopup, setShowVerificationPopup] = useState(false);
 
   const getDurationMinutes = () => {
     if (!form.time || !form.endTime) return 0;
@@ -95,6 +99,15 @@ export default function OfferRide() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // ── Verification gate ──────────────────────────────────
+    const verStatus = user?.verificationStatus;
+    if (verStatus !== "APPROVED") {
+      setShowVerificationPopup(true);
+      return;
+    }
+    // ──────────────────────────────────────────────────────
+
     const today = new Date().toISOString().split("T")[0];
     if (form.date < today) { setError(t("orErrorPastDate")); return; }
     if (form.date === today && form.time) {
@@ -163,6 +176,15 @@ export default function OfferRide() {
 
   return (
     <div className="offer-page offer-page--split">
+
+      {/* ── Verification Popup ───────────────────────────── */}
+      {showVerificationPopup && (
+        <VerificationPopup
+          status={user?.verificationStatus || "NOT_SUBMITTED"}
+          onClose={() => setShowVerificationPopup(false)}
+        />
+      )}
+
       <div className="offer-container-unified">
 
         {/* ─── LEFT PANEL: Form ──────────────────────────────────── */}
