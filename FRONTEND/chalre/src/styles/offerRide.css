@@ -914,6 +914,43 @@ div.offer-page div.offer-zone form.offer-form div.form-footer button.btn-submit:
   .btn-spinner { animation: none !important; }
 }
 
+
+/* ── Custom overlay placeholder for date / time inputs ───────────
+   Shows styled italic gray text over the native --:-- / dd-mm-yyyy
+   chrome when the field has no value yet (React removes the span
+   as soon as the user picks a value). pointer-events:none lets
+   tap/click pass through to the underlying input.
+───────────────────────────────────────────────────────────────── */
+.time-field-wrap {
+  position: relative;
+}
+
+.native-placeholder {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-style: italic;
+  font-size: 0.82rem;
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  pointer-events: none;
+  z-index: 2;
+  white-space: nowrap;
+  /* masks native browser chrome (--:-- / dd-mm-yyyy) that sits below */
+  background: rgba(255, 255, 255, 0.82);
+  padding: 0 3px;
+  border-radius: 3px;
+  line-height: 1.2;
+}
+
+@media (max-width: 480px) {
+  .native-placeholder {
+    font-size: 0.78rem;
+    left: 10px;
+  }
+}
+
 @media print {
   .offer-page { background-image: none; background-color: #fff; }
   .btn-submit { display: none !important; }

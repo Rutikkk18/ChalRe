@@ -254,10 +254,13 @@ export default function OfferRide() {
                 </svg>
                 {t("Departure")}
               </label>
-              <input type="time" className="field-input"
-                value={form.time}
-                onChange={(e) => updateField("time", e.target.value)}
-                required />
+              <div className="time-field-wrap">
+                {!form.time && <span className="native-placeholder">e.g. 09:00</span>}
+                <input type="time" className="field-input"
+                  value={form.time}
+                  onChange={(e) => updateField("time", e.target.value)}
+                  required />
+              </div>
             </div>
             <div className="form-col">
               <label className="field-label">
@@ -270,9 +273,12 @@ export default function OfferRide() {
                   <em className="auto-tag">{t("orAuto")}</em>
                 )}
               </label>
-              <input type="time" className="field-input"
-                value={form.endTime}
-                onChange={(e) => updateField("endTime", e.target.value)} />
+              <div className="time-field-wrap">
+                {!form.endTime && <span className="native-placeholder">e.g. 11:00</span>}
+                <input type="time" className="field-input"
+                  value={form.endTime}
+                  onChange={(e) => updateField("endTime", e.target.value)} />
+              </div>
               {form.endTime && form.time && (
                 <div style={{ marginTop: "6px", display: "flex", flexDirection: "column", gap: "2px" }}>
                   {isOvernightRide() && (
@@ -300,11 +306,14 @@ export default function OfferRide() {
                 </svg>
                 {t("date")}
               </label>
-              <input type="date" className="field-input"
-                value={form.date}
-                onChange={(e) => updateField("date", e.target.value)}
-                min={new Date().toISOString().split("T")[0]}
-                required />
+              <div className="time-field-wrap">
+                {!form.date && <span className="native-placeholder">Select date</span>}
+                <input type="date" className="field-input"
+                  value={form.date}
+                  onChange={(e) => updateField("date", e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
+                  required />
+              </div>
             </div>
             <div className="form-col">
               <label className="field-label">
