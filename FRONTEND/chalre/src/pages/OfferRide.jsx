@@ -100,14 +100,10 @@ export default function OfferRide() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ── Verification gate ──────────────────────────────────
-    const verStatus = user?.verificationStatus;
-    if (verStatus !== "APPROVED") {
-      setShowVerificationPopup(true);
+    if (!form.from?.trim() || !form.to?.trim()) {
+      setError(t("srErrorBothLocations") || "Please enter both start and end locations.");
       return;
     }
-    // ──────────────────────────────────────────────────────
-
     const today = new Date().toISOString().split("T")[0];
     if (form.date < today) { setError(t("orErrorPastDate")); return; }
     if (form.date === today && form.time) {
@@ -135,6 +131,14 @@ export default function OfferRide() {
     }
     if (form.price <= 0) { setError(t("orErrorPrice")); return; }
     if (form.seats < 1 || form.seats > 10) { setError(t("orErrorSeats")); return; }
+
+    // ── Verification gate: only show popup if NOT_SUBMITTED or REJECTED ──
+    const verStatus = user?.verificationStatus;
+    if (!verStatus || verStatus === "NOT_SUBMITTED" || verStatus === "REJECTED") {
+      setShowVerificationPopup(true);
+      return;
+    }
+    // ─────────────────────────────────────────────────────────────────────
 
     setLoading(true); setError(""); setSuccess("");
     try {

@@ -175,7 +175,7 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
           {isFull ? (
             <div className="full-badge">FULL</div>
           ) : (
-            <button className="book-btn" onClick={goToBooking}>
+            <button type="button" className="book-btn" onClick={goToBooking}>
               Book Ride
             </button>
           )}

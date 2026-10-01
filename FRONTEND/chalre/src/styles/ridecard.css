@@ -374,6 +374,9 @@
 }
 
 .book-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 10px 22px;
   min-height: 44px;
   background: var(--green-main);
@@ -456,6 +459,12 @@
   .ride-price-action {
     padding-left: 0;
     justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+  }
+  .ride-price-wrap {
+    align-items: flex-start;
   }
 }
 
@@ -477,16 +486,16 @@
 
 @media (max-width: 480px) {
   .book-btn {
-    width: 100%;
-    min-height: 44px;
-  }
-  .ride-card {
-    padding: 12px;
+    width: auto;
+    min-height: 40px;
+    padding: 8px 18px;
+    font-size: 0.82rem;
   }
 }
 
 @media (max-width: 360px) {
-  .ride-card {
-    padding: 10px;
+  .book-btn {
+    padding: 8px 14px;
+    font-size: 0.78rem;
   }
 }
