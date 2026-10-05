@@ -26,7 +26,7 @@ public class JwtUtil {
                 .setSubject(user.getEmail())
                 .claim("role", user.getRole())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 30))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -37,7 +37,7 @@ public class JwtUtil {
                 .setSubject(email)
                 .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 30))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
