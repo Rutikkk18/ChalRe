@@ -1,10 +1,13 @@
 package com.Startup.chalre.controller;
 
+import com.Startup.chalre.DTO.AuthResponseDTO;
 import com.Startup.chalre.DTO.FirebaseLoginRequest;
 import com.Startup.chalre.DTO.LoginDTO;
+import com.Startup.chalre.DTO.RefreshTokenRequestDTO;
 import com.Startup.chalre.DTO.UserRegisterDTO;
 import com.Startup.chalre.DTO.UserUpdateDTO;
 import com.Startup.chalre.entity.User;
+import com.Startup.chalre.service.RefreshTokenService;
 import com.Startup.chalre.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,11 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
+
+    private boolean isMobileClient(String clientTypeHeader) {
+        return clientTypeHeader != null && "mobile".equalsIgnoreCase(clientTypeHeader.trim());
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(
@@ -41,12 +49,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
+    public ResponseEntity<?> login(
+            @RequestBody LoginDTO dto,
+            @RequestHeader(value = "X-Client-Type", required = false) String clientType) {
 
         User user = userService.validateLogin(dto);
-        String token = userService.generateJwtForUser(user);
-
-        return ResponseEntity.ok(Collections.singletonMap("token", token));
+        AuthResponseDTO authResponse = userService.buildAuthResponse(user, isMobileClient(clientType));
+        return ResponseEntity.ok(authResponse);
     }
 
     @GetMapping("/check-login-method")
@@ -56,10 +65,13 @@ public class UserController {
     }
 
     @PostMapping("/firebase-login")
-    public ResponseEntity<?> firebaseLogin(@RequestBody FirebaseLoginRequest request) {
+    public ResponseEntity<?> firebaseLogin(
+            @RequestBody FirebaseLoginRequest request,
+            @RequestHeader(value = "X-Client-Type", required = false) String clientType) {
         try {
-            String token = userService.loginWithFirebaseToken(request);
-            return ResponseEntity.ok(Collections.singletonMap("token", token));
+            User user = userService.authenticateOrProvisionFirebaseUser(request);
+            AuthResponseDTO authResponse = userService.buildAuthResponse(user, isMobileClient(clientType));
+            return ResponseEntity.ok(authResponse);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IllegalStateException e) {
@@ -69,12 +81,14 @@ public class UserController {
         }
     }
 
-    // ✅ ADDED: Google login endpoint — reuses exact same Firebase token flow
     @PostMapping("/google-login")
-    public ResponseEntity<?> googleLogin(@RequestBody FirebaseLoginRequest request) {
+    public ResponseEntity<?> googleLogin(
+            @RequestBody FirebaseLoginRequest request,
+            @RequestHeader(value = "X-Client-Type", required = false) String clientType) {
         try {
-            String token = userService.loginWithFirebaseToken(request);
-            return ResponseEntity.ok(Collections.singletonMap("token", token));
+            User user = userService.authenticateOrProvisionFirebaseUser(request);
+            AuthResponseDTO authResponse = userService.buildAuthResponse(user, isMobileClient(clientType));
+            return ResponseEntity.ok(authResponse);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IllegalStateException e) {
@@ -82,6 +96,27 @@ public class UserController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequestDTO request) {
+        try {
+            AuthResponseDTO response = refreshTokenService.rotateRefreshToken(request.getRefreshToken());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of(
+                    "error", "Unauthorized",
+                    "message", e.getMessage() != null ? e.getMessage() : "Invalid refresh token"
+            ));
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody(required = false) RefreshTokenRequestDTO request) {
+        if (request != null && request.getRefreshToken() != null) {
+            refreshTokenService.revokeToken(request.getRefreshToken());
+        }
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
     @GetMapping("/me")

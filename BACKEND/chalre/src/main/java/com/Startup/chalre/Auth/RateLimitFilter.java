@@ -66,6 +66,9 @@ public class RateLimitFilter extends OncePerRequestFilter {
                     ("/api/auth/firebase-login".equals(path) || "/api/auth/google-login".equals(path))) {
                 bucketKey = "AUTH_SOCIAL:" + clientIp;
                 capacity = config.getAuthSocialLoginCapacity();
+            } else if ("POST".equalsIgnoreCase(method) && "/api/auth/refresh".equals(path)) {
+                bucketKey = "AUTH_REFRESH:" + clientIp;
+                capacity = 30; // 30 refresh requests per minute per IP
             }
 
             // ── Tier 2: Public / External API Endpoints ──

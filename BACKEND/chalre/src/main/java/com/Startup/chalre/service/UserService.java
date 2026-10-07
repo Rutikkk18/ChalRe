@@ -1,5 +1,6 @@
 package com.Startup.chalre.service;
 
+import com.Startup.chalre.DTO.AuthResponseDTO;
 import com.Startup.chalre.DTO.FirebaseLoginRequest;
 import com.Startup.chalre.DTO.LoginDTO;
 import com.Startup.chalre.DTO.UserRegisterDTO;
@@ -26,6 +27,32 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
+
+    // Helper to generate appropriate AuthResponseDTO based on client type
+    public AuthResponseDTO buildAuthResponse(User user, boolean isMobileClient) {
+        if (isMobileClient) {
+            String accessToken = jwtUtil.generateAccessToken(user);
+            String refreshToken = refreshTokenService.createRefreshToken(user);
+            return AuthResponseDTO.builder()
+                    .token(accessToken) // Legacy fallback
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .tokenType("Bearer")
+                    .expiresIn(jwtUtil.getAccessTokenExpiryMs() / 1000)
+                    .build();
+        } else {
+            // Web / Legacy client: issue standard 30-day token with no refresh token
+            String token = jwtUtil.generateToken(user);
+            return AuthResponseDTO.builder()
+                    .token(token)
+                    .accessToken(token)
+                    .refreshToken(null)
+                    .tokenType("Bearer")
+                    .expiresIn(30L * 24 * 60 * 60)
+                    .build();
+        }
+    }
 
     // =========================
     // NORMAL REGISTER (NON FIREBASE)
@@ -104,10 +131,10 @@ public class UserService {
     }
 
     // =========================
-    // 🔥 FIREBASE LOGIN (COMPILATION SAFE)
+    // 🔥 FIREBASE LOGIN / RESOLUTION
     // =========================
     @Transactional
-    public String loginWithFirebaseToken(FirebaseLoginRequest request) {
+    public User authenticateOrProvisionFirebaseUser(FirebaseLoginRequest request) {
 
         log.info("Firebase login request received");
 
@@ -198,6 +225,12 @@ public class UserService {
         userRepository.saveAndFlush(user);
         log.info("User saved successfully: {}", user.getEmail());
 
+        return user;
+    }
+
+    @Transactional
+    public String loginWithFirebaseToken(FirebaseLoginRequest request) {
+        User user = authenticateOrProvisionFirebaseUser(request);
         return jwtUtil.generateToken(user);
     }
 

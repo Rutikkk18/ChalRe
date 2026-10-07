@@ -45,7 +45,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 path.equals("/api/auth/login") ||
                         path.equals("/api/auth/register") ||
                         path.equals("/api/auth/firebase-login") ||
-                        path.equals("/api/auth/google-login")   // ✅ ADDED: skip Google login endpoint
+                        path.equals("/api/auth/google-login") ||
+                        path.equals("/api/auth/refresh") ||
+                        path.equals("/api/auth/logout")
         ) {
             filterChain.doFilter(request, response);
             return;

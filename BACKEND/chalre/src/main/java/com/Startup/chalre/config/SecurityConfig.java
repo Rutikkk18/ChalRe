@@ -49,7 +49,9 @@ public class SecurityConfig {
                                 "/api/auth/login",
                                 "/api/auth/register",
                                 "/api/auth/firebase-login",
-                                "/api/auth/google-login"   // ✅ ADDED: permit Google login
+                                "/api/auth/google-login",
+                                "/api/auth/refresh",
+                                "/api/auth/logout"
                         ).permitAll()
 
                         .requestMatchers("/api/locations/**").permitAll()
