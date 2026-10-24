@@ -2,8 +2,24 @@
 import axios from "axios";
 import { handleAuthError } from "../utils/errorHandler";
 
+// Resolve base API URL:
+// 1. If VITE_API_BASE_URL is provided (via Vite env or Vercel dashboard), normalize trailing slashes
+//    and ensure it points to the /api base (e.g. "https://chalre-api-staging.onrender.com/api").
+// 2. Otherwise default to "/api" to preserve existing production reverse-proxy behavior.
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (!envUrl || typeof envUrl !== "string" || envUrl.trim() === "") {
+    return "/api";
+  }
+  const trimmed = envUrl.trim().replace(/\/+$/, "");
+  if (trimmed === "" || trimmed === "/api") {
+    return "/api";
+  }
+  return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+};
+
 const api = axios.create({
-   baseURL:"/api"
+  baseURL: getApiBaseUrl()
 });
 
 

@@ -83,7 +83,10 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOriginPatterns(List.of(
+                "https://chalre.in",
+                "https://staging.chalre.in",
                 "https://chalre.vercel.app",
+                "https://chalre-staging.vercel.app",
                 "http://localhost:*"
         ));
 
