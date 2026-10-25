@@ -2,6 +2,7 @@ package com.Startup.chalre.config;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,9 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final RateLimitFilter rateLimitFilter;
 
+    @Value("${cors.allowed-origins:https://chalre-staging.vercel.app,https://staging.chalre.in,https://chalre.in,https://chalre.vercel.app,http://localhost:5173,http://localhost:3000}")
+    private List<String> allowedOrigins;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -38,7 +42,7 @@ public class SecurityConfig {
                 // ✅ Disable CSRF (JWT based) — UNCHANGED
                 .csrf(csrf -> csrf.disable())
 
-                // ✅ Enable CORS — UNCHANGED
+                // ✅ Enable CORS with explicit configuration source
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // ✅ Authorization
@@ -76,28 +80,25 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ✅ GLOBAL CORS CONFIG — UNCHANGED
+    // ✅ GLOBAL CORS CONFIG — Strict finite allowlist, no wildcards
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of(
-                "https://chalre.in",
-                "https://staging.chalre.in",
-                "https://chalre.vercel.app",
-                "https://chalre-staging.vercel.app",
-                "http://localhost:*"
-        ));
+        config.setAllowedOrigins(allowedOrigins);
 
         config.setAllowedMethods(List.of(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS"
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
         ));
 
         config.setAllowedHeaders(List.of(
                 "Authorization",
                 "Content-Type",
-                "Accept"
+                "Accept",
+                "X-Client-Type",
+                "Origin",
+                "X-Requested-With"
         ));
 
         config.setAllowCredentials(true);
