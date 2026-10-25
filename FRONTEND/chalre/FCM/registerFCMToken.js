@@ -1,13 +1,13 @@
 import { getToken } from "firebase/messaging";
-import axios from "axios";
+import api from "../src/api/axios";
 import { messaging } from "./firebase";
 
 export async function registerFCMToken(jwtToken) {
     try {
         const token = await getToken(messaging, { vapidKey: "YOUR_VAPID_KEY" });
 
-        await axios.post(
-            "/api/notifications/register",
+        await api.post(
+            "/notifications/register",
             {
                 token: token,
                 platform: "WEB"

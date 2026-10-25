@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://chalre.onrender.com/api/:path*"
+      "destination": "https://chalre-api-staging.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
