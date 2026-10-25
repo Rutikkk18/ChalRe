@@ -19,6 +19,9 @@ public class RazorpayConfig {
     @Value("${razorpay.secret:}")
     private String secret;
 
+    @Value("${razorpay.webhook.secret:}")
+    private String webhookSecret;
+
     @Bean
     public RazorpayClient razorpayClient() throws Exception {
         if (!StringUtils.hasText(key) || !StringUtils.hasText(secret)) {
@@ -52,5 +55,10 @@ public class RazorpayConfig {
             throw new IllegalStateException("Razorpay key not configured");
         }
         return key;
+    }
+
+    @Bean("razorpayWebhookSecret")
+    public String razorpayWebhookSecret() {
+        return StringUtils.hasText(webhookSecret) ? webhookSecret : "";
     }
 }

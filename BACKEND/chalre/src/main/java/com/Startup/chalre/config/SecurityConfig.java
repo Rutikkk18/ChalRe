@@ -59,6 +59,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         .requestMatchers("/api/locations/**").permitAll()
+                        .requestMatchers("/api/webhooks/**").permitAll()
                         .requestMatchers(
                                 "/uploads/**",
                                 "/auth/**"

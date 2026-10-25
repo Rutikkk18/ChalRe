@@ -38,6 +38,7 @@ public class RazorpayPaymentService {
     private final NotificationService notificationService;
     private final BookingRepository bookingRepository;
     private final RideService rideService;
+    private final SeatHoldService seatHoldService;
 
     public RazorpayPaymentService(
             RazorpayClient razorpayClient,
@@ -47,7 +48,8 @@ public class RazorpayPaymentService {
             UserRepository userRepository,
             NotificationService notificationService,
             BookingRepository bookingRepository,
-            RideService rideService) {
+            RideService rideService,
+            SeatHoldService seatHoldService) {
         this.razorpayClient = razorpayClient;
         this.razorpaySecret = razorpaySecret;
         this.paymentRepository = paymentRepository;
@@ -56,81 +58,16 @@ public class RazorpayPaymentService {
         this.notificationService = notificationService;
         this.bookingRepository = bookingRepository;
         this.rideService = rideService;
+        this.seatHoldService = seatHoldService;
     }
 
-    // STEP 1: Create order (no money charged yet)
+    // STEP 1: Create order with atomic seat hold reservation
     public Map<String, Object> createOrder(Long userId, Long rideId, Long amountPaise,
                                             Integer seats,
                                             Double pickupLat, Double pickupLng,
                                             Double dropLat, Double dropLng) {
-        try {
-            Ride ride = rideRepository.findById(rideId)
-                    .orElseThrow(() -> new RuntimeException("Ride not found"));
-            userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            if (ride.getDriver().getId().equals(userId)) {
-                throw new RuntimeException("You cannot book your own ride.");
-            }
-
-            if (amountPaise == null || amountPaise <= 0) {
-                throw new RuntimeException("Invalid amount: " + amountPaise);
-            }
-
-            if (seats == null || seats < 1) {
-                throw new RuntimeException("Invalid seats count");
-            }
-
-            // ── Server-side price validation ──────────────────────
-            // Reuse the existing RideService.calculatePrice() logic.
-            // When coordinates are null, it returns ride.getPrice() (full-route price).
-            // When coordinates are provided, it returns the partial-route price.
-            // The returned calculatedPrice is PER-SEAT.
-            Map<String, Object> priceData = rideService.calculatePrice(
-                    rideId, pickupLat, pickupLng, dropLat, dropLng);
-            double serverPerSeatPrice =
-                    ((Number) priceData.get("calculatedPrice")).doubleValue();
-            long expectedPaise = Math.round(serverPerSeatPrice * seats * 100);
-
-            // Allow ±₹1 (100 paise) tolerance for floating-point rounding
-            if (Math.abs(amountPaise - expectedPaise) > 100) {
-                logger.warn("Amount mismatch for ride {}: client={} paise, server={} paise",
-                        rideId, amountPaise, expectedPaise);
-                throw new RuntimeException("Payment amount does not match the expected price.");
-            }
-
-            // Use server-calculated amount for the Razorpay order
-            Long verifiedAmount = expectedPaise;
-
-            JSONObject orderRequest = new JSONObject();
-            orderRequest.put("amount", verifiedAmount);
-            orderRequest.put("currency", "INR");
-            orderRequest.put("receipt", "ride_" + rideId + "_" + userId);
-            orderRequest.put("notes", new JSONObject()
-                    .put("rideId", rideId.toString())
-                    .put("userId", userId.toString()));
-
-            logger.info("Creating order - Amount: {} paise (verified), RideId: {}", verifiedAmount, rideId);
-            Order razorpayOrder = razorpayClient.orders.create(orderRequest);
-            String orderId = razorpayOrder.get("id").toString();
-            logger.info("Order created - OrderId: {}", orderId);
-
-            Map<String, Object> result = new HashMap<>();
-            result.put("orderId", orderId);
-            result.put("amount", verifiedAmount);
-            result.put("currency", "INR");
-            result.put("rideId", rideId);
-            result.put("userId", userId);
-            return result;
-
-        } catch (RazorpayException e) {
-            logger.error("Razorpay error: {}", e.getMessage());
-            throw new RuntimeException("Failed to create order: " + e.getMessage());
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Error creating order: " + e.getMessage(), e);
-        }
+        return seatHoldService.createOrderAndHold(
+                userId, rideId, amountPaise, seats, pickupLat, pickupLng, dropLat, dropLng);
     }
 
     // STEP 2: Verify payment after Razorpay popup success

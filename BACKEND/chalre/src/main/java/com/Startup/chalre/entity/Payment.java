@@ -76,6 +76,7 @@ public class Payment {
         PENDING,
         SUCCESS,
         FAILED,
-        REFUNDED
+        REFUNDED,
+        REFUND_PENDING
     }
 }

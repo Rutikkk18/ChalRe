@@ -23,6 +23,9 @@ import com.Startup.chalre.repository.BookingRepository;
 import com.Startup.chalre.repository.PaymentRepository;
 import com.Startup.chalre.repository.RideRepository;
 import com.Startup.chalre.entity.Payment;
+import com.Startup.chalre.entity.SeatHoldStatus;
+import com.Startup.chalre.repository.SeatHoldRepository;
+import java.time.LocalDateTime;
 import com.Startup.chalre.utils.PolylineUtils;
 
 import jakarta.transaction.Transactional;
@@ -38,6 +41,7 @@ public class RideService {
     private final MapService mapService;
     private final RouteService routeService;
     private final PaymentRepository paymentRepository;
+    private final SeatHoldRepository seatHoldRepository;
 
     // ── CREATE RIDE ──────────────────────────────────────────
     public Ride createRide(RideDTO dto, User driver) {
@@ -337,7 +341,7 @@ public class RideService {
 
 
     public Map<String, Object> getRideBookings(Long rideId, User driver) {
-        Ride ride = rideRepository.findById(rideId)
+        Ride ride = rideRepository.findByIdForUpdate(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
         if (!ride.getDriver().getId().equals(driver.getId())) {
@@ -358,8 +362,9 @@ public class RideService {
         return result;
     }
 
+    @Transactional
     public Ride updateRide(Long rideId, RideUpdateDTO dto, User driver) {
-        Ride ride = rideRepository.findById(rideId)
+        Ride ride = rideRepository.findByIdForUpdate(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
         if (!ride.getDriver().getId().equals(driver.getId())) {
@@ -394,7 +399,18 @@ public class RideService {
         if (dto.getDate() != null) ride.setDate(dto.getDate());
         if (dto.getTime() != null) ride.setTime(dto.getTime());
         if (dto.getEndTime() != null) ride.setEndTime(dto.getEndTime());
-        if (dto.getAvailableSeats() != null) ride.setAvailableSeats(dto.getAvailableSeats());
+        if (dto.getAvailableSeats() != null) {
+            int activeHeld = seatHoldRepository.sumActiveHeldSeats(
+                    rideId,
+                    List.of(SeatHoldStatus.PENDING_ORDER, SeatHoldStatus.HELD),
+                    LocalDateTime.now(),
+                    null
+            );
+            if (dto.getAvailableSeats() < activeHeld) {
+                throw new RuntimeException("Cannot reduce available seats below currently active passenger holds (" + activeHeld + " on hold)");
+            }
+            ride.setAvailableSeats(dto.getAvailableSeats());
+        }
         if (dto.getPrice() != null) ride.setPrice(dto.getPrice());
         if (dto.getCarModel() != null) ride.setCarModel(dto.getCarModel());
         if (dto.getCarType() != null) ride.setCarType(dto.getCarType());
@@ -417,7 +433,7 @@ public class RideService {
 
     @Transactional
     public String cancelRide(Long rideId, User driver) {
-        Ride ride = rideRepository.findById(rideId)
+        Ride ride = rideRepository.findByIdForUpdate(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
         if (!ride.getDriver().getId().equals(driver.getId())) {
@@ -472,7 +488,7 @@ public class RideService {
 
     @Transactional
     public String deleteRide(Long rideId, User driver) {
-        Ride ride = rideRepository.findById(rideId)
+        Ride ride = rideRepository.findByIdForUpdate(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
         if (!ride.getDriver().getId().equals(driver.getId())) {
@@ -482,6 +498,16 @@ public class RideService {
         List<Booking> bookings = bookingRepository.findByRide(ride);
         boolean hasActiveBookings = bookings.stream()
                 .anyMatch(b -> "BOOKED".equals(b.getStatus()));
+
+        int activeHeld = seatHoldRepository.sumActiveHeldSeats(
+                rideId,
+                List.of(SeatHoldStatus.PENDING_ORDER, SeatHoldStatus.HELD),
+                LocalDateTime.now(),
+                null
+        );
+        if (activeHeld > 0) {
+            throw new RuntimeException("Cannot delete ride with active passenger holds in checkout.");
+        }
 
         if (hasActiveBookings) {
             throw new RuntimeException("Cannot delete ride with active bookings. Please cancel the ride instead.");
@@ -739,7 +765,7 @@ public class RideService {
     public Map<String, Object> calculatePrice(Long rideId,
                                               Double pickupLat, Double pickupLng,
                                               Double dropLat, Double dropLng) {
-        Ride ride = rideRepository.findById(rideId)
+        Ride ride = rideRepository.findByIdForUpdate(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
         double fullPrice = ride.getPrice();
