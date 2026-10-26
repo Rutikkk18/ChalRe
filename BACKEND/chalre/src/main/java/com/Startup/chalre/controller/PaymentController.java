@@ -10,6 +10,9 @@ import com.Startup.chalre.entity.User;
 import com.Startup.chalre.service.BookingService;
 import com.Startup.chalre.service.PaymentFinalizationService;
 import com.Startup.chalre.service.RazorpayPaymentService;
+import com.Startup.chalre.service.SeatHoldService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,17 +24,19 @@ import java.util.Map;
 @RequestMapping("/api/payments")
 public class PaymentController {
 
+    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
+
     private final RazorpayPaymentService razorpayPaymentService;
     private final BookingService bookingService;
     private final PaymentFinalizationService paymentFinalizationService;
-    private final com.Startup.chalre.service.SeatHoldService seatHoldService;
+    private final SeatHoldService seatHoldService;
     private final String razorpayKey;
 
     public PaymentController(
             RazorpayPaymentService razorpayPaymentService,
             BookingService bookingService,
             PaymentFinalizationService paymentFinalizationService,
-            com.Startup.chalre.service.SeatHoldService seatHoldService,
+            SeatHoldService seatHoldService,
             @Qualifier("razorpayKey") String razorpayKey) {
         this.razorpayPaymentService = razorpayPaymentService;
         this.bookingService = bookingService;
@@ -73,8 +78,18 @@ public class PaymentController {
                     "error", "SEAT_CURRENTLY_HELD",
                     "message", e.getMessage()
             ));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            logger.warn("Validation error creating order: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "BAD_REQUEST",
+                    "message", e.getMessage()
+            ));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            logger.error("Unexpected error creating order: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "CHECKOUT_INITIATION_FAILED",
+                    "message", "Unable to initiate checkout. Please try again."
+            ));
         }
     }
 
@@ -89,7 +104,7 @@ public class PaymentController {
                     : (body.get("razorpayOrderId") != null ? body.get("razorpayOrderId").toString() : null);
 
             if (user == null) {
-                return ResponseEntity.status(401).body(Map.of("error", "UNAUTHORIZED"));
+                return ResponseEntity.status(401).body(Map.of("error", "UNAUTHORIZED", "message", "User must be authenticated"));
             }
 
             boolean released = seatHoldService.releaseHold(holdId, razorpayOrderId, user.getId());
@@ -98,9 +113,12 @@ public class PaymentController {
                     "message", released ? "Seat hold released successfully" : "Hold not found or already inactive"
             ));
         } catch (SecurityException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(403).body(Map.of("error", "FORBIDDEN", "message", e.getMessage()));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "BAD_REQUEST", "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            logger.error("Unexpected error releasing hold: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(Map.of("error", "INTERNAL_SERVER_ERROR", "message", "Failed to release hold."));
         }
     }
 
@@ -160,14 +178,18 @@ public class PaymentController {
                         "refundInitiated", true
                 ));
             } else {
-                return ResponseEntity.badRequest().body(result.getMessage());
+                return ResponseEntity.badRequest().body(Map.of(
+                        "error", "FINALIZATION_FAILED",
+                        "message", result.getMessage() != null ? result.getMessage() : "Payment finalization failed"
+                ));
             }
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "BAD_REQUEST", "message", e.getMessage()));
         } catch (SecurityException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
+            return ResponseEntity.status(403).body(Map.of("error", "FORBIDDEN", "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            logger.error("Unexpected error during payment verification: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(Map.of("error", "INTERNAL_SERVER_ERROR", "message", "Payment verification encountered an internal error. Please contact support."));
         }
     }
 
@@ -179,8 +201,13 @@ public class PaymentController {
         try {
             String result = razorpayPaymentService.confirmRideAndRelease(rideId, user);
             return ResponseEntity.ok(Map.of("message", result));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "BAD_REQUEST", "message", e.getMessage()));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).body(Map.of("error", "FORBIDDEN", "message", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            logger.error("Unexpected error confirming ride {}: {}", rideId, e.getMessage(), e);
+            return ResponseEntity.status(500).body(Map.of("error", "INTERNAL_SERVER_ERROR", "message", "Unable to confirm ride. Please try again."));
         }
     }
 }

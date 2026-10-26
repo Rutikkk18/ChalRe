@@ -341,7 +341,7 @@ public class RideService {
 
 
     public Map<String, Object> getRideBookings(Long rideId, User driver) {
-        Ride ride = rideRepository.findByIdForUpdate(rideId)
+        Ride ride = rideRepository.findById(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
         if (!ride.getDriver().getId().equals(driver.getId())) {
@@ -765,7 +765,7 @@ public class RideService {
     public Map<String, Object> calculatePrice(Long rideId,
                                               Double pickupLat, Double pickupLng,
                                               Double dropLat, Double dropLng) {
-        Ride ride = rideRepository.findByIdForUpdate(rideId)
+        Ride ride = rideRepository.findById(rideId)
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
         double fullPrice = ride.getPrice();

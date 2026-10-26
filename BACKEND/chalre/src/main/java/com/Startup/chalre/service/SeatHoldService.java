@@ -15,19 +15,22 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Consumer;
 
 @Service
-@RequiredArgsConstructor
 public class SeatHoldService {
 
     private static final Logger logger = LoggerFactory.getLogger(SeatHoldService.class);
@@ -40,6 +43,63 @@ public class SeatHoldService {
     private final SeatHoldRepository seatHoldRepository;
     private final RazorpayClient razorpayClient;
     private final RideService rideService;
+    private final TransactionTemplate transactionTemplate;
+
+    @Autowired
+    public SeatHoldService(
+            RideRepository rideRepository,
+            UserRepository userRepository,
+            SeatHoldRepository seatHoldRepository,
+            RazorpayClient razorpayClient,
+            RideService rideService,
+            PlatformTransactionManager transactionManager) {
+        this.rideRepository = rideRepository;
+        this.userRepository = userRepository;
+        this.seatHoldRepository = seatHoldRepository;
+        this.razorpayClient = razorpayClient;
+        this.rideService = rideService;
+        this.transactionTemplate = transactionManager != null ? new TransactionTemplate(transactionManager) : null;
+    }
+
+    public SeatHoldService(
+            RideRepository rideRepository,
+            UserRepository userRepository,
+            SeatHoldRepository seatHoldRepository,
+            RazorpayClient razorpayClient,
+            RideService rideService,
+            TransactionTemplate transactionTemplate) {
+        this.rideRepository = rideRepository;
+        this.userRepository = userRepository;
+        this.seatHoldRepository = seatHoldRepository;
+        this.razorpayClient = razorpayClient;
+        this.rideService = rideService;
+        this.transactionTemplate = transactionTemplate;
+    }
+
+    // Backwards-compatible constructor for existing tests
+    public SeatHoldService(
+            RideRepository rideRepository,
+            UserRepository userRepository,
+            SeatHoldRepository seatHoldRepository,
+            RazorpayClient razorpayClient,
+            RideService rideService) {
+        this(rideRepository, userRepository, seatHoldRepository, razorpayClient, rideService, (TransactionTemplate) null);
+    }
+
+    private <T> T executeInTransaction(TransactionCallback<T> action) {
+        if (transactionTemplate != null) {
+            return transactionTemplate.execute(action);
+        }
+        return action.doInTransaction(null);
+    }
+
+    private void executeWithoutResult(Consumer<org.springframework.transaction.TransactionStatus> action) {
+        if (transactionTemplate != null) {
+            transactionTemplate.executeWithoutResult(action::accept);
+        } else {
+            action.accept(null);
+        }
+    }
 
     @Data
     @Builder
@@ -64,29 +124,29 @@ public class SeatHoldService {
     public ReservationResult reserveHold(Long rideId, Integer seats, Long userId, Long amountPaise,
                                         Double pickupLat, Double pickupLng, Double dropLat, Double dropLng) {
         if (rideId == null) {
-            throw new RuntimeException("Ride ID is required");
+            throw new IllegalArgumentException("Ride ID is required");
         }
         if (seats == null || seats < 1) {
-            throw new RuntimeException("Invalid seats count: " + seats);
+            throw new IllegalArgumentException("Invalid seats count: " + seats);
         }
 
         Ride ride = rideRepository.findByIdForUpdate(rideId)
-                .orElseThrow(() -> new RuntimeException("Ride not found: " + rideId));
+                .orElseThrow(() -> new IllegalArgumentException("Ride not found: " + rideId));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
         if (ride.getDriver().getId().equals(userId)) {
-            throw new RuntimeException("You cannot book your own ride.");
+            throw new IllegalArgumentException("You cannot book your own ride.");
         }
 
         // Validate ride date
         try {
             LocalDate rideDate = LocalDate.parse(ride.getDate());
             if (rideDate.isBefore(LocalDate.now(java.time.ZoneId.of("Asia/Kolkata")))) {
-                throw new RuntimeException("Cannot book a ride that has already passed");
+                throw new IllegalArgumentException("Cannot book a ride that has already passed");
             }
         } catch (Exception e) {
-            if (e instanceof RuntimeException) throw e;
+            if (e instanceof IllegalArgumentException) throw e;
         }
 
         // Authoritative capacity check honoring active SeatHolds
@@ -104,7 +164,7 @@ public class SeatHoldService {
             throw new SeatUnavailableException("This seat is currently held by another passenger. Please try again in 5 minutes.");
         }
 
-        // Validate server-calculated price
+        // Validate server-calculated price (RideService.calculatePrice uses findById without lock)
         Map<String, Object> priceData = rideService.calculatePrice(
                 rideId, pickupLat, pickupLng, dropLat, dropLng);
         double serverPerSeatPrice = ((Number) priceData.get("calculatedPrice")).doubleValue();
@@ -113,7 +173,7 @@ public class SeatHoldService {
         if (Math.abs(amountPaise - expectedPaise) > 100) {
             logger.warn("Amount mismatch for ride {}: client={} paise, server={} paise",
                     rideId, amountPaise, expectedPaise);
-            throw new RuntimeException("Payment amount does not match the expected price.");
+            throw new IllegalArgumentException("Payment amount does not match the expected price.");
         }
 
         String holdReference = "hld_" + UUID.randomUUID().toString().replace("-", "");
@@ -159,7 +219,7 @@ public class SeatHoldService {
     @Transactional
     public SeatHold attachOrder(Long holdId, String razorpayOrderId) {
         SeatHold hold = seatHoldRepository.findByIdForUpdate(holdId)
-                .orElseThrow(() -> new RuntimeException("SeatHold not found: " + holdId));
+                .orElseThrow(() -> new IllegalStateException("SeatHold not found: " + holdId));
 
         if (!SeatHoldStatus.PENDING_ORDER.equals(hold.getStatus())) {
             throw new IllegalStateException("Hold " + holdId + " is not in PENDING_ORDER state. Current: " + hold.getStatus());
@@ -189,36 +249,38 @@ public class SeatHoldService {
      */
     @Transactional
     public boolean releaseHold(Long holdId, String razorpayOrderId, Long userId) {
-        Optional<SeatHold> holdOpt = Optional.empty();
-        if (holdId != null) {
-            holdOpt = seatHoldRepository.findByIdForUpdate(holdId);
-        } else if (razorpayOrderId != null && !razorpayOrderId.isBlank()) {
-            holdOpt = seatHoldRepository.findByRazorpayOrderId(razorpayOrderId);
-        }
+        return executeInTransaction(status -> {
+            Optional<SeatHold> holdOpt = Optional.empty();
+            if (holdId != null) {
+                holdOpt = seatHoldRepository.findByIdForUpdate(holdId);
+            } else if (razorpayOrderId != null && !razorpayOrderId.isBlank()) {
+                holdOpt = seatHoldRepository.findByRazorpayOrderId(razorpayOrderId);
+            }
 
-        if (holdOpt.isEmpty()) {
+            if (holdOpt.isEmpty()) {
+                return false;
+            }
+
+            SeatHold hold = holdOpt.get();
+
+            // Enforce user authorization
+            if (hold.getUser() != null && !hold.getUser().getId().equals(userId)) {
+                throw new SecurityException("Unauthorized to release hold " + hold.getId());
+            }
+
+            // Only release if the hold is still in an uncompleted/active state
+            if (SeatHoldStatus.HELD.equals(hold.getStatus()) || SeatHoldStatus.PENDING_ORDER.equals(hold.getStatus())) {
+                hold.setStatus(SeatHoldStatus.RELEASED);
+                hold.setLastReconciledAt(LocalDateTime.now());
+                seatHoldRepository.save(hold);
+                logger.info("SeatHold {} (order: {}) explicitly RELEASED by user {}. Capacity freed.",
+                        hold.getId(), hold.getRazorpayOrderId(), userId);
+                return true;
+            }
+
+            logger.info("SeatHold {} is in state {}, cannot be released.", hold.getId(), hold.getStatus());
             return false;
-        }
-
-        SeatHold hold = holdOpt.get();
-
-        // Enforce user authorization
-        if (hold.getUser() != null && !hold.getUser().getId().equals(userId)) {
-            throw new SecurityException("Unauthorized to release hold " + hold.getId());
-        }
-
-        // Only release if the hold is still in an uncompleted/active state
-        if (SeatHoldStatus.HELD.equals(hold.getStatus()) || SeatHoldStatus.PENDING_ORDER.equals(hold.getStatus())) {
-            hold.setStatus(SeatHoldStatus.RELEASED);
-            hold.setLastReconciledAt(LocalDateTime.now());
-            seatHoldRepository.save(hold);
-            logger.info("SeatHold {} (order: {}) explicitly RELEASED by user {}. Capacity freed.",
-                    hold.getId(), hold.getRazorpayOrderId(), userId);
-            return true;
-        }
-
-        logger.info("SeatHold {} is in state {}, cannot be released.", hold.getId(), hold.getStatus());
-        return false;
+        });
     }
 
     /**
@@ -226,34 +288,58 @@ public class SeatHoldService {
      */
     @Transactional
     public void markHoldFailed(Long holdId, String reason) {
-        seatHoldRepository.findByIdForUpdate(holdId).ifPresent(hold -> {
-            if (SeatHoldStatus.PENDING_ORDER.equals(hold.getStatus())) {
-                hold.setStatus(SeatHoldStatus.FAILED);
-                hold.setLastReconciledAt(LocalDateTime.now());
-                seatHoldRepository.save(hold);
-                logger.info("SeatHold {} marked FAILED: {}", holdId, reason);
-            }
+        executeWithoutResult(status -> {
+            seatHoldRepository.findByIdForUpdate(holdId).ifPresent(hold -> {
+                if (SeatHoldStatus.PENDING_ORDER.equals(hold.getStatus())) {
+                    hold.setStatus(SeatHoldStatus.FAILED);
+                    hold.setLastReconciledAt(LocalDateTime.now());
+                    seatHoldRepository.save(hold);
+                    logger.info("SeatHold {} marked FAILED: {}", holdId, reason);
+                }
+            });
         });
     }
 
     /**
+     * Preserves capacity when order creation succeeded remotely but local attachment failed.
+     * Transitions hold to EXPIRED_UNRECONCILED with orderId attached so sweeper can safely reconcile.
+     */
+    public void preserveUnreconciledHold(Long holdId, String razorpayOrderId, String reason) {
+        try {
+            executeWithoutResult(status -> {
+                seatHoldRepository.findByIdForUpdate(holdId).ifPresent(hold -> {
+                    hold.setRazorpayOrderId(razorpayOrderId);
+                    hold.setStatus(SeatHoldStatus.EXPIRED_UNRECONCILED);
+                    hold.setLastReconciledAt(LocalDateTime.now());
+                    seatHoldRepository.save(hold);
+                    logger.info("SeatHold {} preserved as EXPIRED_UNRECONCILED with order {}: {}", holdId, razorpayOrderId, reason);
+                });
+            });
+        } catch (Exception ex) {
+            logger.error("Failed to transition hold {} to EXPIRED_UNRECONCILED: {}", holdId, ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Complete two-phase checkout orchestration:
-     * 1. Transaction A: Reserve capacity under lock (returns ReservationResult).
+     * 1. Transaction A: Reserve capacity under lock (via TransactionTemplate).
      * 2. External Call: Create Razorpay order (NO lock, NO DB transaction).
-     * 3. Transaction B: Attach order and set HELD status.
-     * 4. Failure recovery: Reconcile ambiguous timeouts via receipt lookup.
+     * 3. Transaction B: Attach order and set HELD status (via TransactionTemplate).
+     * 4. Failure recovery: Reconcile ambiguous timeouts via receipt lookup or retain EXPIRED_UNRECONCILED.
      */
     public Map<String, Object> createOrderAndHold(Long userId, Long rideId, Long amountPaise,
                                                    Integer seats,
                                                    Double pickupLat, Double pickupLng,
                                                    Double dropLat, Double dropLng) {
-        ReservationResult reservation = reserveHold(
-                rideId, seats, userId, amountPaise, pickupLat, pickupLng, dropLat, dropLng);
+        // Phase A: Reserve capacity under pessimistic write lock in a short Spring-managed transaction
+        ReservationResult reservation = executeInTransaction(status -> reserveHold(
+                rideId, seats, userId, amountPaise, pickupLat, pickupLng, dropLat, dropLng));
 
         Long holdId = reservation.getHoldId();
         String receipt = reservation.getReceipt();
         Long verifiedAmount = reservation.getVerifiedAmountPaise();
 
+        String orderId = null;
         try {
             JSONObject orderRequest = new JSONObject();
             orderRequest.put("amount", verifiedAmount);
@@ -269,10 +355,13 @@ public class SeatHoldService {
             logger.info("Calling Razorpay orders.create - HoldId: {}, Amount: {} paise, Receipt: {}",
                     holdId, verifiedAmount, receipt);
 
+            // External gateway call: Strictly OUTSIDE any database locks or transactions
             Order razorpayOrder = razorpayClient.orders.create(orderRequest);
-            String orderId = razorpayOrder.get("id").toString();
+            orderId = razorpayOrder.get("id").toString();
 
-            SeatHold held = attachOrder(holdId, orderId);
+            // Phase B: Attach order and transition hold to HELD in a second short Spring-managed transaction
+            final String finalOrderId = orderId;
+            SeatHold held = executeInTransaction(status -> attachOrder(holdId, finalOrderId));
 
             Map<String, Object> result = new HashMap<>();
             result.put("orderId", orderId);
@@ -288,8 +377,14 @@ public class SeatHoldService {
             logger.error("Razorpay exception during order creation for hold {}: {}", holdId, e.getMessage());
             return handleOrderCreationFailure(reservation, e, verifiedAmount);
         } catch (Exception e) {
-            logger.error("Unexpected error creating order for hold {}: {}", holdId, e.getMessage(), e);
-            markHoldFailed(holdId, e.getMessage());
+            logger.error("Unexpected error creating or attaching order for hold {}: {}", holdId, e.getMessage(), e);
+            if (orderId != null) {
+                // Razorpay order exists remotely: DO NOT mark FAILED (do not free capacity)!
+                logger.warn("Phase B failed after Razorpay order {} was created for hold {}. Preserving hold for reconciliation.", orderId, holdId);
+                preserveUnreconciledHold(holdId, orderId, e.getMessage());
+            } else {
+                markHoldFailed(holdId, e.getMessage());
+            }
             throw new RuntimeException("Error creating order: " + e.getMessage(), e);
         }
     }
@@ -316,7 +411,7 @@ public class SeatHoldService {
                 String orderId = matched.get("id").toString();
                 logger.info("Reconciliation SUCCESS: Remote order {} found for hold {}", orderId, holdId);
 
-                SeatHold held = attachOrder(holdId, orderId);
+                SeatHold held = executeInTransaction(status -> attachOrder(holdId, orderId));
 
                 Map<String, Object> result = new HashMap<>();
                 result.put("orderId", orderId);

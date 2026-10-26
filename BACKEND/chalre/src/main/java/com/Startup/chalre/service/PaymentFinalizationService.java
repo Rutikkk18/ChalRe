@@ -11,7 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +35,54 @@ public class PaymentFinalizationService {
     private final NotificationService notificationService;
     private final String razorpaySecret;
     private final RazorpayClient razorpayClient;
+    private final TransactionTemplate transactionTemplate;
+
+    @Autowired
+    public PaymentFinalizationService(
+            RideRepository rideRepository,
+            BookingRepository bookingRepository,
+            PaymentRepository paymentRepository,
+            SeatHoldRepository seatHoldRepository,
+            RefundOutboxRepository refundOutboxRepository,
+            UserRepository userRepository,
+            NotificationService notificationService,
+            @Qualifier("razorpaySecret") String razorpaySecret,
+            RazorpayClient razorpayClient,
+            PlatformTransactionManager transactionManager) {
+        this.rideRepository = rideRepository;
+        this.bookingRepository = bookingRepository;
+        this.paymentRepository = paymentRepository;
+        this.seatHoldRepository = seatHoldRepository;
+        this.refundOutboxRepository = refundOutboxRepository;
+        this.userRepository = userRepository;
+        this.notificationService = notificationService;
+        this.razorpaySecret = razorpaySecret;
+        this.razorpayClient = razorpayClient;
+        this.transactionTemplate = transactionManager != null ? new TransactionTemplate(transactionManager) : null;
+    }
+
+    public PaymentFinalizationService(
+            RideRepository rideRepository,
+            BookingRepository bookingRepository,
+            PaymentRepository paymentRepository,
+            SeatHoldRepository seatHoldRepository,
+            RefundOutboxRepository refundOutboxRepository,
+            UserRepository userRepository,
+            NotificationService notificationService,
+            @Qualifier("razorpaySecret") String razorpaySecret,
+            RazorpayClient razorpayClient,
+            TransactionTemplate transactionTemplate) {
+        this.rideRepository = rideRepository;
+        this.bookingRepository = bookingRepository;
+        this.paymentRepository = paymentRepository;
+        this.seatHoldRepository = seatHoldRepository;
+        this.refundOutboxRepository = refundOutboxRepository;
+        this.userRepository = userRepository;
+        this.notificationService = notificationService;
+        this.razorpaySecret = razorpaySecret;
+        this.razorpayClient = razorpayClient;
+        this.transactionTemplate = transactionTemplate;
+    }
 
     public PaymentFinalizationService(
             RideRepository rideRepository,
@@ -43,15 +94,9 @@ public class PaymentFinalizationService {
             NotificationService notificationService,
             @Qualifier("razorpaySecret") String razorpaySecret,
             RazorpayClient razorpayClient) {
-        this.rideRepository = rideRepository;
-        this.bookingRepository = bookingRepository;
-        this.paymentRepository = paymentRepository;
-        this.seatHoldRepository = seatHoldRepository;
-        this.refundOutboxRepository = refundOutboxRepository;
-        this.userRepository = userRepository;
-        this.notificationService = notificationService;
-        this.razorpaySecret = razorpaySecret;
-        this.razorpayClient = razorpayClient;
+        this(rideRepository, bookingRepository, paymentRepository, seatHoldRepository,
+             refundOutboxRepository, userRepository, notificationService, razorpaySecret,
+             razorpayClient, (PlatformTransactionManager) null);
     }
 
     /**
@@ -121,7 +166,11 @@ public class PaymentFinalizationService {
         }
 
         // 3. Execute atomic finalization under database row locks
-        return executeAtomicFinalization(cmd, authenticatedUser);
+        if (transactionTemplate != null) {
+            return transactionTemplate.execute(status -> executeAtomicFinalization(cmd, authenticatedUser));
+        } else {
+            return executeAtomicFinalization(cmd, authenticatedUser);
+        }
     }
 
     /**
