@@ -50,6 +50,7 @@ class ChalreApplicationTests {
         dto.setTime("12:00");
         dto.setAvailableSeats(4);
         dto.setPrice(100.0);
+        dto.setVehicleType("car");
 
         User mockDriver = new User();
 

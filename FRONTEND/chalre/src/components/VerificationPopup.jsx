@@ -15,52 +15,47 @@ export default function VerificationPopup({ status, onClose }) {
   const config = {
     NOT_SUBMITTED: {
       icon: "🔐",
-      title: "Verify Yourself to Offer Rides",
+      title: "Verify your profile",
       badgeClass: "vp-badge--blocked",
       badgeText: "Not Verified",
       description:
-        "ChalRe requires document verification before you can offer rides. This keeps our platform safe and builds trust with passengers.",
-      perks: [
-        "✅ Only takes a few minutes",
-        "✅ Your documents are reviewed securely",
-        "✅ Passengers prefer verified drivers — get more bookings",
-      ],
+        "Complete your document verification to build trust and help passengers feel confident booking your rides.",
       ctaLabel: "Upload Documents",
       ctaClass: "vp-btn--primary",
     },
     PENDING: {
       icon: "⏳",
-      title: "Verification Under Review",
+      title: "Verify your profile",
       badgeClass: "vp-badge--pending",
       badgeText: "Pending Review",
       description:
-        "Your documents have been submitted and are currently being reviewed by our team. You'll be able to offer rides once approved.",
-      perks: [
-        "🔍 Our team reviews documents within 24–48 hours",
-        "📩 You'll be notified once your status changes",
-        "✅ Thank you for keeping the platform safe!",
-      ],
+        "Your documents are under review. You can offer rides if your account is eligible under ChalRe's current ride-posting rules.",
       ctaLabel: "Check Status",
       ctaClass: "vp-btn--warning",
     },
     REJECTED: {
       icon: "⚠️",
-      title: "Documents Rejected",
+      title: "Verify your profile",
       badgeClass: "vp-badge--rejected",
-      badgeText: "Rejected",
+      badgeText: "Action Required",
       description:
         "Your submitted documents were not approved. Please re-upload clear, valid documents to continue offering rides.",
-      perks: [
-        "📄 Ensure documents are clear and not expired",
-        "🔄 Re-upload and our team will review again",
-        "🔐 Verification protects both drivers and passengers",
-      ],
       ctaLabel: "Re-upload Documents",
       ctaClass: "vp-btn--danger",
     },
+    APPROVED: {
+      icon: "✅",
+      title: "Profile Verified",
+      badgeClass: "vp-badge--approved",
+      badgeText: "Verified",
+      description:
+        "Your profile is verified. You can offer rides anytime.",
+      ctaLabel: "View Profile",
+      ctaClass: "vp-btn--primary",
+    },
   };
 
-  const { icon, title, badgeClass, badgeText, description, perks, ctaLabel, ctaClass } =
+  const { icon, title, badgeClass, badgeText, description, ctaLabel, ctaClass } =
     config[status] || config["NOT_SUBMITTED"];
 
   return (
@@ -92,12 +87,6 @@ export default function VerificationPopup({ status, onClose }) {
         {/* Body */}
         <div className="vp-body">
           <p className="vp-description">{description}</p>
-
-          <ul className="vp-perks">
-            {perks.map((perk, i) => (
-              <li key={i} className="vp-perk-item">{perk}</li>
-            ))}
-          </ul>
         </div>
 
         {/* Footer */}

@@ -33,10 +33,6 @@ function haversineKm(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-const vehicleModels = {
-  car: ["SEDAN", "SUV", "HATCHBACK"],
-  bike: ["Bullet", "Splendor", "Shine"],
-};
 
 export default function OfferRide() {
   const { t } = useLanguage();
@@ -44,7 +40,7 @@ export default function OfferRide() {
 
   const [form, setForm] = useState({
     from: "", to: "", date: "", time: "", endTime: "",
-    seats: 1, price: "", carType: "", genderPreference: "", note: "",
+    seats: 1, price: "", genderPreference: "", note: "",
   });
   const [vehicleCategory, setVehicleCategory] = useState("");
   const [loading, setLoading] = useState(false);
@@ -93,8 +89,8 @@ export default function OfferRide() {
   };
 
   const handleVehicleCategoryChange = (category) => {
-    setVehicleCategory((prev) => (prev === category ? "" : category));
-    updateField("carType", "");
+    setVehicleCategory(category);
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -131,6 +127,7 @@ export default function OfferRide() {
     }
     if (form.price <= 0) { setError(t("orErrorPrice")); return; }
     if (form.seats < 1 || form.seats > 10) { setError(t("orErrorSeats")); return; }
+    if (!vehicleCategory) { setError(t("orErrorVehicleType") || "Please select a vehicle type (Car or Bike)."); return; }
 
     // ── Verification gate: only show popup if NOT_SUBMITTED or REJECTED ──
     const verStatus = user?.verificationStatus;
@@ -149,7 +146,7 @@ export default function OfferRide() {
         startLocation: form.from, endLocation: form.to,
         date: form.date, time: form.time, endTime: form.endTime || null,
         availableSeats: form.seats, price: form.price,
-        vehicleType: vehicleCategory || null, carType: form.carType || null,
+        vehicleType: vehicleCategory.toLowerCase(),
         genderPreference: form.genderPreference || null, note: form.note || null,
         fromLat: fromCoords ? fromCoords.lat : null,
         fromLng: fromCoords ? fromCoords.lng : null,
@@ -163,7 +160,7 @@ export default function OfferRide() {
       if (response.status === 200) {
         setSuccess(t("orSuccess"));
         logRideCreated(form.from, form.to, form.price, vehicleCategory); // ✅ fire-and-forget
-        setForm({ from:"",to:"",date:"",time:"",endTime:"",seats:1,price:"",carType:"",genderPreference:"",note:"" });
+        setForm({ from:"",to:"",date:"",time:"",endTime:"",seats:1,price:"",genderPreference:"",note:"" });
         setVehicleCategory("");
         fromCoordsRef.current = null;
         toCoordsRef.current = null;
@@ -383,7 +380,7 @@ export default function OfferRide() {
                   <circle cx="7.5" cy="17.5" r="1.5"/>
                   <circle cx="16.5" cy="17.5" r="1.5"/>
                 </svg>
-                {t("orVehicle")} <span className="opt-tag">({t("orOptional")})</span>
+                {t("orVehicle")}
               </label>
               <div className="vehicle-toggle">
                 {[{ value:"car", label: t("srCar") }, { value:"bike", label: t("srBike") }].map(({ value, label }) => (
@@ -393,16 +390,6 @@ export default function OfferRide() {
                     {label}
                   </button>
                 ))}
-                {vehicleCategory && (
-                  <select className="field-input vehicle-model-select"
-                    value={form.carType}
-                    onChange={(e) => updateField("carType", e.target.value)}>
-                    <option value="">{t("orModel")}</option>
-                    {vehicleModels[vehicleCategory].map((m) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
-                )}
               </div>
             </div>
           </div>

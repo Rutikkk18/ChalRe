@@ -369,7 +369,7 @@ export default function RideDetails() {
                       {ride.driver?.name || "Driver"}
                       {ride.driver?.isDriverVerified && <CheckCircle className="rd__verified" />}
                     </span>
-                    {ride.driver?.avgRating > 0 && (
+                    {ride.driver?.avgRating > 0 && ride.driver?.ratingCount > 0 && (
                       <div className="rd__rating-row">
                         <Star size={14} fill="#fbbf24" color="#fbbf24" />
                         <span>{ride.driver.avgRating.toFixed(1)}</span>

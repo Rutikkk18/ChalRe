@@ -46,6 +46,14 @@ public class RideService {
     // ── CREATE RIDE ──────────────────────────────────────────
     public Ride createRide(RideDTO dto, User driver) {
 
+        if (dto.getVehicleType() == null || dto.getVehicleType().trim().isEmpty()) {
+            throw new IllegalArgumentException("Vehicle type is required");
+        }
+        String normalizedVehicleType = dto.getVehicleType().trim().toLowerCase();
+        if (!normalizedVehicleType.equals("car") && !normalizedVehicleType.equals("bike")) {
+            throw new IllegalArgumentException("Vehicle type must be either 'car' or 'bike'");
+        }
+
         try {
             LocalDate rideDate = LocalDate.parse(dto.getDate());
             LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Kolkata"));
@@ -127,7 +135,7 @@ public class RideService {
         ride.setPrice(dto.getPrice());
         ride.setCarModel(dto.getCarModel());
         ride.setCarType(dto.getCarType());
-        ride.setVehicleType(dto.getVehicleType());
+        ride.setVehicleType(normalizedVehicleType);
         ride.setGenderPreference(dto.getGenderPreference());
         ride.setNote(dto.getNote());
         ride.setDriver(driver);
@@ -414,7 +422,15 @@ public class RideService {
         if (dto.getPrice() != null) ride.setPrice(dto.getPrice());
         if (dto.getCarModel() != null) ride.setCarModel(dto.getCarModel());
         if (dto.getCarType() != null) ride.setCarType(dto.getCarType());
-        if (dto.getVehicleType() != null) ride.setVehicleType(dto.getVehicleType());
+        if (dto.getVehicleType() != null) {
+            String vType = dto.getVehicleType().trim().toLowerCase();
+            if (!vType.isEmpty() && !vType.equals("car") && !vType.equals("bike")) {
+                throw new IllegalArgumentException("Vehicle type must be either 'car' or 'bike'");
+            }
+            if (!vType.isEmpty()) {
+                ride.setVehicleType(vType);
+            }
+        }
         if (dto.getGenderPreference() != null) ride.setGenderPreference(dto.getGenderPreference());
         if (dto.getNote() != null) ride.setNote(dto.getNote());
 

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -35,7 +36,9 @@ public class RideDTO {
     
     private String carModel;  // Optional
     private String carType;  // Optional: SEDAN, SUV, HATCHBACK, etc.
-    private String vehicleType; // Optional: car, bike
+    @NotBlank(message = "Vehicle type is required")
+    @Pattern(regexp = "^(?i)(car|bike)$", message = "Vehicle type must be either 'car' or 'bike'")
+    private String vehicleType;
     private String genderPreference;  // Optional: MALE_ONLY, FEMALE_ONLY
     @Size(max = 250, message = "Note cannot exceed 250 characters")
     private String note;  // Optional

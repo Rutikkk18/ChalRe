@@ -87,6 +87,7 @@ const translations = {
     orErrorEndTime: "End time must be after start time.",
     orErrorPrice: "Price must be greater than ₹0.",
     orErrorSeats: "Seats must be between 1 and 10.",
+    orErrorVehicleType: "Please select a vehicle type (Car or Bike).",
     orErrorFail: "Failed to offer ride. Try again.",
   },
 
@@ -166,6 +167,7 @@ const translations = {
     orErrorEndTime: "समाप्ति समय शुरुआती समय के बाद होना चाहिए।",
     orErrorPrice: "कीमत ₹0 से अधिक होनी चाहिए।",
     orErrorSeats: "सीटें 1 से 10 के बीच होनी चाहिए।",
+    orErrorVehicleType: "कृपया एक वाहन प्रकार चुनें (कार या बाइक)।",
     orErrorFail: "राइड ऑफर करने में विफल।",
   },
 
@@ -244,6 +246,7 @@ const translations = {
     orErrorEndTime: "समाप्ती वेळ सुरुवातीच्या नंतर असणे आवश्यक आहे.",
     orErrorPrice: "किंमत ₹0 पेक्षा जास्त असणे आवश्यक आहे.",
     orErrorSeats: "जागा 1 ते 10 दरम्यान असणे आवश्यक आहे.",
+    orErrorVehicleType: "कृपया एक वाहन प्रकार निवडा (कार किंवा बाईक).",
     orErrorFail: "राइड ऑफर करण्यात अयशस्वी.",
   },
 

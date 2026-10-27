@@ -134,17 +134,13 @@ export default function RideCard({ ride, pickupCoords, dropCoords, pickupName, d
               )}
             </div>
             <span className="driver-name">{driver.name || "Driver"}</span>
-            {driver.avgRating > 0 ? (
+            {Number(driver.avgRating) > 0 && Number(driver.ratingCount) > 0 ? (
               <div className="driver-rating">
                 <Star size={12} fill="#f59e0b" color="#f59e0b" />
-                <span className="driver-rating-score">{driver.avgRating.toFixed(1)}</span>
-                {driver.ratingCount > 0 && (
-                  <span className="driver-rating-count">({driver.ratingCount})</span>
-                )}
+                <span className="driver-rating-score">{Number(driver.avgRating).toFixed(1)}</span>
+                <span className="driver-rating-count">({driver.ratingCount})</span>
               </div>
-            ) : (
-              <span className="driver-new-badge">New Driver</span>
-            )}
+            ) : null}
           </div>
         )}
 

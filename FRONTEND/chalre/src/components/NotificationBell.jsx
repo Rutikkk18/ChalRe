@@ -5,6 +5,18 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/notificationBell.css";
 
+const isNotificationActive = (n) => {
+  if (!n) return false;
+  const now = Date.now();
+  if (n.expiresAt) {
+    return new Date(n.expiresAt).getTime() > now;
+  }
+  if (n.createdAt) {
+    return new Date(n.createdAt).getTime() + 7 * 24 * 60 * 60 * 1000 > now;
+  }
+  return true;
+};
+
 export default function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -33,7 +45,7 @@ export default function NotificationBell() {
   const fetchNotifications = async () => {
     try {
       const res = await api.get("/notifications/my?page=0&size=5");
-      const notifs = res.data || [];
+      const notifs = (res.data || []).filter(isNotificationActive);
       setNotifications(notifs);
       setUnreadCount(notifs.filter(n => !n.readFlag).length);
     } catch (err) {

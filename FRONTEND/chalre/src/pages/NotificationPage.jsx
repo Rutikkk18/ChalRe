@@ -3,6 +3,18 @@ import api from "../api/axios";
 import "../styles/notifications.css";
 import { Check, CheckCheck } from "lucide-react";
 
+const isNotificationActive = (n) => {
+  if (!n) return false;
+  const now = Date.now();
+  if (n.expiresAt) {
+    return new Date(n.expiresAt).getTime() > now;
+  }
+  if (n.createdAt) {
+    return new Date(n.createdAt).getTime() + 7 * 24 * 60 * 60 * 1000 > now;
+  }
+  return true;
+};
+
 export default function NotificationPage() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +27,8 @@ export default function NotificationPage() {
   const fetchNotifications = async () => {
     try {
       const res = await api.get("/notifications/my?page=0&size=50");  // backend route: /api/notifications/my
-      setNotifications(res.data);
+      const data = Array.isArray(res.data) ? res.data : [];
+      setNotifications(data.filter(isNotificationActive));
     } catch (err) {
       console.error(err);
     } finally {
