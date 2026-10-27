@@ -22,6 +22,7 @@ export default function VerificationPopup({ status, onClose }) {
         "Complete your document verification to build trust and help passengers feel confident booking your rides.",
       ctaLabel: "Upload Documents",
       ctaClass: "vp-btn--primary",
+      showInfo: true,
     },
     PENDING: {
       icon: "⏳",
@@ -32,6 +33,7 @@ export default function VerificationPopup({ status, onClose }) {
         "Your documents are under review. You can offer rides if your account is eligible under ChalRe's current ride-posting rules.",
       ctaLabel: "Check Status",
       ctaClass: "vp-btn--warning",
+      showInfo: false,
     },
     REJECTED: {
       icon: "⚠️",
@@ -42,6 +44,7 @@ export default function VerificationPopup({ status, onClose }) {
         "Your submitted documents were not approved. Please re-upload clear, valid documents to continue offering rides.",
       ctaLabel: "Re-upload Documents",
       ctaClass: "vp-btn--danger",
+      showInfo: false,
     },
     APPROVED: {
       icon: "✅",
@@ -52,10 +55,11 @@ export default function VerificationPopup({ status, onClose }) {
         "Your profile is verified. You can offer rides anytime.",
       ctaLabel: "View Profile",
       ctaClass: "vp-btn--primary",
+      showInfo: false,
     },
   };
 
-  const { icon, title, badgeClass, badgeText, description, ctaLabel, ctaClass } =
+  const { icon, title, badgeClass, badgeText, description, ctaLabel, ctaClass, showInfo } =
     config[status] || config["NOT_SUBMITTED"];
 
   return (
@@ -87,24 +91,41 @@ export default function VerificationPopup({ status, onClose }) {
         {/* Body */}
         <div className="vp-body">
           <p className="vp-description">{description}</p>
+
+          {showInfo && (
+            <div className="vp-info-box">
+              <div className="vp-info-header">
+                <span className="vp-info-icon" aria-hidden="true">ⓘ</span>
+                <span className="vp-info-title">
+                  You can offer rides while verification is under review.
+                </span>
+              </div>
+              <p className="vp-info-desc">
+                Upload your documents to get started. You don't need to wait for the review to finish to offer a ride.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
         <div className="vp-footer">
-          <button className="vp-btn vp-btn--ghost" onClick={onClose}>
-            Maybe Later
-          </button>
-          <button
-            className={`vp-btn ${ctaClass}`}
-            onClick={() => { onClose(); navigate("/verification"); }}
-          >
-            {ctaLabel}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-              strokeLinecap="round" strokeLinejoin="round" width="14" height="14">
-              <line x1="5" x2="19" y1="12" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
-          </button>
+          <div className="vp-footer-actions">
+            <button className="vp-btn vp-btn--ghost" onClick={onClose}>
+              Maybe Later
+            </button>
+            <button
+              className={`vp-btn ${ctaClass}`}
+              onClick={() => { onClose(); navigate("/verification"); }}
+            >
+              {ctaLabel}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                strokeLinecap="round" strokeLinejoin="round" width="14" height="14">
+                <line x1="5" x2="19" y1="12" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+          <p className="vp-footnote">Verification helps build trust with passengers.</p>
         </div>
 
       </div>
