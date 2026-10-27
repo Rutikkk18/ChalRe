@@ -55,6 +55,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         .requestMatchers("/api/locations/**").permitAll()
+                        .requestMatchers("/api/webhooks/**").permitAll()
                         .requestMatchers(
                                 "/uploads/**",
                                 "/auth/**"
@@ -83,6 +84,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOriginPatterns(List.of(
+                "https://chalre.in",
                 "https://chalre.vercel.app",
                 "http://localhost:*"
         ));

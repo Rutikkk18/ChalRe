@@ -9,6 +9,9 @@ import com.Startup.chalre.repository.BookingRepository;
 import com.Startup.chalre.repository.PaymentRepository;
 import com.Startup.chalre.repository.RideRepository;
 import com.Startup.chalre.entity.Payment;
+import com.Startup.chalre.Exception.SeatUnavailableException;
+import com.Startup.chalre.entity.SeatHoldStatus;
+import com.Startup.chalre.repository.SeatHoldRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final NotificationService notificationService;
     private final PaymentRepository paymentRepository;
+    private final SeatHoldRepository seatHoldRepository;
 
     /**
      * ATOMIC BOOKING WITH CONCURRENCY SAFE LOCKING
@@ -60,6 +64,21 @@ public class BookingService {
 
         if (dto.getSeats() > ride.getAvailableSeats()) {
             throw new RuntimeException("Not enough seats available for your request.");
+        }
+
+        // Authoritative capacity check honoring active SeatHolds
+        int activeHeld = seatHoldRepository.sumActiveHeldSeats(
+                ride.getId(),
+                List.of(SeatHoldStatus.PENDING_ORDER, SeatHoldStatus.HELD, SeatHoldStatus.EXPIRED_UNRECONCILED),
+                LocalDateTime.now(),
+                null // For cash/direct bookings, no hold is exempt
+        );
+        int unreservedCapacity = ride.getAvailableSeats() - activeHeld;
+        if (unreservedCapacity <= 0) {
+            throw new SeatUnavailableException("No seats available for this ride (currently held by another passenger).");
+        }
+        if (dto.getSeats() > unreservedCapacity) {
+            throw new SeatUnavailableException("Not enough seats available for your request (some seats are currently on hold).");
         }
 
         // Validate payment method
@@ -155,8 +174,11 @@ public class BookingService {
         }
 
         booking.setStatus("CANCELLED");
+        Ride ride = rideRepository.findByIdForUpdate(booking.getRide().getId())
+                .orElseThrow(() -> new RuntimeException("Ride not found for cancelled booking"));
+        // restore seats
 
-        Ride ride = booking.getRide();
+
         ride.setAvailableSeats(ride.getAvailableSeats() + booking.getSeatsBooked());
         rideRepository.save(ride);
 
@@ -259,6 +281,7 @@ public class BookingService {
     /** Maps a full Booking entity to the lightweight BookingSummaryDTO. */
     private BookingSummaryDTO toBookingSummaryDTO(Booking booking) {
         Ride ride = booking.getRide();
+
 
         BookingSummaryDTO.DriverInfo driverInfo = null;
         if (ride.getDriver() != null) {

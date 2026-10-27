@@ -103,7 +103,7 @@ export default function BookingPage() {
   };
 
   const handleBookRide = async () => {
-    if (!ride)       return;
+    if (!ride || loading) return;
     if (noSeatsLeft) { setError("No seats available.");            return; }
     if (seats < 1)   { setError("Please select at least 1 seat."); return; }
     if (seats > ride.availableSeats) {
@@ -114,12 +114,15 @@ export default function BookingPage() {
     setLoading(true);
     setError("");
 
+    let currentOrderId = null;
+    let currentHoldId  = null;
+
     try {
       const basePrice  = priceInfo?.calculatedPrice ?? ride.price;
       const totalPaise = Math.round(basePrice * seats * 100);
 
       const configRes   = await api.get("/payments/config");
-      const razorpayKey = configRes.data.key;
+      const razorpayKey = configRes.data?.key;
 
       if (!razorpayKey || !razorpayKey.startsWith("rzp_")) {
         setError("Invalid payment configuration.");
@@ -137,11 +140,16 @@ export default function BookingPage() {
         dropLng:   dropCoords?.lng   ? Number(dropCoords.lng)   : null,
       });
 
-      const { orderId, amount, currency } = orderRes.data;
+      const { orderId, amount, currency, holdId } = orderRes.data;
+      currentOrderId = orderId;
+      currentHoldId  = holdId;
 
       const loaded = await loadRazorpayScript();
       if (!loaded || !window.Razorpay) {
-        setError("Failed to load payment gateway. Check your connection.");
+        if (currentOrderId || currentHoldId) {
+          api.post("/payments/release-hold", { orderId: currentOrderId, holdId: currentHoldId }).catch(() => {});
+        }
+        setError("Failed to load payment gateway. Please check your internet connection and try again.");
         setLoading(false);
         return;
       }
@@ -159,7 +167,7 @@ export default function BookingPage() {
         handler: async function (response) {
           try {
             const basePrice = priceInfo?.calculatedPrice ?? ride.price;
-            await api.post("/payments/verify", {
+            const verifyRes = await api.post("/payments/verify", {
               rideId:            Number(ride.id),
               amount:            totalPaise,
               seats:             Number(seats),
@@ -174,13 +182,21 @@ export default function BookingPage() {
               dropLng:           dropCoords?.lng ? Number(dropCoords.lng) : null,
               bookedPrice:       basePrice ? Number(basePrice) : null,
             });
-            navigate(`/booking/success/online`);
+
             // ✅ Funnel step 3: payment verified, booking confirmed
             logPaymentSuccess(id, null, totalPaise / 100, seats);
+            navigate(`/booking/success/online`, { state: { bookingId: verifyRes.data?.bookingId } });
           } catch (err) {
-            const msg = err.response?.data ||
-              "Payment verification failed. Contact support if amount was deducted.";
-            setError(typeof msg === "string" ? msg : JSON.stringify(msg));
+            console.error("Payment verification error:", err);
+            // CRITICAL: NEVER call release-hold here because payment may already be captured at Razorpay!
+            if (err.response?.status === 409 && err.response?.data?.refundInitiated) {
+              setError("Payment was received, but your seat hold expired and capacity was claimed by another passenger. A full automatic refund has been initiated to your original payment method.");
+              fetchRide();
+            } else {
+              const msg = err.response?.data?.message || err.response?.data ||
+                "Payment verification is pending or failed. If your account was debited, our automatic reconciliation will confirm your booking or refund you promptly.";
+              setError(typeof msg === "string" ? msg : JSON.stringify(msg));
+            }
             setLoading(false);
           }
         },
@@ -189,7 +205,12 @@ export default function BookingPage() {
         theme: { color: "#1c7c31" },
         modal: {
           ondismiss: function () {
-            setError("Payment cancelled.");
+            if (currentOrderId || currentHoldId) {
+              api.post("/payments/release-hold", { orderId: currentOrderId, holdId: currentHoldId })
+                .catch((e) => console.warn("Failed to release hold on dismiss:", e))
+                .finally(() => fetchRide());
+            }
+            setError("Checkout was cancelled. Your temporary seat reservation has been released.");
             logPaymentCancelled(id, totalPaise / 100); // ✅ funnel drop-off
             setLoading(false);
           }
@@ -200,12 +221,17 @@ export default function BookingPage() {
       razorpay.open();
 
     } catch (err) {
-      console.error(err);
-      const msg = err.response?.data;
-      setError(
-        typeof msg === "string" ? msg :
-        msg?.message || msg?.error || "Payment initiation failed."
-      );
+      console.error("Checkout initiation error:", err);
+      if (err.response?.status === 409) {
+        setError("This seat is currently held by another passenger. Please try again in 5 minutes.");
+        fetchRide();
+      } else {
+        const msg = err.response?.data;
+        setError(
+          typeof msg === "string" ? msg :
+          msg?.message || msg?.error || "Payment initiation failed. Please try again."
+        );
+      }
       logPaymentFailed(id, 0, err.message || "initiation_failed"); // ✅ funnel error
       setLoading(false);
     }
