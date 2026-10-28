@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -368,6 +369,47 @@ public class RefundWorkerService {
         outbox.setFailureReason("TERMINAL_FAILURE: " + sanitizeError(error));
         refundOutboxRepository.save(outbox);
         logger.error("Outbox {} marked FAILED_TERMINAL: {}", outboxId, error);
+    }
+
+    /**
+     * Canonical transactional helper to safely transition a payment to REFUND_PENDING
+     * and persist an idempotent RefundOutbox entry.
+     */
+    @Transactional
+    public RefundOutbox enqueueRefund(Payment payment, String reason) {
+        if (payment == null || payment.getRazorpayPaymentId() == null || payment.getRazorpayPaymentId().isBlank()) {
+            return null;
+        }
+        payment.setStatus(Payment.PaymentStatus.REFUND_PENDING);
+        if (reason != null) {
+            payment.setRefundNote(reason);
+        }
+        Payment savedPayment = paymentRepository.save(payment);
+
+        String idempotencyKey = "rfnd_op_" + savedPayment.getId() + "_" + savedPayment.getRazorpayPaymentId();
+        String receipt = "rcpt_" + savedPayment.getId();
+        if (receipt.length() > 40) {
+            receipt = receipt.substring(0, 40);
+        }
+
+        Optional<RefundOutbox> existing = refundOutboxRepository.findByIdempotencyKey(idempotencyKey);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        RefundOutbox outbox = RefundOutbox.builder()
+                .payment(savedPayment)
+                .razorpayPaymentId(savedPayment.getRazorpayPaymentId())
+                .amountPaise(savedPayment.getAmount())
+                .status(RefundStatus.PENDING)
+                .idempotencyKey(idempotencyKey)
+                .receipt(receipt)
+                .retryCount(0)
+                .createdAt(LocalDateTime.now())
+                .failureReason(reason)
+                .build();
+
+        return refundOutboxRepository.save(outbox);
     }
 
     private boolean isAlreadyRefundedError(String msg) {

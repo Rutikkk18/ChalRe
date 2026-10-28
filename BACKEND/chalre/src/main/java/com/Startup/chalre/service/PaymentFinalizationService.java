@@ -267,6 +267,11 @@ public class PaymentFinalizationService {
             hasCapacity = unreservedCapacity >= cmd.getSeats();
         }
 
+        if (!"ACTIVE".equalsIgnoreCase(ride.getStatus())) {
+            logger.warn("Ride {} is not ACTIVE (status: {}). Denying capacity.", ride.getId(), ride.getStatus());
+            hasCapacity = false;
+        }
+
         User bookingUser = authenticatedUser != null ? authenticatedUser : (hold != null ? hold.getUser() : null);
         if (bookingUser == null && cmd.getUserId() != null) {
             bookingUser = userRepository.findById(cmd.getUserId()).orElse(null);
@@ -375,7 +380,7 @@ public class PaymentFinalizationService {
         payment.setRazorpayPaymentId(cmd.getRazorpayPaymentId());
         payment.setRazorpaySignature(cmd.getRazorpaySignature());
         payment.setCreatedAt(now);
-        payment.setRefundNote("AUTO_REFUND: Seat hold expired and seats were booked by another passenger.");
+        payment.setRefundNote(!"ACTIVE".equalsIgnoreCase(ride.getStatus()) ? "AUTO_REFUND: Ride was cancelled or deactivated." : "AUTO_REFUND: Seat hold expired and seats were booked by another passenger.");
         Payment savedPayment = paymentRepository.save(payment);
 
         // Persist durable RefundOutbox record
@@ -399,7 +404,7 @@ public class PaymentFinalizationService {
                     .receipt(receipt)
                     .retryCount(0)
                     .createdAt(now)
-                    .failureReason("CAPACITY_LOST_EXPIRED_HOLD")
+                    .failureReason(!"ACTIVE".equalsIgnoreCase(ride.getStatus()) ? "RIDE_CANCELLED_BEFORE_FINALIZATION" : "CAPACITY_LOST_EXPIRED_HOLD")
                     .build();
             outbox = refundOutboxRepository.save(outbox);
         }

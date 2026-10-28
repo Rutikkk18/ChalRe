@@ -44,6 +44,10 @@ public class BookingService {
         Ride ride = rideRepository.findByIdForUpdate(dto.getRideId())
                 .orElseThrow(() -> new RuntimeException("Ride not found"));
 
+        if (!"ACTIVE".equalsIgnoreCase(ride.getStatus())) {
+            throw new RuntimeException("This ride is no longer active for booking.");
+        }
+
         // Validate ride date
         try {
             LocalDate rideDate = LocalDate.parse(ride.getDate());

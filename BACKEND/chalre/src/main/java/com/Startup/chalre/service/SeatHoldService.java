@@ -135,6 +135,10 @@ public class SeatHoldService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
+        if (!"ACTIVE".equalsIgnoreCase(ride.getStatus())) {
+            throw new SeatUnavailableException("This ride is no longer available for booking.");
+        }
+
         if (ride.getDriver().getId().equals(userId)) {
             throw new IllegalArgumentException("You cannot book your own ride.");
         }
@@ -437,5 +441,27 @@ public class SeatHoldService {
         // Leave hold in PENDING_ORDER for its 90s TTL so the sweeper reconciles safely.
         logger.warn("Order creation for hold {} remains inconclusive. Retaining PENDING_ORDER reservation.", holdId);
         throw new RuntimeException("Payment gateway is temporarily unresponsive. Please retry in a moment.");
+    }
+
+    /**
+     * Non-destructive deactivation of holds for a cancelled ride.
+     * Only PENDING_ORDER holds (with no remote order created) are transitioned to RELEASED.
+     * HELD and EXPIRED_UNRECONCILED holds are intentionally left intact so the SeatHoldSweeperService
+     * can verify remote Razorpay status and safely issue outbox refunds if funds were captured.
+     */
+    @Transactional
+    public void deactivateHoldsForCancelledRide(Ride ride) {
+        if (ride == null) {
+            return;
+        }
+        List<SeatHold> holds = seatHoldRepository.findByRide(ride);
+        LocalDateTime now = LocalDateTime.now();
+        for (SeatHold hold : holds) {
+            if (SeatHoldStatus.PENDING_ORDER.equals(hold.getStatus())) {
+                hold.setStatus(SeatHoldStatus.RELEASED);
+                hold.setLastReconciledAt(now);
+                seatHoldRepository.save(hold);
+            }
+        }
     }
 }

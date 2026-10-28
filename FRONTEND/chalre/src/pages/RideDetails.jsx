@@ -216,7 +216,7 @@ export default function RideDetails() {
         return;
       }
 
-      const { orderId, amount, currency } = orderRes.data;
+      const { orderId, amount, currency, holdId } = orderRes.data;
 
       const razorpayLoaded = await loadRazorpayScript();
       if (!razorpayLoaded || !window.Razorpay) {
@@ -253,7 +253,16 @@ export default function RideDetails() {
         prefill: { name: "", email: "", contact: "" },
         notes: { rideId: ride.id.toString(), seats: seats.toString() },
         theme: { color: "#1c7c31" },
-        modal: { ondismiss: function () { setBookingLoading(false); } }
+        modal: {
+          ondismiss: function () {
+            if (orderId || holdId) {
+              api.post("/payments/release-hold", { orderId, holdId }).catch((e) => {
+                console.warn("Failed to release hold on dismiss:", e);
+              });
+            }
+            setBookingLoading(false);
+          }
+        }
       };
 
       try {

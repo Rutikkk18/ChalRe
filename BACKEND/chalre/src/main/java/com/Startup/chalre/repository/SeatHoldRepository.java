@@ -1,5 +1,6 @@
 package com.Startup.chalre.repository;
 
+import com.Startup.chalre.entity.Ride;
 import com.Startup.chalre.entity.SeatHold;
 import com.Startup.chalre.entity.SeatHoldStatus;
 import jakarta.persistence.LockModeType;
@@ -23,6 +24,8 @@ public interface SeatHoldRepository extends JpaRepository<SeatHold, Long> {
     Optional<SeatHold> findByIdForUpdate(@Param("id") Long id);
 
     Optional<SeatHold> findByHoldReference(String holdReference);
+
+    List<SeatHold> findByRide(Ride ride);
 
     Optional<SeatHold> findByRazorpayOrderId(String razorpayOrderId);
 

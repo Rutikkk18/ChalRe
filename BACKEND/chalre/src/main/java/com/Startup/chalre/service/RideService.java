@@ -42,6 +42,20 @@ public class RideService {
     private final RouteService routeService;
     private final PaymentRepository paymentRepository;
     private final SeatHoldRepository seatHoldRepository;
+    private final RefundWorkerService refundWorkerService;
+    private final SeatHoldService seatHoldService;
+
+    // Backwards-compatible constructor for existing tests
+    public RideService(
+            RideRepository rideRepository,
+            NotificationService notificationService,
+            BookingRepository bookingRepository,
+            MapService mapService,
+            RouteService routeService,
+            PaymentRepository paymentRepository,
+            SeatHoldRepository seatHoldRepository) {
+        this(rideRepository, notificationService, bookingRepository, mapService, routeService, paymentRepository, seatHoldRepository, null, null);
+    }
 
     // ── CREATE RIDE ──────────────────────────────────────────
     public Ride createRide(RideDTO dto, User driver) {
@@ -185,7 +199,7 @@ public class RideService {
     public List<Ride> getallRides() {
         java.time.LocalDateTime currentIstTime = java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         return rideRepository.findAll().stream()
-                .filter(ride -> ride.getAvailableSeats() > 0)
+                .filter(ride -> "ACTIVE".equalsIgnoreCase(ride.getStatus()) && ride.getAvailableSeats() > 0)
                 .filter(ride -> {
                     try {
                         java.time.LocalDateTime expiryDateTime = calculateRideEndDateTime(ride).plusMinutes(30);
@@ -205,7 +219,7 @@ public class RideService {
         List<Ride> rides = rideRepository
                 .findByStartLocationContainingIgnoreCaseAndEndLocationContainingIgnoreCase(from, to)
                 .stream()
-                .filter(ride -> ride.getAvailableSeats() > 0)
+                .filter(ride -> "ACTIVE".equalsIgnoreCase(ride.getStatus()) && ride.getAvailableSeats() > 0)
                 .toList();
 
         java.time.LocalDateTime currentIstTime = java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
@@ -299,6 +313,25 @@ public class RideService {
 
         for (Ride ride : allRides) {
             long[] counts = countsMap.getOrDefault(ride.getId(), new long[]{0L, 0L});
+            if (!"ACTIVE".equalsIgnoreCase(ride.getStatus())) {
+                if (counts[1] == 0) {
+                    continue; // Skip cancelled/inactive rides with zero bookings completely
+                }
+                RideSummaryDTO dto = new RideSummaryDTO(
+                        ride.getId(),
+                        ride.getStartLocation(),
+                        ride.getEndLocation(),
+                        ride.getDate(),
+                        ride.getTime(),
+                        ride.getAvailableSeats(),
+                        ride.getPrice(),
+                        ride.getVehicleType(),
+                        counts[0],
+                        counts[1]
+                );
+                past.add(dto);
+                continue;
+            }
             RideSummaryDTO dto = new RideSummaryDTO(
                     ride.getId(),
                     ride.getStartLocation(),
@@ -463,12 +496,12 @@ public class RideService {
             if ("BOOKED".equals(booking.getStatus())) {
                 booking.setStatus("CANCELLED");
                 if ("PAID".equalsIgnoreCase(booking.getPaymentStatus())) {
-                    booking.setPaymentStatus("REFUNDED");
+                    booking.setPaymentStatus("REFUND_PENDING");
                     if (booking.getTxnId() != null && !booking.getTxnId().isEmpty()) {
                         paymentRepository.findByRazorpayPaymentId(booking.getTxnId())
                                 .ifPresent(payment -> {
-                                    payment.setStatus(Payment.PaymentStatus.REFUNDED);
-                                    paymentRepository.save(payment);
+                                    refundWorkerService.enqueueRefund(payment, "RIDE_CANCELLED_BY_DRIVER");
+
                                 });
                     }
                     refundedCount++;
@@ -485,11 +518,15 @@ public class RideService {
                         )
                 );
             }
-            booking.setRide(null);
+
             bookingRepository.save(booking);
         }
 
-        rideRepository.delete(ride);
+        seatHoldService.deactivateHoldsForCancelledRide(ride);
+
+        ride.setStatus("CANCELLED");
+        ride.setAvailableSeats(0);
+        rideRepository.save(ride);
 
         notificationService.sendNotification(
                 driver,
@@ -515,21 +552,15 @@ public class RideService {
         boolean hasActiveBookings = bookings.stream()
                 .anyMatch(b -> "BOOKED".equals(b.getStatus()));
 
-        int activeHeld = seatHoldRepository.sumActiveHeldSeats(
-                rideId,
-                List.of(SeatHoldStatus.PENDING_ORDER, SeatHoldStatus.HELD),
-                LocalDateTime.now(),
-                null
-        );
-        if (activeHeld > 0) {
-            throw new RuntimeException("Cannot delete ride with active passenger holds in checkout.");
-        }
-
         if (hasActiveBookings) {
             throw new RuntimeException("Cannot delete ride with active bookings. Please cancel the ride instead.");
         }
 
-        rideRepository.delete(ride);
+        seatHoldService.deactivateHoldsForCancelledRide(ride);
+
+        ride.setStatus("CANCELLED");
+        ride.setAvailableSeats(0);
+        rideRepository.save(ride);
 
         notificationService.sendNotification(
                 driver,
@@ -647,6 +678,7 @@ public class RideService {
         for (Ride r : candidates) {
 
             // basic filters
+            if (!"ACTIVE".equalsIgnoreCase(r.getStatus())) continue;
             if (r.getAvailableSeats() <= 0) continue;
             if (seats != null && r.getAvailableSeats() < seats) continue;
 
