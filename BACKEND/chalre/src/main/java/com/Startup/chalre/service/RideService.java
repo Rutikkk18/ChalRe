@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.Startup.chalre.DTO.RideDTO;
@@ -23,16 +24,15 @@ import com.Startup.chalre.repository.BookingRepository;
 import com.Startup.chalre.repository.PaymentRepository;
 import com.Startup.chalre.repository.RideRepository;
 import com.Startup.chalre.entity.Payment;
+import com.Startup.chalre.entity.SeatHold;
 import com.Startup.chalre.entity.SeatHoldStatus;
 import com.Startup.chalre.repository.SeatHoldRepository;
 import java.time.LocalDateTime;
 import com.Startup.chalre.utils.PolylineUtils;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class RideService {
 
     private final RideRepository rideRepository;
@@ -43,7 +43,26 @@ public class RideService {
     private final PaymentRepository paymentRepository;
     private final SeatHoldRepository seatHoldRepository;
     private final RefundWorkerService refundWorkerService;
-    private final SeatHoldService seatHoldService;
+
+    @Autowired
+    public RideService(
+            RideRepository rideRepository,
+            NotificationService notificationService,
+            BookingRepository bookingRepository,
+            MapService mapService,
+            RouteService routeService,
+            PaymentRepository paymentRepository,
+            SeatHoldRepository seatHoldRepository,
+            RefundWorkerService refundWorkerService) {
+        this.rideRepository = rideRepository;
+        this.notificationService = notificationService;
+        this.bookingRepository = bookingRepository;
+        this.mapService = mapService;
+        this.routeService = routeService;
+        this.paymentRepository = paymentRepository;
+        this.seatHoldRepository = seatHoldRepository;
+        this.refundWorkerService = refundWorkerService;
+    }
 
     // Backwards-compatible constructor for existing tests
     public RideService(
@@ -54,7 +73,7 @@ public class RideService {
             RouteService routeService,
             PaymentRepository paymentRepository,
             SeatHoldRepository seatHoldRepository) {
-        this(rideRepository, notificationService, bookingRepository, mapService, routeService, paymentRepository, seatHoldRepository, null, null);
+        this(rideRepository, notificationService, bookingRepository, mapService, routeService, paymentRepository, seatHoldRepository, null);
     }
 
     // ── CREATE RIDE ──────────────────────────────────────────
@@ -522,7 +541,7 @@ public class RideService {
             bookingRepository.save(booking);
         }
 
-        seatHoldService.deactivateHoldsForCancelledRide(ride);
+        deactivateHoldsForCancelledRide(ride);
 
         ride.setStatus("CANCELLED");
         ride.setAvailableSeats(0);
@@ -556,7 +575,7 @@ public class RideService {
             throw new RuntimeException("Cannot delete ride with active bookings. Please cancel the ride instead.");
         }
 
-        seatHoldService.deactivateHoldsForCancelledRide(ride);
+        deactivateHoldsForCancelledRide(ride);
 
         ride.setStatus("CANCELLED");
         ride.setAvailableSeats(0);
@@ -1007,4 +1026,20 @@ public class RideService {
             return java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata"));
         }
     }
+
+    private void deactivateHoldsForCancelledRide(Ride ride) {
+        if (ride == null) {
+            return;
+        }
+        List<SeatHold> holds = seatHoldRepository.findByRide(ride);
+        LocalDateTime now = LocalDateTime.now();
+        for (SeatHold hold : holds) {
+            if (SeatHoldStatus.PENDING_ORDER.equals(hold.getStatus())) {
+                hold.setStatus(SeatHoldStatus.RELEASED);
+                hold.setLastReconciledAt(now);
+                seatHoldRepository.save(hold);
+            }
+        }
+    }
+
 }

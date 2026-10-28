@@ -129,8 +129,7 @@ public class RideCancellationSafetyTest {
                 routeService,
                 paymentRepository,
                 seatHoldRepository,
-                refundWorkerService,
-                seatHoldService
+                refundWorkerService
         );
 
         when(rideRepository.findByIdForUpdate(100L)).thenReturn(Optional.of(activeRide));
