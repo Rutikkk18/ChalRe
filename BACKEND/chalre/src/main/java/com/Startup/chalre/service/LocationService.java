@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class LocationService {
@@ -42,7 +41,8 @@ public class LocationService {
             return Collections.emptyList();
         }
 
-        String cacheKey = query.trim().toLowerCase();
+        String trimmedQuery = query.trim();
+        String cacheKey = trimmedQuery.toLowerCase();
 
         // ── Return cached result if available — no blocking ──
         List<LocationDTO> cached = cache.get(cacheKey);
@@ -50,37 +50,76 @@ public class LocationService {
             return cached;
         }
 
-        String url = UriComponentsBuilder
-                .fromHttpUrl("https://api.locationiq.com/v1/autocomplete")
-                .queryParam("key", locationIqApiKey)
-                .queryParam("q", query.trim())
-                .queryParam("limit", 5)
-                .queryParam("countrycodes", "in")
-                .toUriString();
+        // ── Step 1: Try LocationIQ Autocomplete (fast type-ahead) ──
+        List<LocationDTO> results = queryAutocomplete(trimmedQuery);
 
+        // ── Step 2: Fallback to LocationIQ Forward Search if autocomplete yielded no results ──
+        // (Useful for villages, rural areas, or alternative spellings where autocomplete misses)
+        if (results == null || results.isEmpty()) {
+            results = querySearchFallback(trimmedQuery);
+        }
 
+        if (results == null) {
+            results = Collections.emptyList();
+        }
 
-        HttpHeaders headers = new HttpHeaders();
+        cache.put(cacheKey, results);
+        return results;
+    }
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
+    private List<LocationDTO> queryAutocomplete(String query) {
         try {
+            String url = UriComponentsBuilder
+                    .fromHttpUrl("https://api.locationiq.com/v1/autocomplete")
+                    .queryParam("key", locationIqApiKey)
+                    .queryParam("q", query)
+                    .queryParam("limit", 5)
+                    .queryParam("countrycodes", "in")
+                    .toUriString();
+
+            HttpHeaders headers = new HttpHeaders();
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
             ResponseEntity<LocationDTO[]> response = restTemplate.exchange(
                     url, HttpMethod.GET, entity, LocationDTO[].class
             );
 
             LocationDTO[] body = response.getBody();
-            List<LocationDTO> result = (body == null)
-                    ? Collections.emptyList()
-                    : Collections.unmodifiableList(Arrays.asList(body));
-
-            cache.put(cacheKey, result);
-            return result;
-
+            if (body != null && body.length > 0) {
+                return Collections.unmodifiableList(Arrays.asList(body));
+            }
         } catch (Exception e) {
-            System.err.println("Location search failed for: "
-                    + query + " → " + e.getMessage());
-            return Collections.emptyList();
+            // LocationIQ returns 404 when no autocomplete matches are found
+            System.out.println("Autocomplete returned no matches for '" + query + "': " + e.getMessage());
         }
+        return Collections.emptyList();
+    }
+
+    private List<LocationDTO> querySearchFallback(String query) {
+        try {
+            String url = UriComponentsBuilder
+                    .fromHttpUrl("https://api.locationiq.com/v1/search")
+                    .queryParam("key", locationIqApiKey)
+                    .queryParam("q", query)
+                    .queryParam("format", "json")
+                    .queryParam("limit", 5)
+                    .queryParam("countrycodes", "in")
+                    .toUriString();
+
+            HttpHeaders headers = new HttpHeaders();
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<LocationDTO[]> response = restTemplate.exchange(
+                    url, HttpMethod.GET, entity, LocationDTO[].class
+            );
+
+            LocationDTO[] body = response.getBody();
+            if (body != null && body.length > 0) {
+                return Collections.unmodifiableList(Arrays.asList(body));
+            }
+        } catch (Exception e) {
+            System.err.println("Search fallback failed for: " + query + " → " + e.getMessage());
+        }
+        return Collections.emptyList();
     }
 }
