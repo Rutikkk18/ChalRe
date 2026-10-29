@@ -1,0 +1,742 @@
+/* ==========================================================================
+   MINIMAL CAR/BIKE SAVINGS & EARNINGS CALCULATOR
+   ========================================================================== */
+
+.chalre-calc-section {
+  position: relative;
+  width: 100%;
+  padding: clamp(28px, 4vw, 52px) clamp(16px, 3.5vw, 40px);
+  background: #f4fbf6;
+  background-image: radial-gradient(circle at 50% 0%, rgba(28, 124, 49, 0.05) 0%, transparent 70%);
+  margin-bottom: clamp(36px, 5vw, 60px);
+  box-sizing: border-box;
+}
+
+.chalre-calc-container {
+  max-width: 960px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   HEADER
+   ───────────────────────────────────────────────────────────── */
+
+.chalre-calc-header {
+  text-align: center;
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+.chalre-calc-eyebrow {
+  display: inline-block;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #005917;
+  background: rgba(0, 89, 23, 0.08);
+  border: 1px solid rgba(0, 89, 23, 0.18);
+  padding: 3px 12px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+
+.chalre-calc-title {
+  font-family: var(--font-display, "Merriweather", Georgia, serif);
+  font-size: clamp(26px, 3.5vw, 38px);
+  font-weight: 800;
+  color: #0f2413;
+  margin: 0 0 8px 0;
+  line-height: 1.25;
+}
+
+.chalre-calc-title-accent {
+  color: #005917;
+  font-style: italic;
+  display: inline-block;
+}
+
+.chalre-calc-subtitle {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: clamp(14px, 1.5vw, 16px);
+  color: #4b6351;
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MAIN CARD
+   ───────────────────────────────────────────────────────────── */
+
+.chalre-calc-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 89, 23, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 89, 23, 0.06), 0 2px 6px rgba(0, 0, 0, 0.02);
+  padding: clamp(20px, 3vw, 32px);
+  box-sizing: border-box;
+}
+
+/* Topbar: Purpose Toggle + Vehicle Toggle */
+.chalre-calc-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(0, 89, 23, 0.08);
+}
+
+.chalre-pill-group {
+  display: inline-flex;
+  background: #f4fbf6;
+  border: 1px solid rgba(0, 89, 23, 0.14);
+  border-radius: 999px;
+  padding: 3px;
+}
+
+.chalre-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  color: #556c5a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chalre-pill-btn:hover:not(.chalre-pill-btn--active) {
+  color: #005917;
+}
+
+.chalre-pill-btn--active {
+  background: #005917;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 89, 23, 0.2);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CALCULATOR BODY (Left Inputs, Right Result)
+   ───────────────────────────────────────────────────────────── */
+
+.chalre-calc-body {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: clamp(20px, 3.5vw, 36px);
+  align-items: stretch;
+}
+
+/* Left: Inputs Stack */
+.chalre-calc-inputs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.chalre-inputs-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   ANIMATED MEDIA BANNER (3s Story Carousel)
+   ───────────────────────────────────────────────────────────── */
+
+.chalre-calc-media-banner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  max-height: 240px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0f2413;
+  box-shadow: 0 4px 16px rgba(0, 89, 23, 0.1);
+  border: 1px solid rgba(0, 89, 23, 0.16);
+  margin-bottom: 4px;
+}
+
+.chalre-calc-media-banner--find {
+  aspect-ratio: 16 / 9;
+  max-height: 220px;
+}
+
+.chalre-media-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.chalre-media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 16%;
+  display: block;
+}
+
+.chalre-media-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.22) 40%,
+    rgba(3, 30, 11, 0.88) 100%
+  );
+  pointer-events: none;
+}
+
+.chalre-media-content {
+  position: absolute;
+  inset: 0;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.chalre-media-badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #86efac;
+  background: rgba(0, 60, 16, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(134, 239, 172, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.chalre-media-caption {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: clamp(12.5px, 1.8vw, 14px);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.35;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+  max-width: 82%;
+}
+
+.chalre-media-dots {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 3;
+}
+
+.chalre-media-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chalre-media-dot:hover:not(.chalre-media-dot--active) {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.chalre-media-dot--active {
+  width: 18px;
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+}
+
+.chalre-simple-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chalre-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chalre-simple-label {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #142e18;
+}
+
+.chalre-simple-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: #005917;
+  background: #edf8f0;
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+
+/* Slim Custom Slider */
+.chalre-simple-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #d8eadc;
+  outline: none;
+  cursor: pointer;
+}
+
+.chalre-simple-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #005917;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 89, 23, 0.35);
+  transition: transform 0.15s ease;
+}
+
+.chalre-simple-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.chalre-simple-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #005917;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 89, 23, 0.35);
+}
+
+/* Quick Distance Presets */
+.chalre-presets-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.chalre-preset-chip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 89, 23, 0.16);
+  background: #f7fdf9;
+  color: #274d32;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chalre-preset-chip:hover:not(.chalre-preset-chip--active) {
+  border-color: #005917;
+  background: #eef8f1;
+  color: #005917;
+}
+
+.chalre-preset-chip--active {
+  background: #005917;
+  color: #ffffff;
+  border-color: #005917;
+  box-shadow: 0 2px 6px rgba(0, 89, 23, 0.2);
+}
+
+/* Commute Insights Summary Bar */
+.chalre-commute-insights {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #f0f9f3;
+  border: 1px solid rgba(0, 89, 23, 0.14);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 4px;
+}
+
+.chalre-insight-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.chalre-insight-icon {
+  color: #005917;
+  flex-shrink: 0;
+}
+
+.chalre-insight-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #55755e;
+  line-height: 1.2;
+}
+
+.chalre-insight-val {
+  display: block;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  color: #0e2912;
+  margin-top: 2px;
+}
+
+.chalre-insight-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(0, 89, 23, 0.15);
+  flex-shrink: 0;
+}
+
+@media (max-width: 500px) {
+  .chalre-commute-insights {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .chalre-insight-divider {
+    display: none;
+  }
+}
+
+/* Seats Pills */
+.chalre-seats-pills {
+  display: flex;
+  gap: 8px;
+}
+
+.chalre-seat-select-btn {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 89, 23, 0.16);
+  background: #f7fdf9;
+  color: #274d32;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chalre-seat-select-btn:hover:not(.chalre-seat-select-btn--active) {
+  border-color: #005917;
+  background: #eef8f1;
+}
+
+.chalre-seat-select-btn--active {
+  background: #005917;
+  color: #ffffff;
+  border-color: #005917;
+}
+
+.chalre-bike-notice {
+  font-size: 12px;
+  color: #166534;
+  background: #edf8f0;
+  border: 1px solid rgba(0, 89, 23, 0.12);
+  padding: 7px 12px;
+  border-radius: 8px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RIGHT: RESULT BOX
+   ───────────────────────────────────────────────────────────── */
+
+.chalre-calc-result-box {
+  background: linear-gradient(145deg, #09471d 0%, #033612 100%);
+  border-radius: 16px;
+  padding: clamp(18px, 2.5vw, 24px);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 6px 20px rgba(0, 89, 23, 0.16);
+}
+
+.chalre-result-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Value Breakdown List in Result Box */
+.chalre-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px 13px;
+  margin-top: 10px;
+}
+
+.chalre-breakdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11.5px;
+}
+
+.chalre-breakdown-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  flex-shrink: 0;
+}
+
+.chalre-breakdown-label {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 500;
+  flex: 1;
+}
+
+.chalre-breakdown-val {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-weight: 700;
+  color: #86efac;
+}
+
+.chalre-result-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #86efac;
+}
+
+.chalre-result-amount {
+  font-family: var(--font-display, "Merriweather", Georgia, serif);
+  font-size: clamp(32px, 3.6vw, 42px);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.chalre-result-unit {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  margin-left: 4px;
+}
+
+.chalre-result-sub {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+}
+
+/* Micro road animation in result box */
+.chalre-mini-road {
+  position: relative;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.chalre-mini-road-dashes {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 1.5px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.45) 0px,
+    rgba(255, 255, 255, 0.45) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  z-index: 1;
+}
+
+/* Roadside pickup marker */
+.chalre-mini-pickup-marker {
+  position: absolute;
+  left: 48%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px dashed rgba(250, 204, 21, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.chalre-mini-pickup-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #facc15;
+}
+
+/* Waiting passenger */
+.chalre-mini-passenger {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fde047;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+  z-index: 2;
+}
+
+/* Vehicle */
+.chalre-mini-car {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #4ade80;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 3;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+/* Passenger boarded badge */
+.chalre-mini-boarded-badge {
+  background: #22c55e;
+  color: #032b10;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Minimal CTA Button */
+.chalre-minimal-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #005917;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.chalre-minimal-cta-btn:hover {
+  background: #dcfce7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FOOTNOTE
+   ───────────────────────────────────────────────────────────── */
+
+.chalre-calc-footnote {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: #64816c;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 89, 23, 0.08);
+  line-height: 1.4;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE DESIGN
+   ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .chalre-calc-body {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .chalre-calc-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chalre-pill-group {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .chalre-pill-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chalre-mini-car {
+    animation: none !important;
+    left: 50% !important;
+  }
+
+  .chalre-pill-btn,
+  .chalre-seat-select-btn,
+  .chalre-minimal-cta-btn {
+    transition: none !important;
+  }
+}

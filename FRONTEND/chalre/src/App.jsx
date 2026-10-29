@@ -25,6 +25,7 @@ import AboutChalRe from "./pages/AboutChalRe";
 import JoinOurTeam from "./pages/JoinOurTeam";
 import BlogList from "./pages/Blog/BlogList";
 import BlogPost from "./pages/Blog/BlogPost";
+import TrustCenter from "./pages/TrustCenter";
 import ScrollToTop from "./components/ScrollToTop";
 
 import AdminRoute from "./utils/AdminRoute";
@@ -146,6 +147,7 @@ export default function App() {
           <Route path="/careers" element={<JoinOurTeam />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/trust-center" element={<TrustCenter />} />
         </Route>
 
         {/* ADMIN PANEL ROUTES */}

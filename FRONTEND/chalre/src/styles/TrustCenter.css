@@ -1,0 +1,277 @@
+/* ==========================================================================
+   CHALRE TRUST CENTER PAGE
+   ========================================================================== */
+
+.trust-center-page {
+  min-height: 100vh;
+  background: #fbfdfc;
+  color: #0f2413;
+  padding-bottom: 70px;
+}
+
+.trust-center-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Hero Section */
+.trust-center-hero {
+  background: linear-gradient(145deg, #09471d 0%, #032b10 100%);
+  color: #ffffff;
+  padding: 40px 0 46px;
+  margin-bottom: 32px;
+}
+
+.trust-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 22px;
+  transition: all 0.2s ease;
+}
+
+.trust-back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.trust-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #86efac;
+  background: rgba(134, 239, 172, 0.15);
+  border: 1px solid rgba(134, 239, 172, 0.3);
+  padding: 3px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.trust-hero-title {
+  font-family: var(--font-display, "Merriweather", Georgia, serif);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 10px 0;
+  line-height: 1.25;
+}
+
+.trust-hero-accent {
+  color: #86efac;
+  font-style: italic;
+}
+
+.trust-hero-sub {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  max-width: 680px;
+  line-height: 1.5;
+}
+
+/* Category Pills */
+.trust-cat-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.trust-cat-pill {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 89, 23, 0.16);
+  background: #ffffff;
+  color: #27482d;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trust-cat-pill:hover:not(.trust-cat-pill--active) {
+  border-color: #005917;
+  background: #f0f9f3;
+}
+
+.trust-cat-pill--active {
+  background: #005917;
+  color: #ffffff;
+  border-color: #005917;
+  box-shadow: 0 2px 8px rgba(0, 89, 23, 0.2);
+}
+
+/* Policy List */
+.trust-policy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.trust-policy-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 89, 23, 0.14);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 89, 23, 0.04);
+  transition: all 0.2s ease;
+}
+
+.trust-policy-card--expanded {
+  border-color: #005917;
+  box-shadow: 0 4px 16px rgba(0, 89, 23, 0.08);
+}
+
+.trust-policy-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.trust-policy-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1;
+}
+
+.trust-policy-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(0, 89, 23, 0.08);
+  color: #005917;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.trust-policy-tag-row {
+  margin-bottom: 4px;
+}
+
+.trust-policy-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #005917;
+  background: rgba(0, 89, 23, 0.08);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.trust-policy-title {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f2413;
+  margin: 0 0 3px 0;
+}
+
+.trust-policy-summary {
+  font-size: 12.5px;
+  color: #55755e;
+  margin: 0;
+}
+
+.trust-policy-chevron {
+  color: #55755e;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.trust-policy-chevron--rotated {
+  transform: rotate(180deg);
+  color: #005917;
+}
+
+.trust-policy-content {
+  padding: 0 20px 20px 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.trust-policy-content p {
+  font-size: 13.5px;
+  color: #27482d;
+  line-height: 1.6;
+  margin: 0;
+  background: #f7fdf9;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-left: 3px solid #005917;
+}
+
+/* Related Resources */
+.trust-related-box {
+  background: #ffffff;
+  border: 1px solid rgba(0, 89, 23, 0.14);
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.trust-related-box h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f2413;
+  margin: 0 0 16px 0;
+}
+
+.trust-related-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.trust-link-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #f7fdf9;
+  border: 1px solid rgba(0, 89, 23, 0.14);
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #005917;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.trust-link-pill:hover {
+  background: #eef8f1;
+  border-color: #005917;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .trust-policy-content {
+    padding-left: 20px;
+  }
+}

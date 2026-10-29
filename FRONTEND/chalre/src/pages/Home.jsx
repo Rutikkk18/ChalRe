@@ -6,10 +6,14 @@ import { useState, useEffect, useRef } from "react";
 import Footer from "../components/Footer";
 import { ShieldCheck, Compass, Lock, Car, MapPin, Route, ArrowRight, User, Plus, Minus } from "lucide-react";
 import CustomDatePicker from "../components/CustomDatePicker";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
 import { getBlogPosts } from "../data/blogs";
 import BlogCard from "../components/BlogCard";
+import HowItWorks from "../components/HowItWorks";
+import SavingsCalculator from "../components/SavingsCalculator";
+import TrustTransparency from "../components/TrustTransparency";
 import { logSearch, logOfferRideClicked, logFaqExpanded } from "../analytics/analyticsService"; // ✅ analytics observer
 
 export default function Home() {
@@ -67,14 +71,6 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <header className="hero">
-
-        {/* ── LAUNCH OFFER BADGE ── */}
-        <div className="launch-banner-container">
-          <div className="launch-offer-badge animated-travel">
-            <span className="badge-pulse-dot"></span>
-            Launch Special: <strong>Drivers keep 100% earnings</strong> (0% Platform Fee)
-          </div>
-        </div>
 
         <h1>{t("heroTitle")}</h1>
         <p>{t("heroSubtitle")}</p>
@@ -177,6 +173,7 @@ export default function Home() {
       {/* ── FEATURES ── */}
       <motion.section
         className="features"
+        style={{ paddingBottom: "clamp(20px, 3vw, 32px)" }}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.5 }}
@@ -226,8 +223,10 @@ export default function Home() {
           <h3>{t("securePayments")}</h3>
           <p>{t("securePaymentsDesc")}</p>
         </motion.div>
-        <div className="divider gradient" />
       </motion.section>
+
+      {/* ── HOW A RIDE WORKS ── */}
+      <HowItWorks />
 
       {/* ── SHARE RIDE ── */}
       <motion.div
@@ -286,7 +285,9 @@ export default function Home() {
           <ArrowRight size={16} className="btn-hssr-arrow" />
         </motion.button>
       </motion.div>
-      <div className="divider gradient" />
+
+      {/* ── SAVINGS & EARNINGS CALCULATOR ── */}
+      <SavingsCalculator />
 
       {/* ── FRAUD / SAFETY ── */}
       <motion.div
@@ -359,7 +360,8 @@ export default function Home() {
         </motion.div>
       </motion.div>
 
-      <div className="divider gradient" />
+      {/* ── TRUST & TRANSPARENCY ── */}
+      <TrustTransparency />
 
       {/* ── WHY CHALRE ── */}
       <motion.section
@@ -422,8 +424,6 @@ export default function Home() {
         </div>
       </motion.section>
 
-      <div className="divider gradient" />
-
       {/* ── HELP CENTRE (FAQ ACCORDION) ── */}
       <div className="help-centre">
         <h2 className="help-title">{t("helpCentreTitle")}</h2>
@@ -476,7 +476,6 @@ export default function Home() {
             {t("readHelpCentre")}
           </button>
         </div>
-        <div className="divider gradient" />
       </div>
 
       {/* ── LATEST FROM THE BLOG ── */}

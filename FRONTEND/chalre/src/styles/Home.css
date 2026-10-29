@@ -35,14 +35,14 @@ html, body {
   padding: 0 clamp(20px, 3vw, 32px);
   z-index: 100;
   border-radius: 14px;
-  box-shadow: 0 8px 30px rgba(0, 100, 0, 0.15);
+  box-shadow: 0 8px 30px rgba(0, 89, 23, 0.14);
   border: 1.8px solid rgba(28, 124, 49, 0.15);
 }
 
 .logo {
   font-size: clamp(22px, 4vw, 28px);
   font-weight: 700;
-  color: #075017;
+  color: #005917;
   margin: 0;
   line-height: 1;
   flex-shrink: 0;
@@ -70,7 +70,7 @@ html, body {
 }
 
 .nav-links a:hover {
-  color: #1c7c31;
+  color: #005917;
 }
 
 .nav-playstore-btn {
@@ -155,7 +155,6 @@ html, body {
   font-weight: 600;
   font-size: clamp(14px, 1.6vw, 15px);
   transition: all 0.3s ease;
-  font-family: var(--font-display, "Merriweather", Georgia, "Times New Roman", serif);
   appearance: none;
   -webkit-appearance: none;
   display: inline-flex;
@@ -336,6 +335,9 @@ html, body {
   margin-top: 10px;
   font-family: var(--font-display, "Merriweather", Georgia, "Times New Roman", serif);
   line-height: 1.2;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 20px;
 }
 
@@ -365,8 +367,8 @@ html, body {
   transition: all 0.3s ease;
   gap: 8px;
   position: relative;
-  border-style: groove;
-  border-color: #024110;
+  border-style: solid;
+  border-color: rgba(0, 89, 23, 0.25);
   border-width: 1.5px;
 }
 
@@ -525,7 +527,7 @@ html, body {
   gap: clamp(20px, 3vw, 32px);
   padding: clamp(56px, 8vw, 96px) 24px;
   flex-wrap: wrap;
-  background: #ffffff;
+  background: var(--color-surface, #f4fbf6);
 }
 
 .feature-card {
@@ -535,17 +537,17 @@ html, body {
   max-width: 340px;
   border-radius: 14px;
   text-align: center;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  border: 1px solid #f1f3f5;
+  border: 1px solid rgba(0, 89, 23, 0.1);
   position: relative;
   overflow: visible;
 }
 
 .feature-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 89, 23, 0.1);
   border-color: rgba(2, 65, 16, 0.2);
 }
 
@@ -789,7 +791,7 @@ html, body {
    WHY CHALRE SECTION
 ================================ */
 .why-chalre {
-  background: #ffffff;
+  background: var(--color-surface, #f4fbf6);
   padding: clamp(56px, 10vw, 96px) 20px;
   font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
@@ -812,7 +814,7 @@ html, body {
 .why-header h2 {
   font-size: clamp(26px, 5vw, 34px);
   font-weight: 700;
-  color: #0f5132;
+  color: #0f2413;
   margin-bottom: 12px;
   font-family: var(--font-display, "Merriweather", Georgia, "Times New Roman", serif);
   line-height: 1.2;
@@ -840,7 +842,7 @@ html, body {
   padding: clamp(28px, 4vw, 40px) clamp(20px, 3vw, 30px);
   text-align: center;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f1f3f5;
+  border: 1px solid rgba(0, 89, 23, 0.1);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   display: flex;
   flex-direction: column;
@@ -857,7 +859,7 @@ html, body {
 
 .why-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 89, 23, 0.1);
   border-color: rgba(2, 65, 16, 0.2);
 }
 
@@ -909,7 +911,7 @@ html, body {
   text-align: center;
   font-size: clamp(26px, 4vw, 32px);
   font-weight: 700;
-  color: #003b44;
+  color: #0f2413;
   margin-bottom: clamp(30px, 6vw, 50px);
   font-family: var(--font-display, "Merriweather", Georgia, "Times New Roman", serif);
 }
@@ -1019,19 +1021,19 @@ html, body {
   width: 12px;
 }
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #f1f5f1;
 }
 ::-webkit-scrollbar-thumb {
-  background: #605f5f;
+  background: #b7d6bf;
   border-radius: 6px;
-  border: 2px solid #1a1a1a;
+  border: 2px solid #f1f5f1;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #b9b4b4;
+  background: #8cb89a;
 }
 * {
-  scrollbar-width: auto;
-  scrollbar-color: #7d7a7a #1a1a1a;
+  scrollbar-width: thin;
+  scrollbar-color: #b7d6bf #f1f5f1;
 }
 
 /* ================================
@@ -1351,7 +1353,7 @@ html, body {
   color: #6b7280;
   line-height: 1.6;
   margin: 0;
-  font-family: var(--font-display, "Merriweather", Georgia, "Times New Roman", serif);
+  font-family: var(--font-body, "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
 }
 
 .home-blog-preview__grid {

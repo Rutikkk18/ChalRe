@@ -1,0 +1,673 @@
+/* ==========================================================================
+   CHALRE TRUST & TRANSPARENCY SECTION (RECEIPT CARD EXPERIENCE)
+   ========================================================================== */
+
+.chalre-trust-section {
+  position: relative;
+  width: 100%;
+  padding: clamp(40px, 6vw, 76px) clamp(16px, 3.5vw, 40px);
+  background: #f4fbf6;
+  background-image: radial-gradient(circle at 50% 0%, rgba(28, 124, 49, 0.05) 0%, transparent 75%);
+  margin-bottom: clamp(36px, 5vw, 64px);
+  box-sizing: border-box;
+}
+
+.chalre-trust-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TWO-COLUMN GRID
+   ───────────────────────────────────────────────────────────── */
+
+.chalre-trust-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: clamp(28px, 4vw, 56px);
+  align-items: flex-start;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LEFT COLUMN: HEADLINE & MANIFESTO
+   ───────────────────────────────────────────────────────────── */
+
+.chalre-trust-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 10px;
+}
+
+.chalre-trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #005917;
+  background: rgba(0, 89, 23, 0.08);
+  border: 1px solid rgba(0, 89, 23, 0.2);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+.chalre-trust-title {
+  font-family: var(--font-display, "Merriweather", Georgia, serif);
+  font-size: clamp(28px, 3.8vw, 42px);
+  font-weight: 800;
+  color: #0f2413;
+  line-height: 1.2;
+  margin: 0 0 14px 0;
+}
+
+.chalre-trust-accent {
+  color: #005917;
+  font-style: italic;
+}
+
+.chalre-trust-subtitle {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: clamp(14.5px, 2vw, 16.5px);
+  font-weight: 600;
+  color: #234327;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.chalre-trust-manifesto {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 13.5px;
+  color: #4a6750;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   INTERACTIVE PILLARS & MICRO-ANIMATION ZONE (.tp)
+   ───────────────────────────────────────────────────────────── */
+
+.tp {
+  --green: #005917;
+  --mid: #1f7a3a;
+  --mint: #d9f0df;
+  --mint-2: #bfe8c8;
+  --bg: #f4fbf6;
+  --line: rgba(0, 89, 23, 0.16);
+  width: 100%;
+  max-width: 480px;
+  margin-bottom: 24px;
+}
+
+/* pills */
+.tp-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.tp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: var(--green);
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.tp-pill:hover {
+  border-color: var(--mid);
+  background: #f0f9f3;
+}
+
+.tp-pill:focus-visible {
+  outline: 2px solid var(--mid);
+  outline-offset: 2px;
+}
+
+.tp-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mint-2);
+  transition: all 0.25s ease;
+}
+
+.tp-pill.is-active {
+  background: var(--green);
+  color: #ffffff;
+  border-color: var(--green);
+  box-shadow: 0 2px 8px rgba(0, 89, 23, 0.2);
+}
+
+.tp-pill.is-active .tp-dot {
+  background: #7be09a;
+  transform: scale(1.3);
+}
+
+/* stage */
+.tp-stage {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(160deg, #ffffff 0%, var(--bg) 100%);
+  padding: 18px 18px 16px;
+  box-shadow: 0 4px 16px rgba(0, 89, 23, 0.04);
+}
+
+.tp-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.55;
+  background-image: radial-gradient(rgba(0, 89, 23, 0.18) 1px, transparent 1px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(circle at 50% 45%, #000000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(circle at 50% 45%, #000000 30%, transparent 75%);
+}
+
+.tp-scene {
+  position: relative;
+  animation: tp-in 0.4s ease both;
+}
+
+.tp-scene svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+}
+
+.tp-caption {
+  position: relative;
+  margin: 10px 0 0;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #3b5741;
+  min-height: 2.8em;
+}
+
+@keyframes tp-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* shared svg colours */
+.fill-white { fill: #ffffff; }
+.fill-mint { fill: var(--mint); }
+.fill-green { fill: var(--green); }
+.stroke-line { stroke: var(--line); stroke-width: 2; }
+.stroke-green { stroke: var(--green); }
+
+/* 1 · KYC */
+.kyc-card { animation: kyc-float 4s ease-in-out infinite; transform-origin: 160px 105px; }
+.kyc-scan { fill: #7be09a; opacity: 0.8; animation: kyc-scan 2.4s ease-in-out 0.2s 1 both; }
+.kyc-stamp { transform-origin: 236px 142px; animation: kyc-stamp 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) 1.8s both; }
+.kyc-tick { stroke-dasharray: 40; stroke-dashoffset: 40; animation: kyc-draw 0.4s ease 2.2s forwards; }
+@keyframes kyc-scan { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 0.9; } 85% { opacity: 0.9; } 100% { transform: translateY(127px); opacity: 0; } }
+@keyframes kyc-stamp { from { transform: scale(2.6) rotate(-18deg); opacity: 0; } to { transform: scale(1) rotate(-8deg); opacity: 1; } }
+@keyframes kyc-draw { to { stroke-dashoffset: 0; } }
+@keyframes kyc-float { 50% { transform: translateY(-4px); } }
+
+/* 2 · UPI */
+.upi-phone { animation: upi-tap 3.6s ease-in-out infinite; transform-origin: 160px 102px; }
+.upi-badge { animation: upi-badge 3.6s ease-in-out infinite; transform-origin: 160px 102px; }
+.upi-lock { animation: upi-lock 3.6s ease-in-out infinite; transform-origin: 160px 102px; }
+.upi-ripple { fill: none; stroke: var(--mid); stroke-width: 2; transform-origin: 160px 102px; animation: upi-ripple 3.6s ease-out infinite; opacity: 0; }
+.upi-ripple.r2 { animation-delay: 0.25s; }
+@keyframes upi-tap { 0%, 100% { transform: translateY(0); } 12% { transform: translateY(4px) scale(0.98); } 24% { transform: none; } }
+@keyframes upi-badge { 0%, 45% { opacity: 1; transform: scale(1); } 55%, 90% { opacity: 0; transform: scale(0.6); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes upi-lock { 0%, 45% { opacity: 0; transform: scale(0.6); } 58% { opacity: 1; transform: scale(1.1); } 66%, 90% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
+@keyframes upi-ripple { 0% { opacity: 0.7; transform: scale(1); } 40% { opacity: 0; transform: scale(2.4); } 100% { opacity: 0; } }
+
+/* 3 · Route */
+.route-line { stroke: var(--mid); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 2 9; animation: route-dash 1.2s linear infinite; }
+.walker { offset-path: path("M30 150 C 90 150, 100 70, 160 90 S 240 120, 262 62"); -webkit-offset-path: path("M30 150 C 90 150, 100 70, 160 90 S 240 120, 262 62"); offset-rotate: 0deg; animation: route-go 5s ease-in-out infinite; }
+.walker.w2 { offset-path: path("M30 168 C 100 170, 110 90, 170 108 S 232 140, 262 62"); -webkit-offset-path: path("M30 168 C 100 170, 110 90, 170 108 S 232 140, 262 62"); animation-delay: 0.25s; }
+.pin { transform-origin: 262px 76px; animation: pin-bob 2s ease-in-out infinite; }
+@keyframes route-dash { to { stroke-dashoffset: -11; } }
+@keyframes route-go { 0% { offset-distance: 0%; } 80%, 100% { offset-distance: 92%; } }
+@keyframes pin-bob { 50% { transform: translateY(-5px); } }
+
+/* 4 · Zero Platform Fee */
+.fee-card { animation: fee-float 4s ease-in-out infinite; transform-origin: 160px 100px; }
+.fee-row { transform-origin: 160px 100px; }
+.fee-row-1 { animation: fee-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
+.fee-row-2 { animation: fee-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both; }
+.fee-row-3 { animation: fee-pop 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.65s both; }
+@keyframes fee-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes fee-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tp *, .tp *::before { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; }
+  .kyc-tick { stroke-dashoffset: 0; }
+}
+
+@media (max-width: 480px) {
+  .tp-pill { font-size: 12px; padding: 7px 12px; }
+}
+
+/* CTA Wrap */
+.chalre-trust-cta-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chalre-trust-center-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  background: #005917;
+  color: #ffffff;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 89, 23, 0.25);
+  transition: all 0.2s ease;
+}
+
+.chalre-trust-center-btn:hover {
+  background: #004512;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 89, 23, 0.3);
+}
+
+.chalre-trust-center-btn:focus-visible {
+  outline: 3px solid rgba(0, 89, 23, 0.4);
+  outline-offset: 2px;
+}
+
+.chalre-trust-cta-sub {
+  font-size: 11.5px;
+  color: #5c7b64;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RIGHT COLUMN: RECEIPT CARD
+   ───────────────────────────────────────────────────────────── */
+
+.chalre-receipt-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(0, 89, 23, 0.16);
+  border-radius: 18px;
+  box-shadow: 0 10px 32px rgba(0, 89, 23, 0.08), 0 2px 8px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Receipt Header */
+.chalre-receipt-header {
+  background: linear-gradient(135deg, #09471d 0%, #032b10 100%);
+  color: #ffffff;
+  padding: 20px 22px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chalre-receipt-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.chalre-receipt-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.chalre-receipt-brand-icon {
+  color: #4ade80;
+}
+
+.chalre-receipt-logo {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  color: #ffffff;
+}
+
+.chalre-receipt-doc-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #86efac;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(134, 239, 172, 0.25);
+}
+
+.chalre-receipt-headline {
+  font-family: var(--font-display, "Merriweather", Georgia, serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+}
+
+.chalre-receipt-meta {
+  display: flex;
+  gap: 14px;
+  font-family: monospace;
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.04em;
+}
+
+/* Receipt Perforated Edge Divider with cutouts */
+.chalre-receipt-perforation {
+  position: relative;
+  height: 18px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+}
+
+.chalre-receipt-perforation-line {
+  width: 100%;
+  height: 1px;
+  border-bottom: 1.5px dashed rgba(0, 89, 23, 0.2);
+}
+
+.chalre-receipt-punch-hole {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: #f4fbf6;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 89, 23, 0.16);
+  z-index: 2;
+}
+
+.chalre-receipt-punch-hole--left {
+  left: -8px;
+  box-shadow: inset -2px 0 3px rgba(0, 89, 23, 0.08);
+}
+
+.chalre-receipt-punch-hole--right {
+  right: -8px;
+  box-shadow: inset 2px 0 3px rgba(0, 89, 23, 0.08);
+}
+
+/* Receipt Body */
+.chalre-receipt-body {
+  padding: 12px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chalre-receipt-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chalre-receipt-group-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #005917;
+  padding: 4px 6px;
+  border-bottom: 1px solid rgba(0, 89, 23, 0.1);
+}
+
+.chalre-group-icon {
+  color: #005917;
+}
+
+/* Receipt Rows */
+.chalre-receipt-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chalre-receipt-row {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.chalre-receipt-row--expanded {
+  background: #f7fdf9;
+  border-color: rgba(0, 89, 23, 0.16);
+}
+
+.chalre-receipt-row-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 8px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.chalre-receipt-row-header:hover {
+  background: #f0f9f3;
+}
+
+.chalre-receipt-row-header:focus-visible {
+  outline: 2px solid #005917;
+  outline-offset: 1px;
+}
+
+.chalre-row-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  flex: 1;
+}
+
+.chalre-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.chalre-status-indicator--verified {
+  color: #005917;
+}
+
+.chalre-status-indicator--neutral {
+  color: #6b8a73;
+}
+
+.chalre-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chalre-row-title {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f2413;
+}
+
+.chalre-row-short {
+  font-size: 11px;
+  color: #55755e;
+  line-height: 1.3;
+}
+
+.chalre-row-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.chalre-row-value {
+  font-family: var(--font-body, "Ubuntu", sans-serif);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #005917;
+  background: rgba(0, 89, 23, 0.08);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 89, 23, 0.12);
+}
+
+.chalre-row-chevron {
+  color: #4a6750;
+  transition: transform 0.25s ease;
+}
+
+.chalre-row-chevron--rotated {
+  transform: rotate(180deg);
+}
+
+/* Expandable Drawer */
+.chalre-receipt-row-drawer {
+  overflow: hidden;
+}
+
+.chalre-drawer-inner {
+  padding: 0 10px 10px 30px;
+}
+
+.chalre-drawer-inner p {
+  font-size: 11.5px;
+  color: #27482d;
+  line-height: 1.55;
+  margin: 0;
+  background: #ffffff;
+  padding: 9px 12px;
+  border-radius: 6px;
+  border-left: 2.5px solid #005917;
+}
+
+/* Receipt Footer */
+.chalre-receipt-footer {
+  background: #f7fdf9;
+  border-top: 1.5px dashed rgba(0, 89, 23, 0.18);
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chalre-receipt-summary-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #0f2413;
+}
+
+.chalre-receipt-total-val {
+  color: #005917;
+  background: rgba(0, 89, 23, 0.1);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.chalre-receipt-micro-hash {
+  font-family: monospace;
+  font-size: 9px;
+  color: #7b9983;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE BREAKPOINTS
+   ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .chalre-trust-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .chalre-trust-left {
+    padding-top: 0;
+  }
+
+  .tp {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .chalre-receipt-header {
+    padding: 16px 14px;
+  }
+
+  .chalre-receipt-body {
+    padding: 10px 12px 14px;
+  }
+
+  .chalre-receipt-row-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .chalre-row-right {
+    align-self: flex-end;
+  }
+
+  .chalre-drawer-inner {
+    padding-left: 10px;
+  }
+}

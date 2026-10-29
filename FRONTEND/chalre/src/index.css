@@ -6,6 +6,25 @@
   --font-heading: var(--font-display);
   --font-sans: var(--font-body);
   --font-serif: var(--font-display);
+
+  /* ── ChalRe Design Tokens ── */
+  --color-brand: #005917;
+  --color-brand-dark: #024110;
+  --color-brand-deep: #032b10;
+  --color-brand-hover: #004712;
+  --color-surface: #F4FBF6;
+  --color-surface-alt: #f0f9f3;
+  --color-text-primary: #0f2413;
+  --color-text-secondary: #4b6351;
+  --color-text-muted: #6b7280;
+  --color-border: rgba(0, 89, 23, 0.14);
+  --color-border-light: rgba(0, 89, 23, 0.08);
+  --space-section: clamp(64px, 10vw, 96px);
+  --space-section-sm: clamp(40px, 6vw, 64px);
+  --container-max: 1120px;
+  --container-wide: 1200px;
+  --radius-card: 16px;
+  --radius-pill: 999px;
 }
 
 *, *::before, *::after {
