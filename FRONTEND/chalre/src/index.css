@@ -19,6 +19,14 @@
   --color-text-muted: #6b7280;
   --color-border: rgba(0, 89, 23, 0.14);
   --color-border-light: rgba(0, 89, 23, 0.08);
+
+  /* ── Accent Tokens (Restrained Muted Gold System) ── */
+  --color-accent: #D9A441;
+  --color-accent-hover: #C48F2F;
+  --color-accent-text: #8A5800;
+  --color-accent-surface: #FDF8EE;
+  --color-accent-border: rgba(217, 164, 65, 0.38);
+
   --space-section: clamp(64px, 10vw, 96px);
   --space-section-sm: clamp(40px, 6vw, 64px);
   --container-max: 1120px;

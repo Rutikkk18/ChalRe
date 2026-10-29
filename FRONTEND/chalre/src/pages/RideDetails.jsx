@@ -380,7 +380,7 @@ export default function RideDetails() {
                     </span>
                     {ride.driver?.avgRating > 0 && ride.driver?.ratingCount > 0 && (
                       <div className="rd__rating-row">
-                        <Star size={14} fill="#fbbf24" color="#fbbf24" />
+                        <Star size={14} fill="#D9A441" color="#D9A441" />
                         <span>{ride.driver.avgRating.toFixed(1)}</span>
                         <span className="rd__rating-count">({ride.driver.ratingCount || 0})</span>
                       </div>
@@ -523,8 +523,8 @@ export default function RideDetails() {
                           <div className="rd__review-stars">
                             {[1,2,3,4,5].map((star) => (
                               <Star key={star} size={13}
-                                fill={star <= rating.stars ? "#fbbf24" : "none"}
-                                color={star <= rating.stars ? "#fbbf24" : "#d1d5db"} />
+                                fill={star <= rating.stars ? "#D9A441" : "none"}
+                                color={star <= rating.stars ? "#D9A441" : "#d1d5db"} />
                             ))}
                           </div>
                           <span className="rd__review-date">

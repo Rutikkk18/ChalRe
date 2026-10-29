@@ -190,7 +190,7 @@ export default function Home() {
           }}
         >
           <div className="feature-icon-badge">
-            <ShieldCheck size={26} strokeWidth={1.5} style={{ color: '#024110' }} />
+            <ShieldCheck size={26} strokeWidth={1.8} style={{ color: '#005917' }} />
           </div>
           <h3>{t("verifiedUsers")}</h3>
           <p>{t("verifiedUsersDesc")}</p>
@@ -204,7 +204,7 @@ export default function Home() {
           }}
         >
           <div className="feature-icon-badge">
-            <Compass size={26} strokeWidth={1.5} style={{ color: '#024110' }} />
+            <Compass size={26} strokeWidth={1.8} style={{ color: '#005917' }} />
           </div>
           <h3>{t("smartMatching")}</h3>
           <p>{t("smartMatchingDesc")}</p>
@@ -218,7 +218,7 @@ export default function Home() {
           }}
         >
           <div className="feature-icon-badge">
-            <Lock size={26} strokeWidth={1.5} style={{ color: '#024110' }} />
+            <Lock size={26} strokeWidth={1.8} style={{ color: '#005917' }} />
           </div>
           <h3>{t("securePayments")}</h3>
           <p>{t("securePaymentsDesc")}</p>
